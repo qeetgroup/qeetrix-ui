@@ -1,0 +1,147 @@
+{
+  "name": "@qeetrix/ui",
+  "version": "1.0.3",
+  "private": false,
+  "description": "Qeetrix UI — the Qeet Group React component library (shadcn + Base UI, Tailwind v4).",
+  "license": "UNLICENSED",
+  "type": "module",
+  "packageManager": "bun@1.3.14",
+  "engines": {
+    "node": ">=20",
+    "bun": ">=1.3"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/index.css",
+    "./qeetrix.css": "./dist/styles/tokens.css",
+    "./tokens.css": "./dist/styles/tokens.raw.css",
+    "./tokens.json": "./dist/styles/tokens.json",
+    "./brand": {
+      "types": "./dist/brand/index.d.ts",
+      "import": "./dist/brand/index.js",
+      "default": "./dist/brand/index.js"
+    },
+    "./i18n": {
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n/index.js",
+      "default": "./dist/i18n/index.js"
+    },
+    "./blocks": {
+      "types": "./dist/blocks/index.d.ts",
+      "import": "./dist/blocks/index.js",
+      "default": "./dist/blocks/index.js"
+    },
+    "./blocks/*": {
+      "types": "./dist/blocks/*.d.ts",
+      "import": "./dist/blocks/*.js",
+      "default": "./dist/blocks/*.js"
+    },
+    "./components/*-provider": {
+      "types": "./dist/components/*-provider.d.ts",
+      "import": "./dist/components/*-provider.js",
+      "default": "./dist/components/*-provider.js"
+    },
+    "./components/ui/*": {
+      "types": "./dist/components/ui/*.d.ts",
+      "import": "./dist/components/ui/*.js",
+      "default": "./dist/components/ui/*.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/ui/*.d.ts",
+      "import": "./dist/components/ui/*.js",
+      "default": "./dist/components/ui/*.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "import": "./dist/lib/*.js",
+      "default": "./dist/lib/*.js"
+    },
+    "./hooks/*": {
+      "types": "./dist/hooks/*.d.ts",
+      "import": "./dist/hooks/*.js",
+      "default": "./dist/hooks/*.js"
+    },
+    "./fonts/*": "./dist/fonts/*"
+  },
+  "scripts": {
+    "prepack": "bun run build",
+    "build": "node scripts/build-tokens.mjs && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/postbuild.mjs",
+    "build-tokens": "node scripts/build-tokens.mjs",
+    "validate-tokens": "node scripts/build-tokens.mjs && node scripts/validate-contrast.mjs",
+    "scan:tokens": "node scripts/scan-token-usage.mjs",
+    "manifest": "node scripts/build-manifest.mjs",
+    "generate-logos": "node scripts/generate-logos.mjs",
+    "dev": "node scripts/build-tokens.mjs && tsc -p tsconfig.build.json --watch --noEmit",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:package": "node scripts/verify-package.mjs",
+    "test:a11y-coverage": "node scripts/check-a11y-coverage.mjs",
+    "clean": "rm -rf dist build src/styles .turbo",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "bun run build && changeset publish"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.5.0",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.14.3",
+    "@tiptap/pm": "^3.27.0",
+    "@tiptap/react": "^3.27.0",
+    "@tiptap/starter-kit": "^3.27.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "embla-carousel-react": "^8.6.0",
+    "lucide-react": "^0.577.0",
+    "react-day-picker": "^9.9.0",
+    "react-resizable-panels": "^4.11.2",
+    "recharts": "^3.8.1",
+    "shadcn": "^4.7.0",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.3.6",
+    "qrcode": "^1.5.4"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19",
+    "tailwindcss": ">=4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@changesets/cli": "^2.31.0",
+    "culori": "^4.0.1",
+    "style-dictionary": "^5.4.1",
+    "@tailwindcss/vite": "^4.3.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.19.19",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "axe-core": "^4.12.1",
+    "jsdom": "^29.1.1",
+    "tailwindcss": "^4.3.0",
+    "tsc-alias": "^1.8.17",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9",
+    "vitest-axe": "^0.1.0",
+    "@types/qrcode": "^1.5.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

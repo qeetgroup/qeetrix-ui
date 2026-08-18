@@ -1,0 +1,15 @@
+{
+  "icon": {
+    "$description": "Icon sizing + stroke scale (Gap 9). Consumed by the <Icon> wrapper (mirrored there as JS constants) and exposed as --qx-icon-size-* / --qx-icon-stroke-*.",
+    "size": {
+      "xs": { "$value": "14px", "$type": "dimension" },
+      "sm": { "$value": "16px", "$type": "dimension" },
+      "md": { "$value": "20px", "$type": "dimension" },
+      "lg": { "$value": "24px", "$type": "dimension" }
+    },
+    "stroke": {
+      "thin": { "$value": "1.5", "$type": "number" },
+      "regular": { "$value": "2", "$type": "number" }
+    }
+  }
+}

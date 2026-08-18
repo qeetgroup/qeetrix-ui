@@ -1,0 +1,40 @@
+{
+  "color": {
+    "text": {
+      "primary": { "$value": "{color.neutral.50}", "$type": "color" },
+      "secondary": { "$value": "{color.neutral.300}", "$type": "color" },
+      "tertiary": { "$value": "{color.neutral.400}", "$type": "color" },
+      "placeholder": { "$value": "{color.neutral.500}", "$type": "color" },
+      "disabled": { "$value": "{color.neutral.600}", "$type": "color" },
+      "inverse": { "$value": "{color.neutral.900}", "$type": "color" },
+      "brand": { "$value": "{color.brand.300}", "$type": "color" },
+      "link": { "$value": "{color.brand.300}", "$type": "color" },
+      "success": { "$value": "{color.success.300}", "$type": "color" },
+      "warning": { "$value": "{color.warning.300}", "$type": "color" },
+      "danger": { "$value": "{color.danger.400}", "$type": "color" },
+      "info": { "$value": "{color.info.300}", "$type": "color" },
+      "on-brand": { "$value": "{color.neutral.900}", "$type": "color" }
+    },
+    "surface": {
+      "canvas": { "$value": "{color.neutral.950}", "$type": "color" },
+      "default": { "$value": "{color.neutral.850}", "$type": "color" },
+      "elevated": { "$value": "{color.neutral.800}", "$type": "color" },
+      "sunken": { "$value": "{color.neutral.950}", "$type": "color" },
+      "subtle": { "$value": "{color.neutral.900}", "$type": "color" },
+      "inverse": { "$value": "{color.neutral.100}", "$type": "color" }
+    },
+    "border": {
+      "default": { "$value": "{color.neutral.700}", "$type": "color" },
+      "subtle": { "$value": "{color.neutral.800}", "$type": "color" },
+      "strong": { "$value": "{color.neutral.600}", "$type": "color" },
+      "focused": { "$value": "{color.brand.400}", "$type": "color" },
+      "hover": { "$value": "{color.neutral.500}", "$type": "color" },
+      "danger": { "$value": "{color.danger.400}", "$type": "color" }
+    },
+    "action": {
+      "primary": { "$value": "{color.brand.400}", "$type": "color" },
+      "primary-hover": { "$value": "{color.brand.300}", "$type": "color" },
+      "primary-active": { "$value": "{color.brand.200}", "$type": "color" }
+    }
+  }
+}

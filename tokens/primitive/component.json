@@ -1,0 +1,30 @@
+{
+  "component": {
+    "sidebar": {
+      "width": {
+        "default": {
+          "$value": "16rem",
+          "$type": "dimension"
+        },
+        "mobile": {
+          "$value": "18rem",
+          "$type": "dimension"
+        },
+        "icon": {
+          "$value": "3rem",
+          "$type": "dimension"
+        }
+      }
+    },
+    "tour": {
+      "card-width": {
+        "$value": "288px",
+        "$type": "dimension"
+      },
+      "offset": {
+        "$value": "12px",
+        "$type": "dimension"
+      }
+    }
+  }
+}

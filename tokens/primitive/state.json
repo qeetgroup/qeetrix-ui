@@ -1,0 +1,11 @@
+{
+  "state": {
+    "opacity": {
+      "disabled": {
+        "$value": 0.5,
+        "$type": "number",
+        "$description": "Shared opacity for unavailable interactive controls. Semantic disabled styling must also preserve the native disabled or aria-disabled state."
+      }
+    }
+  }
+}

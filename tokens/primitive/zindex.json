@@ -1,0 +1,19 @@
+{
+  "z": {
+    "base": { "$value": "0", "$type": "number" },
+    "dropdown": { "$value": "1000", "$type": "number" },
+    "sticky": { "$value": "1100", "$type": "number" },
+    "fixed": { "$value": "1200", "$type": "number" },
+    "modal-backdrop": { "$value": "1300", "$type": "number" },
+    "modal": { "$value": "1400", "$type": "number" },
+    "drawer-backdrop": { "$value": "1500", "$type": "number" },
+    "drawer": { "$value": "1600", "$type": "number" },
+    "popover": { "$value": "1700", "$type": "number" },
+    "toast": { "$value": "1800", "$type": "number" },
+    "command-palette": { "$value": "1900", "$type": "number" },
+    "tour-backdrop": { "$value": "2000", "$type": "number" },
+    "tour": { "$value": "2010", "$type": "number" },
+    "skip-nav": { "$value": "2100", "$type": "number" },
+    "debug": { "$value": "9999", "$type": "number" }
+  }
+}

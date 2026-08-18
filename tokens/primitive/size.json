@@ -1,0 +1,23 @@
+{
+  "font": {
+    "size": {
+      "micro": { "$value": "11px", "$type": "dimension" },
+      "caption": { "$value": "12px", "$type": "dimension" },
+      "body-sm": { "$value": "13px", "$type": "dimension" },
+      "body": { "$value": "14px", "$type": "dimension" },
+      "body-lg": { "$value": "16px", "$type": "dimension" },
+      "heading-sm": { "$value": "18px", "$type": "dimension" },
+      "heading": { "$value": "20px", "$type": "dimension" },
+      "heading-lg": { "$value": "24px", "$type": "dimension" },
+      "title": { "$value": "32px", "$type": "dimension" },
+      "display": { "$value": "48px", "$type": "dimension" },
+      "display-lg": { "$value": "64px", "$type": "dimension" }
+    },
+    "weight": {
+      "regular": { "$value": "400", "$type": "fontWeight" },
+      "medium": { "$value": "500", "$type": "fontWeight" },
+      "semibold": { "$value": "600", "$type": "fontWeight" },
+      "bold": { "$value": "700", "$type": "fontWeight" }
+    }
+  }
+}

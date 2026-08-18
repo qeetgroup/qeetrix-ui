@@ -1,0 +1,45 @@
+{
+  "radii": {
+    "base": {
+      "$value": "0.45rem",
+      "$type": "dimension",
+      "$description": "White-label override surface; drives the shadcn --radius. Maps 1:1 to the current Qeet ID --radius."
+    },
+    "none": {
+      "$value": "0px",
+      "$type": "dimension"
+    },
+    "xs": {
+      "$value": "2px",
+      "$type": "dimension"
+    },
+    "s": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "m": {
+      "$value": "6px",
+      "$type": "dimension"
+    },
+    "l": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "xl": {
+      "$value": "12px",
+      "$type": "dimension"
+    },
+    "2xl": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "pill": {
+      "$value": "9999px",
+      "$type": "dimension"
+    },
+    "circle": {
+      "$value": "50%",
+      "$type": "dimension"
+    }
+  }
+}

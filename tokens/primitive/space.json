@@ -1,0 +1,15 @@
+{
+  "space": {
+    "0": { "$value": "0px", "$type": "dimension" },
+    "xxs": { "$value": "2px", "$type": "dimension" },
+    "xs": { "$value": "4px", "$type": "dimension" },
+    "s": { "$value": "8px", "$type": "dimension" },
+    "m": { "$value": "12px", "$type": "dimension" },
+    "l": { "$value": "16px", "$type": "dimension" },
+    "xl": { "$value": "24px", "$type": "dimension" },
+    "2xl": { "$value": "32px", "$type": "dimension" },
+    "3xl": { "$value": "48px", "$type": "dimension" },
+    "4xl": { "$value": "64px", "$type": "dimension" },
+    "5xl": { "$value": "96px", "$type": "dimension" }
+  }
+}

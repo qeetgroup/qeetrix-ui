@@ -1,0 +1,1172 @@
+{
+  "$schema": "https://qeetrix.qeet.in/manifest.schema.json",
+  "name": "@qeetrix/ui",
+  "version": "1.0.3",
+  "description": "Qeet Group design system — accessible, token-driven React components (Base UI + Tailwind v4).",
+  "generated": "2026-08-18",
+  "styles": "@qeetrix/ui/styles.css",
+  "tokens": "@qeetrix/ui/tokens.json",
+  "count": 145,
+  "components": [
+    {
+      "slug": "access-review",
+      "name": "AccessReview",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/access-review",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "accordion",
+      "name": "Accordion",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/accordion",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "action-bar",
+      "name": "ActionBar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/action-bar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "alert",
+      "name": "Alert",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/alert",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "alert-dialog",
+      "name": "AlertDialog",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/alert-dialog",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "angle-slider",
+      "name": "AngleSlider",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/angle-slider",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "app-shell",
+      "name": "AppShell",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/app-shell",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "aspect-ratio",
+      "name": "AspectRatio",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/aspect-ratio",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "audit-event",
+      "name": "AuditEvent",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/audit-event",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "autocomplete",
+      "name": "Autocomplete",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/autocomplete",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "availability-grid",
+      "name": "AvailabilityGrid",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/availability-grid",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "avatar",
+      "name": "Avatar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/avatar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "badge",
+      "name": "Badge",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/badge",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "banner",
+      "name": "Banner",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/banner",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "blockquote",
+      "name": "Blockquote",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/blockquote",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "breadcrumb",
+      "name": "Breadcrumb",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/breadcrumb",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "button",
+      "name": "Button",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/button",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "button-group",
+      "name": "ButtonGroup",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/button-group",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "calendar",
+      "name": "Calendar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/calendar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "callout",
+      "name": "Callout",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/callout",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "card",
+      "name": "Card",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/card",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "carousel",
+      "name": "Carousel",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/carousel",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "chart",
+      "name": "Chart",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/chart",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "chart-presets",
+      "name": "ChartPresets",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/chart-presets",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "checkbox",
+      "name": "Checkbox",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/checkbox",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "checkbox-card",
+      "name": "CheckboxCard",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/checkbox-card",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "chip",
+      "name": "Chip",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/chip",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "clipboard",
+      "name": "Clipboard",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/clipboard",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "close-button",
+      "name": "CloseButton",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/close-button",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "code-block",
+      "name": "CodeBlock",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/code-block",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "collapsible",
+      "name": "Collapsible",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/collapsible",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "color-picker",
+      "name": "ColorPicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/color-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "color-swatch",
+      "name": "ColorSwatch",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/color-swatch",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "combobox",
+      "name": "Combobox",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/combobox",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "command-palette",
+      "name": "CommandPalette",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/command-palette",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "comment-thread",
+      "name": "CommentThread",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/comment-thread",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "container",
+      "name": "Container",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/container",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "context-menu",
+      "name": "ContextMenu",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/context-menu",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "copyable-secret",
+      "name": "CopyableSecret",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/copyable-secret",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "country-picker",
+      "name": "CountryPicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/country-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "currency-input",
+      "name": "CurrencyInput",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/currency-input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "data-state",
+      "name": "DataState",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/data-state",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "data-table",
+      "name": "DataTable",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/data-table",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "date-picker",
+      "name": "DatePicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/date-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "date-time-picker",
+      "name": "DateTimePicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/date-time-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "description-list",
+      "name": "DescriptionList",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/description-list",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "dialog",
+      "name": "Dialog",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/dialog",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "diff-viewer",
+      "name": "DiffViewer",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/diff-viewer",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "drawer",
+      "name": "Drawer",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/drawer",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "dropdown-menu",
+      "name": "DropdownMenu",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/dropdown-menu",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "editable",
+      "name": "Editable",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/editable",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "empty-state",
+      "name": "EmptyState",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/empty-state",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "feed",
+      "name": "Feed",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/feed",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "field",
+      "name": "Field",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/field",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "file-card",
+      "name": "FileCard",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/file-card",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "file-type-icon",
+      "name": "FileTypeIcon",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/file-type-icon",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "file-upload",
+      "name": "FileUpload",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/file-upload",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "filter-bar",
+      "name": "FilterBar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/filter-bar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "floating-window",
+      "name": "FloatingWindow",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/floating-window",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "focus-trap",
+      "name": "FocusTrap",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/focus-trap",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "form",
+      "name": "Form",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/form",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "highlight",
+      "name": "Highlight",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/highlight",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "hover-card",
+      "name": "HoverCard",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/hover-card",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "icon",
+      "name": "Icon",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/icon",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "icon-button",
+      "name": "IconButton",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/icon-button",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "input",
+      "name": "Input",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "input-group",
+      "name": "InputGroup",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/input-group",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "json-tree",
+      "name": "JsonTree",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/json-tree",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "kbd",
+      "name": "Kbd",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/kbd",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "label",
+      "name": "Label",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/label",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "link",
+      "name": "Link",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/link",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "listbox",
+      "name": "Listbox",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/listbox",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "logo-uploader",
+      "name": "LogoUploader",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/logo-uploader",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "marquee",
+      "name": "Marquee",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/marquee",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "mask-input",
+      "name": "MaskInput",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/mask-input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "master-detail",
+      "name": "MasterDetail",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/master-detail",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "mention-input",
+      "name": "MentionInput",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/mention-input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "menubar",
+      "name": "Menubar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/menubar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "meter",
+      "name": "Meter",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/meter",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "native-select",
+      "name": "NativeSelect",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/native-select",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "navigation-menu",
+      "name": "NavigationMenu",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/navigation-menu",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "notification",
+      "name": "Notification",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/notification",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "notification-center",
+      "name": "NotificationCenter",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/notification-center",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "notification-preference-matrix",
+      "name": "NotificationPreferenceMatrix",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/notification-preference-matrix",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "number-field",
+      "name": "NumberField",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/number-field",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "number-formatter",
+      "name": "NumberFormatter",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/number-formatter",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "org-chart",
+      "name": "OrgChart",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/org-chart",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "otp-input",
+      "name": "OtpInput",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/otp-input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "overflow-list",
+      "name": "OverflowList",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/overflow-list",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "page-header",
+      "name": "PageHeader",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/page-header",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "pagination",
+      "name": "Pagination",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/pagination",
+      "story": false,
+      "tested": true
+    },
+    {
+      "slug": "pagination-bar",
+      "name": "PaginationBar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/pagination-bar",
+      "story": true,
+      "tested": false
+    },
+    {
+      "slug": "password-input",
+      "name": "PasswordInput",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/password-input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "password-strength-meter",
+      "name": "PasswordStrengthMeter",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/password-strength-meter",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "popover",
+      "name": "Popover",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/popover",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "portal",
+      "name": "Portal",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/portal",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "presence-indicator",
+      "name": "PresenceIndicator",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/presence-indicator",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "preview-card",
+      "name": "PreviewCard",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/preview-card",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "progress",
+      "name": "Progress",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/progress",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "progress-circle",
+      "name": "ProgressCircle",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/progress-circle",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "qr-code",
+      "name": "QrCode",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/qr-code",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "radio-card",
+      "name": "RadioCard",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/radio-card",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "radio-group",
+      "name": "RadioGroup",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/radio-group",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "rating",
+      "name": "Rating",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/rating",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "reaction-bar",
+      "name": "ReactionBar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/reaction-bar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "resizable",
+      "name": "Resizable",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/resizable",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "rich-text-editor",
+      "name": "RichTextEditor",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/rich-text-editor",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "rolling-number",
+      "name": "RollingNumber",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/rolling-number",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "schedule-calendar",
+      "name": "ScheduleCalendar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/schedule-calendar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "scroll-area",
+      "name": "ScrollArea",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/scroll-area",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "security-item",
+      "name": "SecurityItem",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/security-item",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "segmented-control",
+      "name": "SegmentedControl",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/segmented-control",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "select",
+      "name": "Select",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/select",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "separator",
+      "name": "Separator",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/separator",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "sheet",
+      "name": "Sheet",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/sheet",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "sidebar",
+      "name": "Sidebar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/sidebar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "skeleton",
+      "name": "Skeleton",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/skeleton",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "skip-nav",
+      "name": "SkipNav",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/skip-nav",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "slider",
+      "name": "Slider",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/slider",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "spinner",
+      "name": "Spinner",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/spinner",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "spoiler",
+      "name": "Spoiler",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/spoiler",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "stat",
+      "name": "Stat",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/stat",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "status-pill",
+      "name": "StatusPill",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/status-pill",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "stepper",
+      "name": "Stepper",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/stepper",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "switch",
+      "name": "Switch",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/switch",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "table",
+      "name": "Table",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/table",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "table-of-contents",
+      "name": "TableOfContents",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/table-of-contents",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "tabs",
+      "name": "Tabs",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/tabs",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "tag-input",
+      "name": "TagInput",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/tag-input",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "textarea",
+      "name": "Textarea",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/textarea",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "time-picker",
+      "name": "TimePicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/time-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "time-range-picker",
+      "name": "TimeRangePicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/time-range-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "time-since",
+      "name": "TimeSince",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/time-since",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "timeline",
+      "name": "Timeline",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/timeline",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "timer",
+      "name": "Timer",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/timer",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "timezone-picker",
+      "name": "TimezonePicker",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/timezone-picker",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "toast",
+      "name": "Toast",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/toast",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "toggle",
+      "name": "Toggle",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/toggle",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "toggle-tip",
+      "name": "ToggleTip",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/toggle-tip",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "toolbar",
+      "name": "Toolbar",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/toolbar",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "tooltip",
+      "name": "Tooltip",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/tooltip",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "tour",
+      "name": "Tour",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/tour",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "tree-view",
+      "name": "TreeView",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/tree-view",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "typography",
+      "name": "Typography",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/typography",
+      "story": true,
+      "tested": true
+    },
+    {
+      "slug": "visually-hidden",
+      "name": "VisuallyHidden",
+      "import": "@qeetrix/ui",
+      "deepImport": "@qeetrix/ui/components/visually-hidden",
+      "story": true,
+      "tested": true
+    }
+  ]
+}

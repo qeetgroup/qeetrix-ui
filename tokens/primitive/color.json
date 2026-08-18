@@ -1,0 +1,105 @@
+{
+  "color": {
+    "neutral": {
+      "0": { "$value": "oklch(1 0 0)", "$type": "color" },
+      "50": { "$value": "oklch(0.985 0 0)", "$type": "color" },
+      "100": { "$value": "oklch(0.97 0 0)", "$type": "color" },
+      "200": { "$value": "oklch(0.922 0 0)", "$type": "color" },
+      "300": { "$value": "oklch(0.87 0 0)", "$type": "color" },
+      "400": { "$value": "oklch(0.708 0 0)", "$type": "color" },
+      "500": { "$value": "oklch(0.556 0 0)", "$type": "color" },
+      "600": { "$value": "oklch(0.439 0 0)", "$type": "color" },
+      "700": { "$value": "oklch(0.371 0 0)", "$type": "color" },
+      "800": { "$value": "oklch(0.269 0 0)", "$type": "color" },
+      "850": { "$value": "oklch(0.205 0 0)", "$type": "color" },
+      "900": { "$value": "oklch(0.145 0 0)", "$type": "color" },
+      "950": { "$value": "oklch(0.106 0 0)", "$type": "color" },
+      "1000": { "$value": "oklch(0 0 0)", "$type": "color" }
+    },
+
+    "alpha": {
+      "white-10": { "$value": "oklch(1 0 0 / 10%)", "$type": "color" },
+      "white-15": { "$value": "oklch(1 0 0 / 15%)", "$type": "color" }
+    },
+
+    "danger": {
+      "100": { "$value": "{color.neutral.100}", "$type": "color" },
+      "200": { "$value": "{color.neutral.200}", "$type": "color" },
+      "300": { "$value": "{color.neutral.300}", "$type": "color" },
+      "400": { "$value": "oklch(0.704 0.191 22.216)", "$type": "color" },
+      "500": { "$value": "oklch(0.577 0.245 27.325)", "$type": "color" },
+      "600": { "$value": "{color.neutral.600}", "$type": "color" },
+      "700": { "$value": "{color.neutral.700}", "$type": "color" },
+      "800": { "$value": "{color.neutral.800}", "$type": "color" },
+      "900": { "$value": "{color.neutral.900}", "$type": "color" }
+    },
+
+    "accent-blue": {
+      "500": { "$value": "oklch(0.488 0.243 264.376)", "$type": "color" }
+    },
+
+    "brand": {
+      "$description": "Qeet brand ramp — Qeet orange (OD-DS-03, ratified 2026-07-10). Aliases the Tailwind v4 `orange` ramp; #F26D0E ≈ orange.500. Re-brand by re-pointing these aliases (semantic/component tokens need no change).",
+      "100": { "$value": "{color.orange.100}", "$type": "color" },
+      "200": { "$value": "{color.orange.200}", "$type": "color" },
+      "300": { "$value": "{color.orange.300}", "$type": "color" },
+      "400": { "$value": "{color.orange.400}", "$type": "color" },
+      "500": { "$value": "{color.orange.500}", "$type": "color" },
+      "600": { "$value": "{color.orange.600}", "$type": "color" },
+      "700": { "$value": "{color.orange.700}", "$type": "color" },
+      "800": { "$value": "{color.orange.800}", "$type": "color" },
+      "900": { "$value": "{color.orange.900}", "$type": "color" }
+    },
+
+    "accent": {
+      "$description": "PLACEHOLDER — aliases neutral until brand palette is ratified (OD-DS-03).",
+      "100": { "$value": "{color.neutral.100}", "$type": "color" },
+      "300": { "$value": "{color.neutral.300}", "$type": "color" },
+      "500": { "$value": "{color.neutral.500}", "$type": "color" },
+      "700": { "$value": "{color.neutral.700}", "$type": "color" },
+      "900": { "$value": "{color.neutral.900}", "$type": "color" }
+    },
+
+    "success": {
+      "$description": "Status — success (emerald). oklch, aligned to the Tailwind v4 emerald ramp.",
+      "100": { "$value": "oklch(0.95 0.052 163)", "$type": "color" },
+      "300": { "$value": "oklch(0.845 0.143 164.978)", "$type": "color" },
+      "400": { "$value": "oklch(0.765 0.177 163.223)", "$type": "color" },
+      "500": { "$value": "oklch(0.696 0.17 162.48)", "$type": "color" },
+      "600": { "$value": "oklch(0.596 0.145 163.225)", "$type": "color" },
+      "700": { "$value": "oklch(0.508 0.118 165.612)", "$type": "color" },
+      "900": { "$value": "oklch(0.378 0.077 168.94)", "$type": "color" }
+    },
+
+    "warning": {
+      "$description": "Status — warning (amber). oklch, aligned to the Tailwind v4 amber ramp.",
+      "100": { "$value": "oklch(0.962 0.059 95.617)", "$type": "color" },
+      "300": { "$value": "oklch(0.879 0.169 91.605)", "$type": "color" },
+      "400": { "$value": "oklch(0.828 0.189 84.429)", "$type": "color" },
+      "500": { "$value": "oklch(0.769 0.188 70.08)", "$type": "color" },
+      "600": { "$value": "oklch(0.666 0.179 58.318)", "$type": "color" },
+      "700": { "$value": "oklch(0.555 0.163 48.998)", "$type": "color" },
+      "900": { "$value": "oklch(0.414 0.112 45.904)", "$type": "color" }
+    },
+
+    "info": {
+      "$description": "Status — info (sky). oklch, aligned to the Tailwind v4 sky ramp.",
+      "100": { "$value": "oklch(0.951 0.026 236.824)", "$type": "color" },
+      "300": { "$value": "oklch(0.828 0.111 230.318)", "$type": "color" },
+      "400": { "$value": "oklch(0.746 0.16 232.661)", "$type": "color" },
+      "500": { "$value": "oklch(0.685 0.169 237.323)", "$type": "color" },
+      "600": { "$value": "oklch(0.588 0.158 241.966)", "$type": "color" },
+      "700": { "$value": "oklch(0.5 0.134 242.749)", "$type": "color" },
+      "900": { "$value": "oklch(0.391 0.09 240.876)", "$type": "color" }
+    },
+
+    "passkey": {
+      "$description": "PLACEHOLDER — aliases neutral until passkey affordance palette is ratified (OD-DS-03).",
+      "100": { "$value": "{color.neutral.100}", "$type": "color" },
+      "300": { "$value": "{color.neutral.300}", "$type": "color" },
+      "500": { "$value": "{color.neutral.500}", "$type": "color" },
+      "700": { "$value": "{color.neutral.700}", "$type": "color" },
+      "900": { "$value": "{color.neutral.900}", "$type": "color" }
+    }
+  }
+}

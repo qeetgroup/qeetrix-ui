@@ -1,0 +1,22 @@
+{
+  "color": {
+    "data": {
+      "categorical": {
+        "1": { "$value": "{color.blue.700}", "$type": "color" },
+        "2": { "$value": "{color.orange.700}", "$type": "color" },
+        "3": { "$value": "{color.emerald.700}", "$type": "color" },
+        "4": { "$value": "{color.violet.700}", "$type": "color" },
+        "5": { "$value": "{color.rose.700}", "$type": "color" },
+        "6": { "$value": "{color.cyan.800}", "$type": "color" },
+        "7": { "$value": "{color.amber.800}", "$type": "color" },
+        "8": { "$value": "{color.indigo.700}", "$type": "color" }
+      },
+      "grid": { "$value": "{color.neutral.300}", "$type": "color" },
+      "axis": { "$value": "{color.neutral.600}", "$type": "color" },
+      "reference": { "$value": "{color.neutral.500}", "$type": "color" },
+      "positive": { "$value": "{color.success.700}", "$type": "color" },
+      "negative": { "$value": "{color.danger.600}", "$type": "color" },
+      "warning": { "$value": "{color.warning.700}", "$type": "color" }
+    }
+  }
+}

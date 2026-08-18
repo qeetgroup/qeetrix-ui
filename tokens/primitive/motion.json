@@ -1,0 +1,18 @@
+{
+  "duration": {
+    "instant": { "$value": "0ms", "$type": "duration" },
+    "micro": { "$value": "100ms", "$type": "duration" },
+    "fast": { "$value": "150ms", "$type": "duration" },
+    "standard": { "$value": "200ms", "$type": "duration" },
+    "slow": { "$value": "300ms", "$type": "duration" },
+    "deliberate": { "$value": "400ms", "$type": "duration" },
+    "linger": { "$value": "600ms", "$type": "duration" }
+  },
+  "easing": {
+    "standard": { "$value": "cubic-bezier(0.4, 0, 0.2, 1)", "$type": "cubicBezier" },
+    "decelerate": { "$value": "cubic-bezier(0, 0, 0.2, 1)", "$type": "cubicBezier" },
+    "accelerate": { "$value": "cubic-bezier(0.4, 0, 1, 1)", "$type": "cubicBezier" },
+    "sharp": { "$value": "cubic-bezier(0.4, 0, 0.6, 1)", "$type": "cubicBezier" },
+    "linear": { "$value": "linear", "$type": "cubicBezier" }
+  }
+}

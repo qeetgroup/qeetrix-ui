@@ -1,0 +1,42 @@
+{
+  "font": {
+    "family": {
+      "sans": {
+        "$value": "\"Qeet Text\", ui-sans-serif, system-ui, sans-serif",
+        "$type": "fontFamily"
+      },
+      "heading": {
+        "$value": "\"Qeet Display\", ui-sans-serif, system-ui, sans-serif",
+        "$type": "fontFamily"
+      },
+      "ui": {
+        "$value": "\"Qeet UI\", ui-sans-serif, system-ui, sans-serif",
+        "$type": "fontFamily"
+      },
+      "mono": {
+        "$value": "\"Fira Code\", ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, monospace",
+        "$type": "fontFamily"
+      },
+      "indic": {
+        "$description": "Indic-script fallback stack (Gap 16). Qeet fonts are Latin-only; apply `--qx-font-family-indic` (e.g. via a `[lang]` rule) for Devanagari/Bengali/Tamil/Telugu/Kannada/Gujarati/Gurmukhi content. Noto fonts are NOT bundled — consumers self-host or load them from a font CDN.",
+        "$value": "\"Noto Sans\", \"Noto Sans Devanagari\", \"Noto Sans Bengali\", \"Noto Sans Tamil\", \"Noto Sans Telugu\", \"Noto Sans Kannada\", \"Noto Sans Gujarati\", \"Noto Sans Gurmukhi\", ui-sans-serif, system-ui, sans-serif",
+        "$type": "fontFamily"
+      }
+    },
+    "line-height": {
+      "none": { "$value": "1", "$type": "number" },
+      "tight": { "$value": "1.2", "$type": "number" },
+      "snug": { "$value": "1.35", "$type": "number" },
+      "normal": { "$value": "1.5", "$type": "number" },
+      "relaxed": { "$value": "1.65", "$type": "number" },
+      "indic": { "$value": "1.75", "$type": "number" }
+    },
+    "letter-spacing": {
+      "tighter": { "$value": "-0.04em", "$type": "dimension" },
+      "tight": { "$value": "-0.02em", "$type": "dimension" },
+      "normal": { "$value": "0em", "$type": "dimension" },
+      "wide": { "$value": "0.02em", "$type": "dimension" },
+      "wider": { "$value": "0.04em", "$type": "dimension" }
+    }
+  }
+}

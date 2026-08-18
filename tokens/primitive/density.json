@@ -1,0 +1,20 @@
+{
+  "density": {
+    "control-height": {
+      "comfortable": { "$value": "36px", "$type": "dimension" },
+      "compact": { "$value": "28px", "$type": "dimension" }
+    },
+    "row-height": {
+      "comfortable": { "$value": "52px", "$type": "dimension" },
+      "compact": { "$value": "40px", "$type": "dimension" }
+    },
+    "cell-padding-y": {
+      "comfortable": { "$value": "12px", "$type": "dimension" },
+      "compact": { "$value": "6px", "$type": "dimension" }
+    },
+    "field-gap": {
+      "comfortable": { "$value": "16px", "$type": "dimension" },
+      "compact": { "$value": "8px", "$type": "dimension" }
+    }
+  }
+}

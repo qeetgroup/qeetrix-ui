@@ -1,0 +1,8 @@
+{
+  "stroke": {
+    "$description": "Composite stroke-style tokens (DTCG `strokeStyle`). Keyword values map directly to CSS `border-style`; object values with a `dashArray` serialize to a space-joined dash list. Exposed as `--qx-stroke-*`.",
+    "solid": { "$type": "strokeStyle", "$value": "solid" },
+    "dashed": { "$type": "strokeStyle", "$value": "dashed" },
+    "dotted": { "$type": "strokeStyle", "$value": "dotted" }
+  }
+}
