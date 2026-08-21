@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { Stepper, type StepperStep } from "@/components/ui/stepper";
+import { Button } from "@/components/actions/button";
+import { Stepper, type StepperStep } from "@/components/navigation/stepper";
 import { cn } from "@/lib/utils";
 
 interface WizardStep extends StepperStep {

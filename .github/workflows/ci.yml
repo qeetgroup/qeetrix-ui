@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3"
+      - run: bun install --frozen-lockfile
+      # tokens are generated, and typecheck imports them
+      - run: bun run build
+      # types, lint, tests, architecture, API lock, a11y, tokens, contrast
+      - run: bun run verify
+      # packs the tarball and compiles real consumers against it
+      - run: node scripts/check/package.mjs

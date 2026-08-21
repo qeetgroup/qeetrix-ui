@@ -1,8 +1,8 @@
 "use client";
 
 import type * as React from "react";
-import { PageHeader } from "@/components/ui/page-header";
-import { Separator } from "@/components/ui/separator";
+import { PageHeader } from "@/components/layout/page-header";
+import { Separator } from "@/components/utility/separator";
 import { cn } from "@/lib/utils";
 
 interface SettingsLayoutProps extends Omit<React.ComponentProps<"div">, "title"> {

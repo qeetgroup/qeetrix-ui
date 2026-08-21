@@ -1,13 +1,15 @@
 # Dependencies
 node_modules
 
-# Build output
+# Build output — dist/ is the only build directory
 dist
-build
 *.tsbuildinfo
 
-# Generated token artifacts (built by scripts/build-tokens.mjs)
-src/styles
+# Generated token artifacts (built by scripts/build/tokens.mjs).
+# src/styles/index.css is hand-authored and IS versioned.
+src/styles/tokens.css
+src/styles/tokens.raw.css
+src/styles/tokens.json
 
 # Logs
 *.log

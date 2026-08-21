@@ -1,0 +1,23 @@
+{
+  "$comment": "Narrow production-source exemptions for src/scripts/check/token-usage.mjs. Every exemption needs a domain or integration reason; tests and generated files are excluded by the scanner.",
+  "exemptions": [
+    {
+      "file": "src/components/data-display/chart.tsx",
+      "rule": "raw-color",
+      "matches": ["#ccc", "#fff"],
+      "reason": "Selectors target Recharts default SVG attributes; Qeetrix replaces their rendered values with semantic chart tokens."
+    },
+    {
+      "file": "src/components/pickers/color-picker.tsx",
+      "rule": "raw-color",
+      "matches": ["*"],
+      "reason": "ColorPicker accepts, validates, previews, and emits literal hex values as domain data for native input type=color."
+    },
+    {
+      "file": "src/components/data-display/qr-code.tsx",
+      "rule": "raw-color",
+      "matches": ["#ffffffff", "#000000ff", "#000000", "#00000000"],
+      "reason": "The qrcode library requires literal RGBA hex values; these are encoding inputs rather than Qeetrix styling."
+    }
+  ]
+}

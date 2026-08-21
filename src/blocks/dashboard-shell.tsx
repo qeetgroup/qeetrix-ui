@@ -1,7 +1,12 @@
 "use client";
 
 import type * as React from "react";
-import { AppShell, AppShellContent, AppShellHeader, AppShellMain } from "@/components/ui/app-shell";
+import {
+  AppShell,
+  AppShellContent,
+  AppShellHeader,
+  AppShellMain,
+} from "@/components/layout/app-shell";
 import { cn } from "@/lib/utils";
 
 interface DashboardShellProps extends React.ComponentProps<"div"> {

@@ -1,0 +1,4 @@
+{
+  "$comment": "Components without automated a11y coverage yet (Gap 3/12 ratchet). This list may ONLY shrink: add src/components/<category>/__tests__/<name>.test.tsx (or render it in src/__tests__/a11y.test.tsx), then remove it here. `bun run check:a11y` fails if a component is neither covered nor listed.",
+  "exempt": []
+}

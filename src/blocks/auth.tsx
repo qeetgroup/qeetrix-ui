@@ -1,14 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Form, FormActions } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { OTPInput } from "@/components/ui/otp-input";
-import { PasswordStrengthMeter } from "@/components/ui/password-strength-meter";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/actions/button";
+import { Alert, AlertDescription } from "@/components/feedback/alert";
+import { Field, FieldGroup, FieldLabel } from "@/components/inputs/field";
+import { Form, FormActions } from "@/components/inputs/form";
+import { Input } from "@/components/inputs/input";
+import { OTPInput } from "@/components/inputs/otp-input";
+import { PasswordStrengthMeter } from "@/components/inputs/password-strength-meter";
+import { Separator } from "@/components/utility/separator";
 import { cn } from "@/lib/utils";
 
 interface AuthShellProps extends Omit<React.ComponentProps<"div">, "title"> {
