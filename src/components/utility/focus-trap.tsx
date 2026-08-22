@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { useFocusTrap } from "@/runtime/focus-trap";
 
 interface FocusTrapProps extends React.ComponentProps<"div"> {

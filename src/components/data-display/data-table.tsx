@@ -218,7 +218,7 @@ function FacetedFilter<TData>({
       <PopoverTrigger
         render={
           <Button variant="outline" size="sm" className="border-dashed">
-            <PlusCircleIcon /> {title}
+            <PlusCircleIcon aria-hidden /> {title}
             {selected.size > 0 && (
               <>
                 <Separator orientation="vertical" className="mx-1 h-4" />
@@ -259,7 +259,7 @@ function FacetedFilter<TData>({
                       : "border-input",
                   )}
                 >
-                  {isSelected && <CheckIcon className="size-3" />}
+                  {isSelected && <CheckIcon aria-hidden className="size-3" />}
                 </span>
                 <span className="flex-1 text-start">{option.label}</span>
                 {facets?.get(option.value) != null && (
@@ -441,7 +441,11 @@ function DataTable<TData, TValue>({
               aria-label={row.getIsExpanded() ? "Collapse row" : "Expand row"}
               onClick={row.getToggleExpandedHandler()}
             >
-              {row.getIsExpanded() ? <ChevronDownIcon /> : <ChevronRightIcon />}
+              {row.getIsExpanded() ? (
+                <ChevronDownIcon aria-hidden />
+              ) : (
+                <ChevronRightIcon aria-hidden />
+              )}
             </Button>
           ) : null,
       });
@@ -583,7 +587,10 @@ function DataTable<TData, TValue>({
           <div className="flex flex-1 flex-wrap items-center gap-2">
             {enableSearch && (
               <div className="relative w-full sm:max-w-xs">
-                <SearchIcon className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <SearchIcon
+                  aria-hidden
+                  className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                />
                 <Input
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
@@ -617,12 +624,12 @@ function DataTable<TData, TValue>({
                   setDensityOverride(density === "compact" ? "comfortable" : "compact")
                 }
               >
-                {density === "compact" ? <Rows3Icon /> : <Rows2Icon />}
+                {density === "compact" ? <Rows3Icon aria-hidden /> : <Rows2Icon aria-hidden />}
               </Button>
             )}
             {enableExport && (
               <Button variant="outline" size="sm" onClick={exportCsv}>
-                <DownloadIcon /> Export
+                <DownloadIcon aria-hidden /> Export
               </Button>
             )}
             {enableColumnVisibility && hideableColumns.length > 0 && (
@@ -630,7 +637,7 @@ function DataTable<TData, TValue>({
                 <DropdownMenuTrigger
                   render={
                     <Button variant="outline" size="sm">
-                      <SlidersHorizontalIcon /> Columns
+                      <SlidersHorizontalIcon aria-hidden /> Columns
                     </Button>
                   }
                 />
@@ -716,11 +723,11 @@ function DataTable<TData, TValue>({
                           >
                             {content}
                             {sorted === "asc" ? (
-                              <ArrowUpIcon className="size-3.5" />
+                              <ArrowUpIcon aria-hidden className="size-3.5" />
                             ) : sorted === "desc" ? (
-                              <ArrowDownIcon className="size-3.5" />
+                              <ArrowDownIcon aria-hidden className="size-3.5" />
                             ) : (
-                              <ChevronsUpDownIcon className="size-3.5 opacity-40" />
+                              <ChevronsUpDownIcon aria-hidden className="size-3.5 opacity-40" />
                             )}
                           </button>
                         ) : (
@@ -739,6 +746,7 @@ function DataTable<TData, TValue>({
                                     aria-label={`Column options for ${columnLabel(header.column.id)}`}
                                   >
                                     <PinIcon
+                                      aria-hidden
                                       className={cn(
                                         header.column.getIsPinned()
                                           ? "text-foreground"
@@ -837,7 +845,7 @@ function DataTable<TData, TValue>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              <ChevronLeftIcon /> Previous
+              <ChevronLeftIcon aria-hidden /> Previous
             </Button>
             <Button
               variant="outline"
@@ -845,7 +853,7 @@ function DataTable<TData, TValue>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Next <ChevronRightIcon />
+              Next <ChevronRightIcon aria-hidden />
             </Button>
           </div>
         </div>

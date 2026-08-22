@@ -6,9 +6,7 @@ describe("useControllableState", () => {
   describe("uncontrolled", () => {
     it("seeds from defaultValue and owns state afterwards", () => {
       const onChange = vi.fn();
-      const { result } = renderHook(() =>
-        useControllableState({ defaultValue: "a", onChange }),
-      );
+      const { result } = renderHook(() => useControllableState({ defaultValue: "a", onChange }));
       expect(result.current[0]).toBe("a");
 
       act(() => result.current[1]("b"));

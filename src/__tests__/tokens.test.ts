@@ -357,7 +357,9 @@ describe("token plumbing", () => {
   });
 
   it("declares a dependency rule for every layer, flowing one way", () => {
-    for (const [layer, allowed] of Object.entries(TOKEN_LAYER_RULES)) {
+    for (const [layer, allowed] of Object.entries(
+      TOKEN_LAYER_RULES as Record<string, readonly string[]>,
+    )) {
       expect(allowed.length, `${layer} has no rule`).toBeGreaterThan(0);
     }
     expect(TOKEN_LAYER_RULES.primitive).toEqual(["primitive"]);

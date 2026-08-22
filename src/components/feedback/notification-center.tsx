@@ -69,7 +69,7 @@ function NotificationCenter({
   const list = (data: NotificationItem[]) =>
     data.length === 0 ? (
       <div className="flex flex-col items-center gap-1 px-4 py-12 text-center text-sm text-muted-foreground">
-        <BellIcon className="size-6 opacity-40" />
+        <BellIcon aria-hidden className="size-6 opacity-40" />
         {emptyMessage}
       </div>
     ) : (
@@ -114,7 +114,7 @@ function NotificationCenter({
                   onClick={() => onDismiss(item.id)}
                   className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
-                  <XIcon className="size-4" />
+                  <XIcon aria-hidden className="size-4" />
                 </button>
               )}
             </React.Fragment>
@@ -133,7 +133,7 @@ function NotificationCenter({
             aria-label={`Notifications${unread.length ? `, ${unread.length} unread` : ""}`}
             className={cn("relative", className)}
           >
-            <BellIcon />
+            <BellIcon aria-hidden />
             {unread.length > 0 && (
               <Badge className="absolute -inset-e-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[length:var(--qx-component-notification-center-count-font-size)] tabular-nums">
                 {unread.length > 9 ? "9+" : unread.length}

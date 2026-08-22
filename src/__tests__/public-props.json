@@ -399,6 +399,7 @@
       "aria-label",
       "autoFocus",
       "className",
+      "defaultValue",
       "disabled",
       "length",
       "onChange",
@@ -418,6 +419,7 @@
     ],
     "RatingProps": [
       "allowHalf",
+      "defaultValue",
       "disabled",
       "icon",
       "max",
@@ -450,6 +452,7 @@
       "variant"
     ],
     "ActionBarProps": [
+      "aria-label",
       "children",
       "className",
       "onClearSelection",
@@ -707,6 +710,12 @@
       "className",
       "disabled",
       "value"
+    ],
+    "SelectTriggerProps": [
+      "size"
+    ],
+    "CardProps": [
+      "size"
     ],
     "FloatingWindowProps": [
       "defaultPosition",

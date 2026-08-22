@@ -215,7 +215,7 @@ bun run format           # biome check --write
 | `check:token-usage` | no raw colours, z-indexes, shadows or bare lengths in component source |
 | `check:contrast` | WCAG-AA on every semantic text/surface pair, both themes |
 
-**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/api-guidelines.md](docs/standards/api-guidelines.md).
+**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/component-api.md](docs/standards/component-api.md).
 
 ---
 
@@ -238,7 +238,7 @@ CI runs `verify` on every PR; merging the **Version Packages** PR publishes to t
 | Topic | Where |
 |:--|:--|
 | 🏗 Architecture · layers · dependency rules | [docs/architecture/](docs/architecture/overview.md) |
-| 📐 API conventions · manifest schema | [docs/standards/](docs/standards/api-guidelines.md) |
+| 📐 API conventions · manifest schema | [docs/standards/](docs/standards/component-api.md) |
 | 🎨 Tokens · theming · density · motion · RTL | [docs/standards/tokens.md](docs/standards/tokens.md) |
 | 🏛 Component status · deprecation · versioning | [docs/governance/](docs/governance/component-status.md) |
 | 🧱 Component workshop | the sibling `qeetrix-story` repo → <http://localhost:6006> |

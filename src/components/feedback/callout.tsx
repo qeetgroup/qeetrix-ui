@@ -10,6 +10,10 @@ const calloutVariants = cva("flex gap-3 rounded-lg border-s-4 p-4 text-sm", {
       info: "border-info bg-info/10 text-info-foreground",
       success: "border-success bg-success/10 text-success-foreground",
       warning: "border-warning bg-warning/10 text-warning-foreground",
+      // `destructive` is the library-wide name for this tone (Button, Badge, Link,
+      // DropdownMenu). `error` predates it and keeps working — see
+      // docs/standards/component-api.md § Variant vocabulary.
+      destructive: "border-destructive bg-destructive/10 text-destructive",
       error: "border-destructive bg-destructive/10 text-destructive",
     },
   },
@@ -22,13 +26,14 @@ const calloutVariants = cva("flex gap-3 rounded-lg border-s-4 p-4 text-sm", {
 function resolveDefaultIcon(variant: string): React.ReactNode {
   switch (variant) {
     case "success":
-      return <CheckCircle2Icon className="mt-0.5 size-4 shrink-0" />;
+      return <CheckCircle2Icon aria-hidden className="mt-0.5 size-4 shrink-0" />;
     case "warning":
-      return <AlertTriangleIcon className="mt-0.5 size-4 shrink-0" />;
+      return <AlertTriangleIcon aria-hidden className="mt-0.5 size-4 shrink-0" />;
+    case "destructive":
     case "error":
-      return <AlertCircleIcon className="mt-0.5 size-4 shrink-0" />;
+      return <AlertCircleIcon aria-hidden className="mt-0.5 size-4 shrink-0" />;
     default:
-      return <InfoIcon className="mt-0.5 size-4 shrink-0" />;
+      return <InfoIcon aria-hidden className="mt-0.5 size-4 shrink-0" />;
   }
 }
 

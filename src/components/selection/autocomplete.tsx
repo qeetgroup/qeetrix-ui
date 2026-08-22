@@ -75,7 +75,7 @@ function Autocomplete({
             aria-label="Clear"
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
-            <XIcon className="size-4" />
+            <XIcon aria-hidden className="size-4" />
           </AutocompletePrimitive.Clear>
         </div>
       </div>

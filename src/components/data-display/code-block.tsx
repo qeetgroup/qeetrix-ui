@@ -163,7 +163,11 @@ function CodeBlock({
           aria-label={copied ? "Copied" : "Copy code"}
           className="absolute end-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
         >
-          {copied ? <CheckIcon className="text-emerald-600 dark:text-emerald-400" /> : <CopyIcon />}
+          {copied ? (
+            <CheckIcon aria-hidden className="text-emerald-600 dark:text-emerald-400" />
+          ) : (
+            <CopyIcon aria-hidden />
+          )}
         </Button>
       )}
       <pre className={cn("m-0 overflow-auto p-3 leading-relaxed", maxHeight)}>

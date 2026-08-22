@@ -11,7 +11,12 @@ import { cn } from "@/lib/utils";
  * Forwards all Base UI NumberField.Root props (`value`, `onValueChange`,
  * `min`, `max`, `step`, `format`, `defaultValue`, `disabled`, `name`, …).
  */
-function NumberField({ className, ...props }: NumberFieldPrimitive.Root.Props) {
+function NumberField({
+  className,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  ...props
+}: NumberFieldPrimitive.Root.Props) {
   return (
     <NumberFieldPrimitive.Root
       data-slot="number-field"
@@ -23,14 +28,20 @@ function NumberField({ className, ...props }: NumberFieldPrimitive.Root.Props) {
           aria-label="Decrease"
           className="flex w-8 items-center justify-center rounded-s-lg border-e border-input text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-disabled"
         >
-          <MinusIcon className="size-4" />
+          <MinusIcon aria-hidden className="size-4" />
         </NumberFieldPrimitive.Decrement>
-        <NumberFieldPrimitive.Input className="w-full min-w-0 bg-transparent px-2.5 text-center text-base tabular-nums outline-none md:text-sm" />
+        <NumberFieldPrimitive.Input
+          // The Root's aria-* land on the wrapper, not the field, so the input had no accessible
+          // name at all — forward them, the same way Slider does for its thumb.
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          className="w-full min-w-0 bg-transparent px-2.5 text-center text-base tabular-nums outline-none md:text-sm"
+        />
         <NumberFieldPrimitive.Increment
           aria-label="Increase"
           className="flex w-8 items-center justify-center rounded-e-lg border-s border-input text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-disabled"
         >
-          <PlusIcon className="size-4" />
+          <PlusIcon aria-hidden className="size-4" />
         </NumberFieldPrimitive.Increment>
       </NumberFieldPrimitive.Group>
     </NumberFieldPrimitive.Root>

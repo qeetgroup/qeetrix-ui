@@ -102,7 +102,7 @@ function FilterBar({
         <PopoverTrigger
           render={
             <Button variant="outline" size="sm" className="gap-1 border-dashed">
-              <PlusIcon className="size-3.5" />
+              <PlusIcon aria-hidden className="size-3.5" />
               {addLabel}
             </Button>
           }

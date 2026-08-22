@@ -263,7 +263,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       }}
       {...props}
     >
-      <PanelLeftIcon className="rtl:rotate-180" />
+      <PanelLeftIcon aria-hidden className="rtl:rotate-180" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -312,10 +312,7 @@ function SidebarInput({ className, ...props }: React.ComponentProps<typeof Input
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
-      className={cn(
-        "h-[var(--qx-control-height)] w-full bg-background shadow-none",
-        className,
-      )}
+      className={cn("h-[var(--qx-control-height)] w-full bg-background shadow-none", className)}
       {...props}
     />
   );

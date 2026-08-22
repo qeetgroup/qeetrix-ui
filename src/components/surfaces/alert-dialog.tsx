@@ -35,6 +35,10 @@ function AlertDialogContent({ className, children, ...props }: AlertDialogPrimit
     <AlertDialogPortal>
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
+        // Base UI's AlertDialog popup renders role="dialog". The APG alert-dialog pattern needs
+        // role="alertdialog" so assistive technology announces it as requiring a response before
+        // the user can continue — which is the whole difference between this and Dialog.
+        role="alertdialog"
         data-slot="alert-dialog-content"
         className={cn(
           "fixed left-1/2 top-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border bg-popover p-6 text-sm text-popover-foreground shadow-modal transition duration-150 ease-out data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95",

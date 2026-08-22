@@ -2,9 +2,8 @@
 
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import { cn } from "@/lib/utils";
 
 interface ListboxOption {
   label: string;
@@ -137,7 +136,7 @@ function Listbox({
             )}
           >
             <span className="flex size-4 items-center justify-center">
-              {isSel && <CheckIcon className="size-4" />}
+              {isSel && <CheckIcon aria-hidden className="size-4" />}
             </span>
             <span className="flex-1 truncate">{o.label}</span>
           </button>

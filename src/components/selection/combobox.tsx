@@ -44,7 +44,7 @@ function ComboboxListPopup({
                 className={ITEM_CLASS}
               >
                 <ComboboxPrimitive.ItemIndicator className="absolute end-2 flex size-4 items-center justify-center">
-                  <CheckIcon className="size-4" />
+                  <CheckIcon aria-hidden className="size-4" />
                 </ComboboxPrimitive.ItemIndicator>
                 <span className="flex-1 truncate">{item.label}</span>
               </ComboboxPrimitive.Item>
@@ -110,13 +110,13 @@ function Combobox({
             aria-label="Clear selection"
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
-            <XIcon className="size-4" />
+            <XIcon aria-hidden className="size-4" />
           </ComboboxPrimitive.Clear>
           <ComboboxPrimitive.Trigger
             aria-label="Open"
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ChevronsUpDownIcon className="size-4" />
+            <ChevronsUpDownIcon aria-hidden className="size-4" />
           </ComboboxPrimitive.Trigger>
         </div>
       </div>
@@ -191,7 +191,7 @@ function MultiSelect({
                     aria-label={`Remove ${item.label}`}
                     className="flex items-center rounded-sm text-secondary-foreground/70 transition-colors hover:text-secondary-foreground"
                   >
-                    <XIcon className="size-3" />
+                    <XIcon aria-hidden className="size-3" />
                   </ComboboxPrimitive.ChipRemove>
                 </ComboboxPrimitive.Chip>
               ))
@@ -208,7 +208,7 @@ function MultiSelect({
             aria-label="Open"
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ChevronsUpDownIcon className="size-4" />
+            <ChevronsUpDownIcon aria-hidden className="size-4" />
           </ComboboxPrimitive.Trigger>
         </div>
       </div>

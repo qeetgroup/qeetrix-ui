@@ -97,7 +97,7 @@ function ToastList() {
           aria-label="Close"
           className="absolute end-2 top-2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          <XIcon className="size-4" />
+          <XIcon aria-hidden className="size-4" />
         </ToastPrimitive.Close>
       </ToastPrimitive.Root>
     );

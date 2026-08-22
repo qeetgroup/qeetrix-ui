@@ -2,12 +2,14 @@
 
 import { StarIcon } from "lucide-react";
 import * as React from "react";
-
+import { useControllableState } from "@/hooks/use-controllable-state";
 import { cn } from "@/lib/utils";
 
 interface RatingProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   /** Current rating. Supports halves (e.g. `3.5`) when `allowHalf`. */
-  value: number;
+  value?: number;
+  /** Initial rating when uncontrolled. Defaults to `0`. */
+  defaultValue?: number;
   /** Provide to make the rating interactive. Omit (or set `readOnly`) for display only. */
   onChange?: (value: number) => void;
   /** Number of icons. Defaults to `5`. */
@@ -33,7 +35,8 @@ const sizeClasses = {
  * read-only `img` otherwise. Half values are supported via `allowHalf`.
  */
 function Rating({
-  value,
+  value: valueProp,
+  defaultValue = 0,
   onChange,
   max = 5,
   allowHalf = false,
@@ -45,7 +48,15 @@ function Rating({
   "aria-label": ariaLabel,
   ...props
 }: RatingProps) {
-  const interactive = !!onChange && !readOnly && !disabled;
+  const [value, setValue] = useControllableState<number>({
+    value: valueProp,
+    defaultValue,
+    onChange,
+  });
+  // Interactive when the consumer can receive changes, or when the component owns the value.
+  // Before uncontrolled support existed this was `!!onChange`, which would have left a
+  // `defaultValue`-only Rating inert.
+  const interactive = !readOnly && !disabled && (onChange !== undefined || valueProp === undefined);
   const [hover, setHover] = React.useState<number | null>(null);
   const display = hover ?? value;
   const step = allowHalf ? 0.5 : 1;
@@ -59,7 +70,7 @@ function Rating({
   );
 
   function commit(next: number) {
-    onChange?.(Math.max(0, Math.min(max, next)));
+    setValue(Math.max(0, Math.min(max, next)));
   }
 
   // Resolve a rating value from a pointer event on the container by locating the

@@ -54,6 +54,7 @@ function Carousel({
   className,
   children,
   onKeyDown: onKeyDownProp,
+  "aria-label": ariaLabel,
   ...props
 }: React.ComponentProps<"section"> & CarouselProps) {
   const [carouselRef, api] = useEmblaCarousel(
@@ -141,8 +142,11 @@ function Carousel({
         data-slot="carousel"
         onKeyDown={handleKeyDown}
         className={cn("relative", className)}
-        role="region"
         aria-roledescription="carousel"
+        // An unnamed <section> is not exposed as a landmark at all, which is why this previously
+        // needed an explicit role="region" and still announced as anonymous. Naming it makes the
+        // section a real region natively, so the explicit role is redundant.
+        aria-label={ariaLabel ?? "Carousel"}
         {...props}
       >
         {children}
@@ -203,7 +207,7 @@ function CarouselPrevious({
       aria-label="Previous slide"
       {...props}
     >
-      <ArrowLeftIcon />
+      <ArrowLeftIcon aria-hidden />
     </Button>
   );
 }
@@ -232,7 +236,7 @@ function CarouselNext({
       aria-label="Next slide"
       {...props}
     >
-      <ArrowRightIcon />
+      <ArrowRightIcon aria-hidden />
     </Button>
   );
 }

@@ -248,12 +248,12 @@ describe("the rule set itself", () => {
 
   it("catches a cycle between two layers", () => {
     const problems = findRuleSetProblems({ components: ["blocks"], blocks: ["components"] });
-    expect(problems.map((p) => p.kind)).toContain("cycle");
+    expect(problems.map((p: { kind: string }) => p.kind)).toContain("cycle");
   });
 
   it("catches a rule set a legal chain could escape through", () => {
     const problems = findRuleSetProblems({ blocks: ["components"], components: ["lib"], lib: [] });
-    expect(problems.map((p) => p.kind)).toContain("not-transitively-closed");
+    expect(problems.map((p: { kind: string }) => p.kind)).toContain("not-transitively-closed");
     expect(problems[0]?.message).toContain("blocks → lib is not allowed");
   });
 

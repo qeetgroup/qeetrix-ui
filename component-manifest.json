@@ -1,6 +1,6 @@
 {
   "$schema": "https://qeetrix.qeet.in/manifest.schema.json",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "name": "@qeetrix/ui",
   "version": "1.0.3",
   "description": "Qeet Group design system — accessible, token-driven React components (Base UI + Tailwind v4).",
@@ -26,6 +26,12 @@
     "stable": 144,
     "deprecated": 1
   },
+  "accessibilityAudit": {
+    "not-audited": 67,
+    "partial": 6,
+    "audited": 72,
+    "exception": 0
+  },
   "components": [
     {
       "slug": "access-review",
@@ -49,11 +55,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "table"
+        "pattern": "table",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -91,11 +116,44 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onValueChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "accordion"
+        "pattern": "accordion",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -129,11 +187,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "toolbar"
+        "pattern": "toolbar",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -170,16 +255,38 @@
           "info",
           "success",
           "warning",
+          "destructive",
           "danger"
         ],
         "sizes": null,
         "variantGroups": [
           "variant"
-        ]
+        ],
+        "variantAliases": {
+          "danger": "destructive"
+        },
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "alert"
+        "pattern": "alert",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": "assertive",
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -215,11 +322,46 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "alertdialog"
+        "pattern": "alertdialog",
+        "audit": "partial",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "partial",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "shift+tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": {
+          "focus": "Same `inert` limitation as Dialog."
+        }
       },
       "testing": {
         "unit": true,
@@ -258,11 +400,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "slider"
+        "pattern": "slider",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -296,11 +457,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "landmarks"
+        "pattern": "landmarks",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -334,11 +514,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -374,11 +573,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -418,11 +636,42 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "combobox"
+        "pattern": "combobox",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "escape",
+          "arrow-up",
+          "arrow-down",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "active-descendant",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -459,11 +708,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -497,11 +765,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -545,11 +832,30 @@
         "sizes": null,
         "variantGroups": [
           "variant"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -588,16 +894,38 @@
           "info",
           "success",
           "warning",
+          "destructive",
           "danger"
         ],
         "sizes": null,
         "variantGroups": [
           "variant"
-        ]
+        ],
+        "variantAliases": {
+          "danger": "destructive"
+        },
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -637,11 +965,30 @@
         ],
         "variantGroups": [
           "size"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -677,11 +1024,37 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "breadcrumb"
+        "pattern": "breadcrumb",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -741,11 +1114,38 @@
         "variantGroups": [
           "size",
           "variant"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "button"
+        "pattern": "button",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "enter",
+          "space",
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -779,11 +1179,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -822,11 +1241,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "grid"
+        "pattern": "grid",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -862,16 +1300,38 @@
           "info",
           "success",
           "warning",
+          "destructive",
           "error"
         ],
         "sizes": null,
         "variantGroups": [
           "variant"
-        ]
+        ],
+        "variantAliases": {
+          "error": "destructive"
+        },
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -907,11 +1367,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -945,11 +1424,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "carousel"
+        "pattern": "carousel",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -983,11 +1489,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1021,11 +1546,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1065,11 +1609,43 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "checked",
+            "default": "defaultChecked",
+            "change": "onCheckedChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "checkbox"
+        "pattern": "checkbox",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "space",
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1106,11 +1682,37 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "checkbox"
+        "pattern": "checkbox",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1157,11 +1759,36 @@
         "variantGroups": [
           "selected",
           "size"
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onValueChange"
+          }
         ]
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1195,11 +1822,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "button"
+        "pattern": "button",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1233,11 +1887,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "button"
+        "pattern": "button",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "enter",
+          "space",
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1274,11 +1955,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1314,11 +2014,44 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "disclosure"
+        "pattern": "disclosure",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1357,11 +2090,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1408,11 +2160,30 @@
           "interactive",
           "selected",
           "size"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1453,11 +2224,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "combobox"
+        "pattern": "combobox",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1495,11 +2285,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "combobox"
+        "pattern": "combobox",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1533,11 +2342,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1579,11 +2407,32 @@
         "variantGroups": [
           "gutters",
           "size"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": [
+          "size"
+        ],
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1621,11 +2470,42 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "menu"
+        "pattern": "menu",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "enter",
+          "space",
+          "escape",
+          "arrow-up",
+          "arrow-down",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1661,11 +2541,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1702,11 +2601,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1740,11 +2658,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1780,11 +2717,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "alert"
+        "pattern": "alert",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1822,11 +2778,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "table"
+        "pattern": "table",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1863,11 +2838,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1904,11 +2898,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1942,11 +2955,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -1982,11 +3014,46 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "dialog"
+        "pattern": "dialog",
+        "audit": "partial",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "partial",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "shift+tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": {
+          "focus": "Focus containment is enforced with `inert`, which jsdom does not implement, so the tests assert the mechanism is installed rather than observing containment. Browser-level verification is on the manual checklist."
+        }
       },
       "testing": {
         "unit": true,
@@ -2020,11 +3087,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2060,11 +3146,46 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "dialog"
+        "pattern": "dialog",
+        "audit": "partial",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "partial",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "shift+tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": {
+          "focus": "Focus containment is enforced with `inert`, which jsdom does not implement, so the tests assert the mechanism is installed rather than observing containment. Browser-level verification is on the manual checklist."
+        }
       },
       "testing": {
         "unit": true,
@@ -2102,11 +3223,48 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "menu-button"
+        "pattern": "menu-button",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "enter",
+          "space",
+          "escape",
+          "arrow-up",
+          "arrow-down",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2143,11 +3301,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2181,11 +3358,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2223,11 +3419,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "feed"
+        "pattern": "feed",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2267,11 +3482,30 @@
         "sizes": null,
         "variantGroups": [
           "orientation"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": "polite",
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2308,11 +3542,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2346,11 +3599,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2387,11 +3659,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2425,11 +3716,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2467,11 +3777,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "dialog"
+        "pattern": "dialog",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2501,17 +3830,34 @@
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
-      "states": [
-        "active"
-      ],
+      "states": [],
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2548,11 +3894,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2586,11 +3951,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2626,11 +4010,43 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2664,11 +4080,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2702,11 +4137,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "button"
+        "pattern": "button",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "enter",
+          "space",
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2744,11 +4206,36 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2784,11 +4271,36 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2825,11 +4337,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2863,11 +4394,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2903,11 +4453,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2956,11 +4525,37 @@
           "size",
           "underline",
           "variant"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "link"
+        "pattern": "link",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -2999,11 +4594,48 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onValueChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "listbox"
+        "pattern": "listbox",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "arrow-up",
+          "arrow-down",
+          "home",
+          "end",
+          "enter",
+          "type-ahead"
+        ],
+        "focus": {
+          "model": "active-descendant",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3039,11 +4671,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3079,11 +4730,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3117,11 +4787,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3155,11 +4844,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3195,11 +4903,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "combobox"
+        "pattern": "combobox",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3237,11 +4964,46 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "menubar"
+        "pattern": "menubar",
+        "audit": "partial",
+        "dimensions": {
+          "semantic": "partial",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "pass",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "enter",
+          "space",
+          "escape",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": {
+          "semantic": "Base UI renders its focus guards and aria-owns bridges as direct children of the role=menubar element, so while a menu is open the menubar owns non-menuitem children and axe's aria-required-children fails. A structural detail of the primitive with no supported workaround; asserted in composites.test.tsx so a Base UI fix surfaces."
+        }
       },
       "testing": {
         "unit": true,
@@ -3277,11 +5039,30 @@
         "sizes": null,
         "variantGroups": [
           "intent"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "meter"
+        "pattern": "meter",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3318,11 +5099,42 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "arrow-up",
+          "arrow-down",
+          "enter",
+          "home",
+          "end",
+          "type-ahead"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3362,11 +5174,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "disclosure"
+        "pattern": "disclosure",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3406,16 +5237,38 @@
           "info",
           "success",
           "warning",
+          "destructive",
           "error"
         ],
         "sizes": null,
         "variantGroups": [
           "variant"
-        ]
+        ],
+        "variantAliases": {
+          "error": "destructive"
+        },
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3452,11 +5305,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3490,11 +5362,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "table"
+        "pattern": "table",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3531,11 +5422,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "spinbutton"
+        "pattern": "spinbutton",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "arrow-up",
+          "arrow-down"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3569,11 +5487,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3611,11 +5548,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3653,11 +5609,39 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "backspace",
+          "arrow-left",
+          "arrow-right"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3694,11 +5678,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3732,11 +5735,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3772,11 +5794,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": "polite",
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3810,11 +5859,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3854,11 +5922,38 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3892,11 +5987,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3932,11 +6046,43 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -3970,11 +6116,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4015,11 +6180,30 @@
         "variantGroups": [
           "size",
           "status"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4053,11 +6237,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4093,11 +6296,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": "polite",
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4137,11 +6359,30 @@
         ],
         "variantGroups": [
           "size"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4175,11 +6416,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4216,11 +6476,41 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "radio-group"
+        "pattern": "radio-group",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "space",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4259,11 +6549,41 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "radio-group"
+        "pattern": "radio-group",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "space",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4301,11 +6621,40 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "slider"
+        "pattern": "slider",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4342,11 +6691,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4382,11 +6750,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "window-splitter"
+        "pattern": "window-splitter",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4423,11 +6810,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4461,11 +6867,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4502,11 +6927,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "table"
+        "pattern": "table",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4542,11 +6986,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4580,11 +7043,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4630,11 +7112,45 @@
           "fullWidth",
           "orientation",
           "size"
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onValueChange"
+          }
         ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "radio-group"
+        "pattern": "radio-group",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "pass",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "space",
+          "arrow-left",
+          "arrow-right"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4675,11 +7191,50 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onValueChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "combobox"
+        "pattern": "combobox",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space",
+          "escape",
+          "arrow-up",
+          "arrow-down",
+          "home",
+          "end",
+          "type-ahead"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4713,11 +7268,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4753,11 +7327,46 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "dialog"
+        "pattern": "dialog",
+        "audit": "partial",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "partial",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "shift+tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": true,
+          "restored": true
+        },
+        "liveRegion": null,
+        "exceptions": {
+          "focus": "Focus containment is enforced with `inert`, which jsdom does not implement, so the tests assert the mechanism is installed rather than observing containment. Browser-level verification is on the manual checklist."
+        }
       },
       "testing": {
         "unit": true,
@@ -4808,11 +7417,30 @@
         "variantGroups": [
           "size",
           "variant"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4846,11 +7474,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4886,11 +7533,37 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -4929,11 +7602,44 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "slider"
+        "pattern": "slider",
+        "audit": "partial",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "partial",
+          "screenReader": "pass",
+          "rtl": "pass",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": {
+          "focus": "Base UI hides the thumb until it has measured the track; jsdom has no layout, so the thumb's range input stays out of the computed accessibility tree and focus cannot be observed. Verified structurally instead; browser-level check is on the manual checklist."
+        }
       },
       "testing": {
         "unit": true,
@@ -4974,11 +7680,30 @@
         ],
         "variantGroups": [
           "size"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5016,11 +7741,44 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "expanded",
+            "default": "defaultExpanded",
+            "change": "onExpandedChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "disclosure"
+        "pattern": "disclosure",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5056,11 +7814,30 @@
         "sizes": null,
         "variantGroups": [
           "trend"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5097,11 +7874,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5135,11 +7931,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5178,11 +7993,37 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "switch"
+        "pattern": "switch",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "space",
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5218,11 +8059,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "table"
+        "pattern": "table",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5258,11 +8118,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5301,11 +8180,48 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onValueChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
-        "pattern": "tabs"
+        "pattern": "tabs",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "pass",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5342,11 +8258,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5384,11 +8319,36 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5424,11 +8384,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5462,11 +8441,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5500,11 +8498,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5538,11 +8555,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5576,11 +8612,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5617,11 +8672,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5657,11 +8731,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "alert"
+        "pattern": "alert",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5710,11 +8803,38 @@
         "variantGroups": [
           "size",
           "variant"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "button"
+        "pattern": "button",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "space"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5748,11 +8868,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5790,11 +8929,40 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "toolbar"
+        "pattern": "toolbar",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "pass",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5830,11 +8998,37 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "tooltip"
+        "pattern": "tooltip",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "escape"
+        ],
+        "focus": {
+          "model": "none",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5871,11 +9065,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "dialog"
+        "pattern": "dialog",
+        "audit": "not-audited",
+        "dimensions": {
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
+          "rtl": "not-audited",
+          "reducedMotion": "not-audited",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5914,11 +9127,43 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "treeview"
+        "pattern": "treeview",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
+          "rtl": "pass",
+          "reducedMotion": "pass",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": [
+          "tab",
+          "enter",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -5967,11 +9212,32 @@
         "sizes": null,
         "variantGroups": [
           "variant"
-        ]
+        ],
+        "variantAliases": null,
+        "domainAxes": [
+          "variant"
+        ],
+        "controlled": null
       },
       "accessibility": {
         "required": false,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "pass",
+          "contrast": "pass"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,
@@ -6005,11 +9271,30 @@
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null
+        "variantGroups": null,
+        "variantAliases": null,
+        "domainAxes": null,
+        "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none"
+        "pattern": "none",
+        "audit": "audited",
+        "dimensions": {
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "not-applicable",
+          "focus": "not-applicable",
+          "screenReader": "pass",
+          "rtl": "not-applicable",
+          "reducedMotion": "not-applicable",
+          "forcedColors": "not-applicable",
+          "contrast": "not-applicable"
+        },
+        "keyboard": null,
+        "focus": null,
+        "liveRegion": null,
+        "exceptions": null
       },
       "testing": {
         "unit": true,

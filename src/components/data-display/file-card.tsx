@@ -41,10 +41,10 @@ function FileCard({
       {...props}
     >
       <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted">
-        {thumbnail ?? <FileTypeIcon type={iconType} className="size-8" />}
+        {thumbnail ?? <FileTypeIcon aria-hidden type={iconType} className="size-8" />}
       </div>
       <div className="flex items-start gap-2">
-        <FileTypeIcon type={iconType} className="mt-0.5 size-4" />
+        <FileTypeIcon aria-hidden type={iconType} className="mt-0.5 size-4" />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium" title={name}>
             {name}

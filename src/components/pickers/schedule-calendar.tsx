@@ -159,13 +159,13 @@ function ScheduleCalendar({
       <header className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1">
           <Button variant="outline" size="sm" onClick={() => go(-1)} aria-label="Previous">
-            <ChevronLeftIcon />
+            <ChevronLeftIcon aria-hidden />
           </Button>
           <Button variant="outline" size="sm" onClick={() => go(0)}>
             Today
           </Button>
           <Button variant="outline" size="sm" onClick={() => go(1)} aria-label="Next">
-            <ChevronRightIcon />
+            <ChevronRightIcon aria-hidden />
           </Button>
           <h2 data-slot="schedule-title" className="ms-2 font-heading text-base font-semibold">
             {title}

@@ -67,7 +67,7 @@ function ReactionBar({
               aria-label="Add reaction"
               className="inline-flex size-6 items-center justify-center rounded-full border border-border text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <SmilePlusIcon className="size-3.5" />
+              <SmilePlusIcon aria-hidden className="size-3.5" />
             </button>
           }
         />

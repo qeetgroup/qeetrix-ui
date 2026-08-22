@@ -55,6 +55,45 @@ export const RECOMMENDED_SIZE_SCALE = [
 export type RecommendedSize = (typeof RECOMMENDED_SIZE_SCALE)[number];
 
 /**
+ * The shared tone vocabulary. A component's `variant` names should come from here so that
+ * `destructive` means the same thing on a Button, a Badge, an Alert and a menu item.
+ *
+ * The library had three names for one tone — `destructive` (Button, Badge, Link, DropdownMenu),
+ * `danger` (Alert, Banner) and `error` (Callout, Notification). `destructive` won on usage and
+ * because it is what the bridge variable is called; the other two are kept as declared aliases.
+ */
+export const CANONICAL_VARIANTS = [
+  "default",
+  "primary",
+  "secondary",
+  "tertiary",
+  "outline",
+  "ghost",
+  "link",
+  "destructive",
+  "muted",
+  "info",
+  "success",
+  "warning",
+] as const;
+export type CanonicalVariant = (typeof CANONICAL_VARIANTS)[number];
+
+/**
+ * A controlled-state triple: the authoritative prop, the uncontrolled seed, and the callback.
+ *
+ * The names follow one shape — `x` / `default<X>` / `on<X>Change` — so a consumer who has used
+ * one stateful Qeetrix component can predict the next one.
+ */
+export type ControlledStateContract = {
+  /** The controlled prop, e.g. `value`, `open`, `checked`. */
+  value: string;
+  /** The uncontrolled seed, e.g. `defaultValue`. */
+  default: string;
+  /** The change callback, e.g. `onValueChange`. */
+  change: string;
+};
+
+/**
  * The recorded variant surface of a component.
  * `null` on any field means "not recorded", which is different from an empty list.
  */

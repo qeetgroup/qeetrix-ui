@@ -87,12 +87,7 @@ type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
   size?: "sm" | "default";
 };
 
-function SelectTrigger({
-  className,
-  size = "default",
-  children,
-  ...props
-}: SelectTriggerProps) {
+function SelectTrigger({ className, size = "default", children, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -105,7 +100,12 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon
-        render={<ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />}
+        render={
+          <ChevronDownIcon
+            aria-hidden
+            className="pointer-events-none size-4 text-muted-foreground"
+          />
+        }
       />
     </SelectPrimitive.Trigger>
   );
@@ -181,7 +181,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
           <span className="pointer-events-none absolute end-2 flex size-4 items-center justify-center" />
         }
       >
-        <CheckIcon className="pointer-events-none" />
+        <CheckIcon aria-hidden className="pointer-events-none" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );
@@ -210,7 +210,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <ChevronUpIcon />
+      <ChevronUpIcon aria-hidden />
     </SelectPrimitive.ScrollUpArrow>
   );
 }
@@ -228,7 +228,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <ChevronDownIcon />
+      <ChevronDownIcon aria-hidden />
     </SelectPrimitive.ScrollDownArrow>
   );
 }

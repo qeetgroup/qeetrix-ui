@@ -76,6 +76,14 @@ export function validateManifest({
     INTERACTION_STATES,
     ARIA_PATTERNS,
     VARIANT_GROUP_ALIASES,
+    CANONICAL_VARIANTS,
+    RECOMMENDED_SIZE_SCALE,
+    A11Y_DIMENSIONS,
+    A11Y_DIMENSION_STATES,
+    A11Y_AUDIT_STATES,
+    KEYBOARD_KEYS,
+    FOCUS_MODELS,
+    LIVE_REGION_POLITENESS,
   } = vocabulary;
 
   // ── the document itself ─────────────────────────────────────────────────────────────
@@ -243,6 +251,92 @@ export function validateManifest({
           hint: "a component with required: true has an accessibility contract to name",
         });
       }
+      // ── the audit matrix ────────────────────────────────────────────────────────
+      if (!(A11Y_AUDIT_STATES ?? []).includes(entry.accessibility.audit)) {
+        error(label, `accessibility.audit is "${entry.accessibility.audit}"`, {
+          expected: `one of ${(A11Y_AUDIT_STATES ?? []).join(", ")}`,
+        });
+      }
+      if (!isPlainObject(entry.accessibility.dimensions)) {
+        error(label, "accessibility.dimensions block is missing");
+      } else {
+        for (const dimension of A11Y_DIMENSIONS ?? []) {
+          const state = entry.accessibility.dimensions[dimension];
+          if (!(A11Y_DIMENSION_STATES ?? []).includes(state)) {
+            error(label, `accessibility.dimensions.${dimension} is "${state}"`, {
+              expected: `one of ${(A11Y_DIMENSION_STATES ?? []).join(", ")}`,
+            });
+          }
+          // A gap without a reason is a defect wearing a label.
+          if (
+            (state === "exception" || state === "partial") &&
+            !entry.accessibility.exceptions?.[dimension]
+          ) {
+            error(label, `accessibility.dimensions.${dimension} is "${state}" with no reason`, {
+              expected: `an entry in accessibility.exceptions.${dimension}`,
+              location: REGISTRY_LOCATION,
+            });
+          }
+        }
+        // The roll-up is computed, so it must actually agree with the dimensions it summarises.
+        const states = Object.values(entry.accessibility.dimensions);
+        const expectedAudit = states.includes("not-audited")
+          ? "not-audited"
+          : states.includes("exception")
+            ? "exception"
+            : states.includes("partial")
+              ? "partial"
+              : "audited";
+        if (entry.accessibility.audit !== expectedAudit) {
+          error(label, `accessibility.audit says "${entry.accessibility.audit}"`, {
+            expected: expectedAudit,
+            hint: "the roll-up is computed from the dimensions — regenerate the manifest",
+          });
+        }
+      }
+
+      for (const key of entry.accessibility.keyboard ?? []) {
+        if (!(KEYBOARD_KEYS ?? []).includes(key)) {
+          error(label, `accessibility.keyboard lists "${key}", which is not a known key`, {
+            expected: `one of ${(KEYBOARD_KEYS ?? []).join(", ")}`,
+            location: REGISTRY_LOCATION,
+          });
+        }
+      }
+      if (entry.accessibility.focus !== null && entry.accessibility.focus !== undefined) {
+        const focus = entry.accessibility.focus;
+        if (!(FOCUS_MODELS ?? []).includes(focus.model)) {
+          error(label, `accessibility.focus.model is "${focus.model}"`, {
+            expected: `one of ${(FOCUS_MODELS ?? []).join(", ")}`,
+            location: REGISTRY_LOCATION,
+          });
+        }
+        for (const field of ["contained", "restored"]) {
+          if (!isBoolean(focus[field])) {
+            error(label, `accessibility.focus.${field} must be true or false`, {
+              location: REGISTRY_LOCATION,
+            });
+          }
+        }
+        // A trap the user cannot get out of is the defect this pairing prevents.
+        if (focus.contained === true && focus.restored !== true) {
+          error(label, "contains focus but does not restore it", {
+            expected: "restored: true",
+            hint: "a modal that traps focus and does not give it back strands the keyboard user",
+            location: REGISTRY_LOCATION,
+          });
+        }
+      }
+      const politeness = entry.accessibility.liveRegion;
+      if (politeness !== null && politeness !== undefined) {
+        if (!(LIVE_REGION_POLITENESS ?? []).includes(politeness)) {
+          error(label, `accessibility.liveRegion is "${politeness}"`, {
+            expected: `one of ${(LIVE_REGION_POLITENESS ?? []).join(", ")}`,
+            location: REGISTRY_LOCATION,
+          });
+        }
+      }
+
       if (typeof pattern === "string" && pattern !== "none" && required !== true) {
         error(label, `accessibility.pattern is "${pattern}" but required is false`, {
           expected: "required: true",
@@ -269,7 +363,7 @@ export function validateManifest({
     if (!isPlainObject(entry.api)) {
       error(label, "api block is missing");
     } else {
-      for (const field of ["variants", "sizes", "variantGroups"]) {
+      for (const field of ["variants", "sizes", "variantGroups", "domainAxes"]) {
         if (!isStringArrayOrNull(entry.api[field])) {
           error(label, `api.${field} must be an array of strings or null`);
         }
@@ -285,6 +379,106 @@ export function validateManifest({
           seen.add(value);
         }
       }
+      // ── the shared vocabularies ───────────────────────────────────────────────────
+      const aliases = entry.api.variantAliases ?? {};
+      const domainAxes = entry.api.domainAxes ?? [];
+
+      for (const [alias, canonical] of Object.entries(aliases)) {
+        if (!(entry.api.variants ?? []).includes(alias)) {
+          error(
+            label,
+            `declares "${alias}" as a variant alias, but the component has no such variant`,
+            {
+              location: REGISTRY_LOCATION,
+            },
+          );
+        }
+        if (!(entry.api.variants ?? []).includes(canonical)) {
+          error(
+            label,
+            `aliases "${alias}" to "${canonical}", which the component does not accept`,
+            {
+              expected: `add "${canonical}" to the cva variants`,
+              location: REGISTRY_LOCATION,
+            },
+          );
+        }
+        if (!(CANONICAL_VARIANTS ?? []).includes(canonical)) {
+          error(label, `aliases "${alias}" to "${canonical}", which is not a canonical variant`, {
+            expected: `one of ${(CANONICAL_VARIANTS ?? []).join(", ")}`,
+            location: REGISTRY_LOCATION,
+          });
+        }
+      }
+
+      if (!domainAxes.includes("variant")) {
+        for (const variant of entry.api.variants ?? []) {
+          if ((INTERACTION_STATES ?? []).includes(variant)) {
+            error(label, `has a variant named "${variant}", which is an interaction state`, {
+              expected: `a boolean prop such as \`${variant}\``,
+              hint: "variant is what a component looks like; state is what it is currently doing",
+            });
+          } else if (
+            !(CANONICAL_VARIANTS ?? []).includes(variant) &&
+            aliases[variant] === undefined
+          ) {
+            error(
+              label,
+              `has a variant named "${variant}", which is not in the shared vocabulary`,
+              {
+                expected: `one of ${(CANONICAL_VARIANTS ?? []).join(", ")}`,
+                location: REGISTRY_LOCATION,
+                hint: 'declare it in api.variantAliases if it is a legacy name, or api.domainAxes: ["variant"] if the names are domain concepts',
+              },
+            );
+          }
+        }
+      }
+
+      if (!domainAxes.includes("size")) {
+        for (const size of entry.api.sizes ?? []) {
+          if (!(RECOMMENDED_SIZE_SCALE ?? []).includes(size)) {
+            error(label, `has a size named "${size}", which is not on the size scale`, {
+              expected: `one of ${(RECOMMENDED_SIZE_SCALE ?? []).join(", ")}`,
+              location: REGISTRY_LOCATION,
+              hint: 'declare api.domainAxes: ["size"] when the names are domain concepts',
+            });
+          }
+        }
+        // `default` and `md` both name the middle of the scale; a component with both is a
+        // coin toss for the consumer.
+        const sizes = new Set(entry.api.sizes ?? []);
+        if (sizes.has("default") && sizes.has("md")) {
+          error(label, 'declares both "default" and "md" sizes', {
+            expected: 'one of them — "default" when the size is density-resolved, "md" otherwise',
+          });
+        }
+      }
+
+      // ── controlled state ─────────────────────────────────────────────────────────
+      for (const triple of entry.api.controlled ?? []) {
+        for (const field of ["value", "default", "change"]) {
+          if (typeof triple[field] !== "string" || triple[field].length === 0) {
+            error(label, `has a controlled-state declaration missing \`${field}\``, {
+              location: REGISTRY_LOCATION,
+            });
+          }
+        }
+        if (typeof triple.value !== "string") continue;
+        const capitalised = triple.value.charAt(0).toUpperCase() + triple.value.slice(1);
+        if (triple.default !== `default${capitalised}`) {
+          error(label, `controls "${triple.value}" but seeds it with "${triple.default}"`, {
+            expected: `default${capitalised}`,
+            hint: "the triple is x / default<X> / on<X>Change, so a consumer can predict it",
+          });
+        }
+        if (triple.change !== `on${capitalised}Change`) {
+          error(label, `controls "${triple.value}" but reports it with "${triple.change}"`, {
+            expected: `on${capitalised}Change`,
+          });
+        }
+      }
+
       // Convention: the visual and size axes have one name each in this library.
       for (const group of entry.api.variantGroups ?? []) {
         const canonical = VARIANT_GROUP_ALIASES?.[group];

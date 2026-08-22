@@ -114,7 +114,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute start-2 flex items-center justify-center">
         <MenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon className="size-4" />
+          <CheckIcon aria-hidden className="size-4" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -138,7 +138,7 @@ function MenubarRadioItem({ className, children, ...props }: MenuPrimitive.Radio
     >
       <span className="pointer-events-none absolute start-2 flex items-center justify-center">
         <MenuPrimitive.RadioItemIndicator>
-          <CircleIcon className="size-2 fill-current" />
+          <CircleIcon aria-hidden className="size-2 fill-current" />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}
@@ -205,7 +205,7 @@ function MenubarSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ms-auto rtl:rotate-180" />
+      <ChevronRightIcon aria-hidden className="ms-auto rtl:rotate-180" />
     </MenuPrimitive.SubmenuTrigger>
   );
 }

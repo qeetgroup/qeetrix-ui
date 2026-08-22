@@ -2,9 +2,8 @@
 
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import { cn } from "@/lib/utils";
 
 const rootVariants = cva("relative inline-flex rounded-lg bg-muted p-1 text-muted-foreground", {
   variants: {
@@ -23,6 +22,8 @@ interface SegmentedControlContextValue {
   value: string | undefined;
   setValue: (v: string) => void;
   disabled?: boolean;
+  /** Shared radio-group name, so the segments form one native group. */
+  name: string;
 }
 
 const SegmentedControlContext = React.createContext<SegmentedControlContextValue | null>(null);
@@ -57,6 +58,7 @@ function SegmentedControl({
     defaultValue,
     onChange: onValueChange as (next: string | undefined) => void,
   });
+  const groupName = React.useId();
   const rootRef = React.useRef<HTMLDivElement>(null);
   const [indicator, setIndicator] = React.useState<React.CSSProperties>({ opacity: 0 });
 
@@ -83,8 +85,8 @@ function SegmentedControl({
   }, [orientation]);
 
   const ctx = React.useMemo(
-    () => ({ value: current, setValue, disabled }),
-    [current, setValue, disabled],
+    () => ({ value: current, setValue, disabled, name: groupName }),
+    [current, setValue, disabled, groupName],
   );
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -160,6 +162,9 @@ function SegmentedControlItem({
     >
       <input
         type="radio"
+        // Without a shared name the radios are not one native group: assistive technology
+        // announces each as "1 of 1" and the browser enforces no single-selection.
+        name={ctx?.name}
         data-slot="segmented-control-input"
         className="sr-only"
         checked={active}

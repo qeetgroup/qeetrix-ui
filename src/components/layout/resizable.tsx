@@ -55,6 +55,7 @@ function ResizableHandle({
           )}
         >
           <GripVerticalIcon
+            aria-hidden
             className={cn("size-2.5 text-muted-foreground", vertical && "rotate-90")}
           />
         </div>

@@ -9,6 +9,11 @@ import { cn } from "@/lib/utils";
 interface ActionBarProps {
   /** Controlled visibility — set to true when rows are selected. */
   open: boolean;
+  /**
+   * Accessible name for the toolbar. Defaults to "Selection actions"; override it to match the
+   * product's wording or language — component copy is never localized in the library.
+   */
+  "aria-label"?: string;
   /** Number of currently selected items; renders the selection pill when provided together with onClearSelection. */
   selectionCount?: number;
   /** Callback fired when the user clicks the clear-selection (×) button. */
@@ -48,12 +53,13 @@ function ActionBar({
   onClearSelection,
   children,
   className,
+  "aria-label": ariaLabel = "Selection actions",
 }: ActionBarProps) {
   return (
     <div
       data-slot="action-bar"
       role="toolbar"
-      aria-label="Selection actions"
+      aria-label={ariaLabel}
       aria-hidden={!open}
       inert={!open}
       className={cn(

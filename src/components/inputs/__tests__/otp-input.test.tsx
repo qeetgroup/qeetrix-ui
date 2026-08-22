@@ -32,12 +32,25 @@ describe("OTPInput", () => {
     expect(onChange).toHaveBeenCalledWith("7");
   });
 
-  it("filters non-digit characters", () => {
+  it("filters non-digit characters, and reports nothing when nothing changed", () => {
     const onChange = vi.fn();
     render(<OTPInput value="" onChange={onChange} aria-label="OTP" />);
     const inputs = screen.getAllByRole("textbox");
     fireEvent.change(inputs[0], { target: { value: "a" } });
-    expect(onChange).toHaveBeenCalledWith("");
+    // The letter is filtered out, so the box stays empty — that is the requirement.
+    expect(inputs[0]).toHaveValue("");
+    // And the value did not change, so onChange does not fire. A no-op notification would make a
+    // consumer that debounces a verification request fire one for a keystroke that did nothing.
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("accepts a defaultValue and owns the state when uncontrolled", () => {
+    render(<OTPInput defaultValue="12" length={4} aria-label="OTP" />);
+    const inputs = screen.getAllByRole("textbox");
+    expect(inputs[0]).toHaveValue("1");
+    expect(inputs[1]).toHaveValue("2");
+    fireEvent.change(inputs[2], { target: { value: "3" } });
+    expect(inputs[2]).toHaveValue("3");
   });
 
   it("calls onComplete when all boxes are filled", () => {

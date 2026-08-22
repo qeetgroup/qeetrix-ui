@@ -162,8 +162,15 @@ const components = entries
       status,
       capabilities,
       states,
-      api: derived.api,
-      accessibility: { ...REGISTRY_DEFAULTS.accessibility, ...(declared.accessibility ?? {}) },
+      // The derived cva surface, plus what only a human can declare: which variant names are
+      // legacy aliases, which axes use domain names, and the controlled-state triples.
+      api: {
+        ...derived.api,
+        variantAliases: declared.api?.variantAliases ?? null,
+        domainAxes: declared.api?.domainAxes ?? null,
+        controlled: declared.api?.controlled ?? null,
+      },
+      accessibility: accessibilityFor(declared),
       testing: {
         unit: test.length > 0,
         accessibility: /\baxe\(/.test(test) || globalA11ySlugs.has(slug),
@@ -179,6 +186,42 @@ const components = entries
       deprecated: status === "deprecated" || derived.deprecatedMarker,
     };
   });
+
+/**
+ * Assemble a component's accessibility record.
+ *
+ * Every dimension is present, defaulting to `not-audited`, and `audit` is *computed* from them —
+ * there is no way to declare a component audited, which is the point. A component with one
+ * unreviewed dimension is `not-audited`, however many of the others pass.
+ */
+function accessibilityFor(declared) {
+  const declaredA11y = declared.accessibility ?? {};
+  const dimensions = Object.fromEntries(
+    contracts.A11Y_DIMENSIONS.map((dimension) => [
+      dimension,
+      declaredA11y.dimensions?.[dimension] ?? "not-audited",
+    ]),
+  );
+  const states = Object.values(dimensions);
+  const audit = states.includes("not-audited")
+    ? "not-audited"
+    : states.includes("exception")
+      ? "exception"
+      : states.includes("partial")
+        ? "partial"
+        : "audited";
+
+  return {
+    required: declaredA11y.required ?? REGISTRY_DEFAULTS.accessibility.required,
+    pattern: declaredA11y.pattern ?? REGISTRY_DEFAULTS.accessibility.pattern,
+    audit,
+    dimensions,
+    keyboard: declaredA11y.keyboard ?? null,
+    focus: declaredA11y.focus ?? null,
+    liveRegion: declaredA11y.liveRegion ?? null,
+    exceptions: declaredA11y.exceptions ?? null,
+  };
+}
 
 const countBy = (keys, predicate) =>
   Object.fromEntries(keys.map((key) => [key, components.filter((c) => predicate(c, key)).length]));
@@ -196,6 +239,11 @@ const manifest = {
   count: components.length,
   categories: countBy(categories, (c, key) => c.category === key),
   statuses: countBy(contracts.COMPONENT_STATUSES, (c, key) => c.status === key),
+  /** Component count per accessibility audit state. */
+  accessibilityAudit: countBy(
+    contracts.A11Y_AUDIT_STATES,
+    (c, key) => c.accessibility.audit === key,
+  ),
   components,
 };
 

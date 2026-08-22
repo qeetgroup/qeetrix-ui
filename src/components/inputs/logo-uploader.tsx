@@ -104,7 +104,7 @@ function LogoUploader({
                 disabled={disabled}
                 onClick={() => inputRef.current?.click()}
               >
-                <UploadCloudIcon /> Replace
+                <UploadCloudIcon aria-hidden /> Replace
               </Button>
               <Button
                 type="button"
@@ -113,7 +113,7 @@ function LogoUploader({
                 disabled={disabled}
                 onClick={clearLogo}
               >
-                <Trash2Icon /> Remove
+                <Trash2Icon aria-hidden /> Remove
               </Button>
             </div>
           </div>
@@ -142,7 +142,7 @@ function LogoUploader({
             disabled && "pointer-events-none opacity-disabled",
           )}
         >
-          <ImageIcon className="size-6 text-muted-foreground" />
+          <ImageIcon aria-hidden className="size-6 text-muted-foreground" />
           <span className="block text-sm font-medium">Drop a logo here</span>
           <span className="block text-xs text-muted-foreground">
             PNG, JPG, SVG, or WEBP up to {maxSizeMB} MB

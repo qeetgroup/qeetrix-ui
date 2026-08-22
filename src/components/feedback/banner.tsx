@@ -13,6 +13,9 @@ const bannerVariants = cva("flex w-full items-center gap-3 px-4 py-2.5 text-sm",
       info: "bg-info text-info-foreground",
       success: "bg-success text-success-foreground",
       warning: "bg-warning text-warning-foreground",
+      // `destructive` is the library-wide name for this tone; `danger` predates it and
+      // keeps working — see docs/standards/component-api.md § Variant vocabulary.
+      destructive: "bg-destructive text-destructive-foreground",
       danger: "bg-destructive text-destructive-foreground",
     },
   },
@@ -44,7 +47,7 @@ function Banner({ className, variant, onDismiss, children, ...props }: BannerPro
           aria-label="Dismiss"
           className="-me-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md opacity-80 transition-opacity hover:opacity-100"
         >
-          <XIcon className="size-4" />
+          <XIcon aria-hidden className="size-4" />
         </button>
       )}
     </section>

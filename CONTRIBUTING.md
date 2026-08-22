@@ -13,7 +13,7 @@ bun run build     # generates src/styles/* (gitignored) — needed before typech
 bun run verify
 ```
 
-Types, lint, tests, and seven structural checks. If it passes, CI passes. Run
+Types (source and test fixtures), lint, tests, and seven structural checks. If it passes, CI passes. Run
 `bun run verify:package` as well when you touch `package.json` exports, the
 build pipeline, or anything under `scripts/build/`.
 
@@ -46,15 +46,16 @@ Categories: `actions` · `inputs` · `selection` · `pickers` · `navigation` ·
    `data-slot` attributes, Base UI for anything interactive, tokens for every
    colour/shadow/z-index. Add `"use client"` as the **first** line if it uses
    hooks, state or browser APIs. Follow
-   [docs/standards/api-guidelines.md](./docs/standards/api-guidelines.md).
+   [docs/standards/component-api.md](./docs/standards/component-api.md).
 2. Add the slug to `scripts/config/category-map.json`.
 3. Export it from the category `index.ts`.
 4. Add `__tests__/<slug>.test.tsx` with at least a render assertion and an
    `axe` pass.
 5. Declare it in `src/manifests/component-registry.ts` — its `status`
-   (`experimental` or `beta`, not `stable`) and its `accessibility` (the APG
-   pattern it implements, or `"none"`). Everything else is derived from the
-   source; don't declare what the generator can observe.
+   (`experimental` or `beta`, not `stable`), its `accessibility` (the APG
+   pattern it implements, or `"none"`), and its `api` (controlled-state
+   triples, variant aliases). Everything else is derived from the source;
+   don't declare what the generator can observe.
 6. `bun run build:manifest` to regenerate the catalog.
 7. `bun run verify` — it names anything you missed.
 8. `bun run check:exports -- --update` to re-snapshot the public API.
@@ -76,6 +77,25 @@ is always a visible line in the diff and always ships with a changeset.
 
 To keep a symbol out of the barrel (deprecated aliases), mark the file
 `@barrel-exclude`; it stays reachable only via its deep import.
+
+## Component APIs
+
+The rules are in [docs/standards/component-api.md](./docs/standards/component-api.md); the order
+to do things in is [docs/standards/component-checklist.md](./docs/standards/component-checklist.md).
+The short version:
+
+- **`variant`** is what it looks like, **`size`** is how big, **state** is what it's doing.
+  `variant="disabled"` fails `check:contract`.
+- **One name per tone.** `destructive`, not `danger` or `error` — the old names still work on the
+  four components that had them, declared as `api.variantAliases`.
+- **Controlled state is a triple**: `x` / `default<X>` / `on<X>Change`, built with
+  `useControllableState` or inherited from Base UI. Declare it in the registry.
+- **Export `<Name>Props`** and nothing else from the type layer. Declared props are snapshotted,
+  so removing one fails `check:exports`.
+- **Extend native props, never enumerate them.** Spread `{...props}` last.
+- **Composition over configuration**, flat exports (`DialogTrigger`, not `Dialog.Trigger`), and
+  `render` for polymorphism — not `as` or `asChild`.
+- **The styling API is `className`, `style`, `data-slot` and component tokens.** Nothing else.
 
 ## Layers
 

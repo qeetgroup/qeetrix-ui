@@ -19,6 +19,9 @@ const notificationVariants = cva("relative flex gap-3 rounded-lg border p-4 shad
       info: "border-info/30 bg-info/10 [--qx-noti-accent:var(--info)]",
       success: "border-success/30 bg-success/10 [--qx-noti-accent:var(--success)]",
       warning: "border-warning/30 bg-warning/10 [--qx-noti-accent:var(--warning)]",
+      // `destructive` is the library-wide name for this tone; `error` predates it and
+      // keeps working — see docs/standards/component-api.md § Variant vocabulary.
+      destructive: "border-destructive/30 bg-destructive/10 [--qx-noti-accent:var(--destructive)]",
       error: "border-destructive/30 bg-destructive/10 [--qx-noti-accent:var(--destructive)]",
     },
   },
@@ -29,6 +32,7 @@ const DEFAULT_ICONS = {
   info: InfoIcon,
   success: CheckCircle2Icon,
   warning: TriangleAlertIcon,
+  destructive: XCircleIcon,
   error: XCircleIcon,
 } as const;
 
@@ -69,7 +73,7 @@ function Notification({
   return (
     <div
       data-slot="notification"
-      role={variant === "error" ? "alert" : "status"}
+      role={variant === "destructive" || variant === "error" ? "alert" : "status"}
       aria-live={variant === "error" ? "assertive" : "polite"}
       className={cn(notificationVariants({ variant }), className)}
       {...props}
@@ -81,7 +85,7 @@ function Notification({
         >
           {icon ??
             (loading ? (
-              <Loader2Icon className="size-5 animate-spin" />
+              <Loader2Icon aria-hidden className="size-5 animate-spin" />
             ) : (
               <Icon className="size-5" />
             ))}
@@ -113,7 +117,7 @@ function Notification({
           onClick={onClose}
           className="-me-1 -mt-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <XIcon className="size-4" />
+          <XIcon aria-hidden className="size-4" />
         </button>
       )}
     </div>

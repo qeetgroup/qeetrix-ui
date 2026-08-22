@@ -95,7 +95,7 @@ function Pagination({
           onClick={onFirst}
           aria-label="First page"
         >
-          <ChevronsLeftIcon /> First
+          <ChevronsLeftIcon aria-hidden /> First
         </Button>
         <Button
           variant="ghost"
@@ -105,7 +105,7 @@ function Pagination({
           aria-label="Previous page"
           className="hidden sm:inline-flex"
         >
-          <ChevronLeftIcon /> Prev
+          <ChevronLeftIcon aria-hidden /> Prev
         </Button>
       </div>
 
@@ -126,7 +126,7 @@ function Pagination({
         onClick={onNext}
         aria-label="Next page"
       >
-        Next <ChevronRightIcon />
+        Next <ChevronRightIcon aria-hidden />
       </Button>
     </nav>
   );

@@ -25,10 +25,12 @@
  * component as unreviewed for a concern it does not have.
  */
 export function stripComments(source) {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    // Leave `https://` and the like alone: a real line comment is not preceded by a colon.
-    .replace(/(^|[^:"'`\\])\/\/[^\n]*/g, "$1");
+  return (
+    source
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      // Leave `https://` and the like alone: a real line comment is not preceded by a colon.
+      .replace(/(^|[^:"'`\\])\/\/[^\n]*/g, "$1")
+  );
 }
 
 /** Motion driven from JavaScript, where a CSS media query cannot reach it. */

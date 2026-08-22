@@ -58,7 +58,7 @@ function DatePicker({
               className,
             )}
           >
-            <CalendarIcon className="size-4" />
+            <CalendarIcon aria-hidden className="size-4" />
             {selected ? formatDate(selected) : placeholder}
           </Button>
         }
@@ -123,7 +123,7 @@ function DateRangePicker({
               className,
             )}
           >
-            <CalendarIcon className="size-4" />
+            <CalendarIcon aria-hidden className="size-4" />
             {label ?? placeholder}
           </Button>
         }

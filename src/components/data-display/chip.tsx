@@ -3,9 +3,8 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { XIcon } from "lucide-react";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import { cn } from "@/lib/utils";
 
 const chipVariants = cva(
   "inline-flex items-center gap-1.5 rounded-full border font-medium whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled",
@@ -191,7 +190,7 @@ function Chip({
           onClick={onRemove}
           className="ms-0.5 inline-flex size-4 items-center justify-center rounded-full text-current/70 transition-colors hover:bg-foreground/10 hover:text-current focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <XIcon className="size-3" />
+          <XIcon aria-hidden className="size-3" />
         </button>
       </span>
     );

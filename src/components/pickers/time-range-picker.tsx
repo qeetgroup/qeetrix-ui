@@ -84,7 +84,7 @@ function TimeRangePicker({
             data-slot="time-range-picker"
             className={cn("justify-start gap-2 font-normal", className)}
           >
-            <ClockIcon className="size-4" />
+            <ClockIcon aria-hidden className="size-4" />
             {label}
           </Button>
         }

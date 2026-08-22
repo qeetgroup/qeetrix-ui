@@ -25,16 +25,17 @@ import type {
 } from "@/contracts/component";
 import type { ComponentLayer } from "@/contracts/layers";
 import type { InteractionState } from "@/contracts/states";
-import type { VariantContract } from "@/contracts/variants";
+import type { ControlledStateContract, VariantContract } from "@/contracts/variants";
 
 /**
  * Manifest schema version.
  *
  * Bumped whenever an entry's shape changes. `1` was the pre-governance manifest (identity and
- * import paths only); `2` adds the contract fields. The version-1 fields are still emitted, so
+ * import paths only); `2` added the contract fields; `3` adds the accessibility audit matrix
+ * and the declared API surface. The version-1 fields are still emitted, so
  * a version-1 consumer keeps working — see docs/standards/component-manifest.md § Compatibility.
  */
-export const MANIFEST_SCHEMA_VERSION = 2;
+export const MANIFEST_SCHEMA_VERSION = 3;
 
 /** One component's entry in the manifest. */
 export type ComponentManifestEntry = {
@@ -56,7 +57,15 @@ export type ComponentManifestEntry = {
   status: ComponentStatus;
   capabilities: ComponentCapabilities;
   states: readonly InteractionState[];
-  api: VariantContract;
+  /**
+   * The public API surface: the `cva` variants and sizes read from the source, plus the declared
+   * parts — legacy variant aliases, axes that use domain names, and the controlled-state triples.
+   */
+  api: VariantContract & {
+    variantAliases: Readonly<Record<string, string>> | null;
+    domainAxes: readonly ("variant" | "size")[] | null;
+    controlled: readonly ControlledStateContract[] | null;
+  };
   accessibility: AccessibilityContract;
   testing: TestingContract;
   deprecation: DeprecationContract | null;

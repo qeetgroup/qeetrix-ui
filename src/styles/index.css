@@ -414,6 +414,23 @@
     --sidebar-accent-foreground: HighlightText;
     --sidebar-border: CanvasText;
     --sidebar-ring: Highlight;
+
+    /* Chart chrome becomes system-coloured so axes, gridlines and reference lines stay legible
+     * against whatever background the user chose. */
+    --chart-grid: GrayText;
+    --chart-axis: CanvasText;
+    --chart-reference: GrayText;
+  }
+
+  /* The categorical series are the one place authored colour is deliberately preserved.
+   * Remapping eight series to system colours would make them identical, which destroys the
+   * chart rather than making it accessible; `forced-color-adjust: none` is the mechanism the
+   * spec provides for colour that carries meaning. The non-colour alternative is
+   * ChartDataTable, which every chart is expected to render — see
+   * docs/standards/accessibility.md § Data visualisation. */
+  [data-slot="chart"],
+  [data-slot="chart"] * {
+    forced-color-adjust: none;
   }
 
   * {

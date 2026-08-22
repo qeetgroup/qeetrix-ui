@@ -10,8 +10,27 @@
  * @see docs/architecture/overview.md
  */
 
-export type { AccessibilityContract, AriaPattern } from "./accessibility";
-export { ARIA_PATTERNS } from "./accessibility";
+export type {
+  A11yAuditState,
+  A11yDimension,
+  A11yDimensionState,
+  A11ySupport,
+  AccessibilityContract,
+  AriaPattern,
+  FocusContract,
+  FocusModel,
+  KeyboardKey,
+  LiveRegionPoliteness,
+} from "./accessibility";
+export {
+  A11Y_AUDIT_STATES,
+  A11Y_DIMENSION_STATES,
+  A11Y_DIMENSIONS,
+  ARIA_PATTERNS,
+  FOCUS_MODELS,
+  KEYBOARD_KEYS,
+  LIVE_REGION_POLITENESS,
+} from "./accessibility";
 export type {
   ComponentCapabilities,
   ComponentCategory,
@@ -61,9 +80,16 @@ export {
   THEME_MODES,
   TOKEN_PREFIX,
 } from "./theme";
-export type { CanonicalVariantGroup, RecommendedSize, VariantContract } from "./variants";
+export type {
+  CanonicalVariant,
+  CanonicalVariantGroup,
+  ControlledStateContract,
+  RecommendedSize,
+  VariantContract,
+} from "./variants";
 export {
   CANONICAL_VARIANT_GROUPS,
+  CANONICAL_VARIANTS,
   RECOMMENDED_SIZE_SCALE,
   VARIANT_GROUP_ALIASES,
 } from "./variants";

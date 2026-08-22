@@ -16,13 +16,18 @@ library itself is built and changed.
 
 | | |
 |:--|:--|
-| [api-guidelines.md](./standards/api-guidelines.md) | Prop names, controlled state, event naming, refs, styling |
+| [component-api.md](./standards/component-api.md) | Variants, sizes, states, controlled state, composition, parts, refs, types, styling |
+| [component-checklist.md](./standards/component-checklist.md) | The order to do things in when adding or standardising a component |
 | [component-manifest.md](./standards/component-manifest.md) | The generated manifest's schema, and where every field comes from |
 | [tokens.md](./standards/tokens.md) | The four token layers, naming, ownership, types, deprecation, raw-value policy |
 | [theming.md](./standards/theming.md) | How light/dark resolve, ThemeProvider, re-branding, overrides, forced colors |
 | [density.md](./standards/density.md) | The density model and how a component consumes it |
 | [motion.md](./standards/motion.md) | The motion vocabulary and reduced-motion handling |
 | [rtl.md](./standards/rtl.md) | Logical properties, and why tokens carry no direction |
+| [accessibility.md](./standards/accessibility.md) | The WCAG 2.2 AA baseline, the audit matrix, ARIA and naming policy, forms, overlays, live regions |
+| [keyboard-interactions.md](./standards/keyboard-interactions.md) | The keyboard model per pattern |
+| [focus-management.md](./standards/focus-management.md) | Focus models, entry, containment, restoration, visibility |
+| [accessibility-checklist.md](./standards/accessibility-checklist.md) | The audit checklist |
 
 ## Governance
 
@@ -44,3 +49,6 @@ library itself is built and changed.
 - Nothing becomes public by accident — `bun run check:exports`.
 - Unknown is a value, not a guess. `"unknown"` in the manifest is a review backlog item, not a
   "no".
+- Accessibility is audited per dimension, and the roll-up is computed — there is no field that
+  means "accessible: true". All 145 components pass axe; 78 are audited —
+  `bun run check:a11y`.

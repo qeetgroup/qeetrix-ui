@@ -192,6 +192,7 @@ function TreeNodeItem({
       >
         {hasChildren ? (
           <ChevronRightIcon
+            aria-hidden
             className={cn(
               "size-4 shrink-0 text-muted-foreground transition-transform",
               open && "rotate-90",

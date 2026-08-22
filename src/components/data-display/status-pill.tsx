@@ -91,7 +91,13 @@ function StatusPill({ status, kind, dot = true, children, className }: StatusPil
   const label = children ?? known?.label ?? (status ? titleCase(status) : "");
 
   return (
-    <Badge variant={KIND_TO_BADGE[resolved]} className={cn("gap-1.5", className)}>
+    <Badge
+      // Without this the pill inherits Badge's slot, so a consumer cannot target a StatusPill
+      // distinctly from any other badge. Badge spreads props after its own data-slot, so this wins.
+      data-slot="status-pill"
+      variant={KIND_TO_BADGE[resolved]}
+      className={cn("gap-1.5", className)}
+    >
       {dot && (
         <span
           data-slot="status-pill-dot"

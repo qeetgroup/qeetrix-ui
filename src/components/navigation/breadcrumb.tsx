@@ -71,7 +71,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <ChevronRightIcon className="rtl:rotate-180" />}
+      {children ?? <ChevronRightIcon aria-hidden className="rtl:rotate-180" />}
     </li>
   );
 }
@@ -85,7 +85,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span"
       className={cn("flex size-5 items-center justify-center [&>svg]:size-4", className)}
       {...props}
     >
-      <MoreHorizontalIcon />
+      <MoreHorizontalIcon aria-hidden />
       <span className="sr-only">More</span>
     </span>
   );

@@ -161,7 +161,7 @@ function Dropzone({
           children
         ) : (
           <>
-            <UploadCloudIcon className="size-6 text-muted-foreground" />
+            <UploadCloudIcon aria-hidden className="size-6 text-muted-foreground" />
             <span className="block text-sm font-medium">
               {multiple
                 ? "Drop files here, or click to browse"
@@ -212,9 +212,9 @@ interface FileUploadItemProps extends Omit<React.ComponentProps<"li">, "onError"
 
 const statusIcon: Record<FileUploadStatus, React.ReactNode> = {
   pending: null,
-  uploading: <Loader2Icon className="size-4 animate-spin text-muted-foreground" />,
-  success: <CheckCircle2Icon className="size-4 text-success" />,
-  error: <AlertCircleIcon className="size-4 text-destructive" />,
+  uploading: <Loader2Icon aria-hidden className="size-4 animate-spin text-muted-foreground" />,
+  success: <CheckCircle2Icon aria-hidden className="size-4 text-success" />,
+  error: <AlertCircleIcon aria-hidden className="size-4 text-destructive" />,
 };
 
 /** One row in a {@link FileList}: icon/thumbnail, name, size, progress, remove. */
@@ -240,9 +240,9 @@ function FileUploadItem({
           // Plain <img>: framework-agnostic (no next/image).
           <img src={previewUrl} alt="" className="size-full object-cover" />
         ) : isImage ? (
-          <ImageIcon className="size-4 text-muted-foreground" />
+          <ImageIcon aria-hidden className="size-4 text-muted-foreground" />
         ) : (
-          <FileIcon className="size-4 text-muted-foreground" />
+          <FileIcon aria-hidden className="size-4 text-muted-foreground" />
         )}
       </div>
 
@@ -273,7 +273,7 @@ function FileUploadItem({
             aria-label={`Remove ${file.name}`}
             onClick={onRemove}
           >
-            <XIcon />
+            <XIcon aria-hidden />
           </Button>
         )}
       </div>

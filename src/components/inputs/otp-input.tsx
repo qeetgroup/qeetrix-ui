@@ -1,15 +1,17 @@
 "use client";
 
 import * as React from "react";
-
+import { useControllableState } from "@/hooks/use-controllable-state";
 import { cn } from "@/lib/utils";
 
 interface OTPInputProps {
   /** Number of digit boxes. Defaults to 6 (RFC 6238 / standard OTP). */
   length?: number;
   /** Controlled value — the joined digit string, 0..length chars long. */
-  value: string;
-  onChange: (value: string) => void;
+  value?: string;
+  /** Initial value when uncontrolled. */
+  defaultValue?: string;
+  onChange?: (value: string) => void;
   /** Fires when every box is filled with a digit. */
   onComplete?: (value: string) => void;
   autoFocus?: boolean;
@@ -25,13 +27,14 @@ interface OTPInputProps {
  * backspace-to-prev, arrow-key navigation, and pastes a full code into
  * any box. Only digits are accepted; non-digit input is filtered.
  *
- * It is fully controlled — owners pass `value` (the joined string) and
- * `onChange` (called with the new joined string on every edit).
+ * Controlled or uncontrolled: pass `value` to own the joined string, or `defaultValue` and let
+ * the component own it. `onChange` fires with the new joined string on every edit in both modes.
  * `onComplete` fires once when all boxes are filled.
  */
 function OTPInput({
   length = 6,
-  value,
+  value: valueProp,
+  defaultValue = "",
   onChange,
   onComplete,
   autoFocus,
@@ -39,6 +42,11 @@ function OTPInput({
   className,
   ...aria
 }: OTPInputProps) {
+  const [value, setValue] = useControllableState<string>({
+    value: valueProp,
+    defaultValue,
+    onChange,
+  });
   const inputsRef = React.useRef<(HTMLInputElement | null)[]>([]);
   const uid = React.useId();
 
@@ -66,7 +74,7 @@ function OTPInput({
 
   const emit = (next: string[]) => {
     const joined = next.join("");
-    onChange(joined);
+    setValue(joined);
     if (joined.length === length && next.every((d) => d !== "")) {
       onComplete?.(joined);
     }
@@ -93,7 +101,7 @@ function OTPInput({
         emit(next);
         focusAt(idx - 1);
       }
-      // Else: let the native backspace clear the current digit; onChange
+      // Else: let the native backspace clear the current digit; the change handler
       // will pick that up and propagate.
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();

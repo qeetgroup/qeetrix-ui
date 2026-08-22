@@ -65,7 +65,10 @@ function Subtree({
             onClick={() => setOpen((o) => !o)}
             className="absolute -bottom-2 left-1/2 z-10 flex size-4 -translate-x-1/2 items-center justify-center rounded-full border border-border bg-background text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
           >
-            <ChevronDownIcon className={cn("size-3 transition-transform", !open && "-rotate-90")} />
+            <ChevronDownIcon
+              aria-hidden
+              className={cn("size-3 transition-transform", !open && "-rotate-90")}
+            />
           </button>
         )}
       </div>

@@ -241,7 +241,7 @@ function TourStep({
           aria-label="Dismiss tour"
           className="inline-flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-70 transition-opacity hover:opacity-100"
         >
-          <XIcon className="size-3.5" />
+          <XIcon aria-hidden className="size-3.5" />
         </button>
       </div>
 
@@ -258,13 +258,13 @@ function TourStep({
         <div className="flex gap-2">
           {!isFirst && (
             <Button variant="outline" size="sm" onClick={onPrev} data-slot="tour-prev-button">
-              <ChevronLeftIcon />
+              <ChevronLeftIcon aria-hidden />
               Back
             </Button>
           )}
           <Button size="sm" onClick={onNext} data-slot="tour-next-button">
             {isLast ? "Done" : "Next"}
-            {!isLast && <ChevronRightIcon />}
+            {!isLast && <ChevronRightIcon aria-hidden />}
           </Button>
         </div>
       </div>

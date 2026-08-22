@@ -100,7 +100,7 @@ function DateTimePicker({
               className,
             )}
           >
-            <CalendarIcon className="size-4" />
+            <CalendarIcon aria-hidden className="size-4" />
             {selected ? formatter.format(selected) : placeholder}
           </Button>
         }

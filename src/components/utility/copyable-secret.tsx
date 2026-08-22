@@ -113,12 +113,12 @@ function CopyableSecret({
       >
         {copied ? (
           <>
-            <CheckIcon className="text-success" />
+            <CheckIcon aria-hidden className="text-success" />
             <span className="hidden sm:inline">{copiedLabel}</span>
           </>
         ) : (
           <>
-            <CopyIcon />
+            <CopyIcon aria-hidden />
             <span className="hidden sm:inline">{copyLabel}</span>
           </>
         )}

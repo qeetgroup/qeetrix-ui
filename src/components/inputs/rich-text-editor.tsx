@@ -73,77 +73,77 @@ function ToolbarControls({ editor }: { editor: Editor }) {
         editor.isActive("bold"),
         () => editor.chain().focus().toggleBold().run(),
         "Bold",
-        <BoldIcon />,
+        <BoldIcon aria-hidden />,
       )}
       {item(
         editor.isActive("italic"),
         () => editor.chain().focus().toggleItalic().run(),
         "Italic",
-        <ItalicIcon />,
+        <ItalicIcon aria-hidden />,
       )}
       {item(
         editor.isActive("strike"),
         () => editor.chain().focus().toggleStrike().run(),
         "Strikethrough",
-        <StrikethroughIcon />,
+        <StrikethroughIcon aria-hidden />,
       )}
       {item(
         editor.isActive("code"),
         () => editor.chain().focus().toggleCode().run(),
         "Inline code",
-        <CodeIcon />,
+        <CodeIcon aria-hidden />,
       )}
       <Separator orientation="vertical" className="mx-0.5 h-5" />
       {item(
         editor.isActive("heading", { level: 1 }),
         () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
         "Heading 1",
-        <Heading1Icon />,
+        <Heading1Icon aria-hidden />,
       )}
       {item(
         editor.isActive("heading", { level: 2 }),
         () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
         "Heading 2",
-        <Heading2Icon />,
+        <Heading2Icon aria-hidden />,
       )}
       {item(
         editor.isActive("heading", { level: 3 }),
         () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
         "Heading 3",
-        <Heading3Icon />,
+        <Heading3Icon aria-hidden />,
       )}
       <Separator orientation="vertical" className="mx-0.5 h-5" />
       {item(
         editor.isActive("bulletList"),
         () => editor.chain().focus().toggleBulletList().run(),
         "Bullet list",
-        <ListIcon />,
+        <ListIcon aria-hidden />,
       )}
       {item(
         editor.isActive("orderedList"),
         () => editor.chain().focus().toggleOrderedList().run(),
         "Numbered list",
-        <ListOrderedIcon />,
+        <ListOrderedIcon aria-hidden />,
       )}
       {item(
         editor.isActive("blockquote"),
         () => editor.chain().focus().toggleBlockquote().run(),
         "Quote",
-        <QuoteIcon />,
+        <QuoteIcon aria-hidden />,
       )}
       <Separator orientation="vertical" className="mx-0.5 h-5" />
       {item(
         false,
         () => editor.chain().focus().undo().run(),
         "Undo",
-        <Undo2Icon />,
+        <Undo2Icon aria-hidden />,
         !editor.can().undo(),
       )}
       {item(
         false,
         () => editor.chain().focus().redo().run(),
         "Redo",
-        <Redo2Icon />,
+        <Redo2Icon aria-hidden />,
         !editor.can().redo(),
       )}
     </>

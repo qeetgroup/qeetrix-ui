@@ -110,6 +110,7 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
             className="grid size-3 place-items-center"
           >
             <ChevronRightIcon
+              aria-hidden
               className={cn(
                 "size-3 text-muted-foreground transition-transform",
                 open && "rotate-90",
@@ -166,6 +167,7 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
             className="grid size-3 place-items-center"
           >
             <ChevronRightIcon
+              aria-hidden
               className={cn(
                 "size-3 text-muted-foreground transition-transform",
                 open && "rotate-90",

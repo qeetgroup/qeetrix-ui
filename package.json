@@ -78,6 +78,7 @@
     "dev": "node scripts/build/tokens.mjs && tsc -p tsconfig.build.json --watch --noEmit",
     "build": "bun run clean && node scripts/build/tokens.mjs && node scripts/build/manifest.mjs && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/build/subpath-shims.mjs && node scripts/build/postbuild.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
@@ -97,7 +98,7 @@
     "prepack": "bun run build",
     "check:tokens": "node scripts/check/tokens.mjs",
     "check:token-usage": "node scripts/check/token-usage.mjs",
-    "verify": "bun run typecheck && bun run lint && bun run test && bun run check:architecture && bun run check:contract && bun run check:tokens && bun run check:exports && bun run check:a11y && bun run check:token-usage && bun run check:contrast",
+    "verify": "bun run typecheck && bun run typecheck:tests && bun run lint && bun run test && bun run check:architecture && bun run check:contract && bun run check:tokens && bun run check:exports && bun run check:a11y && bun run check:token-usage && bun run check:contrast",
     "verify:package": "bun run build && bun run check:package"
   },
   "dependencies": {

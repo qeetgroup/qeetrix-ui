@@ -84,7 +84,11 @@ function CopyButton({
       }}
       {...rest}
     >
-      {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+      {copied ? (
+        <CheckIcon aria-hidden className="size-3.5" />
+      ) : (
+        <CopyIcon aria-hidden className="size-3.5" />
+      )}
       <span className="ms-1">{copied ? copiedLabel : label}</span>
     </Button>
   );

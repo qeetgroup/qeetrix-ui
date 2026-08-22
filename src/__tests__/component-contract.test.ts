@@ -72,8 +72,36 @@ function validEntry(overrides: Record<string, unknown> = {}) {
       reducedMotion: "not-applicable",
     },
     states: ["hover", "disabled"],
-    api: { variants: ["default"], sizes: ["default"], variantGroups: ["size", "variant"] },
-    accessibility: { required: true, pattern: "button" },
+    api: {
+      variants: ["default"],
+      sizes: ["default"],
+      variantGroups: ["size", "variant"],
+      variantAliases: null,
+      domainAxes: null,
+      controlled: null,
+    },
+    accessibility: {
+      required: true,
+      pattern: "button",
+      audit: "not-audited",
+      dimensions: Object.fromEntries(
+        [
+          "semantic",
+          "name",
+          "keyboard",
+          "focus",
+          "screenReader",
+          "rtl",
+          "reducedMotion",
+          "forcedColors",
+          "contrast",
+        ].map((dimension) => [dimension, "not-audited"]),
+      ),
+      keyboard: null,
+      focus: null,
+      liveRegion: null,
+      exceptions: null,
+    },
     testing: {
       unit: true,
       accessibility: true,
@@ -280,26 +308,34 @@ describe("manifest validation", () => {
   });
 
   it("rejects a required accessibility contract with no pattern", () => {
-    const entry = validEntry({ accessibility: { required: true, pattern: null } });
+    const entry = validEntry({
+      accessibility: { ...validEntry().accessibility, required: true, pattern: null },
+    });
     expect(issues(validate([entry]))).toContain("Missing accessibility.pattern");
   });
 
   it("rejects an APG pattern that is not claimed as required", () => {
-    const entry = validEntry({ accessibility: { required: false, pattern: "dialog" } });
+    const entry = validEntry({
+      accessibility: { ...validEntry().accessibility, required: false, pattern: "dialog" },
+    });
     expect(issues(validate([entry]))).toContain(
       'accessibility.pattern is "dialog" but required is false',
     );
   });
 
   it("rejects an unknown ARIA pattern", () => {
-    const entry = validEntry({ accessibility: { required: true, pattern: "sidebar" } });
+    const entry = validEntry({
+      accessibility: { ...validEntry().accessibility, required: true, pattern: "sidebar" },
+    });
     expect(issues(validate([entry]))).toContain(
       'accessibility.pattern "sidebar" is not a known ARIA pattern',
     );
   });
 
   it("allows a reviewed component with no applicable pattern", () => {
-    const entry = validEntry({ accessibility: { required: false, pattern: "none" } });
+    const entry = validEntry({
+      accessibility: { ...validEntry().accessibility, required: false, pattern: "none" },
+    });
     expect(validate([entry]).errors).toEqual([]);
   });
 
@@ -389,7 +425,14 @@ describe("manifest validation", () => {
 
   it("warns about a variant axis named twice, without failing", () => {
     const entry = validEntry({
-      api: { variants: ["default"], sizes: null, variantGroups: ["kind"] },
+      api: {
+        variants: ["default"],
+        sizes: null,
+        variantGroups: ["kind"],
+        variantAliases: null,
+        domainAxes: null,
+        controlled: null,
+      },
     });
     const result = validate([entry]);
     expect(result.errors).toEqual([]);
@@ -400,7 +443,14 @@ describe("manifest validation", () => {
 
   it("rejects a repeated variant name", () => {
     const entry = validEntry({
-      api: { variants: ["default", "default"], sizes: null, variantGroups: ["variant"] },
+      api: {
+        variants: ["default", "default"],
+        sizes: null,
+        variantGroups: ["variant"],
+        variantAliases: null,
+        domainAxes: null,
+        controlled: null,
+      },
     });
     expect(issues(validate([entry]))).toContain('api.variants lists "default" twice');
   });
@@ -409,7 +459,9 @@ describe("manifest validation", () => {
 describe("diagnostics", () => {
   it("names the component, the issue, the expectation and the file", () => {
     const [finding] = validate([
-      validEntry({ accessibility: { required: true, pattern: null } }),
+      validEntry({
+        accessibility: { ...validEntry().accessibility, required: true, pattern: null },
+      }),
     ]).errors;
     const rendered = formatFinding(finding);
     expect(rendered).toContain("Component Contract Error");

@@ -34,9 +34,9 @@ function Checkbox({ className, ...props }: CheckboxProps) {
         className="flex items-center justify-center text-current data-unchecked:hidden"
       >
         {props.indeterminate ? (
-          <MinusIcon className="size-3.5" />
+          <MinusIcon aria-hidden className="size-3.5" />
         ) : (
-          <CheckIcon className="size-3.5" />
+          <CheckIcon aria-hidden className="size-3.5" />
         )}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

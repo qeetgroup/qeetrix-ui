@@ -217,7 +217,7 @@ is documented in [component-manifest.md](../standards/component-manifest.md).
 - **Versioning** — [docs/governance/versioning.md](../governance/versioning.md)
 - **Component maturity** — [docs/governance/component-status.md](../governance/component-status.md)
 - **Deprecation** — [docs/governance/deprecations.md](../governance/deprecations.md)
-- **API conventions** — [docs/standards/api-guidelines.md](../standards/api-guidelines.md)
+- **API conventions** — [docs/standards/component-api.md](../standards/component-api.md)
 
 Changes ship through Changesets. A public API change is not just a version bump: it is a
 re-snapshotted `public-api.json`, a changeset at the right level, and — when a component's
