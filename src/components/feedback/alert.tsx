@@ -12,6 +12,11 @@ const alertVariants = cva(
         info: "border-info/25 bg-info/10 text-info [&>svg]:text-info",
         success: "border-success/25 bg-success/10 text-success [&>svg]:text-success",
         warning: "border-warning/25 bg-warning/10 text-warning [&>svg]:text-warning",
+        // `destructive` is the library-wide name for this tone (Button, Badge, Link,
+        // DropdownMenu). `danger` predates it and keeps working — see
+        // docs/standards/component-api.md § Variant vocabulary.
+        destructive:
+          "border-destructive/25 bg-destructive/10 text-destructive [&>svg]:text-destructive",
         danger: "border-destructive/25 bg-destructive/10 text-destructive [&>svg]:text-destructive",
       },
     },
@@ -21,11 +26,10 @@ const alertVariants = cva(
   },
 );
 
-function Alert({
-  className,
-  variant,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
+/** The alert's own props plus its `variant` surface. */
+type AlertProps = React.ComponentProps<"div"> & VariantProps<typeof alertVariants>;
+
+function Alert({ className, variant, ...props }: AlertProps) {
   return (
     <div
       data-slot="alert"
@@ -56,4 +60,5 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
   );
 }
 
+export type { AlertProps };
 export { Alert, AlertDescription, AlertTitle, alertVariants };

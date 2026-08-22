@@ -18,8 +18,10 @@ import {
 } from "@/components/surfaces/sheet";
 import { Separator } from "@/components/utility/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { sidebarMessages } from "@/lib/messages";
 import { COMPONENT } from "@/lib/token-values";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -158,6 +160,7 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
+  const messages = useMessages("sidebar", sidebarMessages);
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
   if (collapsible === "none") {
@@ -192,8 +195,8 @@ function Sidebar({
           side={side}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>{messages.mobileTitle}</SheetTitle>
+            <SheetDescription>{messages.mobileDescription}</SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>
@@ -247,7 +250,14 @@ function Sidebar({
   );
 }
 
+/**
+ * The collapse/expand control. Its accessible name comes from the message catalogue: the
+ * sidebar parts take no `messages` prop of their own — there are a dozen of them sharing three
+ * strings, and a prop on each would be more surface than the strings are worth. Translate them
+ * with a `MessagesProvider`.
+ */
 function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
+  const messages = useMessages("sidebar", sidebarMessages);
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -263,25 +273,26 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       }}
       {...props}
     >
-      <PanelLeftIcon className="rtl:rotate-180" />
-      <span className="sr-only">Toggle Sidebar</span>
+      <PanelLeftIcon aria-hidden className="rtl:rotate-180" />
+      <span className="sr-only">{messages.toggle}</span>
     </Button>
   );
 }
 
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
+  const messages = useMessages("sidebar", sidebarMessages);
   const { toggleSidebar } = useSidebar();
 
   return (
     <button
       data-sidebar="rail"
       data-slot="sidebar-rail"
-      aria-label="Toggle Sidebar"
+      aria-label={messages.toggle}
       tabIndex={-1}
       onClick={toggleSidebar}
-      title="Toggle Sidebar"
+      title={messages.toggle}
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
+        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:translate-x-1/2",
         "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize rtl:in-data-[side=left]:cursor-e-resize rtl:in-data-[side=right]:cursor-w-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
         "group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:inset-s-full hover:group-data-[collapsible=offcanvas]:bg-sidebar rtl:group-data-[collapsible=offcanvas]:translate-x-0",
@@ -312,10 +323,7 @@ function SidebarInput({ className, ...props }: React.ComponentProps<typeof Input
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
-      className={cn(
-        "h-[var(--qx-density-control-height,2rem)] w-full bg-background shadow-none",
-        className,
-      )}
+      className={cn("h-[var(--qx-control-height)] w-full bg-background shadow-none", className)}
       {...props}
     />
   );
@@ -580,6 +588,35 @@ function SidebarMenuBadge({ className, ...props }: React.ComponentProps<"div">) 
   );
 }
 
+/** The narrowest and widest a skeleton text bar may be, as a percentage of the row. */
+const SKELETON_TEXT_WIDTH_MIN = 50;
+const SKELETON_TEXT_WIDTH_SPREAD = 40;
+
+/**
+ * A width in `[50%, 90%)` that depends only on `id`.
+ *
+ * The same id always yields the same width — that is the hydration contract — and two ids that
+ * differ anywhere yield unrelated widths, which is what keeps a list of skeletons uneven. The
+ * mixing step at the end earns its keep: React hands out ids that differ by one character, and
+ * a plain rolling hash of those turns into a visible staircase of widths down the list.
+ */
+function skeletonTextWidth(id: string): string {
+  let hash = 0;
+  for (let index = 0; index < id.length; index += 1) {
+    hash = (Math.imul(hash, 31) + id.charCodeAt(index)) | 0;
+  }
+  // Murmur3's finalizer. React's ids differ in one character, and a rolling hash of those maps
+  // several of them onto the same bucket: without this, six skeletons in a row could come out
+  // with three identical widths.
+  hash ^= hash >>> 16;
+  hash = Math.imul(hash, 0x85ebca6b);
+  hash ^= hash >>> 13;
+  hash = Math.imul(hash, 0xc2b2ae35);
+  hash ^= hash >>> 16;
+
+  return `${((hash >>> 0) % SKELETON_TEXT_WIDTH_SPREAD) + SKELETON_TEXT_WIDTH_MIN}%`;
+}
+
 function SidebarMenuSkeleton({
   className,
   showIcon = false,
@@ -587,10 +624,13 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean;
 }) {
-  // Random width between 50 to 90%.
-  const [width] = React.useState(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
-  });
+  // Varied, not random. A loading list wants uneven bars so it reads as a list of names rather
+  // than a chart, but the width may not be drawn at render time: the server and the browser draw
+  // different numbers, and React resolves a mismatched `style` attribute by keeping the server's
+  // — so the element renders one width while the component believes another, for the life of the
+  // row. `useId` is the one per-instance value React guarantees is identical in both renders, so
+  // the variety comes from hashing it.
+  const width = skeletonTextWidth(React.useId());
 
   return (
     <div

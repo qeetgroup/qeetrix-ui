@@ -10,7 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
   SidebarProvider,
+  SidebarRail,
   SidebarTrigger,
 } from "@/components/navigation/sidebar";
 
@@ -79,5 +81,71 @@ describe("Sidebar", () => {
   it("has no axe violations", async () => {
     const { container } = render(<Shell />);
     expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+/* SSR-002. The skeleton's width used to be `Math.random()`, drawn during render. */
+describe("SidebarMenuSkeleton width", () => {
+  const widths = (container: Element) =>
+    [...container.querySelectorAll<HTMLElement>('[data-sidebar="menu-skeleton-text"]')].map(
+      (element) => element.style.getPropertyValue("--skeleton-width"),
+    );
+
+  it("keeps each skeleton's width across re-renders", () => {
+    const { container, rerender } = render(
+      <ul>
+        <SidebarMenuSkeleton />
+        <SidebarMenuSkeleton />
+        <SidebarMenuSkeleton />
+      </ul>,
+    );
+    const before = widths(container);
+
+    rerender(
+      <ul>
+        <SidebarMenuSkeleton />
+        <SidebarMenuSkeleton />
+        <SidebarMenuSkeleton />
+      </ul>,
+    );
+
+    expect(widths(container)).toEqual(before);
+    expect(before.every((width) => /^\d+%$/.test(width))).toBe(true);
+  });
+
+  it("still varies the widths between siblings", () => {
+    const { container } = render(
+      <ul>
+        {["a", "b", "c", "d", "e", "f"].map((key) => (
+          <SidebarMenuSkeleton key={key} />
+        ))}
+      </ul>,
+    );
+
+    expect(new Set(widths(container)).size).toBeGreaterThan(3);
+  });
+});
+
+// The rail handle carried `ltr:-translate-x-1/2 rtl:-translate-x-1/2` — the same value under both
+// variants, so the `rtl:` one was a no-op and the handle sat on the wrong side of the edge in RTL.
+// jsdom computes no layout, so the assertion is on the emitted variants: the mirrored one must be
+// the opposite sign of the base.
+describe("Sidebar rail mirroring", () => {
+  it("mirrors the rail handle offset under rtl", () => {
+    const { container } = render(
+      <SidebarProvider>
+        <Sidebar collapsible="offcanvas">
+          <SidebarContent />
+          <SidebarRail />
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const rail = container.querySelector('[data-slot="sidebar-rail"]');
+    expect(rail).not.toBeNull();
+    const className = rail?.getAttribute("class") ?? "";
+    expect(className).toContain("ltr:-translate-x-1/2");
+    expect(className).toContain("rtl:translate-x-1/2");
+    expect(className).not.toContain("rtl:-translate-x-1/2");
   });
 });

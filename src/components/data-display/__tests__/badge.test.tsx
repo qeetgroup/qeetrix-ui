@@ -17,9 +17,10 @@ const VARIANTS = [
   "muted",
 ] as const;
 
-// One distinguishing class per variant proves the variant styling is wired up.
+// One distinguishing class per variant proves the variant styling is wired up. `default` reads
+// its tone from the badge component token; the rest still use the bridge utilities directly.
 const VARIANT_CLASS: Record<(typeof VARIANTS)[number], string> = {
-  default: "bg-primary",
+  default: "bg-[var(--qx-component-badge-default-background)]",
   secondary: "bg-secondary",
   outline: "text-foreground",
   success: "bg-success/10",

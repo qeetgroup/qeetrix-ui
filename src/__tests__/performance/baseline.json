@@ -1,0 +1,371 @@
+{
+  "$note": "Measured scale baseline for the components PERF-002 names, plus DiffViewer. Written by src/__tests__/performance/scale.test.tsx, which asserts every budget below; validated by scripts/check/performance.mjs, which refuses a raised one.",
+  "environment": "vitest 4 + jsdom, Node 20+. jsdom does no layout and no paint: getBoundingClientRect is all zeros and ResizeObserver never fires. Every number here is JavaScript work and DOM construction, NOT browser rendering performance. A component that is cheap here can still be slow to paint.",
+  "metrics": {
+    "elements": "DOM elements the mounted component built, container included (container.querySelectorAll('*').length).",
+    "dataReads": "Reads of the component's input: index reads on the array prop, or field reads on its items where the component copies the array first. Counted through a Proxy, so it is exact and machine-independent \u2014 which makes the growth between two fixture sizes a complexity assertion rather than a timing guess. Omitted where the input is not an array.",
+    "listeners": "addEventListener calls during mount, beyond the ~140 React 19 delegates to every container. 0 means the component adds no native listeners of its own.",
+    "observers": "ResizeObserver constructions during mount."
+  },
+  "policy": "A ratchet, not a target. Each budget is the value measured on the date below plus headroom: 10% rounded up for counts of 20 or more, exact below that (where 10% is noise). Budgets may only shrink. scripts/check/performance.mjs fails a commit that raises one, drops a case, or parks a budget more than 25% above its measurement \u2014 a budget nobody has to meet is not a budget.",
+  "recording": "Run `bunx vitest run src/__tests__/performance/scale.test.tsx`; the failure message carries the measured value. Update `measured` and `budget` together, and say why in the changeset.",
+  "recorded": "2026-08-22",
+  "cases": {
+    "diff-viewer/lines-250-one-change": {
+      "fixture": "250 unique lines, one line replaced in the middle",
+      "metrics": {
+        "elements": {
+          "measured": 1256,
+          "budget": 1382
+        },
+        "dataReads": {
+          "measured": 755,
+          "budget": 831
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "diff-viewer/lines-1000-one-change": {
+      "fixture": "1 000 unique lines, one line replaced in the middle \u2014 4x the input of the 250-line case",
+      "metrics": {
+        "elements": {
+          "measured": 5006,
+          "budget": 5507
+        },
+        "dataReads": {
+          "measured": 3005,
+          "budget": 3306
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "diff-viewer/lines-5000-one-change": {
+      "fixture": "5 000 unique lines, one line replaced in the middle \u2014 25 million cells for the LCS matrix this replaced",
+      "metrics": {
+        "elements": {
+          "measured": 25006,
+          "budget": 27507
+        },
+        "dataReads": {
+          "measured": 15005,
+          "budget": 16506
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "diff-viewer/disjoint-300-default-ceiling": {
+      "fixture": "300 lines against 300 entirely different lines, default maxEditDistance \u2014 the worst case for Myers, where the edit distance is the whole input",
+      "metrics": {
+        "elements": {
+          "measured": 3001,
+          "budget": 3302
+        },
+        "dataReads": {
+          "measured": 180604,
+          "budget": 198665
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "diff-viewer/disjoint-300-ceiling-16": {
+      "fixture": "the same disjoint pair with maxEditDistance 16 \u2014 the search gives up and reports a wholesale replacement",
+      "metrics": {
+        "elements": {
+          "measured": 3001,
+          "budget": 3302
+        },
+        "dataReads": {
+          "measured": 910,
+          "budget": 1002
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "data-table/rows-200-paginated": {
+      "fixture": "200 rows, 3 columns, default pagination, column visibility off",
+      "metrics": {
+        "elements": {
+          "measured": 82,
+          "budget": 91
+        },
+        "dataReads": {
+          "measured": 400,
+          "budget": 441
+        },
+        "listeners": {
+          "measured": 4,
+          "budget": 4
+        },
+        "observers": {
+          "measured": 1,
+          "budget": 1
+        }
+      }
+    },
+    "data-table/rows-2000-paginated": {
+      "fixture": "2 000 rows, 3 columns, default pagination \u2014 same DOM as the 200-row case, ten times the row reads",
+      "metrics": {
+        "elements": {
+          "measured": 82,
+          "budget": 91
+        },
+        "dataReads": {
+          "measured": 4000,
+          "budget": 4400
+        },
+        "listeners": {
+          "measured": 4,
+          "budget": 4
+        },
+        "observers": {
+          "measured": 1,
+          "budget": 1
+        }
+      }
+    },
+    "data-table/rows-200-virtualized": {
+      "fixture": "200 rows, 3 columns, enableVirtualization \u2014 jsdom reports a zero-height scroller so no rows are virtualized into the DOM; this measures setup, not virtualization",
+      "metrics": {
+        "elements": {
+          "measured": 33,
+          "budget": 37
+        },
+        "dataReads": {
+          "measured": 400,
+          "budget": 441
+        },
+        "listeners": {
+          "measured": 4,
+          "budget": 4
+        },
+        "observers": {
+          "measured": 1,
+          "budget": 1
+        }
+      }
+    },
+    "tree-view/roots-20-children-5-collapsed": {
+      "fixture": "20 branches of 5 leaves each, all collapsed",
+      "metrics": {
+        "elements": {
+          "measured": 101,
+          "budget": 112
+        },
+        "dataReads": {
+          "measured": 43,
+          "budget": 48
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      },
+      "$dataReads": "Re-recorded 2026-08-22: was {'measured': 22, 'budget': 25}. TreeView now resolves reading direction, and when no DirectionProvider is present that resolution reads the DOM in a layout effect, so the subtree renders once more before paint and every node's data is read twice. The extra pass is the documented cost of keeping the first render identical on server and client (see useResolvedDirection); wrapping the tree in a DirectionProvider removes it entirely, because steps 1 and 2 of resolution are available during render. The DOM-count invariant this case exists for -- collapsed subtrees are not rendered -- is unchanged."
+    },
+    "tree-view/roots-20-children-5-expanded": {
+      "fixture": "the same 120 nodes with every branch defaultOpen",
+      "metrics": {
+        "elements": {
+          "measured": 521,
+          "budget": 574
+        },
+        "dataReads": {
+          "measured": 43,
+          "budget": 48
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      },
+      "$dataReads": "Re-recorded 2026-08-22. TreeView now resolves reading direction; with no DirectionProvider present that resolution reads the DOM in a layout effect, so the subtree renders once more before paint and every node's data is read twice. This is the documented cost of keeping the first render identical on server and client (see useResolvedDirection); a DirectionProvider removes it entirely, because steps 1 and 2 of resolution are available during render. The DOM-count invariants these cases exist for are unchanged."
+    },
+    "org-chart/breadth-5-depth-2": {
+      "fixture": "31 nodes (breadth 5, depth 2) \u2014 OrgChart has no collapsed state, so every node is in the DOM",
+      "metrics": {
+        "elements": {
+          "measured": 150,
+          "budget": 165
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "org-chart/breadth-5-depth-3": {
+      "fixture": "156 nodes (breadth 5, depth 3)",
+      "metrics": {
+        "elements": {
+          "measured": 750,
+          "budget": 826
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "json-tree/keys-100-default-depth": {
+      "fixture": "100-key object, default initialOpenDepth of 1 \u2014 the root is open, the 100 nested objects are collapsed",
+      "metrics": {
+        "elements": {
+          "measured": 1108,
+          "budget": 1219
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "json-tree/keys-100-fully-open": {
+      "fixture": "the same object with initialOpenDepth 3 \u2014 every node expanded",
+      "metrics": {
+        "elements": {
+          "measured": 2008,
+          "budget": 2209
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "feed/items-100": {
+      "fixture": "100 children, each wrapped in a role=article",
+      "metrics": {
+        "elements": {
+          "measured": 201,
+          "budget": 222
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "feed/items-200": {
+      "fixture": "200 children \u2014 Feed renders every child eagerly",
+      "metrics": {
+        "elements": {
+          "measured": 401,
+          "budget": 442
+        },
+        "listeners": {
+          "measured": 0,
+          "budget": 0
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "schedule-calendar/events-100-month": {
+      "fixture": "100 events across one month, month view; reads counted on the event objects, once per visible day",
+      "metrics": {
+        "elements": {
+          "measured": 1033,
+          "budget": 1137
+        },
+        "dataReads": {
+          "measured": 8856,
+          "budget": 9742
+        },
+        "listeners": {
+          "measured": 3,
+          "budget": 3
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    },
+    "schedule-calendar/events-400-month": {
+      "fixture": "400 events across one month, month view",
+      "metrics": {
+        "elements": {
+          "measured": 3433,
+          "budget": 3777
+        },
+        "dataReads": {
+          "measured": 36894,
+          "budget": 40584
+        },
+        "listeners": {
+          "measured": 3,
+          "budget": 3
+        },
+        "observers": {
+          "measured": 0,
+          "budget": 0
+        }
+      }
+    }
+  }
+}

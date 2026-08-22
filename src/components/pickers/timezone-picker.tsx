@@ -112,7 +112,7 @@ function TimezonePicker({
       aria-label={ariaLabel ?? "Timezone"}
       data-slot="timezone-picker"
       className={cn(
-        "h-[var(--qx-density-control-height,2.25rem)] w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none transition-colors",
+        "h-[var(--qx-control-height)] w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none transition-colors",
         "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-disabled",
         className,

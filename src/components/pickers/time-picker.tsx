@@ -14,10 +14,67 @@ function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+/* ── Step normalisation ────────────────────────────────────────────────────────────────────
+ * `minuteStep` is `number` at the type level, so a consumer can hand this component `0`, `-5`,
+ * `NaN`, `Infinity` or `0.1` and typecheck cleanly. A `0` or negative step makes the option loop
+ * below non-terminating: the counter never reaches its bound, so the render never returns and the
+ * main thread is gone. A non-finite step terminates but yields a single-option picker, and a
+ * fractional step yields floating-point labels. All of them are normalisation problems, so they
+ * are normalised once, here, rather than guarded at each call site.
+ *
+ * The bound is closed at both ends. Below `1` there is nothing finer than a minute to select;
+ * above `30` a minute column holds one option, which is a column that cannot be used. Both ends
+ * clamp instead of throwing — a picker that silently offers coarser minutes is recoverable, a
+ * render that throws is not.
+ */
+
+/** Coarsest supported minute granularity; `60` would leave a single, unusable option. */
+const MAX_MINUTE_STEP = 30;
+
+/**
+ * Normalise a consumer-supplied minute granularity to an integer in `[1, 30]`.
+ * Anything that is not a finite number, and anything that rounds below `1`,
+ * becomes `1`; anything above `30` becomes `30`.
+ */
+function normalizeMinuteStep(step: number): number {
+  if (!Number.isFinite(step)) return 1;
+  const rounded = Math.round(step);
+  if (rounded < 1) return 1;
+  return Math.min(rounded, MAX_MINUTE_STEP);
+}
+
+/**
+ * `[0, stop)` in `step` increments. Total by construction: `step` is coerced to a positive
+ * integer first, so no caller — present or future — can make this loop forever or emit
+ * fractional values. Callers that care about the difference should normalise first with
+ * {@link normalizeMinuteStep}.
+ */
 function range(stop: number, step: number): number[] {
+  const safeStep = Number.isFinite(step) && step >= 1 ? Math.floor(step) : 1;
   const out: number[] = [];
-  for (let i = 0; i < stop; i += step) out.push(i);
+  for (let i = 0; i < stop; i += safeStep) out.push(i);
   return out;
+}
+
+/** A minute a `Select` can actually hold: whole, and inside the hour. */
+function isRenderableMinute(m: number): boolean {
+  return Number.isInteger(m) && m >= 0 && m < 60;
+}
+
+/**
+ * Minute options for `step`, plus `current` when the step grid does not land on it.
+ *
+ * A step that does not divide 60 (`7`, say) is honoured as given rather than rounded to a
+ * divisor — the consumer asked for that granularity and 60 has few divisors. The consequence is
+ * that a value already held by the form can fall between two options, and a `Select` cannot
+ * display a value it has no item for: the minute column would read as empty while the component
+ * believed it had a value. The off-grid minute is therefore added to the list, so the picker can
+ * always render its own value. Changing minutes snaps back onto the grid.
+ */
+function minuteOptionsFor(step: number, current: number | null): number[] {
+  const options = range(60, step);
+  if (current === null || !isRenderableMinute(current) || options.includes(current)) return options;
+  return [...options, current].sort((a, b) => a - b);
 }
 
 interface TimeParts {
@@ -45,7 +102,13 @@ interface TimePickerProps {
   /** Display hour cycle. The emitted value is always 24h. Defaults to `24`. */
   hourCycle?: 12 | 24;
   withSeconds?: boolean;
-  /** Minute granularity. Defaults to `1`. */
+  /**
+   * Minute granularity, normalised to an integer in `[1, 30]`. Anything that is
+   * not a finite number, and anything that rounds below `1`, becomes `1`;
+   * anything above `30` becomes `30`. A step that does not divide 60 is honoured
+   * as given, and the current value's minute is always offered even when it
+   * falls between two steps. Defaults to `1`.
+   */
   minuteStep?: number;
   disabled?: boolean;
   id?: string;
@@ -57,6 +120,9 @@ interface TimePickerProps {
  * Time-of-day picker built from `Select` columns (hours / minutes / optional
  * seconds / AM-PM). Controlled or uncontrolled. The value is always emitted as
  * a 24h `"HH:mm"` (or `"HH:mm:ss"`) string regardless of `hourCycle`.
+ *
+ * `minuteStep` is normalised before it reaches the option loop — see
+ * {@link TimePickerProps.minuteStep} for the exact rule.
  */
 function TimePicker({
   value,
@@ -110,8 +176,9 @@ function TimePicker({
     emit({ ...base, h });
   }
 
+  const step = normalizeMinuteStep(minuteStep);
   const hourOptions = is12 ? Array.from({ length: 12 }, (_, i) => i + 1) : range(24, 1);
-  const minuteOptions = range(60, minuteStep);
+  const minuteOptions = minuteOptionsFor(step, parsed ? base.m : null);
   const secondOptions = range(60, 1);
 
   const hourValue = parsed ? (is12 ? String(hour12) : pad(base.h)) : null;

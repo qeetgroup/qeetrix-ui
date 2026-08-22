@@ -126,7 +126,7 @@ function AngleSlider({
     >
       <span
         aria-hidden
-        className="absolute rounded-full bg-primary shadow-sm ring-2 ring-background transition-shadow group-hover:ring-[3px] group-focus-visible:ring-[3px]"
+        className="absolute rounded-full bg-primary shadow-sm ring-2 ring-background transition-shadow group-hover:ring-[length:var(--qx-focus-ring-width)] group-focus-visible:ring-[length:var(--qx-focus-ring-width)]"
         style={{ width: thumb, height: thumb, left: tx - thumb / 2, top: ty - thumb / 2 }}
       />
     </div>

@@ -1,0 +1,53 @@
+{
+  "$comment": "Which accessibility dimensions are proved once for the whole library rather than per component, and by what. `bun run check:a11y` verifies each record resolves to something runnable that actually asserts: a `test` record must name a suite that exists and contains assertions, a `gate` record must name a script that exists. `requires` narrows the claim — a mechanism only covers a component the mechanism reaches, so a component whose capability falls outside the listed values needs its own test even for a global dimension; `excludeScriptedMotion` does the same for motion the CSS rule cannot see. Every dimension NOT listed under `global` needs per-component evidence: a test that renders the component and asserts that dimension, either in one of the audit suites in `files` (which may credit any component they render) or in the component's own colocated `__tests__/<slug>.test.tsx` (which may credit only that component). `conditional` corpora count only while their stated precondition holds — see the record's own `why`.",
+  "files": [
+    "src/__tests__/accessibility/audit.test.tsx",
+    "src/__tests__/accessibility/composites.test.tsx",
+    "src/__tests__/accessibility/interactive.test.tsx",
+    "src/__tests__/accessibility/presentational.test.tsx"
+  ],
+  "conditional": [
+    {
+      "directories": ["src/__tests__/browser"],
+      "requires": {
+        "kind": "ci-job",
+        "workflow": ".github/workflows/ci.yml",
+        "job": "browser",
+        "script": "bun run test:browser"
+      },
+      "why": "Real Chromium proves what jsdom cannot show at all — `inert` exclusion, sequential focus containment, reflow at 200% zoom, pointer hit-testing, and the two host-global media blocks in src/styles/base.css. These files are NOT run by `bun run verify`: a Playwright Chromium build is ~200 MB and an optional peer, and a gate that makes a first-time `verify` download 200 MB is a gate developers work around (see vitest.browser.config.ts). They ARE run by a required CI job on every push, which is a real guarantee — just a different one, so it is named here and checked rather than assumed. If the job stops running the suite, the corpus is refused and every claim resting on it fails by name."
+    }
+  ],
+  "global": {
+    "reducedMotion": {
+      "kind": "test",
+      "file": "src/__tests__/accessibility/environment.test.ts",
+      "suite": "reduced motion",
+      "proves": "src/styles/index.css collapses every CSS transition and animation to the reduced-motion duration token, document-wide",
+      "requires": {
+        "capability": "reducedMotion",
+        "is": ["supported", "not-applicable"]
+      },
+      "excludeScriptedMotion": true
+    },
+    "forcedColors": {
+      "kind": "test",
+      "file": "src/__tests__/accessibility/environment.test.ts",
+      "suite": "forced colors",
+      "proves": "every bridge colour variable a component can paint with is remapped to a system colour keyword, shadows are removed, and the focus indicator survives",
+      "requires": {
+        "capability": "darkMode",
+        "is": ["supported", "not-applicable"]
+      }
+    },
+    "contrast": {
+      "kind": "gate",
+      "script": "scripts/check/contrast.mjs",
+      "proves": "every required text, focus and chart token pair holds at WCAG AA in both themes — jsdom has no layout, so this cannot be a component test",
+      "requires": {
+        "capability": "darkMode",
+        "is": ["supported", "not-applicable"]
+      }
+    }
+  }
+}

@@ -4,11 +4,19 @@
   "private": false,
   "description": "Qeetrix UI \u2014 the Qeet Group React component library (shadcn + Base UI, Tailwind v4).",
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qeetgroup/qeetrix-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qeetgroup/qeetrix-ui/issues"
+  },
+  "homepage": "https://github.com/qeetgroup/qeetrix-ui#readme",
   "type": "module",
   "packageManager": "bun@1.3.14",
   "engines": {
     "node": ">=20",
-    "bun": ">=1.3"
+    "bun": ">=1.3.14"
   },
   "sideEffects": [
     "**/*.css"
@@ -23,6 +31,7 @@
       "default": "./dist/index.js"
     },
     "./styles.css": "./dist/styles/index.css",
+    "./base.css": "./dist/styles/base.css",
     "./qeetrix.css": "./dist/styles/tokens.css",
     "./tokens.css": "./dist/styles/tokens.raw.css",
     "./tokens.json": "./dist/styles/tokens.json",
@@ -37,20 +46,60 @@
       "import": "./dist/blocks/index.js",
       "default": "./dist/blocks/index.js"
     },
-    "./blocks/*": {
-      "types": "./dist/blocks/*.d.ts",
-      "import": "./dist/blocks/*.js",
-      "default": "./dist/blocks/*.js"
+    "./blocks/auth": {
+      "types": "./dist/blocks/auth.d.ts",
+      "import": "./dist/blocks/auth.js",
+      "default": "./dist/blocks/auth.js"
+    },
+    "./blocks/dashboard-shell": {
+      "types": "./dist/blocks/dashboard-shell.d.ts",
+      "import": "./dist/blocks/dashboard-shell.js",
+      "default": "./dist/blocks/dashboard-shell.js"
+    },
+    "./blocks/onboarding-wizard": {
+      "types": "./dist/blocks/onboarding-wizard.d.ts",
+      "import": "./dist/blocks/onboarding-wizard.js",
+      "default": "./dist/blocks/onboarding-wizard.js"
+    },
+    "./blocks/page-state": {
+      "types": "./dist/blocks/page-state.d.ts",
+      "import": "./dist/blocks/page-state.js",
+      "default": "./dist/blocks/page-state.js"
+    },
+    "./blocks/pricing-table": {
+      "types": "./dist/blocks/pricing-table.d.ts",
+      "import": "./dist/blocks/pricing-table.js",
+      "default": "./dist/blocks/pricing-table.js"
+    },
+    "./blocks/settings-layout": {
+      "types": "./dist/blocks/settings-layout.d.ts",
+      "import": "./dist/blocks/settings-layout.js",
+      "default": "./dist/blocks/settings-layout.js"
     },
     "./providers": {
       "types": "./dist/providers/index.d.ts",
       "import": "./dist/providers/index.js",
       "default": "./dist/providers/index.js"
     },
-    "./providers/*": {
-      "types": "./dist/providers/*.d.ts",
-      "import": "./dist/providers/*.js",
-      "default": "./dist/providers/*.js"
+    "./providers/density-provider": {
+      "types": "./dist/providers/density-provider.d.ts",
+      "import": "./dist/providers/density-provider.js",
+      "default": "./dist/providers/density-provider.js"
+    },
+    "./providers/direction-provider": {
+      "types": "./dist/providers/direction-provider.d.ts",
+      "import": "./dist/providers/direction-provider.js",
+      "default": "./dist/providers/direction-provider.js"
+    },
+    "./providers/messages-provider": {
+      "types": "./dist/providers/messages-provider.d.ts",
+      "import": "./dist/providers/messages-provider.js",
+      "default": "./dist/providers/messages-provider.js"
+    },
+    "./providers/theme-provider": {
+      "types": "./dist/providers/theme-provider.d.ts",
+      "import": "./dist/providers/theme-provider.js",
+      "default": "./dist/providers/theme-provider.js"
     },
     "./components/*": {
       "types": "./dist/components/*.d.ts",
@@ -62,33 +111,95 @@
       "import": "./dist/components/ui/*.js",
       "default": "./dist/components/ui/*.js"
     },
-    "./lib/*": {
-      "types": "./dist/lib/*.d.ts",
-      "import": "./dist/lib/*.js",
-      "default": "./dist/lib/*.js"
+    "./components/index": null,
+    "./components/actions/*": null,
+    "./components/inputs/*": null,
+    "./components/selection/*": null,
+    "./components/pickers/*": null,
+    "./components/navigation/*": null,
+    "./components/feedback/*": null,
+    "./components/surfaces/*": null,
+    "./components/data-display/*": null,
+    "./components/layout/*": null,
+    "./components/utility/*": null,
+    "./hooks/use-media-query": {
+      "types": "./dist/hooks/use-media-query.d.ts",
+      "import": "./dist/hooks/use-media-query.js",
+      "default": "./dist/hooks/use-media-query.js"
     },
-    "./hooks/*": {
-      "types": "./dist/hooks/*.d.ts",
-      "import": "./dist/hooks/*.js",
-      "default": "./dist/hooks/*.js"
+    "./hooks/use-mobile": {
+      "types": "./dist/hooks/use-mobile.d.ts",
+      "import": "./dist/hooks/use-mobile.js",
+      "default": "./dist/hooks/use-mobile.js"
     },
-    "./fonts/*": "./dist/fonts/*"
+    "./hooks/use-motion": {
+      "types": "./dist/hooks/use-motion.d.ts",
+      "import": "./dist/hooks/use-motion.js",
+      "default": "./dist/hooks/use-motion.js"
+    },
+    "./hooks/use-prefers-reduced-motion": {
+      "types": "./dist/hooks/use-prefers-reduced-motion.d.ts",
+      "import": "./dist/hooks/use-prefers-reduced-motion.js",
+      "default": "./dist/hooks/use-prefers-reduced-motion.js"
+    },
+    "./lib/motion": {
+      "types": "./dist/lib/motion.d.ts",
+      "import": "./dist/lib/motion.js",
+      "default": "./dist/lib/motion.js"
+    },
+    "./lib/responsive": {
+      "types": "./dist/lib/responsive.d.ts",
+      "import": "./dist/lib/responsive.js",
+      "default": "./dist/lib/responsive.js"
+    },
+    "./lib/token-values": {
+      "types": "./dist/lib/token-values.d.ts",
+      "import": "./dist/lib/token-values.js",
+      "default": "./dist/lib/token-values.js"
+    },
+    "./lib/utils": {
+      "types": "./dist/lib/utils.d.ts",
+      "import": "./dist/lib/utils.js",
+      "default": "./dist/lib/utils.js"
+    },
+    "./fonts/*": "./dist/fonts/*",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "node scripts/build/tokens.mjs && tsc -p tsconfig.build.json --watch --noEmit",
     "build": "bun run clean && node scripts/build/tokens.mjs && node scripts/build/manifest.mjs && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/build/subpath-shims.mjs && node scripts/build/postbuild.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "bun run typecheck && bun run lint && bun run test && node scripts/check/architecture.mjs && node scripts/check/exports.mjs && node scripts/check/a11y-coverage.mjs && node scripts/check/token-usage.mjs && node scripts/check/contrast.mjs",
-    "verify:package": "bun run build && node scripts/check/package.mjs",
-    "clean": "rm -rf dist node_modules/.cache/qeetrix src/styles/tokens.css src/styles/tokens.raw.css src/styles/tokens.json",
+    "test:coverage": "vitest run --coverage",
+    "test:browser": "vitest run --config vitest.browser.config.ts",
+    "build:manifest": "node scripts/build/manifest.mjs",
+    "build:tokens": "node scripts/build/tokens.mjs",
+    "check:architecture": "node scripts/check/architecture.mjs",
+    "check:contract": "node scripts/check/component-contract.mjs",
+    "check:exports": "node scripts/check/exports.mjs",
+    "check:a11y": "node scripts/check/a11y-coverage.mjs",
+    "check:contrast": "node scripts/check/contrast.mjs",
+    "check:package": "node scripts/check/package.mjs",
+    "clean": "node scripts/build/clean.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "bun run build && changeset publish",
-    "prepack": "bun run build"
+    "release": "bun run check:release && bun run verify && bun run verify:package && changeset publish",
+    "prepack": "bun run build",
+    "check:tokens": "node scripts/check/tokens.mjs",
+    "check:token-usage": "node scripts/check/token-usage.mjs",
+    "check:performance": "node scripts/check/performance.mjs",
+    "verify": "bun run typecheck && bun run typecheck:tests && bun run lint && bun run test && bun run check:architecture && bun run check:contract && bun run check:tokens && bun run check:exports && bun run check:a11y && bun run check:token-usage && bun run check:contrast && bun run check:performance && bun run check:bundle && bun run check:coverage && bun run check:docs",
+    "verify:package": "bun run build && bun run check:package",
+    "build:logos": "node scripts/build/logos.mjs",
+    "check:generated": "node scripts/build/manifest.mjs --check && node scripts/build/logos.mjs --check",
+    "check:release": "node scripts/check/release.mjs",
+    "check:coverage": "node scripts/check/coverage.mjs",
+    "check:docs": "node scripts/check/docs.mjs",
+    "check:bundle": "node scripts/check/bundle.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -134,7 +245,10 @@
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
     "vitest-axe": "^0.1.0",
-    "@types/qrcode": "^1.5.5"
+    "@types/qrcode": "^1.5.5",
+    "@vitest/browser-playwright": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.9",
+    "playwright": "^1.57.0"
   },
   "publishConfig": {
     "access": "public"

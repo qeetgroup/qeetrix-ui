@@ -38,7 +38,7 @@ function DrawerContent({
     <SheetContent
       data-slot="drawer-content"
       side="bottom"
-      className={cn("max-h-[85vh] gap-0 rounded-t-xl pt-2", className)}
+      className={cn("max-h-[85dvh] gap-0 rounded-t-xl pt-2", className)}
       {...props}
     >
       <div aria-hidden className="mx-auto mb-1 h-1.5 w-12 shrink-0 rounded-full bg-muted" />

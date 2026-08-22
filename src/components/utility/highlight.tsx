@@ -52,7 +52,7 @@ function Highlight({
           <mark
             key={key}
             className={cn(
-              "rounded-[0.2em] bg-primary/20 px-0.5 font-medium text-foreground dark:bg-primary/25",
+              "rounded-[var(--qx-component-highlight-corner)] bg-primary/20 px-0.5 font-medium text-foreground dark:bg-primary/25",
               markClassName,
             )}
           >

@@ -1,0 +1,15 @@
+{
+  "component": {
+    "tour": {
+      "$description": "Guided-tour card geometry. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "card-width": {
+        "$value": "288px",
+        "$type": "dimension"
+      },
+      "offset": {
+        "$value": "12px",
+        "$type": "dimension"
+      }
+    }
+  }
+}

@@ -3,15 +3,30 @@
 import { XIcon } from "lucide-react";
 import * as React from "react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { overlayMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
+import { clampToViewport } from "@/runtime/overlay-position";
 
 interface Position {
   x: number;
   y: number;
 }
 
+/**
+ * How much of the panel has to stay on screen. Enough for the drag handle and the close
+ * button, so a panel dragged towards an edge can always be dragged back.
+ */
+const KEEP_VISIBLE = 64;
+
 interface UseFloatingWindowOptions {
   defaultPosition?: Position;
+  /**
+   * The panel being dragged. Its measured size bounds the drag, so a tall or wide panel
+   * cannot be pushed past the edge; without it a minimum visible strip is assumed.
+   */
+  surfaceRef?: React.RefObject<HTMLElement | null>;
 }
 
 /** Drag state + handlers for a non-modal floating panel. Spread `dragHandleProps` on the header. */
@@ -20,6 +35,35 @@ function useFloatingWindow(options?: UseFloatingWindowOptions) {
     options?.defaultPosition ?? { x: 24, y: 24 },
   );
   const drag = React.useRef<{ ox: number; oy: number; px: number; py: number } | null>(null);
+  const surfaceRef = options?.surfaceRef;
+
+  // Clamp against what the panel actually measures. The previous implementation subtracted a
+  // literal 80/40px, which let a 400px-wide panel sit almost entirely off screen.
+  const clamp = React.useCallback(
+    (next: Position): Position => {
+      if (typeof window === "undefined") return next;
+      const rect = surfaceRef?.current?.getBoundingClientRect();
+      return clampToViewport(
+        next,
+        { width: rect?.width ?? 0, height: rect?.height ?? 0 },
+        { width: window.innerWidth, height: window.innerHeight },
+        KEEP_VISIBLE,
+      );
+    },
+    [surfaceRef],
+  );
+
+  // A panel parked near an edge must not be stranded off screen when the window shrinks.
+  React.useEffect(() => {
+    function handleResize() {
+      setPosition((prev) => {
+        const next = clamp(prev);
+        return next.x === prev.x && next.y === prev.y ? prev : next;
+      });
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [clamp]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     drag.current = { ox: position.x, oy: position.y, px: e.clientX, py: e.clientY };
@@ -28,14 +72,7 @@ function useFloatingWindow(options?: UseFloatingWindowOptions) {
   const onPointerMove = (e: React.PointerEvent) => {
     const d = drag.current;
     if (!d) return;
-    const vw = typeof window !== "undefined" ? window.innerWidth : 9999;
-    const vh = typeof window !== "undefined" ? window.innerHeight : 9999;
-    const nx = d.ox + (e.clientX - d.px);
-    const ny = d.oy + (e.clientY - d.py);
-    setPosition({
-      x: Math.max(0, Math.min(nx, vw - 80)),
-      y: Math.max(0, Math.min(ny, vh - 40)),
-    });
+    setPosition(clamp({ x: d.ox + (e.clientX - d.px), y: d.oy + (e.clientY - d.py) }));
   };
   const onPointerUp = (e: React.PointerEvent) => {
     drag.current = null;
@@ -52,6 +89,11 @@ interface FloatingWindowProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   defaultPosition?: Position;
   /** Width in px. */
   width?: number;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"overlay">;
 }
 
 /**
@@ -64,23 +106,27 @@ function FloatingWindow({
   onClose,
   defaultPosition,
   width = 320,
+  messages: messageOverrides,
   className,
   children,
   ...props
 }: FloatingWindowProps) {
-  const { position, dragHandleProps } = useFloatingWindow({ defaultPosition });
+  const messages = useMessages("overlay", overlayMessages, messageOverrides);
+  const surfaceRef = React.useRef<HTMLDivElement | null>(null);
+  const { position, dragHandleProps } = useFloatingWindow({ defaultPosition, surfaceRef });
   const titleId = React.useId();
 
   if (!open) return null;
 
   return (
     <div
+      ref={surfaceRef}
       role="dialog"
       aria-modal={false}
       aria-labelledby={title ? titleId : undefined}
       data-slot="floating-window"
       className={cn(
-        "fixed z-50 flex max-h-[80vh] flex-col rounded-lg border border-border bg-card text-card-foreground shadow-modal",
+        "fixed z-(--qx-z-fixed) flex max-h-[80dvh] flex-col rounded-lg border border-border bg-card text-card-foreground shadow-modal",
         className,
       )}
       style={{ left: position.x, top: position.y, width }}
@@ -97,11 +143,11 @@ function FloatingWindow({
         {onClose && (
           <button
             type="button"
-            aria-label="Close"
+            aria-label={messages.close}
             onClick={onClose}
             className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
           >
-            <XIcon className="size-4" />
+            <XIcon aria-hidden className="size-4" />
           </button>
         )}
       </div>

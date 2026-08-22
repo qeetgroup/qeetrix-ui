@@ -1,0 +1,12 @@
+{
+  "component": {
+    "chart": {
+      "$description": "Chart chrome. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "reference-stroke-width": {
+        "$value": "1.5px",
+        "$type": "dimension",
+        "$description": "Dashed reference-line weight. Between the hairline (1px) and thin (2px) stroke steps: 1px disappears against the grid, 2px competes with the data."
+      }
+    }
+  }
+}

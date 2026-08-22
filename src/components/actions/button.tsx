@@ -4,12 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-[var(--qx-component-button-corner)] border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 hover:shadow-sm [a]:hover:bg-primary/80",
+          "bg-[var(--qx-component-button-primary-background)] text-[var(--qx-component-button-primary-foreground)] shadow-xs hover:bg-[var(--qx-component-button-primary-background-hover)] hover:shadow-sm [a]:hover:bg-[var(--qx-component-button-primary-background-active)]",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
@@ -22,15 +22,15 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-[var(--qx-density-control-height,2rem)] gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
-        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+          "h-[var(--qx-component-button-height)] gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
+        xs: "h-6 gap-1 rounded-[var(--qx-component-button-corner-xs)] px-2 text-xs in-data-[slot=button-group]:rounded-[var(--qx-component-button-corner)] has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-[var(--qx-component-button-corner-sm)] px-2.5 text-[length:var(--qx-component-button-font-size-sm)] in-data-[slot=button-group]:rounded-[var(--qx-component-button-corner)] has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
-        icon: "size-[var(--qx-density-control-height,2rem)]",
+        icon: "size-[var(--qx-component-button-height)]",
         "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+          "size-6 rounded-[var(--qx-component-button-corner-xs)] in-data-[slot=button-group]:rounded-[var(--qx-component-button-corner)] [&_svg:not([class*='size-'])]:size-3",
         "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
+          "size-7 rounded-[var(--qx-component-button-corner-sm)] in-data-[slot=button-group]:rounded-[var(--qx-component-button-corner)]",
         "icon-lg": "size-9",
       },
     },
@@ -41,12 +41,10 @@ const buttonVariants = cva(
   },
 );
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+/** The button's own props plus its `variant` / `size` surface. */
+type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>;
+
+function Button({ className, variant = "default", size = "default", ...props }: ButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -57,4 +55,5 @@ function Button({
   );
 }
 
+export type { ButtonProps };
 export { Button, buttonVariants };

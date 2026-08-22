@@ -1,0 +1,17 @@
+{
+  "component": {
+    "typography": {
+      "$description": "Prose and inline-code styling. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "code-padding-inline": {
+        "$value": "0.3rem",
+        "$type": "dimension",
+        "$description": "Inline-code padding is em-adjacent rather than on the spacing scale, so the chip hugs the glyphs at any size."
+      },
+      "code-padding-block": {
+        "$value": "0.2rem",
+        "$type": "dimension",
+        "$description": "See code-padding-inline."
+      }
+    }
+  }
+}

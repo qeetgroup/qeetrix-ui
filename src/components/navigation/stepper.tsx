@@ -33,6 +33,9 @@ function Stepper({ steps, activeStep, className, ...props }: StepperProps) {
             key={stepKey}
             data-state={state}
             className={cn("flex items-center gap-3", !isLast && "flex-1")}
+            // The active step is what a screen-reader user needs to locate; a data attribute
+            // is invisible to them.
+            aria-current={state === "active" ? "step" : undefined}
           >
             <div className="flex items-center gap-3">
               <span
@@ -43,7 +46,7 @@ function Stepper({ steps, activeStep, className, ...props }: StepperProps) {
                   state === "upcoming" && "border-border text-muted-foreground",
                 )}
               >
-                {state === "complete" ? <CheckIcon className="size-4" /> : index + 1}
+                {state === "complete" ? <CheckIcon aria-hidden className="size-4" /> : index + 1}
               </span>
               <div className="flex flex-col">
                 <span

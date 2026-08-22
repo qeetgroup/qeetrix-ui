@@ -1,3 +1,27 @@
+/**
+ * Qeetrix core stylesheet — everything a Qeetrix component needs, and nothing that touches the
+ * host document. Published as `@qeetrix/ui/core.css`.
+ *
+ * Two entries, one body:
+ *
+ *   - `@qeetrix/ui/styles.css` (./styles.css) — this file **plus** ./base.css. Unchanged
+ *     behaviour, and still the default: it is what every existing consumer imports.
+ *   - `@qeetrix/ui/core.css`  (this file) — the same tokens, theme mapping, fonts and utility
+ *     scanning with the host-global layer left out. Nothing here selects `html`, `body`, `*`,
+ *     a heading or a bare `button`; the only rules a consumer gets are Tailwind's own preflight
+ *     (inseparable from `@import "tailwindcss"`) and shadcn's base layer.
+ *
+ * What you give up by choosing core.css: the document does not get Qeetrix's type, background or
+ * `font-feature-settings`; headings and native buttons keep the host's fonts; the skeleton
+ * shimmer, the document-wide reduced-motion collapse and the forced-colors remapping are all
+ * absent. Those last two are accessibility guarantees — see docs/standards/theming.md — so a
+ * consumer opting out is taking responsibility for them. Component-level styling is unaffected,
+ * because components paint with utilities and bridge variables, never with the base layer.
+ *
+ * The split is a *file* split only. `styles.css` compiles to the same bytes it did when the two
+ * were one file — src/__tests__/tokens.test.ts asserts the composition, and the equivalence was
+ * proved by compiling both with the Tailwind compiler.
+ */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -173,6 +197,17 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+
+  /* Code syntax roles. Hue is the information in a highlighter, so — like the categorical chart
+   * series — these are their own vocabulary rather than reuses of the text roles. CodeBlock and
+   * JSONTree are the only consumers; punctuation stays on text-muted-foreground. */
+  --color-syntax-key: var(--syntax-key);
+  --color-syntax-string: var(--syntax-string);
+  --color-syntax-number: var(--syntax-number);
+  --color-syntax-literal: var(--syntax-literal);
+
+  /* Rating fill. The value is carried by how much of each icon is filled, not by the hue. */
+  --color-rating-filled: var(--rating-filled);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -208,28 +243,61 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Premium layered elevation — stacked contact + ambient + a hairline ring for
-   * definition. The Tailwind ramp (shadow-xs…xl) is overridden so every surface
-   * reads refined; rest/hover/popover/modal are the intentional design ladder:
-   * rest (cards) · hover (lift) · popover (menus) · modal (dialogs).
-   * Mirrors tokens/primitive/shadow.json. */
-  --shadow-2xs: 0 1px 1px rgb(0 0 0 / 0.05);
-  --shadow-xs: 0 1px 2px -1px rgb(0 0 0 / 0.06);
-  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06);
-  --shadow-md: 0 2px 4px -2px rgb(0 0 0 / 0.06), 0 6px 12px -3px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 4px 8px -3px rgb(0 0 0 / 0.08), 0 14px 28px -6px rgb(0 0 0 / 0.12);
-  --shadow-xl: 0 8px 16px -4px rgb(0 0 0 / 0.1), 0 28px 56px -10px rgb(0 0 0 / 0.16);
-  --shadow-inset-subtle: var(--qx-shadow-inset-subtle);
-  --shadow-rest: var(--qx-shadow-rest);
-  --shadow-hover: var(--qx-shadow-hover);
-  --shadow-popover: var(--qx-shadow-popover);
-  --shadow-modal: var(--qx-shadow-modal);
+  /* Elevation. Every value comes from the semantic elevation roles in
+   * src/tokens/semantic/elevation.json — the values are not restated here, so the ladder is
+   * retuned in one place. The Tailwind scale (shadow-2xs…xl) is overridden so every surface
+   * reads refined; raised/hover/overlay/modal are the intentional design ladder:
+   * raised (cards) · hover (lift) · overlay (menus) · modal (dialogs). */
+  --shadow-2xs: var(--qx-elevation-ramp-2xs);
+  --shadow-xs: var(--qx-elevation-ramp-xs);
+  --shadow-sm: var(--qx-elevation-ramp-sm);
+  --shadow-md: var(--qx-elevation-ramp-md);
+  --shadow-lg: var(--qx-elevation-ramp-lg);
+  --shadow-xl: var(--qx-elevation-ramp-xl);
+  --shadow-inset-subtle: var(--qx-elevation-inset);
+  --shadow-rest: var(--qx-elevation-raised);
+  --shadow-hover: var(--qx-elevation-hover);
+  --shadow-popover: var(--qx-elevation-overlay);
+  --shadow-modal: var(--qx-elevation-modal);
 
-  /* Motion easing — mirrors tokens/primitive/motion.json. */
-  --ease-standard: var(--qx-easing-standard);
-  --ease-decelerate: var(--qx-easing-decelerate);
-  --ease-accelerate: var(--qx-easing-accelerate);
-  --ease-sharp: var(--qx-easing-sharp);
+  /* Motion. The four original names stay for compatibility; the semantic role names
+   * (enter/exit/emphasized) are what new code should reach for. Both resolve to the same
+   * curves — src/tokens/semantic/motion.json. */
+  --ease-standard: var(--qx-motion-easing-standard);
+  --ease-decelerate: var(--qx-motion-easing-enter);
+  --ease-accelerate: var(--qx-motion-easing-exit);
+  --ease-sharp: var(--qx-motion-easing-emphasized);
+  --ease-enter: var(--qx-motion-easing-enter);
+  --ease-exit: var(--qx-motion-easing-exit);
+  --ease-emphasized: var(--qx-motion-easing-emphasized);
+
+  /* Semantic type roles, so a component can say what a piece of text *is* rather than picking a
+   * step off the ramp. Both the size and its line height come from src/tokens/semantic/typography.json. */
+  --text-display: var(--qx-typography-display-font-size);
+  --text-display--line-height: var(--qx-typography-display-line-height);
+  --text-heading: var(--qx-typography-heading-font-size);
+  --text-heading--line-height: var(--qx-typography-heading-line-height);
+  --text-title: var(--qx-typography-title-font-size);
+  --text-title--line-height: var(--qx-typography-title-line-height);
+  --text-body: var(--qx-typography-body-font-size);
+  --text-body--line-height: var(--qx-typography-body-line-height);
+  --text-label: var(--qx-typography-label-font-size);
+  --text-label--line-height: var(--qx-typography-label-line-height);
+  --text-label-compact: var(--qx-typography-label-compact-font-size);
+  --text-label-compact--line-height: var(--qx-typography-label-compact-line-height);
+  --text-caption: var(--qx-typography-caption-font-size);
+  --text-caption--line-height: var(--qx-typography-caption-line-height);
+  --text-micro: var(--qx-typography-micro-font-size);
+  --text-micro--line-height: var(--qx-typography-micro-line-height);
+  --text-code: var(--qx-typography-code-font-size);
+  --text-code--line-height: var(--qx-typography-code-line-height);
+
+  /* Named durations, so a transition can say what it is rather than how many ms. */
+  --duration-instant: var(--qx-motion-duration-instant);
+  --duration-fast: var(--qx-motion-duration-fast);
+  --duration-normal: var(--qx-motion-duration-normal);
+  --duration-slow: var(--qx-motion-duration-slow);
+  --duration-deliberate: var(--qx-motion-duration-deliberate);
 
   /* Marquee (components/ui/marquee.tsx) — duration/gap supplied via inline vars. */
   --animate-qx-marquee-left: qx-marquee-left var(--qx-marquee-duration, 20s) linear infinite;
@@ -252,152 +320,7 @@
 /* :root and .dark semantic variables come from ./styles/tokens.css (generated;
  * imported above). Edit token source in packages/ui/tokens, not here. */
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  html {
-    @apply font-sans antialiased;
-    font-feature-settings: "cv11", "ss01", "ss03";
-  }
-  body {
-    @apply bg-background font-sans text-foreground;
-  }
-  ::selection {
-    background-color: color-mix(in oklab, var(--primary) 22%, transparent);
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-heading tracking-tight;
-  }
-  button,
-  [role="button"],
-  input,
-  select,
-  textarea,
-  label,
-  [data-slot="dropdown-menu-item"],
-  [data-slot="dropdown-menu-label"],
-  [data-slot="sidebar-menu-button"],
-  [data-slot="sidebar-menu-sub-button"],
-  [data-slot="sidebar-group-label"],
-  [data-slot="breadcrumb-list"] {
-    font-family: var(--font-ui);
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
-  }
-
-  /* Skeleton shimmer — a moving highlight sweep over the muted base, instead of
-   * a flat pulse. Honors reduced-motion. */
-  [data-slot="skeleton"] {
-    position: relative;
-    overflow: hidden;
-  }
-  [data-slot="skeleton"]::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in oklab, var(--foreground) 8%, transparent),
-      transparent
-    );
-    animation: qx-shimmer 1.6s var(--ease-standard) infinite;
-  }
-  @keyframes qx-shimmer {
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    [data-slot="skeleton"]::after {
-      animation: none;
-    }
-  }
-}
-
-@media (forced-colors: active) {
-  :root,
-  .dark {
-    --background: Canvas;
-    --foreground: CanvasText;
-    --card: Canvas;
-    --card-foreground: CanvasText;
-    --popover: Canvas;
-    --popover-foreground: CanvasText;
-    --primary: ButtonFace;
-    --primary-foreground: ButtonText;
-    --secondary: ButtonFace;
-    --secondary-foreground: ButtonText;
-    --muted: Canvas;
-    --muted-foreground: CanvasText;
-    --accent: Highlight;
-    --accent-foreground: HighlightText;
-    --destructive: Mark;
-    --destructive-foreground: MarkText;
-    --destructive-border: Mark;
-    --success: CanvasText;
-    --success-foreground: Canvas;
-    --success-border: CanvasText;
-    --warning: CanvasText;
-    --warning-foreground: Canvas;
-    --warning-border: CanvasText;
-    --info: CanvasText;
-    --info-foreground: Canvas;
-    --info-border: CanvasText;
-    --border: CanvasText;
-    --input: CanvasText;
-    --ring: Highlight;
-    --sidebar: Canvas;
-    --sidebar-foreground: CanvasText;
-    --sidebar-primary: ButtonFace;
-    --sidebar-primary-foreground: ButtonText;
-    --sidebar-accent: Highlight;
-    --sidebar-accent-foreground: HighlightText;
-    --sidebar-border: CanvasText;
-    --sidebar-ring: Highlight;
-  }
-
-  * {
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
-  :focus-visible {
-    outline: var(--qx-focus-outline-width) solid Highlight !important;
-    outline-offset: var(--qx-focus-offset) !important;
-  }
-
-  button,
-  [role="button"],
-  input,
-  select,
-  textarea,
-  [role="checkbox"],
-  [role="radio"],
-  [role="switch"],
-  [role="tab"],
-  [role="option"] {
-    forced-color-adjust: auto;
-  }
-
-  [data-slot="dialog-overlay"],
-  [data-slot="alert-dialog-overlay"],
-  [data-slot="sheet-overlay"],
-  [data-slot="tour-backdrop"] {
-    background: Canvas !important;
-    opacity: 0.75;
-  }
-
-  [data-slot="skeleton"]::after {
-    display: none;
-  }
-}
+/* The host-global base layer and the forced-colors mapping live in ./base.css, which this file
+ * deliberately does not import — ./styles.css imports both, in that order. They are not inlined
+ * anywhere so the published entry's blast radius on a consumer's document is one named,
+ * enumerated file that a consumer can also decline. */

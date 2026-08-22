@@ -30,7 +30,7 @@ function Radio({ className, ...props }: RadioPrimitive.Root.Props) {
         data-slot="radio-indicator"
         className="flex items-center justify-center text-primary data-unchecked:hidden"
       >
-        <CircleIcon className="size-2 fill-current" />
+        <CircleIcon aria-hidden className="size-2 fill-current" />
       </RadioPrimitive.Indicator>
     </RadioPrimitive.Root>
   );

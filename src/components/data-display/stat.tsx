@@ -71,7 +71,7 @@ function Stat({
         </span>
         {delta != null && (
           <span data-slot="stat-delta" className={cn(statDeltaVariants({ trend }))}>
-            {TrendIcon && <TrendIcon className="size-3.5" />}
+            {TrendIcon && <TrendIcon aria-hidden className="size-3.5" />}
             {delta}
           </span>
         )}

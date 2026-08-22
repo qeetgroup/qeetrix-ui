@@ -9,9 +9,14 @@ afterEach(() => {
   cleanup();
 });
 
+// Files that assert server behaviour opt into `@vitest-environment node`, where there is no
+// `window` by design — that absence is the thing under test. Everything below is a jsdom
+// polyfill, so it is skipped rather than crashing the suite before it starts.
+const HAS_DOM = typeof window !== "undefined";
+
 // jsdom is missing a handful of browser APIs that Base UI / Recharts touch.
 // Provide minimal no-op polyfills so component tests don't crash on mount.
-if (!window.matchMedia) {
+if (HAS_DOM && !window.matchMedia) {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
@@ -41,19 +46,22 @@ class IntersectionObserverStub {
   thresholds = [];
 }
 
-window.ResizeObserver ??= ResizeObserverStub as unknown as typeof ResizeObserver;
-window.IntersectionObserver ??= IntersectionObserverStub as unknown as typeof IntersectionObserver;
+if (HAS_DOM) {
+  window.ResizeObserver ??= ResizeObserverStub as unknown as typeof ResizeObserver;
+  window.IntersectionObserver ??=
+    IntersectionObserverStub as unknown as typeof IntersectionObserver;
 
-// Pointer-capture + scroll APIs used by Base UI menus/selects.
-if (!Element.prototype.hasPointerCapture) {
-  Element.prototype.hasPointerCapture = () => false;
-  Element.prototype.setPointerCapture = () => {};
-  Element.prototype.releasePointerCapture = () => {};
-}
-if (!Element.prototype.scrollIntoView) {
-  Element.prototype.scrollIntoView = () => {};
-}
-// Base UI ScrollArea calls getAnimations() in a timeout after mount; jsdom lacks it.
-if (!Element.prototype.getAnimations) {
-  Element.prototype.getAnimations = () => [];
+  // Pointer-capture + scroll APIs used by Base UI menus/selects.
+  if (!Element.prototype.hasPointerCapture) {
+    Element.prototype.hasPointerCapture = () => false;
+    Element.prototype.setPointerCapture = () => {};
+    Element.prototype.releasePointerCapture = () => {};
+  }
+  if (!Element.prototype.scrollIntoView) {
+    Element.prototype.scrollIntoView = () => {};
+  }
+  // Base UI ScrollArea calls getAnimations() in a timeout after mount; jsdom lacks it.
+  if (!Element.prototype.getAnimations) {
+    Element.prototype.getAnimations = () => [];
+  }
 }

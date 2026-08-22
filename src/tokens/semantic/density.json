@@ -1,0 +1,61 @@
+{
+  "density": {
+    "control-height": {
+      "comfortable": {
+        "$value": "36px",
+        "$type": "dimension"
+      },
+      "compact": {
+        "$value": "28px",
+        "$type": "dimension"
+      },
+      "default": {
+        "$value": "2rem",
+        "$type": "dimension"
+      }
+    },
+    "row-height": {
+      "comfortable": {
+        "$value": "52px",
+        "$type": "dimension"
+      },
+      "compact": {
+        "$value": "40px",
+        "$type": "dimension"
+      },
+      "default": {
+        "$value": "2.5rem",
+        "$type": "dimension"
+      }
+    },
+    "cell-padding-y": {
+      "comfortable": {
+        "$value": "12px",
+        "$type": "dimension"
+      },
+      "compact": {
+        "$value": "6px",
+        "$type": "dimension"
+      },
+      "default": {
+        "$value": "0.75rem",
+        "$type": "dimension"
+      }
+    },
+    "field-gap": {
+      "comfortable": {
+        "$value": "16px",
+        "$type": "dimension"
+      },
+      "compact": {
+        "$value": "8px",
+        "$type": "dimension"
+      },
+      "default": {
+        "$value": "1rem",
+        "$type": "dimension"
+      }
+    },
+    "$description": "Control metrics per density mode. `default` is the density-neutral baseline that applies when no DensityProvider is mounted \u2014 its values are the fallbacks the components already carried inline, lifted here so the number lives in one place. `comfortable` and `compact` are opt-in and applied via [data-qx-density]."
+  }
+}

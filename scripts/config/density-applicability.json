@@ -1,0 +1,591 @@
+{
+  "$comment": "Per-slug density applicability, with the evidence behind every value. `check:contract` requires an entry for every component, requires it to match component-manifest.json, and requires a non-empty `evidence` note \u2014 a value with nothing behind it is the defect this file exists to prevent (DENSITY-001). See src/contracts/density.ts for what the four values mean and scripts/lib/component-source.mjs for which two of them derivation may produce.",
+  "$rules": [
+    "supported \u2014 the family's principal control resolves a density metric: it reads a density-aware CSS variable in its own source, or it renders, as its own root control, a component that does. Derivable when the variable is in this file's source; declared when it arrives through composition.",
+    "unsupported \u2014 the family owns a metric density should govern (control height, repeated-row rhythm, table cell padding, or the gap between form-field parts) and hardcodes it. A reviewed backlog entry.",
+    "not-applicable \u2014 the family owns none of those four metrics: it is content-intrinsic (text, glyph, dot, graphic track), author-sized (a size prop in px, an aspect box), pass-through (no metric of its own), or absent from layout altogether.",
+    "unknown \u2014 reviewed and genuinely undecidable from source. The `evidence` note must say what would settle it."
+  ],
+  "components": {
+    "access-review": {
+      "density": "unsupported",
+      "evidence": "Repeated grant rows at fixed py-2 / py-3 with gap-2.5 \u2014 row rhythm that --qx-control-row-height and --qx-control-cell-padding-y exist to govern."
+    },
+    "accordion": {
+      "density": "unsupported",
+      "evidence": "Trigger row is py-4 and the panel is pb-4; a disclosure header is a control row whose height should follow --qx-control-height."
+    },
+    "action-bar": {
+      "density": "unsupported",
+      "evidence": "Bar padding is py-1.5 with h-4 separators. Toolbar, the same pattern one directory over, sizes its items from --qx-control-height; ActionBar does not."
+    },
+    "alert": {
+      "density": "unsupported",
+      "evidence": "Surface padding py-3 with gap-x-3 / gap-y-1, all literal. A message surface should tighten under compact and has nothing to read."
+    },
+    "alert-dialog": {
+      "density": "unsupported",
+      "evidence": "p-6 content padding and gap-4 header/footer rhythm are literal."
+    },
+    "angle-slider": {
+      "density": "not-applicable",
+      "evidence": "The dial is author-sized: a size prop in px (default 80) sets width and height, and the thumb is derived from it (size * 0.16). There is no control height, row or field gap \u2014 the caller owns the only dimension."
+    },
+    "app-shell": {
+      "density": "unsupported",
+      "evidence": "h-14 application bar and p-4 md:p-6 content gutter are literal; the shell chrome stays put while a compact DataTable inside it shrinks."
+    },
+    "aspect-ratio": {
+      "density": "not-applicable",
+      "evidence": "A ratio box: it sizes from the caller's width and its aspect prop. No control height, row, cell or field gap."
+    },
+    "audit-event": {
+      "density": "unsupported",
+      "evidence": "Repeated event rows at py-2 with space-y-3 between them \u2014 list rhythm, not content."
+    },
+    "autocomplete": {
+      "density": "supported",
+      "evidence": "Trigger reads var(--qx-control-height)."
+    },
+    "availability-grid": {
+      "density": "unsupported",
+      "evidence": "Grid cells are h-7 with py-1 / py-1.5 labels; a time grid is exactly the row-height / cell-padding-y case."
+    },
+    "avatar": {
+      "density": "not-applicable",
+      "evidence": "An author-sized image frame on its own size axis; a portrait's diameter is not layout rhythm."
+    },
+    "badge": {
+      "density": "not-applicable",
+      "evidence": "Inline text decoration: py-0.5 / text-xs, height entirely from its own line box. It has no control height to compress and does not align to control rhythm."
+    },
+    "banner": {
+      "density": "unsupported",
+      "evidence": "py-2.5 bar padding and a size-7 dismiss control, both literal."
+    },
+    "blockquote": {
+      "density": "not-applicable",
+      "evidence": "Typographic block \u2014 border, inline padding and italics. Density publishes no type metric."
+    },
+    "breadcrumb": {
+      "density": "unsupported",
+      "evidence": "Trail items are interactive with literal gap-1 / gap-1.5 and size-3.5..size-5 affordances; no control height is read."
+    },
+    "button": {
+      "density": "supported",
+      "evidence": "Default and icon sizes read var(--qx-component-button-height), which resolves to --qx-density-control-height. The explicit xs/sm/lg sizes are literal by design \u2014 an explicit size is a caller's decision, not a density one."
+    },
+    "button-group": {
+      "density": "not-applicable",
+      "evidence": "A pass-through fieldset \u2014 border-0 p-0 plus interior border-radius overrides. It contributes no metric of its own; the buttons the caller puts inside it are the density-aware part."
+    },
+    "calendar": {
+      "density": "unsupported",
+      "evidence": "Day cells are sized from a private --cell-size and the nav buttons are h-8; neither is on the density scale."
+    },
+    "callout": {
+      "density": "unsupported",
+      "evidence": "p-4 surface padding and gap-3 are literal."
+    },
+    "card": {
+      "density": "unsupported",
+      "evidence": "p-3/p-4, py-3/py-4 and pb-3/pb-4 across header, content and footer, all literal. The most-composed surface in the library and the one a compact page would most visibly need."
+    },
+    "carousel": {
+      "density": "unsupported",
+      "evidence": "pt-4 dot rail and literal control placement; the Buttons it renders are one part of the family, not its principal control."
+    },
+    "chart": {
+      "density": "unsupported",
+      "evidence": "Legend swatches h-2.5/h-3, tooltip rows py-1.5, and the data-table fallback rows are all literal \u2014 the fallback is a table, so cell-padding-y applies to it directly."
+    },
+    "chart-presets": {
+      "density": "not-applicable",
+      "evidence": "SVG geometry only: aspect-square frames and a sparkline path. No padding, no rows, no controls."
+    },
+    "checkbox": {
+      "density": "unknown",
+      "evidence": "The only density-relevant metric is the size-4 (16px) box and its gap-3 to the label. Shrinking a 16px box under compact pushes the hit target further below the 24px WCAG 2.5.8 minimum it is already relying on a label-click exception for. Settled by a design ruling: may compact reduce target size, or should it compress only the label gap? Source cannot answer either way."
+    },
+    "checkbox-card": {
+      "density": "unsupported",
+      "evidence": "p-4 card padding with gap-3, literal."
+    },
+    "chip": {
+      "density": "unsupported",
+      "evidence": "h-6/h-7/h-8 private size axis. Button resolved the same question by making its default size density-resolved and leaving explicit sizes literal; Chip's default is literal."
+    },
+    "clipboard": {
+      "density": "unsupported",
+      "evidence": "CopyButton pins size=\"sm\" on Button, which is h-7 \u2014 Button's density-resolved height is only on the default and icon sizes, so this opts out."
+    },
+    "close-button": {
+      "density": "unsupported",
+      "evidence": "Defaults to size=\"icon-sm\" (size-7). Button's density-resolved height is on default/icon only, so the default CloseButton never moves."
+    },
+    "code-block": {
+      "density": "unsupported",
+      "evidence": "p-3 frame and py-1.5 per line, literal; a code listing's line rhythm is the row-height case."
+    },
+    "collapsible": {
+      "density": "not-applicable",
+      "evidence": "Three unstyled Base UI wrappers with no className at all. Nothing to size."
+    },
+    "color-picker": {
+      "density": "supported",
+      "evidence": "Trigger reads var(--qx-control-height)."
+    },
+    "color-swatch": {
+      "density": "not-applicable",
+      "evidence": "A colour sample tile, size-4..size-8. Its size is a perceptual requirement \u2014 how much colour a reader needs to judge a hue \u2014 not layout rhythm. ColorPicker's trigger, which is a control, already reads --qx-control-height."
+    },
+    "combobox": {
+      "density": "supported",
+      "evidence": "Trigger reads var(--qx-control-height)."
+    },
+    "command-palette": {
+      "density": "unsupported",
+      "evidence": "h-12 search row and py-2 result rows, literal \u2014 a palette is a list of rows."
+    },
+    "comment-thread": {
+      "density": "unsupported",
+      "evidence": "min-h-12 avatar gutter and space-y-1..space-y-4 thread rhythm, literal."
+    },
+    "container": {
+      "density": "not-applicable",
+      "evidence": "Inline axis only: max-width plus px gutters. Density publishes no width or inline-gutter metric and a page's measure is not a density concern."
+    },
+    "context-menu": {
+      "density": "unsupported",
+      "evidence": "Item rows are py-1 inside p-1 popup padding; menu items are controls and menubar (same pattern) reads --qx-control-height."
+    },
+    "copyable-secret": {
+      "density": "unsupported",
+      "evidence": "py-1 / py-2 row padding, literal."
+    },
+    "country-picker": {
+      "density": "supported",
+      "evidence": "Trigger reads var(--qx-control-height)."
+    },
+    "currency-input": {
+      "density": "supported",
+      "evidence": "Renders Input as its only sized element; Input's height is h-[var(--qx-component-input-height)]. The currency symbol is absolutely positioned and the ps-7 inset is inline-axis only."
+    },
+    "data-state": {
+      "density": "unsupported",
+      "evidence": "p-4 / p-6 / p-10 state panels with an h-10 action row, literal."
+    },
+    "data-table": {
+      "density": "supported",
+      "evidence": "Consumes the density context directly (useDensity) and re-publishes it as data-qx-density on the table root, so the row-height estimate the virtualiser uses and the rendered rhythm agree."
+    },
+    "date-picker": {
+      "density": "unsupported",
+      "evidence": "Delegates day sizing to Calendar's private --cell-size and pins Button size on its trigger; nothing on the density scale."
+    },
+    "date-time-picker": {
+      "density": "unsupported",
+      "evidence": "p-3 panel plus Calendar's --cell-size day grid, literal."
+    },
+    "description-list": {
+      "density": "unsupported",
+      "evidence": "gap-y-3 between repeated term/detail pairs \u2014 row rhythm on a key-value grid."
+    },
+    "dialog": {
+      "density": "unsupported",
+      "evidence": "p-6 content padding and gap-4 section rhythm, literal."
+    },
+    "diff-viewer": {
+      "density": "unsupported",
+      "evidence": "py-0.5 per diff line \u2014 line rhythm, which is the row-height case."
+    },
+    "drawer": {
+      "density": "unsupported",
+      "evidence": "pt-2 header and grab-handle chrome, literal."
+    },
+    "dropdown-menu": {
+      "density": "unsupported",
+      "evidence": "Item rows py-1 inside p-1 popup padding. Menubar, the same menu pattern, reads --qx-control-height; this does not."
+    },
+    "editable": {
+      "density": "unsupported",
+      "evidence": "The read-mode preview is min-h-9 (36px) while the edit-mode Input is h-[var(--qx-component-input-height)] (32px default, 28px compact). The two disagree at every density, and switching modes visibly jumps."
+    },
+    "empty-state": {
+      "density": "unsupported",
+      "evidence": "py-12 block padding with size-11 icon frame, literal."
+    },
+    "feed": {
+      "density": "unsupported",
+      "evidence": "Repeated feed items at p-4 with gap-3 \u2014 row rhythm."
+    },
+    "field": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-control-field-gap) for the gap between label, control and description."
+    },
+    "file-card": {
+      "density": "unsupported",
+      "evidence": "p-3 card padding with a size-8 thumbnail, literal."
+    },
+    "file-type-icon": {
+      "density": "not-applicable",
+      "evidence": "A single lucide glyph at size-5. Icons are on the icon scale (tokens/primitive/icon.json), not the density scale."
+    },
+    "file-upload": {
+      "density": "unsupported",
+      "evidence": "p-6 dropzone and p-2 file rows, literal; the file list is a row list."
+    },
+    "filter-bar": {
+      "density": "unsupported",
+      "evidence": "The Input and Combobox it renders are density-resolved, but the bar's own gap-1 / gap-2 / pt-1 chrome and size-3.5 affordances are literal, so the bar height does not follow its controls."
+    },
+    "floating-window": {
+      "density": "unsupported",
+      "evidence": "py-2 title bar and p-3 body, literal."
+    },
+    "focus-trap": {
+      "density": "not-applicable",
+      "evidence": "A bare div with no className; the component is the containment behaviour."
+    },
+    "form": {
+      "density": "unsupported",
+      "evidence": "gap-6 section and gap-2 action stacks are literal, while Field \u2014 the thing they stack \u2014 reads --qx-control-field-gap. The form outgrows its own fields under compact."
+    },
+    "highlight": {
+      "density": "not-applicable",
+      "evidence": "Wraps matched substrings in <mark> with inline-axis padding only. Its height is the line box."
+    },
+    "hover-card": {
+      "density": "unsupported",
+      "evidence": "p-4 surface padding, literal."
+    },
+    "icon": {
+      "density": "not-applicable",
+      "evidence": "Sets the size and stroke of a lucide component from the icon scale. No box of its own."
+    },
+    "icon-button": {
+      "density": "supported",
+      "evidence": "Renders Button with size=\"icon\" by default, which is size-[var(--qx-component-button-height)] \u2014 the density-resolved control height. The whole component is that button."
+    },
+    "input": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-component-input-height), which resolves to --qx-density-control-height."
+    },
+    "input-group": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-control-height)."
+    },
+    "json-tree": {
+      "density": "unsupported",
+      "evidence": "Repeated node rows with literal gap-1 and p-2; a tree is a row list."
+    },
+    "kbd": {
+      "density": "not-applicable",
+      "evidence": "Inline text decoration for a key glyph; height is its own line box."
+    },
+    "label": {
+      "density": "not-applicable",
+      "evidence": "Inline text with a gap-2 to its own trailing icons. The label-to-control gap is Field's, and Field reads --qx-control-field-gap."
+    },
+    "link": {
+      "density": "not-applicable",
+      "evidence": "Inline anchor; the sm/md/lg axis is font size, and the gap-1 is to its own icon. No control height."
+    },
+    "listbox": {
+      "density": "unsupported",
+      "evidence": "Option rows are py-1.5 inside p-1; Select's own listbox reads --qx-control-height, this one does not."
+    },
+    "logo-uploader": {
+      "density": "unsupported",
+      "evidence": "Renders density-resolved Input/Button but frames them with its own literal preview chrome and gap-2."
+    },
+    "marquee": {
+      "density": "not-applicable",
+      "evidence": "Inline-axis ticker. The only spacing is the caller's gap prop in px; no block metric."
+    },
+    "mask-input": {
+      "density": "supported",
+      "evidence": "Renders a single Input as its root; height is h-[var(--qx-component-input-height)], density-resolved."
+    },
+    "master-detail": {
+      "density": "not-applicable",
+      "evidence": "Two h-full panes with gap-0 p-0. Both children are author-sized; the component contributes no rhythm."
+    },
+    "mention-input": {
+      "density": "unsupported",
+      "evidence": "Suggestion rows py-1.5 in a max-h-48 popup, literal."
+    },
+    "menubar": {
+      "density": "supported",
+      "evidence": "Menu items read var(--qx-control-height)."
+    },
+    "meter": {
+      "density": "not-applicable",
+      "evidence": "An h-2 graphic track. A bar's thickness is a graphic weight, not a control height \u2014 shrinking it under compact would make the reading harder, not denser."
+    },
+    "native-select": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-control-height)."
+    },
+    "navigation-menu": {
+      "density": "supported",
+      "evidence": "Triggers read var(--qx-control-height)."
+    },
+    "notification": {
+      "density": "unsupported",
+      "evidence": "p-4 surface padding and a size-7 close control, literal."
+    },
+    "notification-center": {
+      "density": "unsupported",
+      "evidence": "Notification rows at py-2.5 / py-2 inside a max-h-96 list \u2014 row rhythm."
+    },
+    "notification-preference-matrix": {
+      "density": "unsupported",
+      "evidence": "A real table with py-2 / py-3 / pb-2 cells: --qx-control-cell-padding-y is the metric for exactly this and Table already reads it."
+    },
+    "number-field": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-control-height)."
+    },
+    "number-formatter": {
+      "density": "not-applicable",
+      "evidence": "A span of Intl-formatted text. No box."
+    },
+    "org-chart": {
+      "density": "unsupported",
+      "evidence": "p-2 node cards and pt-4 / py-2 rank spacing, literal."
+    },
+    "otp-input": {
+      "density": "unsupported",
+      "evidence": "h-12 digit boxes, literal, while the Field it sits in reads --qx-control-field-gap."
+    },
+    "overflow-list": {
+      "density": "unsupported",
+      "evidence": "The overflow trigger is h-6 and item gaps are literal, so the row height does not follow the controls it measures."
+    },
+    "page-header": {
+      "density": "unsupported",
+      "evidence": "gap-3 / gap-1 / gap-2 title, description and action stacks are literal. It has no fixed height, but the block rhythm is the part a compact page would tighten."
+    },
+    "pagination": {
+      "density": "unsupported",
+      "evidence": "py-2 bar padding and literal control gaps; the page buttons pin their own size."
+    },
+    "pagination-bar": {
+      "density": "unsupported",
+      "evidence": "A deprecated re-export of Pagination \u2014 same component, so necessarily the same value."
+    },
+    "password-input": {
+      "density": "supported",
+      "evidence": "Renders Input as the field; height is h-[var(--qx-component-input-height)]. The reveal toggle is absolutely positioned and contributes no height."
+    },
+    "password-strength-meter": {
+      "density": "not-applicable",
+      "evidence": "h-1 strength segments \u2014 graphic weight, same as Progress and Meter."
+    },
+    "popover": {
+      "density": "unsupported",
+      "evidence": "p-4 surface padding, literal."
+    },
+    "portal": {
+      "density": "not-applicable",
+      "evidence": "Re-export of the primitive; renders its children into another node and no element of its own."
+    },
+    "presence-indicator": {
+      "density": "not-applicable",
+      "evidence": "An 8-12px status dot (size-2..size-3). Below every density metric and sized to stay visible against an avatar."
+    },
+    "preview-card": {
+      "density": "unsupported",
+      "evidence": "p-3 body and h-32 media frame, literal."
+    },
+    "progress": {
+      "density": "not-applicable",
+      "evidence": "An h-2 graphic track. Same reasoning as Meter."
+    },
+    "progress-circle": {
+      "density": "not-applicable",
+      "evidence": "Author-sized diameter \u2014 the sm/md/lg axis and the svg width/height come from one number. No control height, no rhythm."
+    },
+    "qr-code": {
+      "density": "not-applicable",
+      "evidence": "Author-sized square. The module grid derives from the size prop; density has no say in how large a scannable code must be."
+    },
+    "radio-card": {
+      "density": "unsupported",
+      "evidence": "p-4 card padding with gap-3, literal."
+    },
+    "radio-group": {
+      "density": "unknown",
+      "evidence": "Same as Checkbox: a size-4 control glyph with a gap-3 label gap, and the same WCAG 2.5.8 target-size collision. Needs the same ruling."
+    },
+    "rating": {
+      "density": "unknown",
+      "evidence": "Stars are size-3.5 / size-5 / size-7 interactive targets. Whether the default 20px star shrinks under compact runs into the same target-size question as Checkbox, and the size axis does not say which end density should move. Settled by the same design ruling."
+    },
+    "reaction-bar": {
+      "density": "unsupported",
+      "evidence": "Reaction pills are h-6 / size-8 with p-1.5, literal \u2014 they are controls in a row."
+    },
+    "resizable": {
+      "density": "not-applicable",
+      "evidence": "A 1px splitter plus an optional h-4 w-3 grip glyph. The panels are sized by the caller (or by drag), and divider thickness is chrome, not rhythm."
+    },
+    "rich-text-editor": {
+      "density": "unsupported",
+      "evidence": "p-1 toolbar and min-h-40 body are literal; the Toggle it renders for each mark does read --qx-control-height, so the toolbar is taller than its own buttons need under compact."
+    },
+    "rolling-number": {
+      "density": "not-applicable",
+      "evidence": "A span of tabular digits. The animation moves them; nothing sizes them."
+    },
+    "schedule-calendar": {
+      "density": "unsupported",
+      "evidence": "h-24 day cells and py-8 hour rows, literal \u2014 the densest grid in the library and the one row-height was written for."
+    },
+    "scroll-area": {
+      "density": "not-applicable",
+      "evidence": "A 10px scrollbar track and thumb over author-sized content. Scrollbar thickness is chrome."
+    },
+    "security-item": {
+      "density": "unsupported",
+      "evidence": "Repeated rows at p-4 with a size-9 icon frame \u2014 row rhythm."
+    },
+    "segmented-control": {
+      "density": "unsupported",
+      "evidence": "h-8 / h-9 / h-10 private size axis with p-1 track padding; the default size is literal rather than density-resolved."
+    },
+    "select": {
+      "density": "supported",
+      "evidence": "Default-size trigger reads var(--qx-control-height); data-[size=sm] is literal h-7."
+    },
+    "separator": {
+      "density": "not-applicable",
+      "evidence": "A 1px rule. Its one dimension is a hairline and the other is inherited."
+    },
+    "sheet": {
+      "density": "unsupported",
+      "evidence": "p-4 surface padding and gap-4 section rhythm, literal."
+    },
+    "sidebar": {
+      "density": "supported",
+      "evidence": "Nav rows read var(--qx-control-height)."
+    },
+    "skeleton": {
+      "density": "not-applicable",
+      "evidence": "A placeholder box whose dimensions are supplied by the caller to match whatever it stands in for \u2014 including a density-aware component, in which case the caller passes the density-aware size."
+    },
+    "skip-nav": {
+      "density": "not-applicable",
+      "evidence": "sr-only until focused, then a position: fixed overlay. It never participates in the page's vertical rhythm, so there is nothing for its height to align to."
+    },
+    "slider": {
+      "density": "unsupported",
+      "evidence": "The interactive row has no height of its own (h-1 track, size-3 thumb) and min-h-40 fixes the vertical variant, so a slider never aligns to the control rhythm of the fields around it. Toggle solved the same alignment problem by reading --qx-control-height."
+    },
+    "spinner": {
+      "density": "not-applicable",
+      "evidence": "A lucide glyph at size-4..size-8, on the icon scale."
+    },
+    "spoiler": {
+      "density": "not-applicable",
+      "evidence": "A -webkit-line-clamp on text plus a text-only toggle with no height. Density publishes no line-clamp or type metric."
+    },
+    "stat": {
+      "density": "unsupported",
+      "evidence": "p-4 tile padding with literal gap-0.5 / gap-1.5 / gap-2 stacks."
+    },
+    "status-pill": {
+      "density": "not-applicable",
+      "evidence": "Composes Badge with a size-1.5 dot; inline text decoration, same reasoning as Badge."
+    },
+    "stepper": {
+      "density": "unsupported",
+      "evidence": "size-7 step markers and gap-3 connectors, literal."
+    },
+    "switch": {
+      "density": "unknown",
+      "evidence": "Track and thumb come from --qx-component-switch-* , which is a private scale, not a density one. Whether compact should shrink a switch (and take the target below 24px) or leave it and tighten only the row is a design ruling, not a source fact."
+    },
+    "table": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-control-row-height) and var(--qx-control-cell-padding-y) \u2014 the only component that consumes both row metrics."
+    },
+    "table-of-contents": {
+      "density": "unsupported",
+      "evidence": "py-1 on every repeated nav row \u2014 row rhythm."
+    },
+    "tabs": {
+      "density": "supported",
+      "evidence": "Tab triggers read var(--qx-control-height)."
+    },
+    "tag-input": {
+      "density": "unsupported",
+      "evidence": "min-h-8 field shell and h-6 tags are literal, and the min-h-8 (32px) disagrees with the density-resolved input height it is imitating at both comfortable (36px) and compact (28px)."
+    },
+    "textarea": {
+      "density": "unsupported",
+      "evidence": "min-h-16 and py-2 are literal, while its sibling Input reads --qx-component-input-height. Two fields in the same form stop matching under compact."
+    },
+    "time-picker": {
+      "density": "unsupported",
+      "evidence": "Pins size=\"sm\" on every SelectTrigger, which is data-[size=sm]:h-7 \u2014 Select's density-resolved height is on the default size only, so this opts out."
+    },
+    "time-range-picker": {
+      "density": "unsupported",
+      "evidence": "p-1.5 panel and gap-0.5 segment chrome, literal."
+    },
+    "time-since": {
+      "density": "not-applicable",
+      "evidence": "A <time> element of formatted text. No box."
+    },
+    "timeline": {
+      "density": "unsupported",
+      "evidence": "Repeated items at pb-6 with size-2.5 markers \u2014 row rhythm."
+    },
+    "timer": {
+      "density": "unsupported",
+      "evidence": "Renders Button size=\"sm\" (h-7) for its controls, opting out of the density-resolved default size; the digit display is typographic."
+    },
+    "timezone-picker": {
+      "density": "supported",
+      "evidence": "Trigger reads var(--qx-control-height)."
+    },
+    "toast": {
+      "density": "unsupported",
+      "evidence": "py-3 / p-1 surface padding and gap-3 rhythm, literal."
+    },
+    "toggle": {
+      "density": "supported",
+      "evidence": "Reads var(--qx-control-height) for both height and min-width."
+    },
+    "toggle-tip": {
+      "density": "unsupported",
+      "evidence": "Trigger is pinned to buttonVariants({ size: \"icon-sm\" }) \u2014 size-7, literal, and not overridable through a size prop."
+    },
+    "toolbar": {
+      "density": "supported",
+      "evidence": "Items read var(--qx-control-height)."
+    },
+    "tooltip": {
+      "density": "unsupported",
+      "evidence": "py-1.5 bubble padding, literal."
+    },
+    "tour": {
+      "density": "unsupported",
+      "evidence": "p-4 step card with gap-2 / mt-4 rhythm, literal."
+    },
+    "tree-view": {
+      "density": "unsupported",
+      "evidence": "Item rows are py-1 with gap-1.5 \u2014 a tree is a row list, and row-height is the metric for it."
+    },
+    "typography": {
+      "density": "not-applicable",
+      "evidence": "The type scale: font sizes, line heights and block margins. Density publishes control, row, cell and field-gap metrics and no type metric; compressing type is a separate axis with its own readability constraints."
+    },
+    "visually-hidden": {
+      "density": "not-applicable",
+      "evidence": "Clipped out of layout entirely. It has no rendered metrics at all, by definition."
+    }
+  }
+}

@@ -168,3 +168,118 @@ describe("CommandPalette", () => {
     expect(await a11y(document.body)).toHaveNoViolations();
   });
 });
+
+describe("CommandPalette active-result model", () => {
+  const status = () => document.querySelector("[data-slot='command-palette-status']");
+  const combobox = () => screen.getByRole("combobox");
+  const activeOption = () => {
+    const id = combobox().getAttribute("aria-activedescendant");
+    return id ? document.getElementById(id) : null;
+  };
+
+  it("announces the result count politely", () => {
+    render(<Palette />);
+    expect(status()).toHaveAttribute("aria-live", "polite");
+    expect(status()).toHaveTextContent("3 results");
+  });
+
+  it("re-announces the count as the query narrows, including zero", () => {
+    render(<Palette />);
+    fireEvent.change(combobox(), { target: { value: "settings" } });
+    expect(status()).toHaveTextContent("1 result");
+    fireEvent.change(combobox(), { target: { value: "zzz" } });
+    expect(status()).toHaveTextContent("No results");
+  });
+
+  it("accepts a translated count label", () => {
+    render(
+      <CommandPalette
+        open
+        onOpenChange={vi.fn()}
+        items={ITEMS}
+        onSelect={vi.fn()}
+        resultCountLabel={(n) => `${n} résultats`}
+      />,
+    );
+    expect(status()).toHaveTextContent("3 résultats");
+  });
+
+  it("says nothing while closed", () => {
+    render(<Palette open={false} />);
+    expect(status()).toHaveTextContent("");
+  });
+
+  it("never points aria-activedescendant at a removed option", () => {
+    render(<Palette />);
+    // Advance to the last result, then filter so that index no longer exists.
+    fireEvent.keyDown(combobox(), { key: "ArrowDown" });
+    fireEvent.keyDown(combobox(), { key: "ArrowDown" });
+    expect(activeOption()).toHaveTextContent("Open settings");
+
+    fireEvent.change(combobox(), { target: { value: "new" } });
+    expect(combobox()).toHaveAttribute("aria-activedescendant");
+    expect(activeOption()).not.toBeNull();
+    expect(activeOption()).toHaveTextContent("New file");
+  });
+
+  it("drops aria-activedescendant when there are no results", () => {
+    render(<Palette />);
+    fireEvent.change(combobox(), { target: { value: "zzz" } });
+    expect(combobox()).not.toHaveAttribute("aria-activedescendant");
+  });
+
+  it("commits the clamped active result rather than a stale index", () => {
+    const onSelect = vi.fn();
+    render(<Palette onSelect={onSelect} />);
+    fireEvent.keyDown(combobox(), { key: "ArrowDown" });
+    fireEvent.keyDown(combobox(), { key: "ArrowDown" });
+    // Shrink the list to one item without going through onChange's reset.
+    fireEvent.change(combobox(), { target: { value: "New file" } });
+    fireEvent.keyDown(combobox(), { key: "Enter" });
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect.mock.calls[0][0].id).toBe("new");
+  });
+
+  it("does nothing on Enter with no results", () => {
+    const onSelect = vi.fn();
+    const onOpenChange = vi.fn();
+    render(<Palette onSelect={onSelect} onOpenChange={onOpenChange} />);
+    fireEvent.change(combobox(), { target: { value: "zzz" } });
+    fireEvent.keyDown(combobox(), { key: "Enter" });
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(onOpenChange).not.toHaveBeenCalled();
+  });
+
+  it("scrolls the highlighted result into view", () => {
+    const scrollIntoView = vi.fn();
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(<Palette />);
+      scrollIntoView.mockClear();
+      fireEvent.keyDown(combobox(), { key: "ArrowDown" });
+      expect(scrollIntoView).toHaveBeenCalledWith({ block: "nearest" });
+      // jsdom does no layout, so the call is the only observable effect here.
+      expect(scrollIntoView.mock.instances.at(-1)).toBe(activeOption());
+    } finally {
+      Element.prototype.scrollIntoView = original;
+    }
+  });
+
+  it("does not scroll while closed", () => {
+    const scrollIntoView = vi.fn();
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(<Palette open={false} />);
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    } finally {
+      Element.prototype.scrollIntoView = original;
+    }
+  });
+
+  it("has no axe violations with the live region present", async () => {
+    const { container } = render(<Palette />);
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});

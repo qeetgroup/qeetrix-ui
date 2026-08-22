@@ -89,6 +89,12 @@ function LoginForm({
   socialButtons,
   className,
 }: LoginFormProps) {
+  // IDs are instance-scoped: two LoginForms on one page must not produce duplicate
+  // document IDs (a label would then focus the first instance's control). The `name`
+  // attributes stay stable because they are the form's serialisation contract.
+  const uid = React.useId();
+  const emailId = `${uid}-email`;
+  const passwordId = `${uid}-password`;
   return (
     <Form
       className={className}
@@ -101,12 +107,12 @@ function LoginForm({
       <FormError error={error} />
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" name="email" type="email" autoComplete="email" required />
+          <FieldLabel htmlFor={emailId}>Email</FieldLabel>
+          <Input id={emailId} name="email" type="email" autoComplete="email" required />
         </Field>
         <Field>
           <div className="flex items-center justify-between">
-            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <FieldLabel htmlFor={passwordId}>Password</FieldLabel>
             {forgotHref && (
               <a
                 href={forgotHref}
@@ -117,7 +123,7 @@ function LoginForm({
             )}
           </div>
           <Input
-            id="password"
+            id={passwordId}
             name="password"
             type="password"
             autoComplete="current-password"
@@ -152,6 +158,10 @@ interface SignupFormProps {
 /** Name + email + password registration form with a live strength meter. */
 function SignupForm({ onSubmit, loading, error, showStrength = true, className }: SignupFormProps) {
   const [password, setPassword] = React.useState("");
+  const uid = React.useId();
+  const nameId = `${uid}-name`;
+  const emailId = `${uid}-email`;
+  const passwordId = `${uid}-password`;
   return (
     <Form
       className={className}
@@ -164,17 +174,17 @@ function SignupForm({ onSubmit, loading, error, showStrength = true, className }
       <FormError error={error} />
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="name">Name</FieldLabel>
-          <Input id="name" name="name" autoComplete="name" required />
+          <FieldLabel htmlFor={nameId}>Name</FieldLabel>
+          <Input id={nameId} name="name" autoComplete="name" required />
         </Field>
         <Field>
-          <FieldLabel htmlFor="signup-email">Email</FieldLabel>
-          <Input id="signup-email" name="email" type="email" autoComplete="email" required />
+          <FieldLabel htmlFor={emailId}>Email</FieldLabel>
+          <Input id={emailId} name="email" type="email" autoComplete="email" required />
         </Field>
         <Field>
-          <FieldLabel htmlFor="signup-password">Password</FieldLabel>
+          <FieldLabel htmlFor={passwordId}>Password</FieldLabel>
           <Input
-            id="signup-password"
+            id={passwordId}
             name="password"
             type="password"
             autoComplete="new-password"
@@ -205,6 +215,7 @@ interface ForgotPasswordFormProps {
 
 /** Single-field "send reset link" form. */
 function ForgotPasswordForm({ onSubmit, loading, error, className }: ForgotPasswordFormProps) {
+  const emailId = `${React.useId()}-email`;
   return (
     <Form
       className={className}
@@ -216,8 +227,8 @@ function ForgotPasswordForm({ onSubmit, loading, error, className }: ForgotPassw
       <FormError error={error} />
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="reset-email">Email</FieldLabel>
-          <Input id="reset-email" name="email" type="email" autoComplete="email" required />
+          <FieldLabel htmlFor={emailId}>Email</FieldLabel>
+          <Input id={emailId} name="email" type="email" autoComplete="email" required />
         </Field>
       </FieldGroup>
       <FormActions className="sm:justify-stretch">

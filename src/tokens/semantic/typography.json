@@ -1,0 +1,203 @@
+{
+  "typography": {
+    "$description": "Semantic text roles composed from the primitive family/size/weight/line-height/letter-spacing scales. Roles carry the design decision ('a title looks like this'); components reference a role rather than assembling one.",
+    "display": {
+      "font-family": {
+        "$value": "{font.family.heading}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.display}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.semibold}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.tight}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.tighter}",
+        "$type": "dimension"
+      }
+    },
+    "heading": {
+      "font-family": {
+        "$value": "{font.family.heading}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.heading}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.semibold}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.tight}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.tight}",
+        "$type": "dimension"
+      }
+    },
+    "title": {
+      "font-family": {
+        "$value": "{font.family.heading}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.title}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.semibold}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.tight}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.tight}",
+        "$type": "dimension"
+      }
+    },
+    "body": {
+      "font-family": {
+        "$value": "{font.family.sans}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.body}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.regular}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.normal}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.normal}",
+        "$type": "dimension"
+      }
+    },
+    "label": {
+      "font-family": {
+        "$value": "{font.family.ui}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.body-sm}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.medium}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.snug}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.normal}",
+        "$type": "dimension"
+      }
+    },
+    "label-compact": {
+      "font-family": {
+        "$value": "{font.family.ui}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.body-xs}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.medium}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.snug}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.normal}",
+        "$type": "dimension"
+      }
+    },
+    "caption": {
+      "font-family": {
+        "$value": "{font.family.ui}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.caption}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.regular}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.snug}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.normal}",
+        "$type": "dimension"
+      }
+    },
+    "micro": {
+      "font-family": {
+        "$value": "{font.family.ui}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.micro}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.medium}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.snug}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.wide}",
+        "$type": "dimension"
+      }
+    },
+    "code": {
+      "font-family": {
+        "$value": "{font.family.mono}",
+        "$type": "fontFamily"
+      },
+      "font-size": {
+        "$value": "{font.size.body-sm}",
+        "$type": "dimension"
+      },
+      "font-weight": {
+        "$value": "{font.weight.regular}",
+        "$type": "fontWeight"
+      },
+      "line-height": {
+        "$value": "{font.line-height.normal}",
+        "$type": "number"
+      },
+      "letter-spacing": {
+        "$value": "{font.letter-spacing.normal}",
+        "$type": "dimension"
+      }
+    }
+  }
+}

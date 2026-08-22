@@ -1,0 +1,12 @@
+{
+  "component": {
+    "kbd": {
+      "$description": "Keyboard key cap. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "corner": {
+        "$value": "min(var(--radius-md), 6px)",
+        "$type": "dimension",
+        "$description": "The ramp, capped so a 20px key cap stays legibly square."
+      }
+    }
+  }
+}

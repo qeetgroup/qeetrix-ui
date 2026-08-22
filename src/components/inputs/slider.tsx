@@ -12,11 +12,14 @@ function Slider({
   "aria-labelledby": ariaLabelledby,
   ...props
 }: SliderPrimitive.Root.Props) {
-  const _values = Array.isArray(value)
-    ? value
+  // One thumb per value. The fallback used to be `[min, max]`, which meant a single-value slider
+  // — the common case — rendered TWO thumbs: a duplicate slider in the accessibility tree, a
+  // phantom tab stop, and a second dot on the track. A slider with no array value has one thumb.
+  const thumbCount = Array.isArray(value)
+    ? value.length
     : Array.isArray(defaultValue)
-      ? defaultValue
-      : [min, max];
+      ? defaultValue.length
+      : 1;
 
   return (
     <SliderPrimitive.Root
@@ -41,7 +44,7 @@ function Slider({
             className="bg-primary select-none data-horizontal:h-full data-vertical:w-full"
           />
         </SliderPrimitive.Track>
-        {Array.from({ length: _values.length }, (_, i) => `slider-thumb-${i}`).map((thumbKey) => (
+        {Array.from({ length: thumbCount }, (_, i) => `slider-thumb-${i}`).map((thumbKey) => (
           <SliderPrimitive.Thumb
             data-slot="slider-thumb"
             key={thumbKey}

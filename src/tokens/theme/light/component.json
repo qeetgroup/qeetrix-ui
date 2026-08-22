@@ -1,0 +1,15 @@
+{
+  "$description": "Theme overrides for component tokens \u2014 only for decisions that genuinely differ between light and dark. Anything identical in both themes belongs in src/tokens/component/.",
+  "component": {
+    "input": {
+      "background": {
+        "$value": "transparent",
+        "$type": "color"
+      },
+      "background-disabled": {
+        "$value": "color-mix(in oklab, var(--qx-color-border-default) 50%, transparent)",
+        "$type": "color"
+      }
+    }
+  }
+}

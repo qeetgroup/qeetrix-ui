@@ -4,7 +4,9 @@ import { Toast as ToastPrimitive } from "@base-ui/react/toast";
 import { CheckCircle2Icon, InfoIcon, TriangleAlertIcon, XCircleIcon, XIcon } from "lucide-react";
 import type * as React from "react";
 
+import { toastMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 /**
  * A standalone manager so `toast()` can be called from anywhere — event
@@ -56,6 +58,9 @@ const TYPE_ACCENT: Record<ToastType, string> = {
 };
 
 function ToastList() {
+  // Toasts are created imperatively from anywhere, including outside React, so there is no
+  // call site to hang a `messages` prop on: the provider is the only seam that can reach here.
+  const messages = useMessages("toast", toastMessages);
   const { toasts } = ToastPrimitive.useToastManager();
   return toasts.map((item) => {
     const type = (item.type ?? "info") as ToastType;
@@ -94,10 +99,10 @@ function ToastList() {
         ) : null}
         <ToastPrimitive.Close
           data-slot="toast-close"
-          aria-label="Close"
+          aria-label={messages.close}
           className="absolute end-2 top-2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          <XIcon className="size-4" />
+          <XIcon aria-hidden className="size-4" />
         </ToastPrimitive.Close>
       </ToastPrimitive.Root>
     );

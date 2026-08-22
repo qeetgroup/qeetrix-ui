@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import { Textarea } from "@/components/inputs/textarea";
+import type { MessagesFor } from "@/lib/messages";
+import { mentionInputMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { VisuallyHidden } from "@/primitives/visually-hidden";
+import { useMessages } from "@/providers/messages-provider";
 
 interface MentionPerson {
   id: string;
@@ -16,6 +20,18 @@ interface MentionInputProps extends Omit<React.ComponentProps<"textarea">, "valu
   onMention?: (person: MentionPerson) => void;
   /** Character that opens the suggestion list. Default "@". */
   trigger?: string;
+  /**
+   * Text announced politely whenever the suggestion count changes. Replace it
+   * to translate. Return `""` to opt out of the announcement.
+   *
+   * Equivalent to `messages={{ suggestionCount }}` and wins over it.
+   */
+  suggestionCountLabel?: (count: number) => string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"mentionInput">;
 }
 
 function escapeRegExp(s: string) {
@@ -25,6 +41,15 @@ function escapeRegExp(s: string) {
 /**
  * Textarea with `@`-mention typeahead. On trigger, a filtered people list opens;
  * arrow keys + Enter (or click) insert the mention. Controlled via value/onValueChange.
+ *
+ * The control keeps native `textbox` semantics rather than becoming a
+ * `combobox`: it is a multiline composer, and `role="combobox"` would drop
+ * `aria-multiline`. ARIA does not allow `aria-expanded` on `textbox` either, so
+ * the open/closed state and the number of matches are announced through a
+ * polite live region instead (`suggestionCountLabel`).
+ *
+ * The popup closes on Escape, on selection, and when focus leaves the control —
+ * a blur used to leave the suggestions floating over the page.
  */
 function MentionInput({
   value,
@@ -34,9 +59,14 @@ function MentionInput({
   trigger = "@",
   className,
   onKeyDown,
+  onBlur,
+  suggestionCountLabel,
+  messages: messageOverrides,
   ...props
 }: MentionInputProps) {
+  const messages = useMessages("mentionInput", mentionInputMessages, messageOverrides);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
   const listboxId = React.useId();
   const [query, setQuery] = React.useState<string | null>(null);
   const [active, setActive] = React.useState(0);
@@ -61,6 +91,15 @@ function MentionInput({
       : [];
   const isOpen = query != null && suggestions.length > 0;
   const activeIndex = Math.min(active, Math.max(0, suggestions.length - 1));
+  const activeId = isOpen ? `${listboxId}-option-${activeIndex}` : undefined;
+
+  // Keep the active option visible: the popup scrolls at 12rem tall, so arrowing
+  // past the sixth match used to move an option the user could not see.
+  React.useEffect(() => {
+    if (!activeId) return;
+    const node = listRef.current?.querySelector(`[id="${activeId}"]`);
+    (node as HTMLElement | null)?.scrollIntoView?.({ block: "nearest" });
+  }, [activeId]);
 
   const insert = (p: MentionPerson) => {
     const el = textarea();
@@ -77,6 +116,14 @@ function MentionInput({
       el.focus();
       el.setSelectionRange(before.length, before.length);
     });
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    onBlur?.(e);
+    // Focus moving inside the popup (mouse-down on an option) must not dismiss it.
+    const next = e.relatedTarget;
+    if (next instanceof Node && containerRef.current?.contains(next)) return;
+    setQuery(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -103,16 +150,21 @@ function MentionInput({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         aria-autocomplete="list"
         aria-haspopup="listbox"
         aria-controls={isOpen ? listboxId : undefined}
-        aria-activedescendant={isOpen ? `${listboxId}-option-${activeIndex}` : undefined}
+        aria-activedescendant={activeId}
       />
+      <VisuallyHidden role="status" aria-live="polite" data-slot="mention-input-status">
+        {isOpen ? (suggestionCountLabel ?? messages.suggestionCount)(suggestions.length) : ""}
+      </VisuallyHidden>
       {isOpen && (
         <div
+          ref={listRef}
           id={listboxId}
           role="listbox"
-          aria-label="Mention suggestions"
+          aria-label={messages.suggestions}
           className="absolute z-50 mt-1 max-h-48 w-56 overflow-auto rounded-lg border border-border bg-popover p-1 text-sm text-popover-foreground shadow-popover"
         >
           {suggestions.map((p, i) => (

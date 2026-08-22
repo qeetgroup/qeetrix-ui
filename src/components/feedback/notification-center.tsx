@@ -14,7 +14,10 @@ import { Badge } from "@/components/data-display/badge";
 import { Feed } from "@/components/data-display/feed";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/surfaces/popover";
+import type { MessagesFor } from "@/lib/messages";
+import { notificationCenterMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 type NotificationVariant = "info" | "success" | "warning" | "error";
 
@@ -33,7 +36,16 @@ interface NotificationCenterProps {
   onMarkAllRead?: () => void;
   onDismiss?: (id: string) => void;
   align?: "start" | "center" | "end";
+  /**
+   * Shown when the list is empty. Equivalent to `messages={{ empty }}` and wins over it;
+   * prefer the catalogue, which translates the tabs and the dismiss buttons at the same time.
+   */
   emptyMessage?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"notificationCenter">;
   className?: string;
 }
 
@@ -60,21 +72,23 @@ function NotificationCenter({
   onMarkAllRead,
   onDismiss,
   align = "end",
-  emptyMessage = "You're all caught up.",
+  emptyMessage,
+  messages: messageOverrides,
   className,
 }: NotificationCenterProps) {
+  const messages = useMessages("notificationCenter", notificationCenterMessages, messageOverrides);
   const [tab, setTab] = React.useState("all");
   const unread = items.filter((i) => !i.read);
 
   const list = (data: NotificationItem[]) =>
     data.length === 0 ? (
       <div className="flex flex-col items-center gap-1 px-4 py-12 text-center text-sm text-muted-foreground">
-        <BellIcon className="size-6 opacity-40" />
-        {emptyMessage}
+        <BellIcon aria-hidden className="size-6 opacity-40" />
+        {emptyMessage ?? messages.empty}
       </div>
     ) : (
       <Feed
-        aria-label="Notifications"
+        aria-label={messages.feed}
         className="max-h-96 gap-0 divide-y divide-border overflow-y-auto"
         itemClassName="flex gap-3 rounded-none border-0 bg-transparent px-3 py-2.5 shadow-none hover:bg-muted/40 hover:shadow-none focus-visible:bg-muted/40"
       >
@@ -95,7 +109,7 @@ function NotificationCenter({
                   {!item.read && (
                     <span
                       role="img"
-                      aria-label="Unread"
+                      aria-label={messages.unread}
                       className="size-1.5 shrink-0 rounded-full bg-primary"
                     />
                   )}
@@ -110,11 +124,11 @@ function NotificationCenter({
               {onDismiss && (
                 <button
                   type="button"
-                  aria-label="Dismiss"
+                  aria-label={messages.dismiss}
                   onClick={() => onDismiss(item.id)}
                   className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
-                  <XIcon className="size-4" />
+                  <XIcon aria-hidden className="size-4" />
                 </button>
               )}
             </React.Fragment>
@@ -130,12 +144,12 @@ function NotificationCenter({
           <Button
             variant="ghost"
             size="icon"
-            aria-label={`Notifications${unread.length ? `, ${unread.length} unread` : ""}`}
+            aria-label={messages.trigger(unread.length)}
             className={cn("relative", className)}
           >
-            <BellIcon />
+            <BellIcon aria-hidden />
             {unread.length > 0 && (
-              <Badge className="absolute -inset-e-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[10px] tabular-nums">
+              <Badge className="absolute -inset-e-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[length:var(--qx-component-notification-center-count-font-size)] tabular-nums">
                 {unread.length > 9 ? "9+" : unread.length}
               </Badge>
             )}
@@ -144,19 +158,17 @@ function NotificationCenter({
       />
       <PopoverContent align={align} className="w-96 p-0">
         <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
-          <span className="text-sm font-semibold">Notifications</span>
+          <span className="text-sm font-semibold">{messages.heading}</span>
           {unread.length > 0 && onMarkAllRead && (
             <Button variant="ghost" size="sm" onClick={onMarkAllRead}>
-              Mark all read
+              {messages.markAllRead}
             </Button>
           )}
         </div>
         <Tabs value={tab} onValueChange={(v) => setTab(v as string)}>
           <TabsList className="mx-2 mt-2">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="unread">
-              Unread{unread.length > 0 ? ` (${unread.length})` : ""}
-            </TabsTrigger>
+            <TabsTrigger value="all">{messages.allTab}</TabsTrigger>
+            <TabsTrigger value="unread">{messages.unreadTab(unread.length)}</TabsTrigger>
           </TabsList>
           <TabsContent value="all">{list(items)}</TabsContent>
           <TabsContent value="unread">{list(unread)}</TabsContent>

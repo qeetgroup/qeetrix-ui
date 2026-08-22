@@ -4,8 +4,12 @@ import { ImageIcon, Trash2Icon, UploadCloudIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/actions/button";
+import { isFileAccepted } from "@/components/inputs/file-upload";
 import { Input } from "@/components/inputs/input";
+import type { MessagesFor } from "@/lib/messages";
+import { logoUploaderMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface LogoUploaderProps {
   /** Current logo source. Can be a public URL or a data URL. Empty means
@@ -23,7 +27,33 @@ interface LogoUploaderProps {
   disabled?: boolean;
   /** Optional caption shown beneath the file dropzone. */
   hint?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"logoUploader">;
   className?: string;
+}
+
+/** Schemes this component is willing to hand to an `<img src>`. */
+const PREVIEWABLE_DATA_IMAGE = /^data:image\/(png|jpeg|jpg|gif|webp|avif|svg\+xml)[;,]/i;
+
+/**
+ * Whether `src` is safe to render as an image preview.
+ *
+ * Relative paths and `http(s)` are fine. `data:` is allowed only for image
+ * media types — a `data:text/html` value handed to a preview is a way to get
+ * markup rendered somewhere it was not expected. Everything else (`javascript:`,
+ * `blob:` from another origin, unknown schemes) is refused.
+ */
+function isPreviewableSource(src: string): boolean {
+  if (!src) return false;
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(src.trim());
+  if (!scheme) return true; // relative path or bare filename
+  const protocol = scheme[1].toLowerCase();
+  if (protocol === "http" || protocol === "https") return true;
+  if (protocol === "data") return PREVIEWABLE_DATA_IMAGE.test(src.trim());
+  return false;
 }
 
 /**
@@ -37,6 +67,16 @@ interface LogoUploaderProps {
  * `<img>` tag understands. When a real upload endpoint ships, swap the
  * `readAsDataURL` path for an upload-then-emit-URL flow without
  * touching call sites.
+ *
+ * Both input paths run the same `accept` check (shared with `Dropzone` via
+ * {@link isFileAccepted}), so a drop cannot bypass the policy the file dialog
+ * enforces. That check reads the browser-reported name and MIME type only:
+ * **the server must verify the real file signature, cap the size again, and
+ * sanitise SVG before storing or serving it.** An SVG logo is a script-carrying
+ * document, not a picture.
+ *
+ * Only `http(s)`, relative paths and `data:image/*` sources are previewed; any
+ * other scheme is reported as an error rather than passed to `<img src>`.
  */
 function LogoUploader({
   value,
@@ -45,56 +85,86 @@ function LogoUploader({
   accept = "image/*",
   disabled,
   hint,
+  messages: messageOverrides,
   className,
 }: LogoUploaderProps) {
+  const messages = useMessages("logoUploader", logoUploaderMessages, messageOverrides);
   const [dragOver, setDragOver] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const readerRef = React.useRef<FileReader | null>(null);
 
   const maxBytes = maxSizeMB * 1024 * 1024;
 
+  // A reader left running after unmount, or after the user picks a second file,
+  // would resolve into a dead component or overwrite the newer choice.
+  React.useEffect(
+    () => () => {
+      readerRef.current?.abort();
+      readerRef.current = null;
+    },
+    [],
+  );
+
   function handleFile(file: File) {
     setError(null);
-    if (!file.type.startsWith("image/")) {
-      setError("That doesn't look like an image file.");
+    // The same check the file dialog applies, so a drop cannot bypass `accept`.
+    if (!isFileAccepted(file, accept)) {
+      setError(messages.rejectedType);
       return;
     }
     if (file.size > maxBytes) {
-      setError(`File is larger than ${maxSizeMB} MB.`);
+      setError(messages.rejectedSize(maxSizeMB));
       return;
     }
+    readerRef.current?.abort();
     const reader = new FileReader();
+    readerRef.current = reader;
     reader.onload = () => {
+      if (readerRef.current !== reader) return;
+      readerRef.current = null;
       const result = reader.result;
       if (typeof result === "string") onChange(result);
     };
-    reader.onerror = () => setError("Couldn't read that file.");
+    reader.onerror = () => {
+      if (readerRef.current !== reader) return;
+      readerRef.current = null;
+      setError(messages.readError);
+    };
     reader.readAsDataURL(file);
   }
 
   function clearLogo() {
+    readerRef.current?.abort();
+    readerRef.current = null;
     onChange("");
     setError(null);
     if (inputRef.current) inputRef.current.value = "";
   }
+
+  const previewable = isPreviewableSource(value);
 
   return (
     <div data-slot="logo-uploader" className={cn("flex flex-col gap-2", className)}>
       {value ? (
         <div className="flex items-start gap-3 rounded-lg border bg-muted/30 p-3">
           <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-background">
-            {/* Plain <img>: this is a framework-agnostic component (no next/image). */}
-            <img
-              src={value}
-              alt="Logo preview"
-              className="h-full w-full object-contain"
-              onError={() => setError("Couldn't render that source as an image.")}
-            />
+            {previewable ? (
+              // Plain <img>: this is a framework-agnostic component (no next/image).
+              <img
+                src={value}
+                alt={messages.previewAlt}
+                className="h-full w-full object-contain"
+                onError={() => setError(messages.renderError)}
+              />
+            ) : (
+              <ImageIcon aria-hidden className="size-6 text-muted-foreground" />
+            )}
           </div>
           <div className="flex flex-1 flex-col gap-1">
-            <p className="text-sm font-medium">Logo set</p>
+            <p className="text-sm font-medium">{messages.logoSet}</p>
             <p className="line-clamp-1 text-xs text-muted-foreground">
-              {value.startsWith("data:") ? "Uploaded file (preview)" : value}
+              {value.startsWith("data:") ? messages.uploadedFile : value}
             </p>
             <div className="mt-1 flex gap-2">
               <Button
@@ -104,7 +174,7 @@ function LogoUploader({
                 disabled={disabled}
                 onClick={() => inputRef.current?.click()}
               >
-                <UploadCloudIcon /> Replace
+                <UploadCloudIcon aria-hidden /> {messages.replace}
               </Button>
               <Button
                 type="button"
@@ -113,7 +183,7 @@ function LogoUploader({
                 disabled={disabled}
                 onClick={clearLogo}
               >
-                <Trash2Icon /> Remove
+                <Trash2Icon aria-hidden /> {messages.remove}
               </Button>
             </div>
           </div>
@@ -142,10 +212,10 @@ function LogoUploader({
             disabled && "pointer-events-none opacity-disabled",
           )}
         >
-          <ImageIcon className="size-6 text-muted-foreground" />
-          <span className="block text-sm font-medium">Drop a logo here</span>
+          <ImageIcon aria-hidden className="size-6 text-muted-foreground" />
+          <span className="block text-sm font-medium">{messages.dropZone}</span>
           <span className="block text-xs text-muted-foreground">
-            PNG, JPG, SVG, or WEBP up to {maxSizeMB} MB
+            {messages.formatHint(maxSizeMB)}
           </span>
         </button>
       )}
@@ -155,7 +225,7 @@ function LogoUploader({
         type="file"
         accept={accept}
         disabled={disabled}
-        aria-label="Upload a logo file"
+        aria-label={messages.file}
         className="sr-only"
         onChange={(e) => {
           const f = e.target.files?.[0];
@@ -169,11 +239,16 @@ function LogoUploader({
         <Input
           type="url"
           inputMode="url"
-          placeholder="…or paste a logo URL"
+          placeholder={messages.urlPlaceholder}
           value={value && !value.startsWith("data:") ? value : ""}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const next = e.target.value;
+            setError(next && !isPreviewableSource(next) ? messages.unusableSource : null);
+            onChange(next);
+          }}
           disabled={disabled}
-          aria-label="Logo URL"
+          aria-invalid={Boolean(value) && !previewable}
+          aria-label={messages.url}
         />
       </div>
 

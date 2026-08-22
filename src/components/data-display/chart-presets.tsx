@@ -11,7 +11,17 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/data-display/chart";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
+
+/*
+ * Recharts animates with JavaScript (react-smooth), so the global
+ * `prefers-reduced-motion` CSS in `styles/index.css` cannot reach it: it can
+ * collapse a CSS duration but not a requestAnimationFrame loop. Every preset
+ * therefore feeds the preference into `isAnimationActive`, which makes Recharts
+ * paint the final geometry on the first frame instead of growing/drawing into it.
+ * `Sparkline` never animates at all.
+ */
 
 type Datum = Record<string, unknown>;
 
@@ -96,6 +106,7 @@ function AreaChart({
   accessibilityTable,
   accessibilityTableVisibility,
 }: CartesianChartProps) {
+  const animate = !usePrefersReducedMotion();
   return (
     <ChartContainer
       config={config}
@@ -122,6 +133,7 @@ function AreaChart({
               fill={`var(--color-${key})`}
               fillOpacity={0.2}
               strokeWidth={2}
+              isAnimationActive={animate}
             />
           ))}
         </CartesianFrame>
@@ -149,6 +161,7 @@ function BarChart({
   accessibilityTable,
   accessibilityTableVisibility,
 }: CartesianChartProps) {
+  const animate = !usePrefersReducedMotion();
   return (
     <ChartContainer
       config={config}
@@ -172,6 +185,7 @@ function BarChart({
               stackId={stacked ? "a" : undefined}
               fill={`var(--color-${key})`}
               radius={stacked ? 0 : 4}
+              isAnimationActive={animate}
             />
           ))}
         </CartesianFrame>
@@ -198,6 +212,7 @@ function LineChart({
   accessibilityTable,
   accessibilityTableVisibility,
 }: Omit<CartesianChartProps, "stacked">) {
+  const animate = !usePrefersReducedMotion();
   return (
     <ChartContainer
       config={config}
@@ -222,6 +237,7 @@ function LineChart({
               stroke={`var(--color-${key})`}
               strokeWidth={2}
               dot={false}
+              isAnimationActive={animate}
             />
           ))}
         </CartesianFrame>
@@ -258,6 +274,7 @@ function DonutChart({
   accessibilityTable,
   accessibilityTableVisibility,
 }: RadialOrPieProps & { innerRadius?: number }) {
+  const animate = !usePrefersReducedMotion();
   return (
     <ChartContainer
       config={config}
@@ -280,6 +297,7 @@ function DonutChart({
           nameKey={nameKey}
           innerRadius={innerRadius}
           strokeWidth={2}
+          isAnimationActive={animate}
         >
           {data.map((entry) => (
             <Recharts.Cell
@@ -308,6 +326,7 @@ function RadialChart({
   accessibilityTable,
   accessibilityTableVisibility,
 }: RadialOrPieProps) {
+  const animate = !usePrefersReducedMotion();
   return (
     <ChartContainer
       config={config}
@@ -330,7 +349,12 @@ function RadialChart({
         {showTooltip && (
           <ChartTooltip content={<ChartTooltipContent nameKey={nameKey} hideLabel />} />
         )}
-        <Recharts.RadialBar dataKey={dataKey} background cornerRadius={6}>
+        <Recharts.RadialBar
+          dataKey={dataKey}
+          background
+          cornerRadius={6}
+          isAnimationActive={animate}
+        >
           {data.map((entry) => (
             <Recharts.Cell
               key={String(entry[nameKey])}

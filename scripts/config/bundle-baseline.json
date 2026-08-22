@@ -1,0 +1,418 @@
+{
+  "$note": "Measured consumer cost for the entry points DEP-001 and BUNDLE-001 name. Written by `node scripts/check/bundle.mjs --record`; gated by the same script with no flag.",
+  "environment": "Vite 8 / Rolldown, production mode, minify on, target es2022, react + react-dom external. Bundled from src/ (the same module graph tsc emits into dist/), so the gate needs no build. Numbers are bytes of JavaScript a consumer's bundler emits — not download time, and not CSS or fonts, which are counted separately below.",
+  "metrics": {
+    "minified": "Bytes of the minified ES output for the entry, all chunks concatenated.",
+    "gzip": "Bytes of that output under gzip level 9 — the closest single number to what a consumer's users actually download."
+  },
+  "policy": "A ratchet, not a target. Each budget is the measurement plus 10% rounded up to whole KiB — the same shape as src/__tests__/performance/baseline.json. Budgets may only shrink: scripts/check/bundle.mjs fails a commit that raises one, drops an entry, or parks a budget more than 25% above what it now measures. A budget nobody has to meet is not a budget.",
+  "recording": "`node scripts/check/bundle.mjs --record`, then read the diff. Raising a budget is the reviewed decision; the flag exists because the measurement needs a bundler run and there is nowhere else for the numbers to come from.",
+  "recorded": "2026-08-22",
+  "treeShaking": {
+    "$note": "root/button-only vs deep/button: what the root barrel costs a consumer who uses one component. Measured at 100 B gzip on the date above — the barrel shakes. The allowance is deliberately close to it: this is the assertion that src/index.ts has not acquired a side effect.",
+    "maxBarrelOverheadGzipBytes": 256
+  },
+  "entries": {
+    "root/all": {
+      "entry": "src/index.ts",
+      "note": "The whole root barrel, nothing shaken. The ceiling: what a consumer pays only if tree-shaking fails completely.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@date-fns/tz",
+        "@floating-ui/core",
+        "@floating-ui/dom",
+        "@floating-ui/react-dom",
+        "@floating-ui/utils",
+        "@reduxjs/toolkit",
+        "@tanstack/react-table",
+        "@tanstack/react-virtual",
+        "@tanstack/table-core",
+        "@tanstack/virtual-core",
+        "@tiptap/core",
+        "@tiptap/extension-blockquote",
+        "@tiptap/extension-bold",
+        "@tiptap/extension-code",
+        "@tiptap/extension-code-block",
+        "@tiptap/extension-document",
+        "@tiptap/extension-hard-break",
+        "@tiptap/extension-heading",
+        "@tiptap/extension-horizontal-rule",
+        "@tiptap/extension-italic",
+        "@tiptap/extension-link",
+        "@tiptap/extension-list",
+        "@tiptap/extension-paragraph",
+        "@tiptap/extension-strike",
+        "@tiptap/extension-text",
+        "@tiptap/extension-underline",
+        "@tiptap/extensions",
+        "@tiptap/react",
+        "@tiptap/starter-kit",
+        "class-variance-authority",
+        "clsx",
+        "d3-array",
+        "d3-color",
+        "d3-format",
+        "d3-interpolate",
+        "d3-path",
+        "d3-scale",
+        "d3-shape",
+        "d3-time",
+        "d3-time-format",
+        "date-fns",
+        "decimal.js-light",
+        "dijkstrajs",
+        "embla-carousel",
+        "embla-carousel-react",
+        "embla-carousel-reactive-utils",
+        "es-toolkit",
+        "eventemitter3",
+        "fast-equals",
+        "immer",
+        "internmap",
+        "linkifyjs",
+        "lucide-react",
+        "orderedmap",
+        "prosemirror-commands",
+        "prosemirror-dropcursor",
+        "prosemirror-gapcursor",
+        "prosemirror-history",
+        "prosemirror-keymap",
+        "prosemirror-model",
+        "prosemirror-schema-list",
+        "prosemirror-state",
+        "prosemirror-transform",
+        "prosemirror-view",
+        "qrcode",
+        "react-day-picker",
+        "react-is",
+        "react-redux",
+        "react-resizable-panels",
+        "recharts",
+        "redux",
+        "redux-thunk",
+        "reselect",
+        "rope-sequence",
+        "tailwind-merge",
+        "tiny-invariant",
+        "use-sync-external-store",
+        "victory-vendor",
+        "w3c-keyname"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 2416216,
+          "budget": 2658304
+        },
+        "gzip": {
+          "measured": 623945,
+          "budget": 687104
+        }
+      }
+    },
+    "root/button-only": {
+      "entry": "generated fixture — see scripts/check/bundle.mjs",
+      "note": "`import { Button } from '@qeetrix/ui'`, rendering one Button. Compare against deep/button: the difference is the barrel's real cost.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@floating-ui/utils",
+        "class-variance-authority",
+        "clsx",
+        "tailwind-merge"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 56578,
+          "budget": 62464
+        },
+        "gzip": {
+          "measured": 15466,
+          "budget": 17408
+        }
+      }
+    },
+    "deep/button": {
+      "entry": "src/components/actions/button.tsx",
+      "note": "The same component imported directly, as the control for root/button-only.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@floating-ui/utils",
+        "class-variance-authority",
+        "clsx",
+        "tailwind-merge"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 56410,
+          "budget": 62464
+        },
+        "gzip": {
+          "measured": 15367,
+          "budget": 17408
+        }
+      }
+    },
+    "feature/chart": {
+      "entry": "src/components/data-display/chart.tsx",
+      "note": "Recharts, and the d3 and redux-toolkit graph it pulls behind it.",
+      "packages": [
+        "@reduxjs/toolkit",
+        "clsx",
+        "d3-array",
+        "d3-color",
+        "d3-format",
+        "d3-interpolate",
+        "d3-path",
+        "d3-scale",
+        "d3-shape",
+        "d3-time",
+        "d3-time-format",
+        "decimal.js-light",
+        "es-toolkit",
+        "eventemitter3",
+        "immer",
+        "internmap",
+        "react-redux",
+        "recharts",
+        "redux",
+        "reselect",
+        "tailwind-merge",
+        "use-sync-external-store",
+        "victory-vendor"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 386645,
+          "budget": 425984
+        },
+        "gzip": {
+          "measured": 99166,
+          "budget": 109568
+        }
+      }
+    },
+    "feature/data-table": {
+      "entry": "src/components/data-display/data-table.tsx",
+      "note": "TanStack Table + TanStack Virtual, plus the Base UI menus the toolbar uses.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@floating-ui/core",
+        "@floating-ui/dom",
+        "@floating-ui/react-dom",
+        "@floating-ui/utils",
+        "@tanstack/react-table",
+        "@tanstack/react-virtual",
+        "@tanstack/table-core",
+        "@tanstack/virtual-core",
+        "class-variance-authority",
+        "clsx",
+        "lucide-react",
+        "tailwind-merge",
+        "use-sync-external-store"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 393713,
+          "budget": 433152
+        },
+        "gzip": {
+          "measured": 104409,
+          "budget": 115712
+        }
+      }
+    },
+    "feature/rich-text-editor": {
+      "entry": "src/components/inputs/rich-text-editor.tsx",
+      "note": "TipTap starter kit and the ProseMirror packages under it — the most expensive feature in the package.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@floating-ui/utils",
+        "@tiptap/core",
+        "@tiptap/extension-blockquote",
+        "@tiptap/extension-bold",
+        "@tiptap/extension-code",
+        "@tiptap/extension-code-block",
+        "@tiptap/extension-document",
+        "@tiptap/extension-hard-break",
+        "@tiptap/extension-heading",
+        "@tiptap/extension-horizontal-rule",
+        "@tiptap/extension-italic",
+        "@tiptap/extension-link",
+        "@tiptap/extension-list",
+        "@tiptap/extension-paragraph",
+        "@tiptap/extension-strike",
+        "@tiptap/extension-text",
+        "@tiptap/extension-underline",
+        "@tiptap/extensions",
+        "@tiptap/react",
+        "@tiptap/starter-kit",
+        "class-variance-authority",
+        "clsx",
+        "fast-equals",
+        "linkifyjs",
+        "lucide-react",
+        "orderedmap",
+        "prosemirror-commands",
+        "prosemirror-dropcursor",
+        "prosemirror-gapcursor",
+        "prosemirror-history",
+        "prosemirror-keymap",
+        "prosemirror-model",
+        "prosemirror-schema-list",
+        "prosemirror-state",
+        "prosemirror-transform",
+        "prosemirror-view",
+        "rope-sequence",
+        "tailwind-merge",
+        "use-sync-external-store",
+        "w3c-keyname"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 576655,
+          "budget": 634880
+        },
+        "gzip": {
+          "measured": 158726,
+          "budget": 175104
+        }
+      }
+    },
+    "feature/calendar": {
+      "entry": "src/components/pickers/calendar.tsx",
+      "note": "react-day-picker, which brings date-fns.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@date-fns/tz",
+        "@floating-ui/utils",
+        "class-variance-authority",
+        "clsx",
+        "date-fns",
+        "lucide-react",
+        "react-day-picker",
+        "tailwind-merge"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 159971,
+          "budget": 176128
+        },
+        "gzip": {
+          "measured": 39893,
+          "budget": 44032
+        }
+      }
+    },
+    "feature/carousel": {
+      "entry": "src/components/data-display/carousel.tsx",
+      "note": "Embla.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@floating-ui/utils",
+        "class-variance-authority",
+        "clsx",
+        "embla-carousel",
+        "embla-carousel-react",
+        "embla-carousel-reactive-utils",
+        "lucide-react",
+        "tailwind-merge"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 91613,
+          "budget": 101376
+        },
+        "gzip": {
+          "measured": 26828,
+          "budget": 29696
+        }
+      }
+    },
+    "feature/resizable": {
+      "entry": "src/components/layout/resizable.tsx",
+      "note": "react-resizable-panels.",
+      "packages": ["clsx", "lucide-react", "react-resizable-panels", "tailwind-merge"],
+      "metrics": {
+        "minified": {
+          "measured": 83861,
+          "budget": 93184
+        },
+        "gzip": {
+          "measured": 22860,
+          "budget": 25600
+        }
+      }
+    },
+    "feature/qr-code": {
+      "entry": "src/components/data-display/qr-code.tsx",
+      "note": "qrcode, which brings dijkstrajs.",
+      "packages": ["clsx", "dijkstrajs", "qrcode", "tailwind-merge"],
+      "metrics": {
+        "minified": {
+          "measured": 72835,
+          "budget": 80896
+        },
+        "gzip": {
+          "measured": 20163,
+          "budget": 22528
+        }
+      }
+    },
+    "blocks": {
+      "entry": "src/blocks/index.ts",
+      "note": "Every block. Blocks compose components, so this is mostly the components they use.",
+      "packages": [
+        "@base-ui/react",
+        "@base-ui/utils",
+        "@floating-ui/utils",
+        "class-variance-authority",
+        "clsx",
+        "lucide-react",
+        "tailwind-merge"
+      ],
+      "metrics": {
+        "minified": {
+          "measured": 101216,
+          "budget": 111616
+        },
+        "gzip": {
+          "measured": 27240,
+          "budget": 30720
+        }
+      }
+    }
+  },
+  "fonts": {
+    "referenced": {
+      "files": 18,
+      "bytes": 1697988
+    },
+    "unreferenced": {
+      "files": [
+        "Qeet-Bold.woff2",
+        "Qeet-Light.woff2",
+        "Qeet-Medium.woff2",
+        "Qeet-Regular.woff2",
+        "Qeet-SemiBold.woff2",
+        "QeetUIText-Bold.woff2",
+        "QeetUIText-Light.woff2",
+        "QeetUIText-Medium.woff2",
+        "QeetUIText-Regular.woff2",
+        "QeetUIText-SemiBold.woff2",
+        "Qeet[wght,GEOM].woff2"
+      ],
+      "bytes": 612440,
+      "status": "pending removal — 11 files no @font-face references. Recorded rather than deleted because ./fonts/* is a published wildcard export and removing a file from it is a consumer-visible change; see docs/governance/dependency-budgets.md. The gate refuses a *new* unreferenced font, so this list can only shrink."
+    },
+    "total": {
+      "measured": 2314817,
+      "budget": 2546688
+    }
+  }
+}

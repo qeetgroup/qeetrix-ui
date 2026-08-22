@@ -105,7 +105,7 @@ function DataState({
       >
         {empty ?? (
           <>
-            {EmptyIcon && <EmptyIcon className="size-8 text-muted-foreground" />}
+            {EmptyIcon && <EmptyIcon aria-hidden className="size-8 text-muted-foreground" />}
             {emptyTitle && <p className="text-sm font-medium text-foreground">{emptyTitle}</p>}
             {emptyDescription && (
               <p className="text-xs text-muted-foreground">{emptyDescription}</p>

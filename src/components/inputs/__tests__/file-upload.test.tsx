@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/inputs/field";
 import { Dropzone, FileList, FileUploadItem, formatBytes } from "@/components/inputs/file-upload";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
@@ -138,5 +139,225 @@ describe("FileList", () => {
       </FileList>,
     );
     expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+/** Build a FileList-alike for the hidden <input> or a drop event. */
+function fileListOf(files: File[]) {
+  return {
+    ...files,
+    length: files.length,
+    item: (i: number) => files[i] ?? null,
+  } as unknown as FileList;
+}
+
+function dropFiles(zone: Element, files: File[]) {
+  fireEvent.drop(zone, { dataTransfer: { files: fileListOf(files) } });
+}
+
+const png = (name: string, size = 10) => {
+  const file = new File(["x"], name, { type: "image/png" });
+  Object.defineProperty(file, "size", { value: size });
+  return file;
+};
+
+describe("Dropzone count validation", () => {
+  it("accepts only one file on drop when multiple={false}", () => {
+    const onDrop = vi.fn();
+    render(<Dropzone multiple={false} onDrop={onDrop} />);
+    const files = [png("a.png"), png("b.png"), png("c.png")];
+    dropFiles(screen.getByRole("button"), files);
+
+    // The native dialog honours `multiple`, but a drop hands over everything.
+    const [accepted, rejected] = onDrop.mock.calls[0];
+    expect(accepted).toEqual([files[0]]);
+    expect(rejected).toHaveLength(2);
+    expect(rejected.every((r: { reason: string }) => r.reason === "count")).toBe(true);
+    expect(rejected[0].message).toContain("only one file");
+  });
+
+  it("accepts only one file from the file dialog when multiple={false}", () => {
+    const onDrop = vi.fn();
+    render(<Dropzone multiple={false} onDrop={onDrop} />);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const files = [png("a.png"), png("b.png")];
+    Object.defineProperty(input, "files", { value: fileListOf(files) });
+    fireEvent.change(input);
+    expect(onDrop.mock.calls[0][0]).toEqual([files[0]]);
+    expect(onDrop.mock.calls[0][1]).toHaveLength(1);
+  });
+
+  it("still honours a lower maxFiles when multiple is true", () => {
+    const onDrop = vi.fn();
+    render(<Dropzone maxFiles={2} onDrop={onDrop} />);
+    dropFiles(screen.getByRole("button"), [png("a.png"), png("b.png"), png("c.png")]);
+    expect(onDrop.mock.calls[0][0]).toHaveLength(2);
+    expect(onDrop.mock.calls[0][1]).toHaveLength(1);
+  });
+
+  it("takes the stricter of multiple={false} and maxFiles", () => {
+    const onDrop = vi.fn();
+    render(<Dropzone multiple={false} maxFiles={5} onDrop={onDrop} />);
+    dropFiles(screen.getByRole("button"), [png("a.png"), png("b.png")]);
+    expect(onDrop.mock.calls[0][0]).toHaveLength(1);
+  });
+
+  it("applies the accept and size policies to drops too", () => {
+    const onDrop = vi.fn();
+    render(<Dropzone accept="image/*" maxSize={100} onDrop={onDrop} />);
+    const big = png("huge.png", 500);
+    const wrong = new File(["x"], "doc.pdf", { type: "application/pdf" });
+    dropFiles(screen.getByRole("button"), [big, wrong, png("ok.png")]);
+
+    const [accepted, rejected] = onDrop.mock.calls[0];
+    expect(accepted.map((f: File) => f.name)).toEqual(["ok.png"]);
+    expect(rejected.map((r: { reason: string }) => r.reason).sort()).toEqual(["size", "type"]);
+  });
+
+  it("ignores drops while disabled", () => {
+    const onDrop = vi.fn();
+    render(<Dropzone disabled onDrop={onDrop} />);
+    dropFiles(screen.getByRole("button"), [png("a.png")]);
+    expect(onDrop).not.toHaveBeenCalled();
+  });
+});
+
+describe("FileUploadItem status announcements", () => {
+  const file = { name: "report.pdf", size: 2048, type: "application/pdf" };
+  const status = () => document.querySelector("[data-slot='file-upload-item-status']");
+
+  it("announces progress politely, named after the file", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="uploading" progress={40} />
+      </FileList>,
+    );
+    expect(status()).toHaveAttribute("aria-live", "polite");
+    expect(status()).toHaveTextContent("report.pdf: uploading, 40%");
+  });
+
+  it("names the progress bar after the file", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="uploading" progress={40} />
+      </FileList>,
+    );
+    // Several concurrent uploads otherwise expose a stack of anonymous bars.
+    expect(screen.getByRole("progressbar", { name: "Uploading report.pdf" })).toBeInTheDocument();
+  });
+
+  it("announces completion", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="success" />
+      </FileList>,
+    );
+    expect(status()).toHaveTextContent("report.pdf: upload complete");
+  });
+
+  it("says nothing politely while pending", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="pending" />
+      </FileList>,
+    );
+    expect(status()).toHaveTextContent("");
+  });
+
+  it("leaves failures to the visible alert so they are announced once", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="error" error="Server rejected the file" />
+      </FileList>,
+    );
+    expect(status()).toHaveTextContent("");
+    expect(screen.getByRole("alert")).toHaveTextContent("Server rejected the file");
+  });
+
+  it("accepts a translated status label", () => {
+    render(
+      <FileList>
+        <FileUploadItem
+          file={file}
+          status="success"
+          statusLabel={({ name }) => `${name} : envoi terminé`}
+        />
+      </FileList>,
+    );
+    expect(status()).toHaveTextContent("report.pdf : envoi terminé");
+  });
+
+  it("has no axe violations while uploading", async () => {
+    const { container } = render(
+      <FileList>
+        <FileUploadItem file={file} status="uploading" progress={70} onRemove={() => {}} />
+      </FileList>,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("Dropzone form participation", () => {
+  it("names its file input, which is what makes the dialog path submit", () => {
+    const { container } = render(<Dropzone name="cv" />);
+    expect(container.querySelector('input[type="file"]')).toHaveAttribute("name", "cv");
+  });
+
+  it("clears the input on open, and leaves the chosen file in place after the change", () => {
+    render(<Dropzone name="cv" />);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    // jsdom will not hold a non-empty file-input value, so the *writes* are what is observable.
+    const writes: string[] = [];
+    Object.defineProperty(input, "value", {
+      get: () => "",
+      set: (next: string) => writes.push(next),
+      configurable: true,
+    });
+    vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => {});
+
+    fireEvent.click(screen.getByRole("button"));
+    expect(writes).toEqual([""]);
+
+    writes.length = 0;
+    Object.defineProperty(input, "files", {
+      value: fileListOf([png("cv.png")]),
+      configurable: true,
+    });
+    fireEvent.change(input);
+    // The old handler cleared the value here, which also cleared the file out of the FormData —
+    // the reason `name` could not be implemented at all. Clearing moved to open() instead.
+    expect(writes).toEqual([]);
+  });
+
+  it("takes its accessible name from a Field label, replacing its own instruction", () => {
+    render(
+      <Field>
+        <FieldLabel>Curriculum vitae</FieldLabel>
+        <Dropzone name="cv" />
+        <FieldDescription>PDF only.</FieldDescription>
+      </Field>,
+    );
+    const zone = screen.getByRole("button", { name: "Curriculum vitae" });
+    expect(zone).toHaveAttribute("aria-describedby", screen.getByText("PDF only.").id);
+    // The instruction stays on screen even though it is no longer the name.
+    expect(zone).toHaveTextContent(/Drop files here/);
+  });
+
+  it("reports a Field error as invalid", () => {
+    render(
+      <Field>
+        <FieldLabel>Curriculum vitae</FieldLabel>
+        <Dropzone name="cv" />
+        <FieldError>A CV is required.</FieldError>
+      </Field>,
+    );
+    const zone = screen.getByRole("button", { name: "Curriculum vitae" });
+    expect(zone).toHaveAttribute("aria-invalid", "true");
+    expect(zone).toHaveAttribute("aria-errormessage", screen.getByRole("alert").id);
+  });
+
+  it("serialises nothing without a name", () => {
+    const { container } = render(<Dropzone />);
+    expect(container.querySelector('input[type="file"]')).not.toHaveAttribute("name");
   });
 });

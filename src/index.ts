@@ -30,11 +30,15 @@ export { useMediaQuery } from "./hooks/use-media-query";
 export { useIsMobile } from "./hooks/use-mobile";
 export { useMotion } from "./hooks/use-motion";
 export { usePrefersReducedMotion } from "./hooks/use-prefers-reduced-motion";
+export type { MessageOverrides } from "./lib/messages";
+// The English source text, and the pure resolver behind `useMessages` — for building a
+// translation and for testing one. Every default is reachable through `QEETRIX_MESSAGES`.
+export { QEETRIX_MESSAGES, resolveMessages } from "./lib/messages";
 export type { DurationToken, EasingToken, TransitionOptions } from "./lib/motion";
 export { DURATION, EASING, transition } from "./lib/motion";
 export type { Breakpoint } from "./lib/responsive";
 export { BREAKPOINTS, belowWidthQuery, minWidthQuery } from "./lib/responsive";
 export { CHART_COLOR, COMPONENT, SHADOW, STATE_OPACITY, Z_INDEX } from "./lib/token-values";
 export { cn } from "./lib/utils";
-// Providers — theme, density, direction.
+// Providers — theme, density, direction, messages.
 export * from "./providers";

@@ -4,7 +4,10 @@ import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 
 import { cn } from "@/lib/utils";
 
-function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
+/** The tab set's props, including the `value` / `defaultValue` / `onValueChange` triple. */
+type TabsProps = TabsPrimitive.Root.Props;
+
+function Tabs({ className, ...props }: TabsProps) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
@@ -19,7 +22,7 @@ function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "inline-flex h-[var(--qx-density-control-height,2.25rem)] w-fit items-center justify-center gap-1 rounded-lg bg-muted p-1 text-muted-foreground data-[orientation=vertical]:h-fit data-[orientation=vertical]:flex-col",
+        "inline-flex h-[var(--qx-control-height)] w-fit items-center justify-center gap-1 rounded-lg bg-muted p-1 text-muted-foreground data-[orientation=vertical]:h-fit data-[orientation=vertical]:flex-col",
         className,
       )}
       {...props}
@@ -53,4 +56,5 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   );
 }
 
+export type { TabsProps };
 export { Tabs, TabsContent, TabsList, TabsTrigger };

@@ -1,0 +1,253 @@
+# Architecture overview
+
+`@qeetrix/ui` is the Qeet Group design system: one package that ships design tokens, brand
+assets and 145 React components, consumed by every Qeet product. It has exactly one job — make
+the same interface decisions available everywhere, and keep them from drifting.
+
+That only works if the structure is enforced rather than described. This document is the map;
+the rules it describes are checked on every `bun run verify`.
+
+---
+
+## The shape of the package
+
+```text
+src/
+├── tokens/        W3C DTCG token source (primitive + light/dark theme)   — data
+├── styles/        the CSS entry + generated token CSS/JSON               — generated
+├── contracts/     types + vocabularies that describe a component         — governance
+├── manifests/     the manifest's type, and the declarations it is built from
+├── foundations/   token values, typed — generated from src/tokens/          — generated
+├── lib/           framework-free helpers (cn, motion, responsive)
+├── hooks/         React hooks over lib + browser APIs
+├── providers/     theme · density · direction
+├── brand/         Qeet logos + custom icons
+├── components/    10 category folders, each with index.ts + __tests__/
+├── blocks/        page-level compositions of components
+├── __tests__/     global harness: setup, a11y smoke, hydration, API lock, governance
+└── index.ts       the published barrel
+```
+
+`foundations/` is populated: it holds the typed token values, generated from the token source.
+Two directories in the target architecture — `runtime/` and `primitives/` — are still **declared
+but not populated**. See [Migration](#migration) below.
+
+---
+
+## Layers and dependency direction
+
+Code flows one way:
+
+```text
+tokens → foundations → runtime / primitives → components → blocks
+```
+
+with `lib`, `hooks`, `providers` and `brand` as supporting layers that may never reach forward
+into `components` or `blocks`.
+
+Layer membership and the permitted edges are declared in
+[`src/contracts/layers.ts`](../../src/contracts/layers.ts) and enforced by
+[`scripts/check/architecture.mjs`](../../scripts/check/architecture.mjs). Dependencies are
+**deny by default**: an import is legal only if the target layer appears in the source layer's
+allow-list. The full table, and why each edge exists, is in
+[dependency-rules.md](./dependency-rules.md); what each layer is *for* is in
+[component-layers.md](./component-layers.md).
+
+Two properties of the rule set are themselves checked:
+
+- **acyclic** — no two layers may each depend on the other
+- **transitively closed** — if `a → b` and `b → c` are legal, `a → c` must be legal too
+
+The second one matters more than it looks. Without it, a chain of individually permitted
+imports could add up to a dependency the architecture forbids. With it, checking direct edges
+is sufficient.
+
+---
+
+## Public versus internal
+
+The published surface is **only** what the entry points export:
+
+| Specifier | Source |
+|:--|:--|
+| `@qeetrix/ui` | `src/index.ts` — the full barrel |
+| `@qeetrix/ui/components/<slug>` | one component, stable regardless of its category |
+| `@qeetrix/ui/components/<category>` | a category group |
+| `@qeetrix/ui/brand` · `/blocks` · `/providers` | `src/brand` · `src/blocks` · `src/providers` |
+| `@qeetrix/ui/blocks/<name>` · `/providers/<name>` | one block · one provider |
+| `@qeetrix/ui/hooks/<name>` | the four public hooks — `use-media-query`, `use-mobile`, `use-motion`, `use-prefers-reduced-motion` |
+| `@qeetrix/ui/lib/<name>` | the four public helpers — `utils` (`cn`), `motion`, `responsive`, `token-values` |
+| `@qeetrix/ui/styles.css` · `/base.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens; `base.css` is the host-global layer, separately importable |
+| `@qeetrix/ui/manifest.json` | the generated component manifest |
+
+Everything else is **denied**, not merely undocumented.
+`@qeetrix/ui/components/<category>/<slug>`, `@qeetrix/ui/components/index` and
+`@qeetrix/ui/hooks/use-controllable-state` resolve to nothing — `null` export targets, in Node,
+Bun and TypeScript alike. `src/contracts/` and `src/manifests/` were never reachable at all. The
+*governance data* is public as `@qeetrix/ui/manifest.json`; the TypeScript that produces it is
+not, so it can keep evolving without a semver event.
+
+Three inputs keep the surface honest, all in
+[`scripts/check/exports.mjs`](../../scripts/check/exports.mjs), across 21 entry points rather
+than the original three:
+
+1. **the lock** — every exported symbol is snapshotted in
+   [`src/__tests__/public-api.json`](../../src/__tests__/public-api.json). Any addition or
+   removal fails `verify` until it is re-snapshotted deliberately, so an API change is always a
+   visible line in a diff and always ships with a changeset.
+2. **the signature lock** — [`public-props.json`](../../src/__tests__/public-props.json) records
+   the declaration shape, not just the member names, so a required prop becoming optional or a
+   literal union losing a member is a visible change too.
+3. **intentionality** — every component module must contribute at least one symbol to the
+   published surface; a `@barrel-exclude` module must really be excluded; and no two
+   barrel-exported modules may export the same name (`export *` resolves a collision by
+   dropping the symbol, so an ambiguity is a public API that vanishes silently).
+
+Internal structure is therefore free to move. The published deep-import paths are generated by
+[`scripts/build/subpath-shims.mjs`](../../scripts/build/subpath-shims.mjs), so a component can
+change category without a consumer noticing.
+
+---
+
+## Components versus blocks
+
+A **component** is a single interface element with a prop-level API: `Button`, `Dialog`,
+`DataTable`. It composes tokens, other components and hooks, knows nothing about any product,
+and contains no copy that a product would want to change.
+
+A **block** is a page-level composition: `AuthShell`, `DashboardShell`, `PricingTable`. Blocks
+exist so five products do not each rebuild the same login screen. They are opinionated,
+compose components freely, and are versioned more loosely in practice because they are
+starting points rather than primitives.
+
+The direction is absolute: **a component may never import a block.** A component that needs
+something a block has is describing a missing component.
+
+---
+
+## Runtime versus primitives
+
+Both layers are populated. `runtime` holds `focus-trap`, `overlay`, `overlay-position`,
+`collapse` and `storage`; `primitives` holds `Portal` and `VisuallyHidden`. The distinction is
+what each may contain: `runtime` is behaviour with no markup, `primitives` render but make no
+design decision.
+
+- **runtime** — framework-level behaviour with no markup: focus management, collection
+  handling, keyboard navigation, id generation. Headless, testable without rendering.
+- **primitives** — the smallest renderable pieces that carry no design opinion: a slot, a
+  polymorphic element, a portal, a visually-hidden wrapper. They render, but they do not decide
+  how anything looks.
+
+Neither may import `components` or `blocks`. Today that behaviour lives inside individual
+components (`focus-trap`, `portal`, `visually-hidden`) and in `lib`/`hooks`.
+
+---
+
+## Tokens versus foundations
+
+- **tokens** are *data*: W3C DTCG JSON under `src/tokens/`, compiled by Style Dictionary into
+  CSS custom properties and JSON. They import nothing and are imported by nothing —
+  `scripts/build/tokens.mjs` reads them.
+- **foundations** are the *typed values* derived from tokens: the duration scale, the easing
+  curves, the z-index ladder, the breakpoints. Code imports foundations, never token JSON.
+
+Those typed values live in `src/foundations/token-values.ts`, **generated** from the token
+source by `bun run build:tokens`. [`src/lib/token-values.ts`](../../src/lib/token-values.ts)
+re-exports it so `@qeetrix/ui/lib/token-values` keeps resolving. `lib/motion.ts` and
+`lib/responsive.ts` are the remaining token-derived helpers still filed under `lib`.
+
+The primitive layer is deliberately **not published to the stylesheet components render
+against** — `src/styles/tokens.css` carries the semantic and component layers only. That turns
+"components must not depend on primitive values" from a convention into a fact: the variable is
+not there to resolve. See [docs/standards/tokens.md](../standards/tokens.md).
+
+---
+
+## Contracts
+
+[`src/contracts/`](../../src/contracts/) holds the types and closed vocabularies that describe
+a component: its status, capabilities, interaction states, variant surface, ARIA pattern,
+layer. It has one dependency rule — **contracts may only import contracts** — which is what
+lets build scripts read it.
+
+Every vocabulary is declared once as an `as const` array with the union type derived from it,
+so the runtime list and the compile-time type cannot disagree. The build and check scripts read
+the same declarations statically through
+[`scripts/lib/ts-literals.mjs`](../../scripts/lib/ts-literals.mjs), and
+`src/__tests__/component-contract.test.ts` pins that reader against TypeScript's own view.
+
+The result is that `tsc` is the *first* gate. An invalid status or ARIA pattern in the registry
+is a compile error, with a "did you mean" hint, before any script runs.
+
+---
+
+## Manifests
+
+[`component-manifest.json`](../../component-manifest.json) is the published projection of the
+contract. It is generated by
+[`scripts/build/manifest.mjs`](../../scripts/build/manifest.mjs) from three inputs and nothing
+else:
+
+1. the filesystem + `scripts/config/category-map.json` — identity, category, layer
+2. the component source — capabilities, states, `cva` variants, client boundary, test coverage
+3. [`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts) — the
+   declared facts that cannot be derived: status, ARIA pattern, reviewed capability overrides,
+   deprecations
+
+Anything neither derivable nor declared is emitted as `"unknown"` / `null`. **A missing fact
+and a negative fact are different things** — only the first is a backlog item. The full schema
+is documented in [component-manifest.md](../standards/component-manifest.md).
+
+---
+
+## Validation
+
+`bun run verify` is the gate. If it passes, CI passes.
+
+| Check | Enforces |
+|:--|:--|
+| `typecheck` | TypeScript, including the contract types on the registry |
+| `lint` | Biome |
+| `test` | Vitest + axe, hydration, client boundaries, governance |
+| `check:architecture` | category map ↔ filesystem, barrels, kebab-case, client directives, **layer boundaries** |
+| `check:contract` | the manifest satisfies the component contract |
+| `check:exports` | the published surface matches the lock, and is intentional |
+| `check:a11y` | every component has an axe test |
+| `check:tokens` | the token graph: layer direction, references, cycles, types, theme parity, deprecations |
+| `check:token-usage` | no raw colours, z-indexes, shadows or lengths in component source outside the documented backlog |
+| `check:contrast` | WCAG AA on every semantic text/surface pair, both themes |
+
+`bun run verify:package` additionally packs the tarball and compiles real consumers against it.
+
+---
+
+## Release governance
+
+- **Design tokens** — [docs/standards/tokens.md](../standards/tokens.md)
+- **Theming · density · motion · RTL** — [theming](../standards/theming.md) ·
+  [density](../standards/density.md) · [motion](../standards/motion.md) ·
+  [rtl](../standards/rtl.md)
+- **Versioning** — [docs/governance/versioning.md](../governance/versioning.md)
+- **Component maturity** — [docs/governance/component-status.md](../governance/component-status.md)
+- **Deprecation** — [docs/governance/deprecations.md](../governance/deprecations.md)
+- **API conventions** — [docs/standards/component-api.md](../standards/component-api.md)
+
+Changes ship through Changesets. A public API change is not just a version bump: it is a
+re-snapshotted `public-api.json`, a changeset at the right level, and — when a component's
+status or contract changes — an updated registry entry.
+
+---
+
+## Migration
+
+`foundations/` was populated in Phase 2 — it holds the generated typed token values, and
+`src/lib/token-values.ts` is a re-export so no consumer noticed.
+
+`runtime/` and `primitives/` are still declared in
+[`src/contracts/layers.ts`](../../src/contracts/layers.ts) with their dependency rules, but no
+files have been moved into them. This is deliberate: the rules are live the moment the first
+file lands there, and moving 145 components to satisfy a diagram is churn, not architecture.
+
+Because the published deep-import paths are generated rather than mirrored from `src/`, a later
+move is invisible to consumers — the API lock proves it on every run. Phase 2 can migrate one
+layer at a time behind a green `verify`.

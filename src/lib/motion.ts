@@ -1,5 +1,5 @@
 /** Typed motion primitives generated from tokens/primitive/motion.json. */
-import { DURATION, EASING } from "./token-values";
+import { DURATION, EASING } from "@/foundations/token-values";
 
 export { DURATION, EASING };
 

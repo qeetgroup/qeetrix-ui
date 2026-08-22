@@ -4,7 +4,10 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/actions/button";
+import type { MessagesFor } from "@/lib/messages";
+import { codeBlockMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 export type CodeLanguage = "json" | "text" | "shell" | "http";
 
@@ -23,6 +26,11 @@ interface CodeBlockProps {
   className?: string;
   /** Optional caption shown above the block (e.g. filename, content-type). */
   caption?: React.ReactNode;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"codeBlock">;
 }
 
 // ---------------------------------------------------------------------------
@@ -39,11 +47,14 @@ interface CodeBlockProps {
 const JSON_TOKEN_RE =
   /("(?:\\.|[^"\\])*")(\s*:)?|(\b(?:true|false|null)\b)|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
 
+// Semantic syntax roles, not palette utilities: the highlighter's colours are a theme decision,
+// and `--syntax-*` carries a per-theme value so a brand theme retints code without editing this
+// file. Enforced by scripts/check/token-usage.mjs.
 const C = {
-  key: "text-sky-700 dark:text-sky-400",
-  string: "text-emerald-700 dark:text-emerald-400",
-  number: "text-amber-700 dark:text-amber-400",
-  literal: "text-violet-700 dark:text-violet-400",
+  key: "text-syntax-key",
+  string: "text-syntax-string",
+  number: "text-syntax-number",
+  literal: "text-syntax-literal",
 };
 
 function highlightJSON(input: string): React.ReactNode[] {
@@ -105,7 +116,9 @@ function CodeBlock({
   maxHeight = "max-h-96",
   className,
   caption,
+  messages: messageOverrides,
 }: CodeBlockProps) {
+  const messages = useMessages("codeBlock", codeBlockMessages, messageOverrides);
   const [copied, setCopied] = React.useState(false);
   const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -150,7 +163,7 @@ function CodeBlock({
       )}
     >
       {caption && (
-        <div className="flex items-center justify-between border-b px-3 py-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between border-b px-3 py-1.5 text-micro text-muted-foreground">
           {caption}
         </div>
       )}
@@ -160,10 +173,10 @@ function CodeBlock({
           variant="outline"
           size="sm"
           onClick={handleCopy}
-          aria-label={copied ? "Copied" : "Copy code"}
+          aria-label={copied ? messages.copied : messages.copy}
           className="absolute end-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
         >
-          {copied ? <CheckIcon className="text-emerald-600 dark:text-emerald-400" /> : <CopyIcon />}
+          {copied ? <CheckIcon aria-hidden className="text-success" /> : <CopyIcon aria-hidden />}
         </Button>
       )}
       <pre className={cn("m-0 overflow-auto p-3 leading-relaxed", maxHeight)}>

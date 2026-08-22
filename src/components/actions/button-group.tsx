@@ -22,7 +22,7 @@ function ButtonGroup({ orientation = "horizontal", className, ...props }: Button
       className={cn(
         "flex min-w-0 border-0 p-0",
         orientation === "horizontal"
-          ? "flex-row [&>*:not(:first-child)]:-ml-px [&>*:first-child]:rounded-r-none [&>*:last-child]:rounded-l-none [&>*:not(:first-child):not(:last-child)]:rounded-none"
+          ? "flex-row [&>*:not(:first-child)]:-ml-px [&>*:first-child]:rounded-e-none [&>*:last-child]:rounded-s-none [&>*:not(:first-child):not(:last-child)]:rounded-none"
           : "flex-col [&>*:not(:first-child)]:-mt-px [&>*:first-child]:rounded-b-none [&>*:last-child]:rounded-t-none [&>*:not(:first-child):not(:last-child)]:rounded-none",
         className,
       )}

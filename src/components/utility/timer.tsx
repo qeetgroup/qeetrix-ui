@@ -4,7 +4,10 @@ import { cva } from "class-variance-authority";
 import * as React from "react";
 
 import { Button } from "@/components/actions/button";
+import type { MessagesFor } from "@/lib/messages";
+import { timerMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 // ---------------------------------------------------------------------------
 // Hook types
@@ -149,6 +152,11 @@ interface TimerProps {
   /** Show Start/Pause and Reset controls. Defaults to true. */
   showControls?: boolean;
   "aria-label"?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"timer">;
   className?: string;
 }
 
@@ -160,8 +168,10 @@ function Timer({
   onComplete,
   showControls = true,
   "aria-label": ariaLabel,
+  messages: messageOverrides,
   className,
 }: TimerProps) {
+  const messages = useMessages("timer", timerMessages, messageOverrides);
   const { elapsed, remaining, isRunning, toggle, reset } = useTimer({
     mode,
     initialSeconds,
@@ -176,7 +186,7 @@ function Timer({
     <div
       data-slot="timer"
       role="timer"
-      aria-label={ariaLabel ?? (mode === "countdown" ? "Countdown timer" : "Stopwatch")}
+      aria-label={ariaLabel ?? (mode === "countdown" ? messages.countdown : messages.stopwatch)}
       aria-live="off"
       className={cn(timerVariants(), className)}
     >
@@ -189,10 +199,10 @@ function Timer({
       {showControls && (
         <div data-slot="timer-controls" className="flex gap-2">
           <Button size="sm" variant="outline" onClick={toggle}>
-            {isRunning ? "Pause" : "Start"}
+            {isRunning ? messages.pause : messages.start}
           </Button>
           <Button size="sm" variant="ghost" onClick={reset}>
-            Reset
+            {messages.reset}
           </Button>
         </div>
       )}

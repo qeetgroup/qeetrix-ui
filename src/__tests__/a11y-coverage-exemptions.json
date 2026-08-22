@@ -1,4 +1,10 @@
 {
-  "$comment": "Components without automated a11y coverage yet (Gap 3/12 ratchet). This list may ONLY shrink: add src/components/<category>/__tests__/<name>.test.tsx (or render it in src/__tests__/a11y.test.tsx), then remove it here. `bun run check:a11y` fails if a component is neither covered nor listed.",
+  "$comment": "Components without automated axe coverage. Currently empty \u2014 coverage is 145/145 and this list may ONLY grow with a documented reason. Every entry needs `component`, `rule`, `reason` and `revisit`; `bun run check:a11y` rejects an entry that omits any of them, because an exemption without a reason is a defect with a label on it. To remove an entry: add src/components/<category>/__tests__/<name>.test.tsx (or render it in src/__tests__/a11y.test.tsx), then delete it here.",
+  "$schema": {
+    "component": "the component slug",
+    "rule": "what is exempted \u2014 an axe rule id, or \"coverage\" for a missing test",
+    "reason": "why, specifically. Not \"todo\".",
+    "revisit": "what has to happen for this to go away"
+  },
   "exempt": []
 }

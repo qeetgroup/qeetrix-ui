@@ -19,7 +19,8 @@
 
     "alpha": {
       "white-10": { "$value": "oklch(1 0 0 / 10%)", "$type": "color" },
-      "white-15": { "$value": "oklch(1 0 0 / 15%)", "$type": "color" }
+      "white-15": { "$value": "oklch(1 0 0 / 15%)", "$type": "color" },
+      "black-40": { "$value": "oklch(0 0 0 / 40%)", "$type": "color" }
     },
 
     "danger": {

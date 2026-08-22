@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.cache/qeetrix/tsconfig.tests.tsbuildinfo"
+  },
+  // `tsconfig.build.json` excludes tests, so nothing was checking that a test fixture matches the
+  // component it renders. It should: a fixture using a prop that does not exist compiles fine and
+  // then fails at runtime, or worse, passes while rendering the wrong thing. (An `AuditEvent`
+  // fixture missing its required `eventId` did exactly that — the component rendered an empty
+  // heading and only axe noticed.)
+  "include": ["src"],
+  // The three governance suites import the build helpers from `scripts/lib/*.mjs`, which are
+  // deliberately untyped JavaScript so `node` can run them in CI without a build. Typing them
+  // would mean a hand-written .d.ts per module — a second source of truth that drifts silently —
+  // for no gain here, since those files assert validator behaviour rather than render components.
+  // Their behaviour is covered at runtime by `bun run test`.
+  "exclude": [
+    "dist",
+    "src/__tests__/architecture-layers.test.ts",
+    "src/__tests__/component-contract.test.ts",
+    "src/__tests__/tokens.test.ts"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "stroke": {
+    "width": {
+      "$description": "Raw stroke/outline widths. Semantic tokens (focus.*, border roles) alias these; components never read them directly.",
+      "hairline": {
+        "$value": "1px",
+        "$type": "dimension"
+      },
+      "thin": {
+        "$value": "2px",
+        "$type": "dimension"
+      },
+      "thick": {
+        "$value": "3px",
+        "$type": "dimension"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "control": {
+    "$description": "Density-resolved control metrics. A control reads these instead of the raw density variables, so the density fallback is declared once here rather than retyped at every call site \u2014 which is how eight components ended up disagreeing with the density tokens.",
+    "height": {
+      "$value": "var(--qx-density-control-height, var(--qx-density-control-height-default))",
+      "$type": "dimension"
+    },
+    "row-height": {
+      "$value": "var(--qx-density-row-height, var(--qx-density-row-height-default))",
+      "$type": "dimension"
+    },
+    "cell-padding-y": {
+      "$value": "var(--qx-density-cell-padding-y, var(--qx-density-cell-padding-y-default))",
+      "$type": "dimension"
+    },
+    "field-gap": {
+      "$value": "var(--qx-density-field-gap, var(--qx-density-field-gap-default))",
+      "$type": "dimension"
+    }
+  }
+}

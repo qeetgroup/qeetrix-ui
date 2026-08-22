@@ -1,0 +1,64 @@
+{
+  "elevation": {
+    "$description": "Elevation is the *role* a surface plays; shadow is the raw value it renders with. Components pick a role (surface.raised, overlay, modal) and never a shadow number, so the ladder can be retuned in one place.",
+    "flat": {
+      "$value": "{shadow.none}",
+      "$type": "shadow"
+    },
+    "inset": {
+      "$value": "{shadow.inset-subtle}",
+      "$type": "shadow"
+    },
+    "raised": {
+      "$value": "{shadow.rest}",
+      "$type": "shadow"
+    },
+    "hover": {
+      "$value": "{shadow.hover}",
+      "$type": "shadow"
+    },
+    "overlay": {
+      "$value": "{shadow.popover}",
+      "$type": "shadow"
+    },
+    "modal": {
+      "$value": "{shadow.modal}",
+      "$type": "shadow"
+    },
+    "subtle": {
+      "$value": "{shadow.ramp.xs}",
+      "$type": "shadow"
+    },
+    "low": {
+      "$value": "{shadow.ramp.sm}",
+      "$type": "shadow"
+    },
+    "ramp": {
+      "$description": "The Tailwind shadow scale (shadow-2xs\u2026shadow-xl), exposed as semantic aliases so src/styles/index.css can map the utilities without restating the values or reaching into the primitive layer.",
+      "2xs": {
+        "$value": "{shadow.ramp.2xs}",
+        "$type": "shadow"
+      },
+      "xs": {
+        "$value": "{shadow.ramp.xs}",
+        "$type": "shadow"
+      },
+      "sm": {
+        "$value": "{shadow.ramp.sm}",
+        "$type": "shadow"
+      },
+      "md": {
+        "$value": "{shadow.ramp.md}",
+        "$type": "shadow"
+      },
+      "lg": {
+        "$value": "{shadow.ramp.lg}",
+        "$type": "shadow"
+      },
+      "xl": {
+        "$value": "{shadow.ramp.xl}",
+        "$type": "shadow"
+      }
+    }
+  }
+}
