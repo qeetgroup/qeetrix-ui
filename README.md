@@ -13,7 +13,7 @@
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Base UI](https://img.shields.io/badge/Base_UI-1.x-111?logo=radixui&logoColor=white)](https://base-ui.com)
 [![Storybook 10](https://img.shields.io/badge/Storybook-10-FF4785?logo=storybook&logoColor=white)](https://storybook.js.org)
-[![Bun + Turborepo](https://img.shields.io/badge/Bun-Turborepo-F69220?logo=bun&logoColor=white)](https://bun.sh)
+[![Bun](https://img.shields.io/badge/Bun-1.3-F69220?logo=bun&logoColor=white)](https://bun.sh)
 
 **[🚀 Install](#-install--use)** · **[🏗 Architecture](#-architecture)** · **[🧩 Components](#-whats-inside)** · **[🎨 Tokens](#-design-tokens)** · **[📖 Storybook](#-develop)** · **[🚢 Release](#-release)**
 
@@ -29,7 +29,7 @@
 
 </div>
 
-> **Status — pre-1.0 (next publish: `@qeetrix/ui@0.4.0`).** Tokens + brand are now folded into a single `@qeetrix/ui` package; the component set, premium-elevation pass, and Cal Sans typography are in. Already a live dependency of **Qeet ID** (admin · login · website) and **qeet-docs**.
+> **Status — 1.0.3, standalone.** Tokens + brand ship inside `@qeetrix/ui`. Already a live dependency of **Qeet ID** (console · login · website) and **qeet-docs**.
 
 ---
 
@@ -50,39 +50,57 @@
 
 ## 🏗 Architecture
 
-A **Bun + Turborepo** monorepo that publishes a single consumable package. Tokens are the source of truth; everything downstream is generated or composed from them.
+A **standalone Bun package**. Tokens are the source of truth; everything downstream is generated or composed from them. Components live in `src/components/<category>/`, but the *published* import paths stay flat — `dist` carries a generated façade, so a component can move category without breaking a single consumer.
 
 ```mermaid
 flowchart TB
-    subgraph src["packages/ui — @qeetrix/ui"]
+    subgraph pkg["@qeetrix/ui"]
         direction LR
-        tokens["Design tokens<br/>W3C DTCG JSON · OKLCH<br/>packages/ui/tokens/"]
-        sd["Style Dictionary<br/>scripts/build-tokens.mjs<br/>→ semantic + raw --qx-* CSS + JSON"]
-        comps["145 UI modules<br/>custom + Base UI<br/>src/components/ui/"]
+        tokens["Design tokens<br/>W3C DTCG JSON · OKLCH<br/>src/tokens/"]
+        sd["Style Dictionary<br/>scripts/build/tokens.mjs<br/>→ semantic + raw --qx-* CSS + JSON"]
+        comps["145 UI modules · 10 categories<br/>custom + Base UI<br/>src/components/&lt;category&gt;/"]
         brand["Brand<br/>QeetLogo + 10 icons<br/>src/brand/"]
         tokens --> sd --> comps
         brand --> comps
     end
 
-    consumers["Qeet ID — admin · login · website<br/>qeet-docs · future Qeet products"]
-    workshop["apps/qeetrix-story — Storybook 10 workshop"]
+    consumers["Qeet ID — console · login · website<br/>qeet-docs · future Qeet products"]
+    workshop["qeetrix-story — Storybook 10 workshop (sibling repo)"]
 
     comps --> consumers
     comps --> workshop
 ```
 
-**Build pipeline (`@qeetrix/ui`):** `build-tokens` (Style Dictionary) → `tsc` → `tsc-alias` → `postbuild` (inlines the token CSS, copies fonts). The shared `package.json` **`workspaces.catalog`** pins React / Tailwind / TS across the repo.
+**Build pipeline:** `clean` → `tokens` (Style Dictionary) → `manifest` → `tsc` → `tsc-alias` → `subpath-shims` → `postbuild` (CSS entry, fonts, tokens, manifest).
 
-### Packages
+### Source layout
 
-| Package | What it is | Published |
-|:--|:--|:--:|
-| **`@qeetrix/ui`** | The component library **+ tokens + brand** — the one package consumers install | ✅ |
-| `@qeetrix/tsconfig` | Shared TypeScript presets | ✅ |
-| `@qeetrix/eslint-config` | Shared ESLint flat config (base + React) | ✅ |
-| `apps/qeetrix-story` | Storybook 10 workshop — foundations + a story per component | private |
+```
+src/
+├── tokens/            DTCG token source (primitive + light/dark theme)
+├── components/        11 category folders, each with index.ts + __tests__/
+│   ├── actions/ inputs/ selection/ pickers/ navigation/
+│   └── feedback/ surfaces/ data-display/ layout/ utility/
+├── providers/         theme · density · direction
+├── blocks/ brand/ hooks/ lib/ fonts/
+├── styles/            index.css (entry) + generated token CSS/JSON
+└── __tests__/         global harness: setup, a11y smoke, client boundaries, API lock
+scripts/
+├── build/             tokens · manifest · subpath-shims · postbuild · logos
+└── check/             architecture · exports · a11y-coverage · token-usage · contrast · package
+```
 
-> `@qeetrix/tokens` and `@qeetrix/brand` were once separate packages; they're now **folded into `@qeetrix/ui`** and exposed as subpaths (`@qeetrix/ui/tokens.css`, `/tokens.json`, `/qeetrix.css`, `/brand`).
+### Import paths
+
+| Specifier | Resolves to |
+|:--|:--|
+| `@qeetrix/ui` | the full barrel (680 exports) |
+| `@qeetrix/ui/components/button` | one component — **stable regardless of its category** |
+| `@qeetrix/ui/components/actions` | a whole category |
+| `@qeetrix/ui/providers` · `/providers/theme-provider` | the providers |
+| `@qeetrix/ui/brand` · `/blocks` | brand assets · page-level blocks |
+| `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens |
+| `@qeetrix/ui/manifest.json` | the machine-readable component catalog |
 
 ---
 
@@ -122,13 +140,13 @@ export function App() {
 
 Light/dark is driven by the `.dark` class (managed by `ThemeProvider`). Its keyboard shortcut is disabled by default; `enableKeyboardShortcut` opts into `Ctrl/Meta+Shift+D`. Need raw values? `@qeetrix/ui/tokens.css` (the `--qx-*` ramp) and `@qeetrix/ui/tokens.json`.
 
-**Import surfaces:** barrel `@qeetrix/ui` · canonical per-component `@qeetrix/ui/components/button` · compatible legacy `@qeetrix/ui/components/ui/button` · providers such as `@qeetrix/ui/components/theme-provider` · brand code `@qeetrix/ui/brand` · brand CSS with or without `.css` · utils `@qeetrix/ui/lib/utils` · hooks `@qeetrix/ui/hooks/*`.
+**Import surfaces:** see the table in [Architecture](#-architecture). The pre-1.0 `@qeetrix/ui/components/ui/<slug>` path still resolves.
 
 ---
 
 ## 🧩 What's inside
 
-> 145 React UI modules across the full enterprise surface; every non-alias module has a colocated Vitest/axe test and matching component stories cover the public catalog.
+> 145 React UI modules across ten categories; **every one** has a Vitest/axe test in its category's `__tests__/`, and stories cover the public catalog.
 
 - **Overlays** — Dialog · Sheet · Drawer · Popover · DropdownMenu · ContextMenu · Menubar · HoverCard · Tooltip · CommandPalette · NavigationMenu
 - **Inputs & controls** — Button · Input · Textarea · Select · Combobox · MultiSelect · Autocomplete · Checkbox · Radio · Switch · Toggle · Slider · AngleSlider · OTPInput · NumberField · Field / Form · Chip · SegmentedControl · ColorPicker · Date / Time / Timezone pickers
@@ -143,13 +161,13 @@ Light/dark is driven by the `.dark` class (managed by `ThemeProvider`). Its keyb
 
 ## 🎨 Design tokens
 
-The single source of truth lives in [`packages/ui/tokens/`](packages/ui/tokens/) as **W3C DTCG JSON** (primitives → light/dark semantic + shadcn bridge). [Style Dictionary](packages/ui/scripts/build-tokens.mjs) compiles them to:
+The single source of truth lives in [`src/tokens/`](src/tokens/) as **W3C DTCG JSON** (primitives → light/dark semantic + shadcn bridge). [Style Dictionary](scripts/build/tokens.mjs) compiles them to:
 
 - `@qeetrix/ui/styles.css` — the full entry (semantic `:root` / `.dark` vars, baked in)
 - `@qeetrix/ui/tokens.css` — the raw `--qx-*` ramp · `@qeetrix/ui/tokens.json` — resolved per theme
 - `@qeetrix/ui/qeetrix.css` — semantic layer only
 
-Colour is authored in **OKLCH**; elevation uses a **layered shadow ladder** (rest · hover · popover · modal). Every semantic text/surface pair is held to **WCAG-AA contrast** by a build gate (`bun run tokens:validate`).
+Colour is authored in **OKLCH**; elevation uses a **layered shadow ladder** (rest · hover · popover · modal). Every semantic text/surface pair is held to **WCAG-AA contrast** by a build gate (part of `bun run verify`).
 
 > The brand palette (`OD-DS-03`) is a documented open decision — tokens stay neutral until it lands; the Qeet orange (`#F26D0E`) is the leading candidate.
 
@@ -157,19 +175,29 @@ Colour is authored in **OKLCH**; elevation uses a **layered shadow ladder** (res
 
 ## 🛠 Develop
 
-**Toolchain:** Node ≥ 20.9 (`nvm use node`) · **Bun ≥ 1.3** · Turborepo.
+**Toolchain:** Node ≥ 20 · **Bun ≥ 1.3**.
 
 ```bash
 bun install
-bun run build            # turbo run build (@qeetrix/ui regenerates tokens, then compiles)
-bun run tokens:build     # regenerate only the design tokens (Style Dictionary)
-bun run tokens:validate  # WCAG-AA contrast gate on the generated semantic pairs
-bun run lint && bun run typecheck
-bun run --filter @qeetrix/ui test           # Vitest + vitest-axe
-bun run --filter @qeetrix/docs storybook    # component workshop on :6006
+bun run dev              # regenerate tokens, then tsc --watch
+bun run build            # tokens → manifest → tsc → aliases → subpath shims → assets
+bun run test             # Vitest + vitest-axe
+bun run verify           # typecheck · lint · test · architecture · API lock · a11y · tokens · contrast
+bun run verify:package   # build, pack, and compile real consumers against the tarball
+bun run format           # biome check --write
 ```
 
-Adding a component? Drop it in [`packages/ui/src/components/ui/`](packages/ui/src/components/ui/) (one flat file, `cva` + `cn()`, `data-slot`, Base UI for anything interactive), export it from `src/index.ts`, add a story + a Vitest/axe test, and record a changeset. The competitive backlog lives in [`qeet-files/qeetrix/COMPONENT-PROPOSALS.md`](../qeet-files/qeetrix/COMPONENT-PROPOSALS.md); the delivery pipeline + agents in [`.claude/PIPELINE.md`](.claude/PIPELINE.md). See [CONTRIBUTING.md](./CONTRIBUTING.md).
+`verify` is the gate to run before pushing. Its five structural checks are what keep the category layout honest:
+
+| Check | Enforces |
+|:--|:--|
+| `architecture` | category map ↔ filesystem, complete barrels, no barrel imports, kebab-case, tests in `__tests__/` |
+| `exports` | the published API surface matches `src/__tests__/public-api.json` — nothing added or removed by accident |
+| `a11y-coverage` | every component has an axe test (currently **145/145**) |
+| `token-usage` | no raw colours, z-indexes or shadows outside documented exemptions |
+| `contrast` | WCAG-AA on every semantic text/surface pair, both themes |
+
+**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `node scripts/check/exports.mjs --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -178,12 +206,12 @@ Adding a component? Drop it in [`packages/ui/src/components/ui/`](packages/ui/sr
 Versioning + npm publishing run on [Changesets](.changeset/README.md):
 
 ```bash
-bun run changeset          # record a change (pick packages + bump)
-bun run version-packages   # apply bumps + changelogs (usually CI)
-bun run release            # build all, then publish changed public packages
+bun run changeset          # record a change + bump level
+bun run version-packages   # apply bumps + changelog (usually CI)
+bun run release            # build, then publish
 ```
 
-CI runs lint + typecheck + build + token contrast + Storybook on every PR; merging the **Version Packages** PR publishes to the `@qeetrix` npm org (needs `NPM_TOKEN`).
+CI runs `verify` on every PR; merging the **Version Packages** PR publishes to the `@qeetrix` npm org (needs `NPM_TOKEN`).
 
 ---
 
@@ -191,9 +219,9 @@ CI runs lint + typecheck + build + token contrast + Storybook on every PR; mergi
 
 | Topic | Where |
 |:--|:--|
-| 🧱 Component workshop | `bun run --filter @qeetrix/docs storybook` → <http://localhost:6006> |
-| 🤖 For AI assistants | [CLAUDE.md](./CLAUDE.md) — commands, architecture, gotchas |
-| 🗺 Component backlog | [qeet-files/qeetrix/COMPONENT-PROPOSALS.md](../qeet-files/qeetrix/COMPONENT-PROPOSALS.md) |
+| 🧱 Component workshop | the sibling `qeetrix-story` repo → <http://localhost:6006> |
+| 🗺 Component backlog | the sibling `qeetrix-files` repo → `COMPONENT-PROPOSALS.md` |
 | 🔧 Contributing | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 
-Part of the **Qeet Group** workspace alongside [Qeet ID](../qeet-servers/qeet-id-server/). Licensed **UNLICENSED** (private to Qeet Group) pending the public-release decision.
+Part of the **Qeet Group** workspace. Licensed **UNLICENSED** (private to Qeet Group) pending the public-release decision.
+

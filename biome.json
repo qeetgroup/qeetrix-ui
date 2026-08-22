@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -57,7 +57,13 @@
       }
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "overrides": [
     {
       "includes": ["**/*.css"],
@@ -73,7 +79,7 @@
       }
     },
     {
-      "includes": ["src/components/ui/sidebar.tsx"],
+      "includes": ["src/components/navigation/sidebar.tsx"],
       "linter": {
         "rules": {
           "suspicious": {
