@@ -147,6 +147,32 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
 } as const satisfies Record<LayeredSource, readonly ArchitectureLayer[]>;
 
 /**
+ * Non-TypeScript production inputs, governed explicitly.
+ *
+ * `LAYER_ALLOWED_ASSET_DEPENDENCIES[source]` is the complete set of layers `source` may import
+ * a `.css` or `.json` file from. Absent means none — the same deny-by-default as
+ * `LAYER_ALLOWED_DEPENDENCIES`, and the reason this table exists separately:
+ *
+ *   - `components` may depend on the `tokens` layer, because it reads *generated TypeScript*
+ *     derived from it. Importing a raw token JSON is a different act: it bypasses the CSS
+ *     bridge, ships the whole token file into the bundle, and hides the component's colour
+ *     source from `check:token-usage`.
+ *   - a stylesheet is a side effect. A component that imports one has decided, on behalf of
+ *     every consumer, that the styles load — which is the choice `styles.css` exists to make
+ *     once, at the package boundary.
+ *
+ * The table is empty on purpose: today nothing in the shipped tree imports an asset, and the
+ * empty allow-list is what keeps it that way. A future entry is a reviewed decision, not a
+ * side effect of somebody adding an import.
+ *
+ * Test files are exempt, as they are for module dependencies — a harness legitimately reads
+ * the generated stylesheet to assert what it contains.
+ */
+export const LAYER_ALLOWED_ASSET_DEPENDENCIES = {} as const satisfies Partial<
+  Record<LayeredSource, readonly ArchitectureLayer[]>
+>;
+
+/**
  * Layers whose files are excluded from dependency enforcement.
  *
  * Test files are not part of the shipped module graph: a harness legitimately imports a

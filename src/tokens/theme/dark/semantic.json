@@ -183,6 +183,12 @@
         "$value": "color-mix(in oklab, {color.action.primary} 22%, transparent)",
         "$type": "color"
       }
+    },
+    "rating": {
+      "filled": {
+        "$value": "{color.amber.400}",
+        "$type": "color"
+      }
     }
   }
 }

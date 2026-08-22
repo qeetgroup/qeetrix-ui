@@ -6,7 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/data-display/a
 import { type Reaction, ReactionBar } from "@/components/data-display/reaction-bar";
 import { Textarea } from "@/components/inputs/textarea";
 import { TimeSince } from "@/components/utility/time-since";
+import type { CommentThreadMessages, MessagesFor } from "@/lib/messages";
+import { commentThreadMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface CommentAuthor {
   name: string;
@@ -26,7 +29,16 @@ interface CommentThreadProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   /** Called for a new top-level comment, or a reply when `parentId` is set. */
   onSubmit?: (body: string, parentId?: string) => void;
   onReact?: (commentId: string, emoji: string) => void;
+  /**
+   * Placeholder of the top-level composer. Equivalent to `messages={{ placeholder }}` and wins
+   * over it.
+   */
   placeholder?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"commentThread">;
 }
 
 function initials(name: string) {
@@ -52,11 +64,14 @@ function Composer({
   placeholder,
   autoFocus,
   onSubmit,
+  messages,
 }: {
   currentUser?: CommentAuthor;
   placeholder?: string;
   autoFocus?: boolean;
   onSubmit: (body: string) => void;
+  /** Resolved once at the root and threaded down, so every composer reads alike. */
+  messages: CommentThreadMessages;
 }) {
   const [body, setBody] = React.useState("");
   return (
@@ -68,7 +83,7 @@ function Composer({
           onChange={(e) => setBody(e.target.value)}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          aria-label="Comment"
+          aria-label={messages.label}
           className="min-h-12"
         />
         <div className="flex justify-end">
@@ -80,7 +95,7 @@ function Composer({
               setBody("");
             }}
           >
-            Comment
+            {messages.submit}
           </Button>
         </div>
       </div>
@@ -93,11 +108,13 @@ function CommentItem({
   currentUser,
   onReact,
   onReply,
+  messages,
 }: {
   node: CommentNode;
   currentUser?: CommentAuthor;
   onReact?: (commentId: string, emoji: string) => void;
   onReply?: (parentId: string, body: string) => void;
+  messages: CommentThreadMessages;
 }) {
   const [replying, setReplying] = React.useState(false);
   return (
@@ -120,19 +137,20 @@ function CommentItem({
               className="h-6 px-2 text-xs"
               onClick={() => setReplying((r) => !r)}
             >
-              Reply
+              {messages.reply}
             </Button>
           )}
         </div>
         {replying && onReply && (
           <Composer
             currentUser={currentUser}
-            placeholder="Write a reply…"
+            placeholder={messages.replyPlaceholder}
             autoFocus
             onSubmit={(b) => {
               onReply(node.id, b);
               setReplying(false);
             }}
+            messages={messages}
           />
         )}
         {node.replies && node.replies.length > 0 && (
@@ -144,6 +162,7 @@ function CommentItem({
                 currentUser={currentUser}
                 onReact={onReact}
                 onReply={onReply}
+                messages={messages}
               />
             ))}
           </div>
@@ -159,10 +178,12 @@ function CommentThread({
   currentUser,
   onSubmit,
   onReact,
-  placeholder = "Add a comment…",
+  placeholder,
+  messages: messageOverrides,
   className,
   ...props
 }: CommentThreadProps) {
+  const messages = useMessages("commentThread", commentThreadMessages, messageOverrides);
   return (
     <div data-slot="comment-thread" className={cn("space-y-4", className)} {...props}>
       <div className="space-y-4">
@@ -173,14 +194,16 @@ function CommentThread({
             currentUser={currentUser}
             onReact={onReact}
             onReply={onSubmit ? (parentId, body) => onSubmit(body, parentId) : undefined}
+            messages={messages}
           />
         ))}
       </div>
       {onSubmit && (
         <Composer
           currentUser={currentUser}
-          placeholder={placeholder}
+          placeholder={placeholder ?? messages.placeholder}
           onSubmit={(b) => onSubmit(b)}
+          messages={messages}
         />
       )}
     </div>

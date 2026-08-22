@@ -2,7 +2,10 @@
 
 import * as React from "react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { tableOfContentsMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 /** Tracks which of the given heading ids is currently in view (scroll-spy). */
 function useScrollSpy(ids: string[], rootMargin = "0px 0px -70% 0px") {
@@ -41,22 +44,29 @@ interface TableOfContentsProps extends React.HTMLAttributes<HTMLElement> {
   items: TocItem[];
   /** Override the scroll-spy active id (controlled). */
   activeId?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"tableOfContents">;
 }
 
 /** Scroll-spy table of contents (navigation landmark). */
 function TableOfContents({
   items,
   activeId: controlledActive,
+  messages: messageOverrides,
   className,
   ...props
 }: TableOfContentsProps) {
+  const messages = useMessages("tableOfContents", tableOfContentsMessages, messageOverrides);
   const ids = React.useMemo(() => items.map((i) => i.id), [items]);
   const spyActive = useScrollSpy(ids);
   const active = controlledActive ?? spyActive;
 
   return (
     <nav
-      aria-label="Table of contents"
+      aria-label={messages.label}
       data-slot="table-of-contents"
       className={cn("text-sm", className)}
       {...props}

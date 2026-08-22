@@ -12,7 +12,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/surfaces/popover";
+import type { MessagesFor } from "@/lib/messages";
+import { filterBarMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const DEFAULT_OPERATORS = ["is", "is not", "contains"];
 
@@ -35,7 +38,16 @@ interface FilterBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onC
   fields: FilterField[];
   value: ActiveFilter[];
   onValueChange: (filters: ActiveFilter[]) => void;
+  /**
+   * Label of the control that opens the builder. Equivalent to `messages={{ addFilter }}` and
+   * wins over it.
+   */
   addLabel?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"filterBar">;
 }
 
 /**
@@ -46,10 +58,12 @@ function FilterBar({
   fields,
   value,
   onValueChange,
-  addLabel = "Add filter",
+  addLabel,
+  messages: messageOverrides,
   className,
   ...props
 }: FilterBarProps) {
+  const messages = useMessages("filterBar", filterBarMessages, messageOverrides);
   const [open, setOpen] = React.useState(false);
   const [field, setField] = React.useState<string | null>(null);
   const [operator, setOperator] = React.useState<string | null>(null);
@@ -103,7 +117,7 @@ function FilterBar({
           render={
             <Button variant="outline" size="sm" className="gap-1 border-dashed">
               <PlusIcon aria-hidden className="size-3.5" />
-              {addLabel}
+              {addLabel ?? messages.addFilter}
             </Button>
           }
         />
@@ -116,14 +130,14 @@ function FilterBar({
               setOperator(null);
               setVal("");
             }}
-            placeholder="Field…"
+            placeholder={messages.fieldPlaceholder}
           />
           {field && (
             <Combobox
               items={operators.map((o) => ({ label: o, value: o }))}
               value={operator}
               onValueChange={setOperator}
-              placeholder="Operator…"
+              placeholder={messages.operatorPlaceholder}
             />
           )}
           {field &&
@@ -133,26 +147,26 @@ function FilterBar({
                 items={fieldDef.options}
                 value={val || null}
                 onValueChange={(v) => setVal(v ?? "")}
-                placeholder="Value…"
+                placeholder={messages.valuePlaceholder}
               />
             ) : (
               <Input
                 value={val}
                 onChange={(e) => setVal(e.target.value)}
-                placeholder="Value…"
-                aria-label="Filter value"
+                placeholder={messages.valuePlaceholder}
+                aria-label={messages.value}
               />
             ))}
           <div className="flex justify-end gap-2 pt-1">
             <PopoverClose
               render={
                 <Button variant="ghost" size="sm">
-                  Cancel
+                  {messages.cancel}
                 </Button>
               }
             />
             <Button size="sm" disabled={!field || !operator || !val} onClick={add}>
-              Add
+              {messages.add}
             </Button>
           </div>
         </PopoverContent>
@@ -165,7 +179,7 @@ function FilterBar({
           className="text-muted-foreground"
           onClick={() => onValueChange([])}
         >
-          Clear all
+          {messages.clearAll}
         </Button>
       )}
     </div>

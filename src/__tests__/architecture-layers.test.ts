@@ -8,15 +8,20 @@
  */
 import { describe, expect, it } from "vitest";
 import {
+  LAYER_ALLOWED_ASSET_DEPENDENCIES,
   LAYER_ALLOWED_DEPENDENCIES,
   LAYER_DIRECTORIES,
   LAYER_RULE_EXPLANATIONS,
 } from "@/contracts/layers";
 import {
   buildModuleGraph,
+  categoryOf,
+  findAssetDependencyViolations,
   findDeepLayerViolations,
   findLayerViolations,
+  findRelativeEscapes,
   findRuleSetProblems,
+  isAssetPath,
   isTestPath,
   layerOf,
   resolveSpecifier,
@@ -32,6 +37,36 @@ function graph(entries: Record<string, { layer: string; imports?: string[] }>) {
     Object.entries(entries).map(([file, node]) => [
       file,
       { file, layer: node.layer, imports: node.imports ?? [], test: isTestPath(file) },
+    ]),
+  );
+}
+
+/**
+ * The richer node shape the resolved-identity rules read: each edge keeps the specifier as
+ * written *and* the file it resolved to, and an asset is marked as one.
+ *
+ * Built by hand for the same reason the graphs above are: the repository has no cross-category
+ * relative import and no component importing a stylesheet, so a test that only ran against real
+ * code would pass whether or not the rule worked.
+ */
+function resolvedGraph(
+  entries: Record<
+    string,
+    { layer: string; asset?: boolean; edges?: { specifier: string; target: string | null }[] }
+  >,
+) {
+  return new Map(
+    Object.entries(entries).map(([file, node]) => [
+      file,
+      {
+        file,
+        layer: node.layer,
+        category: categoryOf(file),
+        asset: node.asset ?? isAssetPath(file),
+        edges: node.edges ?? [],
+        imports: (node.edges ?? []).map((edge) => edge.target).filter((t) => t !== null),
+        test: isTestPath(file),
+      },
     ]),
   );
 }
@@ -263,6 +298,152 @@ describe("the rule set itself", () => {
   });
 });
 
+describe("category identity", () => {
+  it("reads the category off the resolved path, whatever named it", () => {
+    expect(categoryOf("src/components/inputs/input.tsx")).toBe("inputs");
+    expect(categoryOf("src/components/inputs/__tests__/input.test.tsx")).toBe("inputs");
+  });
+
+  it("has no category for a file that is not inside one", () => {
+    expect(categoryOf("src/components/index.ts")).toBeNull();
+    expect(categoryOf("src/lib/utils.ts")).toBeNull();
+    // `src/components-legacy` must not be read as the `-legacy` category of `src/components`.
+    expect(categoryOf("src/components-legacy/actions/button.tsx")).toBeNull();
+  });
+});
+
+describe("relative imports that leave their own directory", () => {
+  it("catches ../<category>/…, which the old specifier pattern missed entirely", () => {
+    const modules = resolvedGraph({
+      "src/components/actions/button.tsx": {
+        layer: "components",
+        edges: [{ specifier: "../inputs/input", target: "src/components/inputs/input.tsx" }],
+      },
+      "src/components/inputs/input.tsx": { layer: "components" },
+    });
+    const found = findRelativeEscapes({ modules });
+    expect(found).toHaveLength(1);
+    expect(found[0].fromCategory).toBe("actions");
+    expect(found[0].toCategory).toBe("inputs");
+    expect(found[0].rule).toContain("@/components/inputs");
+  });
+
+  it("catches ../../components/<category>/…, the form the old pattern did match", () => {
+    const modules = resolvedGraph({
+      "src/components/actions/button.tsx": {
+        layer: "components",
+        edges: [
+          { specifier: "../../components/inputs/input", target: "src/components/inputs/input.tsx" },
+        ],
+      },
+      "src/components/inputs/input.tsx": { layer: "components" },
+    });
+    expect(findRelativeEscapes({ modules })).toHaveLength(1);
+  });
+
+  it("catches a relative import that leaves the components tree altogether", () => {
+    const modules = resolvedGraph({
+      "src/components/actions/button.tsx": {
+        layer: "components",
+        edges: [{ specifier: "../../lib/utils", target: "src/lib/utils.ts" }],
+      },
+      "src/lib/utils.ts": { layer: "lib" },
+    });
+    const found = findRelativeEscapes({ modules });
+    expect(found).toHaveLength(1);
+    expect(found[0].rule).toContain("@/ alias");
+  });
+
+  it("leaves ./sibling and @/alias imports alone", () => {
+    const modules = resolvedGraph({
+      "src/components/actions/button.tsx": {
+        layer: "components",
+        edges: [
+          { specifier: "./button-parts", target: "src/components/actions/button-parts.tsx" },
+          { specifier: "@/components/inputs/input", target: "src/components/inputs/input.tsx" },
+          { specifier: "react", target: null },
+        ],
+      },
+      "src/components/actions/button-parts.tsx": { layer: "components" },
+      "src/components/inputs/input.tsx": { layer: "components" },
+    });
+    expect(findRelativeEscapes({ modules })).toEqual([]);
+  });
+
+  it("exempts test files, which legitimately reach outside src/", () => {
+    const modules = resolvedGraph({
+      "src/__tests__/architecture-layers.test.ts": {
+        layer: "tests",
+        edges: [{ specifier: "../../scripts/lib/layers.mjs", target: "scripts/lib/layers.mjs" }],
+      },
+    });
+    expect(findRelativeEscapes({ modules })).toEqual([]);
+  });
+});
+
+describe("non-TypeScript production inputs", () => {
+  const allowedAssets = LAYER_ALLOWED_ASSET_DEPENDENCIES as Record<string, readonly string[]>;
+
+  it("rejects a component importing a stylesheet", () => {
+    const modules = resolvedGraph({
+      "src/components/actions/button.tsx": {
+        layer: "components",
+        edges: [{ specifier: "@/styles/index.css", target: "src/styles/index.css" }],
+      },
+      "src/styles/index.css": { layer: "styles" },
+    });
+    const found = findAssetDependencyViolations({ modules, allowedAssets });
+    expect(found).toHaveLength(1);
+    expect(found[0].targetLayer).toBe("styles");
+  });
+
+  it("rejects a component importing a raw token file, which the module table would allow", () => {
+    const modules = resolvedGraph({
+      "src/components/actions/button.tsx": {
+        layer: "components",
+        edges: [
+          { specifier: "@/tokens/primitive/color.json", target: "src/tokens/primitive/color.json" },
+        ],
+      },
+      "src/tokens/primitive/color.json": { layer: "tokens" },
+    });
+    // The module allow-list permits components → tokens; the asset table does not, which is
+    // the whole reason it is a separate table.
+    expect(check(modules as never)).toEqual([]);
+    expect(findAssetDependencyViolations({ modules, allowedAssets })).toHaveLength(1);
+  });
+
+  it("permits an asset import once the layer is listed", () => {
+    const modules = resolvedGraph({
+      "src/styles/build.ts": {
+        layer: "styles",
+        edges: [{ specifier: "./tokens.json", target: "src/styles/tokens.json" }],
+      },
+      "src/styles/tokens.json": { layer: "styles" },
+    });
+    expect(
+      findAssetDependencyViolations({ modules, allowedAssets: { styles: ["styles"] } }),
+    ).toEqual([]);
+  });
+
+  it("exempts test files, which read the generated stylesheet to assert what it contains", () => {
+    const modules = resolvedGraph({
+      "src/__tests__/accessibility/environment.test.ts": {
+        layer: "tests",
+        edges: [{ specifier: "@/styles/index.css", target: "src/styles/index.css" }],
+      },
+      "src/styles/index.css": { layer: "styles" },
+    });
+    expect(findAssetDependencyViolations({ modules, allowedAssets })).toEqual([]);
+  });
+
+  it("classifies assets by extension, not by directory", () => {
+    expect(isAssetPath("src/styles/index.css")).toBe(true);
+    expect(isAssetPath("src/tokens/primitive/color.json")).toBe(true);
+    expect(isAssetPath("src/components/actions/button.tsx")).toBe(false);
+  });
+});
+
 describe("the real module graph", () => {
   const built = buildModuleGraph({ root: ROOT, layerDirectories: LAYER_DIRECTORIES });
 
@@ -282,5 +463,32 @@ describe("the real module graph", () => {
     expect(
       findDeepLayerViolations({ modules: built.modules, allowed: LAYER_ALLOWED_DEPENDENCIES }),
     ).toEqual([]);
+  });
+
+  it("has no relative import that leaves its own directory", () => {
+    expect(findRelativeEscapes({ modules: built.modules })).toEqual([]);
+  });
+
+  it("has no ungoverned dependency on a stylesheet or token file", () => {
+    expect(
+      findAssetDependencyViolations({
+        modules: built.modules,
+        allowedAssets: LAYER_ALLOWED_ASSET_DEPENDENCIES,
+      }),
+    ).toEqual([]);
+  });
+
+  it("includes the non-TypeScript production inputs as nodes", () => {
+    // Before assets were in the graph a component could import either of these and the gate
+    // would report a clean TypeScript tree.
+    expect(built.modules.get("src/styles/index.css")?.layer).toBe("styles");
+    expect(built.modules.get("src/tokens/primitive/color.json")?.layer).toBe("tokens");
+  });
+
+  it("resolves the .js specifiers the brand subtree re-exports through", () => {
+    // `src/brand/index.ts` names its children as "./logos/qeet-logo.js". Until that resolved,
+    // the entire brand subtree was absent from the graph and no layer rule could see it.
+    const brand = built.modules.get("src/brand/index.ts");
+    expect(brand?.imports).toContain("src/brand/logos/qeet-logo.tsx");
   });
 });

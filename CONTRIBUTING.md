@@ -7,6 +7,9 @@ bun install
 bun run build     # generates src/styles/* (gitignored) — needed before typecheck
 ```
 
+Supported on **macOS and Linux**. The scripts use Node's filesystem and path APIs rather than a
+POSIX shell, so Windows may work, but only Linux runs in CI — treat it as unverified.
+
 ## The one command
 
 ```bash
@@ -19,7 +22,15 @@ build pipeline, or anything under `scripts/build/`.
 
 Each check also has its own script, for when you want just one:
 `check:architecture` · `check:contract` · `check:tokens` · `check:exports` ·
-`check:a11y` · `check:token-usage` · `check:contrast`.
+`check:a11y` · `check:token-usage` · `check:contrast` · `check:performance`.
+
+Two gates sit outside `verify`, because they answer different questions:
+
+- `bun run check:generated` — the tracked generated artifacts (`component-manifest.json`, the
+  brand logo components) are what their generators produce right now.
+- `bun run check:release` — the publication preflight. Everything it fails on is a decision or a
+  credential, not a code defect; it fails today by design (see
+  [docs/governance/release.md](./docs/governance/release.md)).
 
 ## Where things live
 
@@ -58,7 +69,9 @@ Categories: `actions` · `inputs` · `selection` · `pickers` · `navigation` ·
    don't declare what the generator can observe.
 6. `bun run build:manifest` to regenerate the catalog.
 7. `bun run verify` — it names anything you missed.
-8. `bun run check:exports -- --update` to re-snapshot the public API.
+8. `bun run check:exports -- --update` to re-snapshot the public API. The snapshot records
+   *signatures*, not just names: a prop's optionality, its declared type, a props type's
+   generics and what it extends. A newly required prop or a narrowed union fails the check.
 9. `bun run changeset` — `minor` for new exports, `major` for removals or
    renames. See [docs/governance/versioning.md](./docs/governance/versioning.md).
 
@@ -127,5 +140,28 @@ Full table: [docs/architecture/dependency-rules.md](./docs/architecture/dependen
 ```bash
 bun run build:tokens               # src/styles/tokens.{css,raw.css,json}
 bun run build:manifest             # component-manifest.json
-node scripts/build/logos.mjs       # src/brand/logos/*.tsx from the raw SVGs
+bun run build:logos                # src/brand/logos/*.tsx from the raw SVGs
+bun run check:generated            # …and prove the committed output matches the generators
 ```
+
+The manifest and the logo components are **tracked** generated files, so they have to be
+reproducible: CI regenerates them and fails on any diff. Two consequences worth knowing:
+
+- The generators emit exactly what Biome accepts, directives included. If you find yourself
+  hand-fixing generated output, fix the template instead — that drift is how the logo components
+  came to differ from the script that writes them.
+- The manifest carries no wall-clock stamp. `generated` is the date the catalog last *changed*,
+  and story coverage is carried forward from the committed manifest when the sibling
+  `qeetrix-story` repo is not checked out, so your topology cannot rewrite 145 entries.
+
+## Adding a public import path
+
+The `exports` map in `package.json` is an **enumerated allowlist**. There are no wildcards over
+`hooks/`, `lib/`, `providers/` or `blocks/` — a new module there is internal until someone adds it
+to the map, and `src/__tests__/package-contract.test.ts` makes you classify it either way. Adding
+a path is a `minor`; removing one is a `major`.
+
+Deep category paths (`@qeetrix/ui/components/actions/button`) are explicitly **denied**: the
+category a component lives in is an implementation detail, and the flat
+`@qeetrix/ui/components/button` façade is the contract. `bun run verify:package` proves every
+published path resolves and every denied one does not, in both ESM resolution and TypeScript.

@@ -15,7 +15,7 @@
  * @see docs/standards/component-manifest.md
  */
 
-import type { AccessibilityContract } from "@/contracts/accessibility";
+import type { A11yAuditState, AccessibilityContract } from "@/contracts/accessibility";
 import type {
   ComponentCapabilities,
   ComponentCategory,
@@ -25,7 +25,7 @@ import type {
 } from "@/contracts/component";
 import type { ComponentLayer } from "@/contracts/layers";
 import type { InteractionState } from "@/contracts/states";
-import type { ControlledStateContract, VariantContract } from "@/contracts/variants";
+import type { AxisSource, ControlledStateContract, VariantContract } from "@/contracts/variants";
 
 /**
  * Manifest schema version.
@@ -65,6 +65,12 @@ export type ComponentManifestEntry = {
     variantAliases: Readonly<Record<string, string>> | null;
     domainAxes: readonly ("variant" | "size")[] | null;
     controlled: readonly ControlledStateContract[] | null;
+    /**
+     * Where each public design-axis prop's values come from, for axes `cva` did not produce.
+     * `null` means the component declares no axis-shaped prop at all — which is a different
+     * statement from "it has one and nobody recorded it", and the reason this field exists.
+     */
+    axisSources: Readonly<Record<string, { source: AxisSource; note: string }>> | null;
   };
   accessibility: AccessibilityContract;
   testing: TestingContract;
@@ -95,5 +101,66 @@ export type ComponentManifest = {
   categories: Record<string, number>;
   /** Component count per maturity status. */
   statuses: Record<ComponentStatus, number>;
+  /** Component count per accessibility audit roll-up state. */
+  accessibilityAudit: Record<A11yAuditState, number>;
   components: readonly ComponentManifestEntry[];
 };
+
+/**
+ * The field list, as data — the local, versioned schema `check:contract` enforces.
+ *
+ * MAN-001: the types above are erased at build time, so nothing stopped the generator from
+ * emitting a field the shape does not declare (`accessibilityAudit` was emitted for a whole
+ * schema version without appearing in `ComponentManifest`) or from dropping one. These arrays
+ * are read statically by scripts/lib/ts-literals.mjs and checked in both directions, so the
+ * published artifact and the declared shape cannot drift apart again.
+ *
+ * Adding a field to the manifest means adding it here. That is the point.
+ */
+export const MANIFEST_DOCUMENT_FIELDS = [
+  "$schema",
+  "schemaVersion",
+  "name",
+  "version",
+  "description",
+  "generated",
+  "styles",
+  "tokens",
+  "count",
+  "categories",
+  "statuses",
+  "accessibilityAudit",
+  "components",
+] as const;
+
+/** The field list for one component entry. Same contract, same reason. */
+export const MANIFEST_ENTRY_FIELDS = [
+  "slug",
+  "name",
+  "category",
+  "layer",
+  "import",
+  "deepImport",
+  "groupImport",
+  "status",
+  "capabilities",
+  "states",
+  "api",
+  "accessibility",
+  "testing",
+  "deprecation",
+  "story",
+  "tested",
+  "deprecated",
+] as const;
+
+/** The field list for `api`. */
+export const MANIFEST_API_FIELDS = [
+  "variants",
+  "sizes",
+  "variantGroups",
+  "variantAliases",
+  "domainAxes",
+  "controlled",
+  "axisSources",
+] as const;

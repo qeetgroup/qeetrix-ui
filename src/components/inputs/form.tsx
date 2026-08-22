@@ -1,6 +1,9 @@
 import type * as React from "react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { formMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const INVALID_CONTROL_SELECTOR = [
   '[aria-invalid="true"]',
@@ -26,7 +29,16 @@ interface FormErrorSummaryItem {
 
 interface FormErrorSummaryProps extends Omit<React.ComponentProps<"div">, "children" | "title"> {
   errors: FormErrorSummaryItem[];
+  /**
+   * Heading of the summary. Equivalent to `messages={{ errorSummaryTitle }}` and wins over it,
+   * and unlike the catalogue it accepts a node rather than a string.
+   */
   title?: React.ReactNode;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"form">;
 }
 
 function focusFirstInvalidControl(form: HTMLFormElement): HTMLElement | null {
@@ -82,11 +94,13 @@ function FormActions({ className, ...props }: React.ComponentProps<"div">) {
 
 function FormErrorSummary({
   errors,
-  title = "There is a problem",
+  title,
+  messages: messageOverrides,
   className,
   tabIndex = -1,
   ...props
 }: FormErrorSummaryProps) {
+  const messages = useMessages("form", formMessages, messageOverrides);
   if (errors.length === 0) {
     return null;
   }
@@ -103,7 +117,7 @@ function FormErrorSummary({
       )}
       {...props}
     >
-      <p className="font-semibold text-destructive">{title}</p>
+      <p className="font-semibold text-destructive">{title ?? messages.errorSummaryTitle}</p>
       <ul className="mt-2 list-disc space-y-1 ps-5">
         {errors.map((error, index) => (
           <li key={error.id ?? `${error.controlId}-${index}`}>

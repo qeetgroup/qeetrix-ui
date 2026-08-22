@@ -95,6 +95,38 @@ the *default*, it does not override an author's decision.
 
 ---
 
+## Applicability: what `capabilities.density` means
+
+The manifest records one of four words per component, and they are not interchangeable:
+
+| Value | Means | Who may say it |
+|:--|:--|:--|
+| `supported` | reads a density metric today, directly or through a component token that resolves to one | derived from source |
+| `unsupported` | should respond to density and does not yet | declared in the registry |
+| `not-applicable` | density is genuinely irrelevant — no control height, no row rhythm, no field gap to compress | declared in the registry |
+| `unknown` | not yet reviewed | derived, and the honest default |
+
+The distinction is the whole point. Source inspection can *prove* `supported`. It cannot prove
+`not-applicable`, because that is a claim about design intent — that this component would look no
+different at any density and never should. Reporting every non-participating component as
+`not-applicable` had 125 of 145 families asserting a decision nobody made, and since the contract
+ratchet counts only `unknown`, the manifest showed a backlog of zero.
+
+So: **derivation may emit `supported` or `unknown` and nothing else**
+([`DERIVABLE_DENSITY_APPLICABILITY`](../../src/contracts/density.ts)). `not-applicable` and
+`unsupported` require an explicit `src/manifests/component-registry.ts` entry, which is a review
+with a name on it.
+
+Density should not be forced onto content-only components where it is genuinely irrelevant — a
+Blockquote has nothing to compress. The point is that saying so is a decision, not a default.
+
+The 20 families that participate today are locked per slug in
+`src/__tests__/token-governance.test.ts`. The aggregate ratchet in `check:contract` counts
+`unknown` totals, so one component could lose density support while another gained it and the
+count would not move; the per-slug list fails by name instead.
+
+---
+
 ## Adding a density-aware metric
 
 1. Add all three modes to

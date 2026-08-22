@@ -8,7 +8,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/surfaces/popover";
+import type { MessagesFor } from "@/lib/messages";
+import { reactionBarMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface Reaction {
   emoji: string;
@@ -22,6 +25,11 @@ interface ReactionBarProps
   onToggle?: (emoji: string) => void;
   /** Emoji offered in the picker. */
   choices?: string[];
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"reactionBar">;
 }
 
 const DEFAULT_CHOICES = ["👍", "❤️", "😄", "🎉", "😮", "😢", "🙏", "🔥", "👀", "✅"];
@@ -31,9 +39,11 @@ function ReactionBar({
   reactions,
   onToggle,
   choices = DEFAULT_CHOICES,
+  messages: messageOverrides,
   className,
   ...props
 }: ReactionBarProps) {
+  const messages = useMessages("reactionBar", reactionBarMessages, messageOverrides);
   return (
     <div
       data-slot="reaction-bar"
@@ -45,7 +55,7 @@ function ReactionBar({
           key={r.emoji}
           type="button"
           aria-pressed={r.reacted}
-          aria-label={`${r.emoji} ${r.count}`}
+          aria-label={messages.reactionCount(r.emoji, r.count)}
           onClick={() => onToggle?.(r.emoji)}
           className={cn(
             "inline-flex h-6 items-center gap-1 rounded-full border px-2 text-xs tabular-nums outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
@@ -64,7 +74,7 @@ function ReactionBar({
           render={
             <button
               type="button"
-              aria-label="Add reaction"
+              aria-label={messages.addReaction}
               className="inline-flex size-6 items-center justify-center rounded-full border border-border text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               <SmilePlusIcon aria-hidden className="size-3.5" />
@@ -79,7 +89,7 @@ function ReactionBar({
                 render={
                   <button
                     type="button"
-                    aria-label={`React ${e}`}
+                    aria-label={messages.react(e)}
                     onClick={() => onToggle?.(e)}
                     className="flex size-8 items-center justify-center rounded-md text-lg outline-none transition-colors hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50"
                   >

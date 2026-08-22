@@ -11,7 +11,10 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { notificationMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const notificationVariants = cva("relative flex gap-3 rounded-lg border p-4 shadow-rest", {
   variants: {
@@ -48,6 +51,11 @@ interface NotificationProps
   /** Action node (e.g. a `Button` or link) shown under the description. */
   action?: React.ReactNode;
   loading?: boolean;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"notification">;
 }
 
 /**
@@ -64,9 +72,11 @@ function Notification({
   onClose,
   action,
   loading,
+  messages: messageOverrides,
   children,
   ...props
 }: NotificationProps) {
+  const messages = useMessages("notification", notificationMessages, messageOverrides);
   const Icon = DEFAULT_ICONS[variant ?? "info"];
   const showIcon = icon !== null;
 
@@ -113,7 +123,7 @@ function Notification({
         <button
           type="button"
           data-slot="notification-close"
-          aria-label="Dismiss"
+          aria-label={messages.dismiss}
           onClick={onClose}
           className="-me-1 -mt-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
         >

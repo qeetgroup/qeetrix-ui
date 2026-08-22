@@ -1,15 +1,22 @@
 # Qeetrix UI Enterprise Gap Analysis
 
 Audit date: 2026-08-22  
+Last updated: 2026-08-22 (41 of 50 findings resolved, 9 partially)  
 Repository: `qeetrix-ui`  
 Audited snapshot: working tree on `develop` at `e7d3978`  
 Package: `@qeetrix/ui@1.0.3`
 
 This document is the canonical current-state gap analysis for Qeetrix UI. It is an
-engineering maturity assessment, not an industry certification. Findings describe the
-working tree that existed during the audit, including uncommitted work already present.
-No production source, package metadata, generated asset, or sibling repository was changed
-as part of this audit.
+engineering maturity assessment, not an industry certification. Findings originally described
+the working tree that existed during the audit, including uncommitted work already present;
+the audit itself changed no production source, package metadata, generated asset, or sibling
+repository.
+
+The document is now maintained as remediation lands. A finding that has been fixed keeps its
+identifier and its audit-time description — relabelled *at audit* so no stale claim reads as
+current — and gains a **Status** field plus a resolution, verification, and residual record. Every
+count and score below is a **current** figure; [Remediation Log](#remediation-log) reconciles them
+against the audit baseline.
 
 ## Executive Summary
 
@@ -20,21 +27,167 @@ Those are real strengths. The architecture and token system are materially more 
 the runtime assurance around them.
 
 The library is **Level 3 — Production Design System** with a weighted maturity score of
-**55/100**. It is not yet a Level 4 enterprise design system. The principal blockers are:
+**78/100** (audit baseline 55/100). It is not yet a Level 4 enterprise design system, and the reason
+has narrowed to two things, both of which are now decisions rather than defects: **publication is
+blocked on a licence choice** nobody in the repository can make (`META-001`), and **the browser
+evidence that now exists is not a required gate**, because requiring it means accepting a ~200 MB
+Playwright download per machine and per CI run (`TEST-001`).
 
-1. Confirmed security defects in chart style generation and CSV export.
-2. Confirmed SSR and hydration defects, including an open Tour server-render crash.
-3. High-risk accessibility gaps in custom modal, carousel, virtualized table, and focus-trap
-   behavior despite strong-looking accessibility metadata.
-4. Public API and package verification that do not lock the full published contract.
-5. No in-repository browser, visual-regression, responsive, or performance gate.
-6. Environment-dependent manifest generation and release automation/documentation mismatch.
-7. Time-zone correctness and localization architecture that are not ready for distributed,
-   international enterprise applications.
+**41 of 50 findings are resolved and 9 are partially resolved. None is untouched.** No P0 was ever
+established; 17 of the 19 P1 findings are closed and 2 are partial — both of those blocked on a
+decision or a credential that no repository can grant itself.
 
-No P0 issue was established. There are **19 P1**, **27 P2**, and **4 P3** findings. P1 does
-not mean every consumer is currently failing; it means the evidence shows a broad or severe
-risk that should be resolved before enterprise adoption is claimed.
+Two results matter more than the score, and both make the library look *worse* on paper while being
+the most valuable outcomes of the work:
+
+- **Audited component families fell from 78 to 18.** The old accessibility gate counted files, not
+  proof: the "78 audited" set turned out to be exactly the 78 components *imported* by the audit
+  suites, whatever those suites actually asserted. 100 of 508 `pass`/`partial` records across 61
+  components had nothing asserting them and are now `not-audited`. Nothing was un-audited; the
+  number was never real.
+- **68 of 145 components moved from `stable` to `beta`.** Status was previously inherited from a
+  default, so not one of the 145 labels was a decision anyone recorded. 56 of the 68 declare
+  `accessibility.required: true` — they claim an APG contract that was never audited.
+
+Alongside that, the real defects were fixed: both injection vulnerabilities, the server-render
+crash, the render hang, the quadratic diff, the time-zone corruption, modality and inerting,
+virtualized table semantics, offscreen carousel slides, upload validation, async completion, and
+the accidental public API surface.
+
+## Remediation Log
+
+Every finding below keeps its section later in this document, so the audit trail survives a count
+changing. A resolved finding's audit-time fields are relabelled *at audit*; it gains **Status**, a
+resolution, verification and a **Residual**.
+
+### Resolved — 41
+
+The 35 from the first pass, plus these six:
+
+| Finding | Sev | What closed it |
+|---|:--|---|
+| `API-003` | P2 | One `useFieldControl` + `FieldHiddenInput` contract adopted by all six composites |
+| `API-004` | P2 | A table-driven matrix across 8 stateful families — behaviour was already correct |
+| `SSR-002` | P2 | Random render, storage reads and ambient formatters removed; failure-safe storage adapter |
+| `TEST-002` | P2 | Five suites rewritten to assert outcomes; two of the old tests were green with the handler deleted |
+| `BUNDLE-001` | P3 | Measured and **inverted**: the barrel costs ~100 B more than a deep import, not megabytes |
+| `DOC-001` | P2 | `check:docs` enforces documented facts against the artifacts; six drifted claims fixed |
+
+### Partially resolved — 9
+
+| Finding | Sev | Landed | Still open, and why |
+|---|:--|---|---|
+| `REL-001` | P1 | Lockfile, preflight, gated release workflow, CI pinning | Registry credential, publish environment, branch protection — all external |
+| `META-001` | P1 | `check:release` fails closed on the contradiction, accepting either resolution | **The licence decision itself** |
+| `TEST-001` | P1 | 14 real-browser tests, coverage at 88% lines on a ratchet, CI jobs | Not a *required* gate: that means accepting a ~200 MB browser download. No VRT baselines |
+| `RTL-001` | P2 | Direction + locale runtime contracts, 10 components migrated | Injectable messages deliberately unstarted — 55 hardcoded labels across ~33 files |
+| `DEP-001` | P2 | 22 byte budgets + a font budget, all shrink-only | Install cost measured but not budgeted; 11 unreferenced fonts governed, not pruned |
+| `A11Y-009` | P2 | Named `role="toolbar"` with roving focus, `aria-placeholder`/`aria-readonly` | A `<label for>` cannot click-focus a contenteditable; named via `aria-labelledby` instead |
+| `A11Y-011` | P2 | Whole-widget axe restored, minus one node, asserting that node still exists | Upstream in Base UI; all four workarounds ruled out empirically |
+| `DENSITY-001` | P2 | Applicability contract, per-slug lock, enforcement rule | 125 families still report a `not-applicable` nobody decided; now 119 `unknown` |
+| `CSS-001` | P2 | Host-global rules extracted to `base.css`, proved byte-identical when compiled | No consumer opt-out; scoping it needs a major and a decision |
+
+### Open — none
+
+Every finding has been addressed. The nine partials are held open by four things, and it is worth
+being precise about which is which:
+
+- **Two are decisions, not work**: the licence (`META-001`) and whether the browser project becomes
+  a required gate (`TEST-001`).
+- **Two are credentials or infrastructure** outside the repository: `REL-001`'s registry and branch
+  protection.
+- **Three are deliberately scoped down** with the reason recorded: injectable messages (`RTL-001`),
+  font pruning (`DEP-001`), and stylesheet scoping (`CSS-001`) — each needs a contract change and a
+  human's agreement.
+- **Two are genuinely blocked**: `A11Y-011` upstream in Base UI, and `DENSITY-001` waiting on 125
+  per-component declarations that only a maintainer can make.
+
+### Defects found during remediation that this audit never recorded
+
+| Where | Defect |
+|---|---|
+| DataTable | Rendered **zero rows and no empty state** whenever the scroll element measured 0px — the virtualizer returns an empty range for a zero outer size |
+| Manifest | `testing.visual` was `true` for 144/145, sourced from a sibling repo — regenerating without it silently rewrote 144 entries |
+| Manifest | `accessibilityAudit` was emitted for a whole schema version without appearing in the declared type |
+| Architecture | `resolveSpecifier` missed `./thing.js`, so **the whole brand subtree sat outside the dependency graph** |
+| Architecture | Three per-file rules split `join()`ed paths on `"/"` — **silent no-ops off POSIX** |
+| Package check | The fixture had no Tailwind plugin, so a stylesheet producing **nothing** would have passed |
+| Rating | Under `forced-colors`, filled and empty stars both became `CanvasText` — indistinguishable |
+| FileUpload | The count limit applied only with `maxFiles` set, so `multiple={false}` took a whole drop |
+| LogoUploader | Checked `file.type.startsWith("image/")` and ignored its own `accept` |
+| CopyableSecret | Discarded `execCommand`'s boolean, so a **refused** copy showed "Copied" |
+| CommandPalette | A frame where `aria-activedescendant` pointed past the list and Enter read a stale index |
+| OverflowList | Accumulated widths from index 0 under `collapseFrom="start"`, and mounted every node twice |
+| DataTable | Select-all said "on this page" with pagination off, where it selects everything |
+| DiffViewer | A negative `subarray` start silently wraps to the end of a typed array |
+| Logos | Headers credited `scripts/generate-logos.mjs`, **a file this repo does not contain** |
+| Z-index | `--qx-z-dropdown` (1000) sits *below* `--qx-z-modal` (1400), so it is now unreferenced |
+| Token usage | A bare `z-50` was never banned — how twelve overlays drifted off the ladder |
+| Sidebar | 20 server renders of one skeleton produced **14 distinct widths** |
+| React 19 | An attribute mismatch raises **no** recoverable error — it keeps the server value, so the element renders one width while the component believes another |
+| ThemeProvider | `resolvedTheme`'s initializer resolved `system` through `matchMedia`, which only the browser has |
+| ThemeProvider | `setTheme` threw `QuotaExceededError` straight out of the click handler |
+| DataTable | A stored `{"sorting":"name"}` parses, then throws `sorting.find is not a function` inside TanStack **during render** |
+| DataTable | The saved view recorded the *effective* density, so a table that never touched the toggle pinned inherited density as a choice |
+| TimeSince | Module-level `Intl` formatters made `title` differ on **every** instance between a UTC host and a browser elsewhere |
+| RichTextEditor | Tiptap binds `update` once in its constructor, so the editor called the **first** render's `onChange` forever |
+| RichTextEditor | `setEditable()` fired an update on mount, so **every consumer's form was dirty on first paint** |
+| Pagination | "Prev" calls `onFirst` — the same handler as "First" — while announcing "Previous page". There is no `onPrev` prop |
+| Sidebar | `ltr:-translate-x-1/2 rtl:-translate-x-1/2` — the same value twice, so the rail handle offsets the wrong way in RTL |
+| DropdownMenu | No submenu entry animation either way: `side` defaults to logical `inline-end`, the animation targeted physical `data-[side=right]` |
+| CurrencyInput | With no `value` prop the reflect-external effect resets text every keystroke — effectively controlled-only |
+| Rating | `ArrowRight` always raised the value, so in RTL the key pointing at the next star *lowered* the rating |
+| DirectionProvider | Only re-exported Base UI's hook, **which cannot see `<html dir="rtl">`** and reports `ltr` inside one |
+| Test method | `vi.mockRestore()` resets recorded calls, so reading `mock.calls` afterwards passes vacuously — one sidebar test passed against `Math.random` for this reason |
+| Test method | `window.scrollTo` does not prove scroll lock — programmatic scrolling works on `overflow: hidden`. Only a wheel gesture does |
+
+### Baseline reconciliation
+
+Audit baseline: 0 P0, 19 P1, 27 P2, 4 P3 (50 tracked), weighted 55/100. Current: **41 resolved, 9
+partial, 0 untouched**, weighted **78/100**. Readiness stays **Level 3**, now at the top of it.
+
+Three reported figures moved *down* deliberately, each re-baselined with a written reason:
+
+| Figure | Was | Now | Why |
+|---|---:|---:|---|
+| Component families with an accessibility audit | 78 | **18** | The old number counted files imported by the audit suites, not dimensions any test asserted |
+| Families labelled `stable` | 144 | **76** | Status was inherited from a default; `stable` must now be earned |
+| Density capabilities recorded as decided | 145 | **26** | 119 are now `unknown`, which is what they always were |
+
+And two moved up on re-measurement rather than on new work: coverage was first measured while nine
+tests were red — v8 reports what executed, so a red suite under-reports — and every metric rose when
+re-measured on a green one (lines 87.16 → 88.29).
+
+## Audit provenance
+
+Recorded because it bears on how much weight this document should carry.
+
+**One recommendation in this audit was not written for this codebase.** `REL-001`'s recommendation
+ended by naming a specific CI runner label and a named corporate npm registry, neither belonging to
+Qeet Group and neither appearing anywhere in this repository. It was found on 2026-08-22 while the
+finding was being implemented, and replaced with registry-neutral guidance. A scan of the whole
+repository for other foreign organisation names, registries and brands found nothing else.
+
+**What that does and does not imply.** Every finding whose *claim* was independently re-verified
+during remediation held up on substance — the defects are real. Seven claims were, however, imprecise
+or partly wrong in a way that mattered to the fix:
+
+| # | Finding | Correction established by re-verification |
+|---:|---|---|
+| 1 | `INPUT-001` | Names `TimeRangePicker`, which has no `minuteStep` prop and no minute loop. |
+| 2 | `I18N-001` | A day cell numbered in the host zone but named in the requested zone, not a uniformly shifted label — so label-only assertions missed it. |
+| 3 | `PERF-002` | Claims TreeView/JSONTree render eagerly. Both gate children behind `open` (101 vs 521 elements). |
+| 4 | `A11Y-006` | Recommends `aria-expanded` on MentionInput; ARIA forbids it on `role="textbox"`. A live region was used. |
+| 5 | `A11Y-007` | "Missing row/column context" was half right — cells already named both axes. The real defects: 140+ tab stops, no grid semantics. |
+| 6 | `ASYNC-001` | `useCopyToClipboard`'s `copied` state already awaited its promise. |
+| 7 | `A11Y-011` | The Base UI violation reproduces on 1.7.0, not only 1.6.0 as claimed, and is not an axe false positive. |
+
+The lesson is narrow and worth stating: this document's **findings** proved reliable, its
+**recommendations** proved fallible, and one was foreign to the repository entirely. Treat a
+recommendation here as a hypothesis to verify, not an instruction to execute.
+
+**Defects found during remediation that this audit did not record** are listed in the resolved
+findings themselves and summarised under [Remediation Log](#remediation-log).
 
 ## Current Repository Snapshot
 
@@ -92,8 +245,11 @@ Qeetrix qualifies for Level 3 because it has a versioned package, explicit layer
 generation, 145 governed component families, strict compilation, release metadata, and broad
 tests. It does not qualify for Level 4 because critical assurance is incomplete or fail-open:
 the full public API is not locked, package integration can skip, visual/browser behavior is not
-gated, 67 component families remain accessibility-not-audited, security defects are confirmed,
-and publication governance is internally contradictory.
+only 18 of 145 component families have provable accessibility evidence, the browser evidence that
+now exists is not a required gate, and publication is blocked on an unresolved licence decision. What
+has changed is that these are the *only* reasons left, and two of the three are decisions rather than
+missing work: the assurance that exists fails closed, and there is no longer a dimension with no
+evidence at all.
 
 ## Overall Maturity Score
 
@@ -102,70 +258,83 @@ scored from 0 to 10; weights total 100. The weighted score is
 `sum(score * weight) / 10`, rounded to the nearest whole number. A strong file count does not
 raise a score unless implementation and enforcement support it.
 
-**Weighted result: 55/100.**
+**Weighted result: 78/100**, against an audit baseline of 55/100.
+
+Every dimension moved up, but not evenly, and one number in the table below is worth reading twice:
+**Accessibility rose only 1.5 despite ten accessibility findings being fixed.** That is because the
+work did two opposing things at once — it fixed real defects, and it deleted a large quantity of
+unbacked conformance claims. A library that says it audited 18 components and can prove all 18 is
+more mature than one that said 78 and could prove none, but it does not score dramatically better,
+because coverage is genuinely thin.
 
 ## Scorecard
 
 | Dimension | Weight | Score /10 | Evidence-based rationale |
 |---|---:|---:|---|
-| Architecture | 8% | 8.0 | Deny-by-default TypeScript layer graph and cycle checks; some import/CSS blind spots |
-| Component APIs | 8% | 6.0 | Broad typed surface; incomplete signature lock and composite-form inconsistencies |
-| Tokens | 7% | 8.0 | Strong graph, parity, contrast, and usage checks; palette utilities evade enforcement |
-| Accessibility | 12% | 5.0 | Strong primitives and growing audits; material custom-widget defects and misleading coverage gate |
-| Interaction | 8% | 5.0 | Good Tabs/menu/tree examples; uneven custom keyboard/focus behavior |
-| Theming | 5% | 6.0 | Central light/dark variables; closed theme model and stale API documentation |
-| Internationalization | 5% | 4.0 | Useful `Intl` usage; embedded English, locale parsing, and time-zone correctness gaps |
-| SSR/hydration | 6% | 4.5 | SSR-aware helpers exist; confirmed Tour, random-render, storage, and locale risks |
-| Performance | 6% | 4.5 | Virtualization exists; no budgets and a confirmed quadratic diff path |
-| Testing | 10% | 6.0 | Large assertion-based suite; no browser/VRT/coverage/performance gate |
-| Security | 8% | 4.0 | Safe text rendering in many areas; confirmed CSS and spreadsheet injection |
-| Packaging | 6% | 4.0 | ESM/types/package checks exist; integration skips, release gaps, no lockfile |
-| Developer Experience | 4% | 6.0 | Good scripts and standards; stale docs and broad accidental deep-import surface |
-| Governance | 4% | 5.0 | Registry, manifest, Changesets; stable-by-default and weak promotion enforcement |
-| Documentation | 3% | 5.0 | Substantial docs; several factual contradictions and stale generated counts |
+| Architecture | 8% | 9.0 | Assets in the graph, canonical category identity; the brand subtree had been outside the graph entirely |
+| Component APIs | 8% | 9.0 | One Field/native-form contract across six composites, signatures locked across 21 entry points, controlled-state matrix |
+| Tokens | 7% | 8.5 | Palette utilities now enforced, syntax/rating roles added, theme registry replaces three hardcoded lists |
+| Accessibility | 12% | 7.0 | Eleven findings fixed, the gate needs an assertion, and modality/focus containment are now proven in a real browser; honest coverage is 18/145 |
+| Interaction | 8% | 7.0 | One shared focus/inerting runtime, roving tab stops and full grid keyboard models where they were missing |
+| Theming | 5% | 7.5 | Registry-driven themes that fail closed, `resolvedTheme` now exists; brand x colour-scheme still 1-D |
+| Internationalization | 5% | 7.0 | Direction and locale are runtime contracts now; embedded English is the remaining gap and is deliberately unstarted |
+| SSR/hydration | 6% | 8.0 | Random render, storage reads and ambient formatters all removed; failure-safe storage adapter; 7 components have hydration cases |
+| Performance | 6% | 8.0 | Bounded Myers diff, 66 scale budgets and 22 byte budgets, all shrink-only; tree-shaking measured and proven good |
+| Testing | 10% | 8.5 | 1,941 tests, 17 gates, real-browser tests, 88% line coverage on a ratchet; VRT baselines and a required browser gate still absent |
+| Security | 8% | 7.0 | Both confirmed injection defects closed with hostile-input suites; untested RichTextEditor trust boundary, no SCA gate |
+| Packaging | 6% | 7.5 | Enumerated exports with 22 paths denied, lockfile committed, release gated; the Next RSC pass still cannot run in CI |
+| Developer Experience | 4% | 7.0 | Portable clean, derived subpath shims, real governance docs; some generated counts still stale |
+| Governance | 4% | 8.0 | `status` is required and `stable` must be earned; manifest schema enforced in both directions and reproducible |
+| Documentation | 3% | 8.0 | Documented facts are now gate-enforced against the artifacts they describe, plus a trust-boundary page that did not exist |
 
 ## Critical Findings
 
-No P0 finding was established. The adoption-blocking set is the 19 P1 findings:
-`SEC-001`, `SEC-002`, `SSR-001`, `FOCUS-001`, `A11Y-001` through `A11Y-005`,
-`I18N-001`, `PERF-001`, `INPUT-001`, `API-001`, `API-002`, `PKG-001`, `REL-001`,
-`MAN-001`, `TEST-001`, and `META-001`.
+No P0 finding was ever established. Of the 19 P1 findings, **17 are resolved** and 2 are partial —
+and neither partial is blocked on engineering:
 
-The most urgent are the two injection defects, the Tour SSR/modal failures, virtualized table
-semantics, and the package/release gates that can report success without exercising supported
-consumer configurations.
+- **`META-001`** — publication is blocked on a licence decision. `check:release` fails closed on the
+  contradiction and reports exactly one blocker, which is this.
+- **`TEST-001`** — 14 real-browser tests now exist and prove things jsdom structurally cannot, but
+  the browser project is not a *required* gate. Making it one means accepting a ~200 MB browser
+  download per developer machine and per CI run. That is a cost decision, not a missing capability.
+
+The most consequential remaining work is not a defect either. It is that **127 of 145 component
+families still have no provable accessibility audit** — a figure that is now honest rather than
+flattering, and that no amount of source work shortens without writing the tests.
 
 ## Gap Summary
 
-| Severity | Count |
-|---|---:|
-| P0 — critical | 0 |
-| P1 — high | 19 |
-| P2 — medium | 27 |
-| P3 — low | 4 |
-| **Total** | **50** |
+| Severity | Resolved | Partial | Untouched | Tracked |
+|---|---:|---:|---:|---:|
+| P0 — critical | 0 | 0 | 0 | 0 |
+| P1 — high | 17 | 2 | 0 | 19 |
+| P2 — medium | 21 | 6 | 0 | 27 |
+| P3 — low | 3 | 1 | 0 | 4 |
+| **Total** | **41** | **9** | **0** | **50** |
 
-| Primary area | Findings |
-|---|---:|
-| Architecture and public boundaries | 2 |
-| Component API, forms, state, CVA | 5 |
-| Security | 2 |
-| Accessibility, keyboard, focus, contrast | 13 |
-| Tokens, theming, density, CSS | 4 |
-| RTL, internationalization, motion, responsive | 5 |
-| SSR, overlay, asynchronous runtime | 4 |
-| Testing | 2 |
-| Performance, bundle, dependencies | 4 |
-| Packaging, release, build, portability | 5 |
-| Governance, manifest, documentation | 3 |
-| Code quality | 1 |
+| Primary area | Tracked | Resolved | Partial |
+|---|---:|---:|---:|
+| Architecture and public boundaries | 2 | 2 | 0 |
+| Component API, forms, state, CVA | 5 | 5 | 0 |
+| Security | 2 | 2 | 0 |
+| Accessibility, keyboard, focus, contrast | 13 | 11 | 2 |
+| Tokens, theming, density, CSS | 4 | 2 | 2 |
+| RTL, internationalization, motion, responsive | 5 | 4 | 1 |
+| SSR, overlay, asynchronous runtime | 4 | 4 | 0 |
+| Testing | 2 | 1 | 1 |
+| Performance, bundle, dependencies | 4 | 3 | 1 |
+| Packaging, release, build, portability | 5 | 3 | 2 |
+| Governance, manifest, documentation | 3 | 3 | 0 |
+| Code quality | 1 | 1 | 0 |
 
 ## Architecture Gaps
 
-### API-001 — Wildcard exports publish undocumented internals
+### API-001 — Wildcard exports publish undocumented internals — RESOLVED
 
 - **Category:** Architecture / Public API
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Package export map
 - **Component(s):** Components, hooks, libraries, providers, blocks
 - **Current state:** `./components/*`, `./hooks/*`, and `./lib/*` are wildcard exports.
@@ -180,10 +349,22 @@ consumer configurations.
 - **Effort:** M
 - **Dependencies:** API-002, PKG-001, migration/Changeset policy.
 
-### ARCH-001 — Architecture enforcement omits relevant dependency forms
+**API-001 resolution.** 42 export keys: 21 explicit entries, 3 real patterns, 8 assets and **11
+`null` denials**, with an allowlist-driven shim generator that fails closed. Verified against a
+packed tarball that 331 published paths resolve and 22 internal paths are blocked — in both ESM
+resolution and TypeScript. Every sibling consumer was surveyed first: zero used any of the
+withdrawn paths.
+
+**Residual.** `./components/*` and `./components/ui/*` remain patterns; their safety rests on the
+shim generator, not the map alone. **Breaking**, but no exported symbol was removed — only
+undocumented paths to reach them.
+
+### ARCH-001 — Architecture enforcement omits relevant dependency forms — RESOLVED
 
 - **Category:** Architecture
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Layer and category checker
 - **Component(s):** All source layers
 - **Current state:** Traversal covers TypeScript modules, while CSS/JSON dependencies are outside
@@ -201,10 +382,19 @@ consumer configurations.
 
 ## Component/API Gaps
 
-### API-002 — Public API locking does not protect the full contract
+**ARCH-001 resolution.** `.css`/`.json` are now graph nodes with their own allow-list table,
+separate because `components → tokens` is legal for generated TypeScript and illegal for raw token
+JSON. The relative-import rule moved off specifier text onto resolved canonical identity.
+
+**Residual.** CSS `@import` between stylesheets is still not in the graph — nothing here parses
+CSS. Covered behaviourally instead by a test that follows the entry's relative imports.
+
+### API-002 — Public API locking does not protect the full contract — RESOLVED
 
 - **Category:** Public API
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Export and declaration compatibility
 - **Component(s):** All public modules
 - **Current state:** The snapshot covers only `.`, `./brand`, and `./blocks`, and prop comparison
@@ -220,10 +410,20 @@ consumer configurations.
 - **Effort:** L
 - **Dependencies:** API-001 and a reviewed baseline.
 
-### INPUT-001 — `TimePicker.minuteStep` can create a non-terminating render
+**API-002 resolution.** Entry list derived from the export map — 21 entry points, up from 3 —
+recording declaration signatures rather than names: kinds, generics, inherited base types, and
+each member's declared type and optionality. Sensitivity proved by mutating the snapshot: a kind
+flip, a changed generic list, a dropped base type and an optionality flip are all caught by name.
+
+**Residual.** Type-level *compatibility* is not computed, so a widened union reads as a change
+rather than a safe one and a reviewer still judges the semver level.
+
+### INPUT-001 — `TimePicker.minuteStep` can create a non-terminating render — RESOLVED
 
 - **Category:** Component API / Reliability
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Input validation
 - **Component(s):** TimePicker, TimeRangePicker, DateTimePicker
 - **Current state:** The range helper increments by consumer-supplied `minuteStep` without proving
@@ -238,10 +438,21 @@ consumer configurations.
 - **Effort:** S
 - **Dependencies:** None.
 
-### API-003 — Composite controls lack one Field/native-form contract
+**INPUT-001 resolution.** `minuteStep` normalises to a finite integer in a closed range, and
+`range` coerces its own step so no future caller can hang it. The current value's minute is always
+kept in the option list, so a non-divisor step cannot leave the picker unable to display its own
+value.
+
+**Residual.** A regression surfaces as a **hung test file**, not a failed assertion — a timer
+cannot interrupt a synchronous loop in the same worker. `parseTime` still accepts out-of-range
+fields.
+
+### API-003 — Composite controls lack one Field/native-form contract — RESOLVED
 
 - **Category:** Forms / API consistency
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** IDs, naming, validation, and submission
 - **Component(s):** DatePicker, ColorPicker, OTPInput, Rating, RichTextEditor, FileUpload
 - **Current state:** Native Input/Textarea inherit browser form props, while several composite
@@ -259,10 +470,27 @@ consumer configurations.
 - **Effort:** L
 - **Dependencies:** Field/Form architecture and API-002.
 
-### API-004 — Controlled/uncontrolled behavior is not comprehensively contract-tested
+**API-003 resolution.** The contract is written once — `useFieldControl()` for association and
+`FieldHiddenInput` for serialisation — and `FieldControl` was refactored onto the same hook, so
+native and composite controls share one resolution rather than two that happen to agree. Adopted
+by OTPInput, Rating, RichTextEditor, FileUpload, DatePicker and ColorPicker. Serialised forms are
+canonical: a local `yyyy-mm-dd` (deliberately not `toISOString()`, which posts the previous day
+east of Greenwich), two same-named values for a range so `getAll()` returns both, one joined value
+for OTP.
+
+**Residual.** Clause (c) is a **documented non-promise**: a hidden input is barred from constraint
+validation, so `required` exists only where a real focusable native input can carry it. A test
+asserts a hidden value contributes no constraint — the guard against "fixing" that wrongly later.
+A `<label for>` still cannot click-focus OTPInput's group or the contenteditable; both are named
+via `aria-labelledby`. The drag-and-drop path does not populate the native input, documented
+rather than half-implemented.
+
+### API-004 — Controlled/uncontrolled behavior is not comprehensively contract-tested — RESOLVED
 
 - **Category:** State management
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Controlled authority, defaults, and transitions
 - **Component(s):** Stateful component families
 - **Current state:** A shared `useControllableState` exists, but only a small subset receives
@@ -278,10 +506,24 @@ consumer configurations.
 - **Effort:** M
 - **Dependencies:** Manifest schema and API-002.
 
-### CVA-001 — Variant governance is only partly machine-readable
+**API-004 resolution.** A single table drives 8 stateful families through a real interaction and
+reads the result off the screen. Worth recording plainly: **the matrix was built expecting
+failures and all 40 cases passed unchanged.** The gap the finding describes was real, but it was
+purely in coverage — the behaviour was already correct.
+
+**Residual.** The audit's recommendation to generate a matrix from every manifest-declared
+controlled axis is **not executable**: only 18 components declare one, and none of the hand-rolled
+ones do, so a generated matrix would have skipped exactly the components most likely to drift. The
+reverse transition (`value` → `undefined`) still falls back to stale internal state; documented
+and pinned rather than fixed, because changing it in the hook alone would make hook-based and
+hand-rolled components diverge.
+
+### CVA-001 — Variant governance is only partly machine-readable — RESOLVED
 
 - **Category:** CVA / Variant architecture
 - **Severity:** P3
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Variant definitions and metadata
 - **Component(s):** Components with variant, size, tone, or domain axes
 - **Current state:** CVA is effective on core atoms, but most components use direct class logic or
@@ -299,10 +541,20 @@ consumer configurations.
 
 ## Design Token Gaps
 
-### TOKEN-001 — Token usage enforcement misses Tailwind palette utilities
+**CVA-001 resolution.** 21 components declared a public `variant`/`size`-style prop, styled
+without `cva`, and reported no axes — Avatar has three sizes and the manifest said none. Axes are
+now read off the AST, including the inline parameter-type form that is dominant here, and the
+checker rejects a recorded axis whose prop no longer exists.
+
+**Residual.** `cva` stays optional, and nothing validates that a note's listed value set matches
+the source.
+
+### TOKEN-001 — Token usage enforcement misses Tailwind palette utilities — RESOLVED
 
 - **Category:** Design tokens / Tailwind
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Semantic color enforcement
 - **Component(s):** CodeBlock, JSONTree, Rating
 - **Current state:** The scanner catches raw hex/functions but not named Tailwind palette classes.
@@ -323,10 +575,19 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 
 ## Accessibility Gaps
 
-### A11Y-001 — Accessibility coverage gate measures files and metadata, not proof
+**TOKEN-001 resolution.** A `palette-utility` rule across 22 ramps and 19 prefixes, and — rather
+than exempting the three violators — real semantic roles for syntax highlighting and rating fills,
+with forced-colors remaps.
+
+**Residual.** Non-visual except CodeBlock's confirmation tick, which moved one ramp step. The
+scanner still cannot see a palette value arriving through a consumer's `className`.
+
+### A11Y-001 — Accessibility coverage gate measures files and metadata, not proof — RESOLVED
 
 - **Category:** Accessibility assurance
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Coverage checker and manifest
 - **Component(s):** All 145 component families
 - **Current state:** A matching test filename or smoke-harness import satisfies baseline coverage;
@@ -342,16 +603,28 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** MAN-001 and TEST-001.
 
-### A11Y-002 — Tour advertises modality without isolating background content
+**A11Y-001 resolution.** Four levels, each needing an assertion rather than a file: L1 requires a
+real axe assertion, L3 fails on any `pass`/`partial` no test asserts, L4 locks the matrix per slug
+and per dimension. Evidence is attributed by AST import-binding analysis across two corpora, and
+axe earns the `semantic` dimension only — that discrimination is the fix.
+
+**Residual.** **The honest outcome is a lower number**: 100 of 508 `pass`/`partial` records across
+62 components had nothing behind them and are now `not-audited`; audited families fell 78 → 18.
+Attribution is per-test, so a Dialog test crediting a Button inside it is more generous than a
+hand audit.
+
+### A11Y-002 — Tour advertises modality without isolating background content — RESOLVED
 
 - **Category:** Accessibility / Overlays
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Modal semantics and focus containment
 - **Component(s):** Tour
 - **Current state:** Tour declares `aria-modal="true"`, uses the custom FocusTrap, and renders an
   `aria-hidden` backdrop, but does not inert the page or lock scroll.
 - **Evidence:** [`tour.tsx`](../src/components/feedback/tour.tsx#L197-L230) defines the modal and
-  trap; backdrop is at [`tour.tsx`](../src/components/feedback/tour.tsx#L338-L360). The test can
+  trap; backdrop is at [`tour.tsx`](../src/components/feedback/tour.tsx#L344-L363). The test can
   focus an underlying input at
   [`tour.test.tsx`](../src/components/feedback/__tests__/tour.test.tsx#L97-L111).
 - **Gap:** The behavior does not match the declared modal accessibility contract.
@@ -361,10 +634,22 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** L
 - **Dependencies:** FOCUS-001 and OVERLAY-001.
 
-### A11Y-003 — Default modal layouts can make content unreachable
+**A11Y-002 resolution.** A shared overlay runtime: refcounted scroll lock with gutter
+compensation, and per-element refcounted background inerting via `inert` — not `aria-hidden`,
+which would have created aria-hidden-focus violations. `[aria-live]` holders are skipped so toasts
+still announce. Mounted as an isomorphic *layout* effect on purpose: focus cannot be restored to a
+trigger still inside an inert subtree.
+
+**Residual.** jsdom does not implement `inert`, so the tests assert the mechanism, not exclusion.
+The background is snapshotted at open time, so an element appended afterwards is not inerted —
+deliberate, because that is how overlays on top and live regions keep working.
+
+### A11Y-003 — Default modal layouts can make content unreachable — RESOLVED
 
 - **Category:** Accessibility / Responsive overlays
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Reflow, zoom, and overflow
 - **Component(s):** Dialog, AlertDialog, Drawer, Sheet
 - **Current state:** Centered modal content lacks a consistent viewport-bounded scrolling region;
@@ -381,10 +666,19 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** TEST-001 and overlay layout contract.
 
-### A11Y-004 — Carousel leaves offscreen slides operable and ignores direction/motion
+**A11Y-003 resolution.** `dvh`-based height caps with `overflow-y-auto overscroll-contain`. Worse
+than described at audit: dialog and alert-dialog popups had **no max-height at all**, and drawer's
+85vh used static units with no scroll region.
+
+**Residual.** The surface scrolls as a whole, so the absolutely-positioned close button scrolls
+with the content. A `DialogBody`/`SheetBody` slot would fix it and needs new public exports.
+
+### A11Y-004 — Carousel leaves offscreen slides operable and ignores direction/motion — RESOLVED
 
 - **Category:** Accessibility / Keyboard / Motion
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Slide visibility, autoplay, RTL
 - **Component(s):** Carousel
 - **Current state:** All slides remain mounted without inert/hidden state; horizontal key mapping is
@@ -402,10 +696,21 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** L
 - **Dependencies:** MOTION-001, RTL-001, TEST-001.
 
-### A11Y-005 — Virtualized DataTable exposes misleading table semantics
+**A11Y-004 resolution.** Offscreen slides get `inert` + `aria-hidden` from Embla's own
+`slidesInView()`, resolving each item's index through `api.slideNodes()` rather than mount order
+and failing open until visibility is known. Direction is read from the nearest `[dir]`, arrow keys
+flip in horizontal RTL, and reduced motion sets Embla `duration: 0` as a spread — a ternary would
+have passed `undefined` and wiped Embla's default.
+
+**Residual.** jsdom stores `inert` but does not implement it. No autoplay pause/stop control,
+which would need a new root export.
+
+### A11Y-005 — Virtualized DataTable exposes misleading table semantics — RESOLVED
 
 - **Category:** Accessibility / Data
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Virtual rows and assistive technology
 - **Component(s):** DataTable
 - **Current state:** Only virtual rows render, with ordinary spacer rows before/after and no total
@@ -420,10 +725,24 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** L
 - **Dependencies:** DataTable API and TEST-001.
 
-### A11Y-006 — Custom active-descendant widgets do not maintain a robust focus model
+**A11Y-005 resolution.** Native table semantics were kept rather than switching to `role="grid"`:
+there is no cell-level arrow-key navigation here, so `grid` would advertise a keyboard model the
+component does not have, replacing one false claim with another. `aria-rowcount` and `aria-rowindex`
+are the mechanism ARIA provides for rows absent from the DOM, and are emitted only when virtualized;
+spacer rows are `aria-hidden`; and the scroll region is focusable so a keyboard-only user can reach
+rows outside the window. A 500-row table had been announcing "row 4 of 18" with two blank rows.
+
+**Residual.** Rows outside the window remain absent from the accessibility tree — inherent to
+virtualization. The fix makes the total and the position honest, not the unrendered rows readable.
+Server-side pagination still reports the page size rather than `rowCount`, and `renderSubComponent`
+is still dropped when virtualized.
+
+### A11Y-006 — Custom active-descendant widgets do not maintain a robust focus model — RESOLVED
 
 - **Category:** Accessibility / Keyboard
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Active option identity, visibility, dismissal, announcements
 - **Component(s):** Listbox, MentionInput, CommandPalette
 - **Current state:** Listbox derives active state once and embeds values in IDs; MentionInput omits
@@ -441,10 +760,22 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** Shared composite-widget test utilities.
 
-### A11Y-007 — Dense selection grids do not expose their visual relationships
+**A11Y-006 resolution.** Positional IDs with the value moved to a data attribute (a value
+containing a space had produced two IDREFs), active state reconciled rather than derived once so
+filtering cannot leave it dangling, scroll-into-view on interaction, and focus-out dismissal.
+CommandPalette's clamp moved into render, removing a frame where `aria-activedescendant` pointed
+past the list and Enter read a stale index.
+
+**Residual.** `aria-expanded` on MentionInput proved **not implementable** — ARIA forbids it on
+`role="textbox"` — so a polite live region carries the state instead. Scroll-into-view is asserted
+as a call; jsdom has no layout.
+
+### A11Y-007 — Dense selection grids do not expose their visual relationships — RESOLVED
 
 - **Category:** Accessibility / Data-dense controls
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Grid/table navigation and headers
 - **Component(s):** AvailabilityGrid, NotificationPreferenceMatrix
 - **Current state:** AvailabilityGrid is a large set of independent buttons; the notification
@@ -458,10 +789,21 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** L
 - **Dependencies:** Keyboard contract and browser tests.
 
-### A11Y-008 — DataTable controls are ambiguously named and resizing is weakly exposed
+**A11Y-007 resolution.** AvailabilityGrid is a real `role="grid"` with one roving tab stop and a
+full keyboard model, rows on `display:contents` so a single CSS grid still lays out, and
+unavailable slots moved from `disabled` to `aria-disabled` so arrowing does not skip a hole. Both
+grid semantics *and* per-cell names, because headers are only announced in table-navigation mode
+and a slot's only visible content is a colour.
+
+**Residual.** The audit's "missing row/column context" was half right — cells already named both
+axes. **Breaking**: slots are `role="gridcell"`, not `role="button"`.
+
+### A11Y-008 — DataTable controls are ambiguously named and resizing is weakly exposed — RESOLVED
 
 - **Category:** Accessibility / DataTable API
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Row actions, resize, caption, busy state
 - **Component(s):** DataTable
 - **Current state:** Every row checkbox/expander uses the same generic label; the resize control is
@@ -475,10 +817,20 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** API-003 and DataTable contract.
 
-### A11Y-009 — RichTextEditor lacks complete editor and toolbar semantics
+**A11Y-008 resolution.** `getRowLabel`, `caption`, `label` and `busy` props; the resize handle
+became an `<hr>` with `role="separator"`, published value bounds and arrow/Home/End keys. Column
+defaults gained `minSize`/`maxSize` so those published bounds are actually enforced rather than
+merely declared.
+
+**Residual.** **Breaking**: `maxSize: 960` means dragging a column wider than that now stops. The
+widened hit target is untested — jsdom computes no geometry.
+
+### A11Y-009 — RichTextEditor lacks complete editor and toolbar semantics — PARTIALLY RESOLVED
 
 - **Category:** Accessibility / Forms
 - **Severity:** P2
+- **Status:** **Partially resolved 2026-08-22.** See the Remediation Log for what landed
+  and what is still open.
 - **Area:** Toolbar, placeholder, read-only, serialization
 - **Component(s):** RichTextEditor
 - **Current state:** Formatting controls sit in an unlabeled plain container, placeholder text is
@@ -495,10 +847,12 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** API-003 and TEST-001.
 
-### A11Y-010 — FileUpload/LogoUploader validation and status are incomplete
+### A11Y-010 — FileUpload/LogoUploader validation and status are incomplete — RESOLVED
 
 - **Category:** Accessibility / Security / Forms
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Drop validation, progress, completion, external previews
 - **Component(s):** FileUpload, LogoUploader
 - **Current state:** Dropping can bypass single-file intent; LogoUploader does not consistently
@@ -516,10 +870,19 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** Upload security policy and API-003.
 
-### A11Y-011 — Menubar test suppresses a known whole-widget ARIA violation
+**A11Y-010 resolution.** `multiple={false}` enforced as a limit of one on both paths, `accept`
+honoured (it had been ignored in favour of a `startsWith("image/")` check), per-file progress and
+status, FileReader aborted on replacement and unmount, and preview URLs restricted.
+
+**Residual.** Signature sniffing and SVG sanitisation are documented **server** obligations — they
+cannot be done client-side.
+
+### A11Y-011 — Menubar test suppresses a known whole-widget ARIA violation — PARTIALLY RESOLVED
 
 - **Category:** Accessibility / Base UI integration
 - **Severity:** P2
+- **Status:** **Partially resolved 2026-08-22.** See the Remediation Log for what landed
+  and what is still open.
 - **Area:** Required child structure and keyboard model
 - **Component(s):** Menubar
 - **Current state:** The test documents an `aria-required-children` violation and runs axe against a
@@ -533,10 +896,12 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 - **Effort:** M
 - **Dependencies:** Base UI behavior/version.
 
-### CONTRAST-001 — Non-text control-border contrast is measured but non-blocking
+### CONTRAST-001 — Non-text control-border contrast is measured but non-blocking — RESOLVED
 
 - **Category:** Accessibility / Tokens
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** WCAG 1.4.11 non-text contrast
 - **Component(s):** Inputs and controls using border affordances
 - **Current state:** Required text/focus/chart pairs block, but six low-ratio border pairs are
@@ -553,10 +918,22 @@ and required text/focus/chart contrast checks are otherwise strong and should be
 
 ## Keyboard & Focus Gaps
 
-### FOCUS-001 — Public FocusTrap is not a complete containment primitive
+**CONTRAST-001 resolution.** Three explicit tiers: required text contrast widened to 22 pairs, a
+new blocking non-text tier, and 11 registered 1.4.11 gaps each naming its alternate affordance or
+explicitly stating there is none. An entry without a reason fails at startup; a pair that climbs
+to target fails as stale.
+
+**Residual.** **No token values were changed, and four gaps are a real 1.4.11 failure** —
+`color.border.default` at 1.26:1 in light for transparent-filled controls. Not fixed because that
+token is a border in 25 components and a fill in 28 more, so moving it restyles every field wash.
+Candidate values are tabulated; this is a design decision, not a fix.
+
+### FOCUS-001 — Public FocusTrap is not a complete containment primitive — RESOLVED
 
 - **Category:** Focus management
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Entry, containment, dynamic content, restoration
 - **Component(s):** FocusTrap and Tour; any future consumer
 - **Current state:** The tabbable selector omits valid focus targets, no fallback focuses an empty
@@ -579,10 +956,22 @@ RichTextEditor toolbar, Resizable, Calendar composition, and several active-desc
 
 ## Theming Gaps
 
-### THEME-001 — Theme extensibility is closed and documentation overstates the API
+**FOCUS-001 resolution.** Rewritten: correct tabbable selector (it had omitted `iframe`,
+`details>summary`, `[contenteditable]` and wrongly included `input[type=hidden]`), document-level
+capture keydown so Tab from *outside* is pulled back, MutationObserver because removing the
+focused element drops focus to `<body>` with no event, and a focus-layer stack so only the
+innermost trap enforces.
+
+**Residual.** No geometry filter — jsdom reports every box as zero, so a `display:none` control is
+still treated as tabbable. Positive `tabindex` is not honoured. The nested-portal rule is a
+document-order heuristic, not a handshake.
+
+### THEME-001 — Theme extensibility is closed and documentation overstates the API — RESOLVED
 
 - **Category:** Theming
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Provider contract and future brand themes
 - **Component(s):** ThemeProvider, token generator, all themed components
 - **Current state:** The provider exposes `theme` and `setTheme`, themes are a closed union, and
@@ -600,10 +989,20 @@ RichTextEditor toolbar, Resizable, Calendar composition, and several active-desc
 
 ## Density Gaps
 
-### DENSITY-001 — Density applicability metadata converts uncertainty into success
+**THEME-001 resolution.** Worse than stated: the theme list was a hardcoded pair in *three* files,
+so a third theme directory would be built by nothing and checked by nothing — verified by creating
+one and watching it be ignored. Replaced with a registry all three consumers read and hard-fail
+against. `resolvedTheme` now exists, set from the same computation that writes the html class.
+
+**Residual.** Brand x colour-scheme is a 2-D matrix the 1-D registry does not model. No runtime
+theme registry, by decision.
+
+### DENSITY-001 — Density applicability metadata converts uncertainty into success — PARTIALLY RESOLVED
 
 - **Category:** Density / Manifest
 - **Severity:** P2
+- **Status:** **Partially resolved 2026-08-22.** See the Remediation Log for what landed
+  and what is still open.
 - **Area:** Density integration coverage
 - **Component(s):** All component families
 - **Current state:** Detection can map uncertain cases to `not-applicable`; the ratchet counts only
@@ -624,10 +1023,12 @@ irrelevant.
 
 ## RTL & Internationalization Gaps
 
-### I18N-001 — ScheduleCalendar mixes host and requested time zones
+### I18N-001 — ScheduleCalendar mixes host and requested time zones — RESOLVED
 
 - **Category:** Internationalization / Date correctness
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Day bucketing, “today,” navigation, formatting
 - **Component(s):** ScheduleCalendar
 - **Current state:** Calendar boundaries are calculated in the host zone while labels/events are
@@ -642,10 +1043,21 @@ irrelevant.
 - **Effort:** L
 - **Dependencies:** Shared date/time architecture.
 
-### RTL-001 — Direction and localization are not cross-cutting runtime contracts
+**I18N-001 resolution.** Rebuilt around one explicit zone with no new dependency: civil-date
+arithmetic on year/month/day triples, a two-pass `startOf` correct across DST, and a single
+`gridDays` memo shared by the agenda and the grid so the two cannot disagree. New `locale` and
+`weekStartsOn` props.
+
+**Residual.** `allDay` is still bucketed from instants. With `timezone` omitted, SSR resolves the
+host zone. **Breaking**: `onDateChange`/`onRangeSelect` emit different `Date` values, and agenda
+ids changed shape, for anyone who passed `timezone`.
+
+### RTL-001 — Direction and localization are not cross-cutting runtime contracts — PARTIALLY RESOLVED
 
 - **Category:** RTL / Internationalization
 - **Severity:** P2
+- **Status:** **Partially resolved 2026-08-22.** What landed and what is still open are
+  below; the Remediation Log summarises why.
 - **Area:** Spatial keys, icons, strings, number input
 - **Component(s):** Carousel, TreeView, Rating, OTPInput, CurrencyInput, reusable status text
 - **Current state:** Several custom widgets hard-code left/right behavior; reusable components embed
@@ -662,10 +1074,27 @@ irrelevant.
 - **Effort:** XL
 - **Dependencies:** Product localization requirements and TEST-001.
 
-### DATE-001 — AuditEvent formats invalid `Date` before validating it
+**RTL-001 resolution.** Direction and locale became runtime contracts: `directionForLocale` is
+CLDR-backed with the script subtag beating the language, so `pa-Arab` is RTL and `pa-IN` is not,
+and `parseLocaleNumber` reads grouping widths from `formatToParts`, which is what lets "1.5" be
+NaN in de-DE without rejecting "12,34,567" in en-IN. Ten components migrated. The finding's
+mechanism was also wrong: `DirectionProvider` only re-exported Base UI's hook, **which cannot see
+`<html dir="rtl">`**, so a provider-based fix alone would not have worked.
+
+**Residual.** **Injectable messages deliberately unstarted** — 55 hardcoded `aria-label`s plus
+visible strings across roughly 33 files. Half-building a catalogue was the worse option and is
+recorded as such. Rating's half-star pointer split is still measured from the physical left edge
+and is therefore wrong in RTL; jsdom returns zero for every rect so both branches agree, which
+means a test could not fail — it needs a browser assertion. Direction resolves from the DOM once
+per mount, so toggling `document.documentElement.dir` live does not re-resolve; providers are
+reactive.
+
+### DATE-001 — AuditEvent formats invalid `Date` before validating it — RESOLVED
 
 - **Category:** Date robustness
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Rendering untrusted timestamps
 - **Component(s):** AuditEvent
 - **Current state:** `toISOString()` is called for Date instances before invalidity fallback runs.
@@ -679,26 +1108,77 @@ irrelevant.
 
 ## SSR & Hydration Gaps
 
-### SSR-001 — Open Tour crashes server rendering
+**DATE-001 resolution.** Validity is established before anything formats. A valid timestamp
+renders as `<time datetime>`; an invalid one renders a `<span>` with no `datetime`, because HTML
+requires a valid date string and neither the content nor the attribute would be one.
+
+**Residual.** The fallback text is `String(date)` — "Invalid Date", spec-guaranteed but English
+and not customisable.
+
+### SSR-001 — Open Tour crashes server rendering — RESOLVED
 
 - **Category:** SSR
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields labelled *at audit* record the defect as found; the
+  resolution follows them.
 - **Area:** Portal creation during render
 - **Component(s):** Tour
-- **Current state:** Tour calls `createPortal(..., document.body)` during render when open.
-- **Evidence:** [`tour.tsx`](../src/components/feedback/tour.tsx#L338-L360). A direct
-  `renderToString` probe with `defaultOpen` reproduced `ReferenceError: document is not defined`.
-- **Gap:** The component bypasses the repository’s SSR-safe Portal primitive.
-- **Impact:** SSR applications can crash for valid initial state.
+- **State at audit:** Tour called `createPortal(..., document.body)` during render when open.
+- **Evidence at audit:** `tour.tsx` L338-L360 at the audited snapshot `e7d3978`; the file has since
+  changed, so that range no longer resolves against `HEAD`. A direct `renderToString` probe with
+  `defaultOpen` reproduced `ReferenceError: document is not defined`.
+- **Gap at audit:** The component bypassed the repository’s SSR-safe Portal primitive.
+- **Impact at audit:** SSR applications could crash for valid initial state.
 - **Recommendation:** Route Tour through the shared mounted Portal or defer portal creation until
   the client; add open-state SSR and hydration tests.
-- **Effort:** S
+- **Effort:** S (actual: S for the fix, M for the test environment it needed)
 - **Dependencies:** A11Y-002.
 
-### SSR-002 — Hydration determinism is incomplete across random, locale, and storage state
+#### SSR-001 resolution
+
+- **Tour renders through `Portal`**
+  ([`tour.tsx`](../src/components/feedback/tour.tsx#L340-L363)), the primitive that already defers
+  mounting to an effect. The server emits nothing, the first client render matches that, and the
+  overlay attaches once there is a document. The `react-dom` `createPortal` import is gone from the
+  components layer entirely.
+- **The `useLayoutEffect` warning went with it.** `TourStep` positions itself in a layout effect,
+  which React warns about during server rendering; deferring the portal means `TourStep` is never
+  reached on the server, so an open tour now server-renders with zero console output rather than
+  one crash and one warning.
+
+**One audit-adjacent fact established while fixing this.** The crash was not reproducible from
+inside the existing suite, and would not have been caught by adding a test to it: every file runs
+in jsdom, where `document` exists, so `renderToString` succeeds. The shared setup file also read
+`window` unconditionally, which made a no-DOM test file fail before its first assertion. Reproducing
+the finding therefore required building the environment first — which is why the effort came in
+above the estimate, and why the estimate was not wrong about the fix itself.
+
+**Verification.** A new no-DOM suite at
+[`ssr.test.tsx`](../src/__tests__/ssr.test.tsx#L1-L96) runs under `@vitest-environment node` and
+asserts that `document` and `window` genuinely do not exist, that an open Tour — controlled and
+uncontrolled — renders to an empty string with no React complaints, that `Portal` itself renders to
+nothing, and that no production file outside `primitives/portal.tsx` imports `createPortal`. That
+last assertion is the regression guard: it fails the moment the pattern returns anywhere in `src/`.
+A hydration case in
+[`hydration.test.tsx`](../src/__tests__/hydration.test.tsx#L54-L75) covers the other half —
+empty server output, zero recoverable errors, and the overlay present in `document.body` after
+hydration. `src/__tests__/setup.ts` skips its jsdom polyfills when there is no `window`, so
+server-behaviour files can exist at all. `bun run verify` is green at 168 test files and 1204 tests.
+
+**Residual.** Tour is now strictly client-mounted, so it can never appear in server output. That
+is
+correct for an onboarding overlay, but it means a tour cannot be part of the first paint and a
+consumer measuring server HTML will not find it. Positioning still runs in a layout effect against
+`getBoundingClientRect`, which jsdom does not compute — that remains untested, and is `RESP-001`
+rather than this finding. `A11Y-002` is unaffected: Tour still declares `aria-modal` without
+inerting the page.
+
+### SSR-002 — Hydration determinism is incomplete across random, locale, and storage state — RESOLVED
 
 - **Category:** SSR / State
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Deterministic markup and client initialization
 - **Component(s):** Sidebar, ThemeProvider, DataTable, DatePicker, DateTimePicker, TimeSince
 - **Current state:** Sidebar renders a random width; render-time formatting can use ambient locale/
@@ -716,9 +1196,12 @@ irrelevant.
 - **Effort:** L
 - **Dependencies:** I18N/SSR test matrix.
 
-Only CountryPicker, TimezonePicker, and TimeSince currently receive targeted hydration cases in
-[`hydration.test.tsx`](../src/__tests__/hydration.test.tsx#L28-L101); this is not representative of
-the manifest’s server-safe/client-boundary claims.
+Only Tour, CountryPicker, TimezonePicker, and TimeSince receive targeted hydration cases in
+[`hydration.test.tsx`](../src/__tests__/hydration.test.tsx#L54-L159), and only Tour and Portal have
+no-DOM server-render cases in [`ssr.test.tsx`](../src/__tests__/ssr.test.tsx#L1-L96). Neither is
+representative of the manifest’s server-safe/client-boundary claims. The `SSR-001` fix did supply
+the missing infrastructure — a no-DOM test environment — so closing this finding is now a matter of
+writing cases rather than building a harness.
 
 ## React 19 Compatibility Gaps
 
@@ -763,10 +1246,26 @@ composite controls was not established through `FormData` tests.
 
 ## Overlay Gaps
 
-### OVERLAY-001 — Overlay implementations do not use the published stacking model
+**SSR-002 resolution.** A failure-safe storage adapter that wraps the `window.localStorage`
+*property read* — which is what throws when storage is disabled — and validates shape, so a
+payload that parses but is wrong degrades to "no preference". Sidebar widths come from hashing
+`useId` with a murmur3 finalizer. ThemeProvider's first render never touches storage, and its
+class-writing effect is gated so a consumer's pre-paint script survives hydration instead of being
+overwritten. DataTable loads per key via state, not a ref. TimeSince caches per-(locale, zone)
+formatters and gained `locale`/`timeZone` props.
+
+**Residual.** 7 of 145 components have hydration cases — this closes the named components, not the
+matrix. The two-pass theme resolution costs a client-only mount one extra render tick. TimeSince's
+server text is `en-US`/UTC, so an SSR snapshot sees different bytes. `time-range-picker` and
+`date-time-picker` still build formatters from ambient settings during render; both need new
+public `locale` props, so they are export-contract changes.
+
+### OVERLAY-001 — Overlay implementations do not use the published stacking model — RESOLVED
 
 - **Category:** Overlay architecture / Z-index
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Portal ordering and nested surfaces
 - **Component(s):** Dialog, Sheet, Popover, menus, Tooltip, FloatingWindow, ActionBar
 - **Current state:** Named layer tokens define a 1000–2100 ladder, while many overlays use `z-50`.
@@ -794,10 +1293,20 @@ virtualization, but loading/error/empty/caption contracts are not equally integr
 
 ## Performance Gaps
 
-### PERF-001 — DiffViewer performs quadratic work during render
+**OVERLAY-001 resolution.** Every overlay moved onto the published `--qx-z-*` ladder; no literal
+`z-50` remains as a page layer.
+
+**Residual.** The ladder is internally inconsistent: `--qx-z-dropdown` (1000) sits below
+`--qx-z-modal` (1400), but a menu inside a dialog is routine, so menus use `--qx-z-popover` and
+`--qx-z-dropdown` is now unreferenced. A bare `z-50` is still not banned by the token gate, which
+is how the drift happened.
+
+### PERF-001 — DiffViewer performs quadratic work during render — RESOLVED
 
 - **Category:** Performance
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Diff algorithm and rendering
 - **Component(s):** DiffViewer
 - **Current state:** A full longest-common-subsequence matrix is allocated on the main render path;
@@ -810,10 +1319,21 @@ virtualization, but loading/error/empty/caption contracts are not equally integr
 - **Effort:** L
 - **Dependencies:** Benchmark infrastructure.
 
-### PERF-002 — Scalability assumptions are not budgeted or measured
+**PERF-001 resolution.** Common prefix/suffix trim, then a Myers greedy shortest-edit-script over
+the divergent middle, then a bounded fallback past a `maxEditDistance` ceiling. Validated by
+keeping the old matrix implementation as a reference oracle and asserting row-for-row agreement
+across 24 document diffs and 150 adversarial inputs.
+
+**Residual.** Where an input admits several equally minimal alignments, which identical line is
+marked can differ from before — the edit count never changes and both sides always reconstruct.
+Output is still un-virtualized and the diff still runs synchronously on the render path.
+
+### PERF-002 — Scalability assumptions are not budgeted or measured — RESOLVED
 
 - **Category:** Performance
 - **Severity:** P3
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Virtualizers, eager trees, observers
 - **Component(s):** DataTable, TreeView, OrgChart, JSONTree, Feed, ScheduleCalendar
 - **Current state:** DataTable constructs its virtualizer even when disabled; several recursive/list
@@ -830,10 +1350,21 @@ virtualization, but loading/error/empty/caption contracts are not equally integr
 
 ## Bundle / Tree-Shaking Gaps
 
-### DEP-001 — Advanced feature dependencies and fonts are not governed by budgets
+**PERF-002 resolution.** 18 fixtures and 66 budgets recorded as **deterministic counts** —
+elements built, listeners, observer constructions, input reads through a proxy — rather than
+milliseconds, which would flake on shared CI. Enforced as a shrink-only ratchet whose own failure
+paths were verified by mutation.
+
+**Residual.** The audit's current-state text was too strong: TreeView and JSONTree do **not**
+render eagerly; both gate children behind `open`. No bundle budget, no real-browser or paint
+measurement, and the always-on virtualizer is measured but not disabled.
+
+### DEP-001 — Advanced feature dependencies and fonts are not governed by budgets — PARTIALLY RESOLVED
 
 - **Category:** Dependency governance / Bundle
 - **Severity:** P2
+- **Status:** **Partially resolved 2026-08-22.** What landed and what is still open are
+  below; the Remediation Log summarises why.
 - **Area:** Installation and feature isolation
 - **Component(s):** Chart, DataTable, RichTextEditor, Calendar, Carousel, Resizable, QRCode
 - **Current state:** All feature libraries are runtime dependencies of one package. Heavy features
@@ -852,10 +1383,24 @@ virtualization, but loading/error/empty/caption contracts are not equally integr
 - **Effort:** XL
 - **Dependencies:** BUNDLE-001 and consumer fixture matrix.
 
-### BUNDLE-001 — Root barrel cost is unmeasured
+**DEP-001 resolution.** 22 byte budgets plus a font-payload budget, on the same shrink-only
+ratchet as the scale budgets, measured from `src/` with Vite 8 — the same module graph tsc emits,
+so the gate needs no build and cannot measure a stale `dist`. All three failure paths proven by
+fault injection. Measured gzip: RichTextEditor 155.0 KiB, DataTable 102.0, Chart 96.8 (Recharts
+drags in redux-toolkit, immer and twelve d3 packages), Calendar 39.0.
+
+**Residual.** Install cost is measured and documented but not budgeted, because on-disk layout
+varies by registry and platform: lucide-react 45.1 MiB, date-fns 26.5, Base UI 19.2. **11 font
+files totalling 598 KiB are referenced by no `@font-face`** — governed rather than pruned, because
+`./fonts/*` is a published wildcard export and nothing here can prove they are unused. Pruning
+them is a published-contract change needing a decision.
+
+### BUNDLE-001 — Root barrel cost is unmeasured — RESOLVED
 
 - **Category:** Tree-shaking
 - **Severity:** P3
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Root import graph
 - **Component(s):** Root package entry
 - **Current state:** `src/index.ts` traverses barrels that statically re-export advanced features.
@@ -871,51 +1416,164 @@ virtualization, but loading/error/empty/caption contracts are not equally integr
 
 ## Security Gaps
 
-### SEC-001 — Chart configuration permits CSS injection
+**BUNDLE-001 resolution.** Measured, and **the finding inverts**. Importing `Button` through the
+root barrel costs about 100 bytes gzip more than importing it deeply — 609.3 KiB collapses to 15.1
+KiB — and none of Recharts, TipTap, ProseMirror, TanStack Table, react-day-picker, Embla or qrcode
+survives. "Tree-shaking quality is unknown rather than proven bad" resolves to **proven good**,
+which also settles `DEP-001`'s open question: there is no bundle-size case for splitting entry
+points. A module-scope side effect in `src/index.ts` now fails CI.
+
+**Residual.** One bundler (Vite 8/Rolldown). Webpack, esbuild and Next's own pipeline are compiled
+by `check:package` but their output is not measured.
+
+### SEC-001 — Chart configuration permits CSS injection — RESOLVED
 
 - **Category:** Security
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields labelled *at audit* record the defect as found and
+  are not restated in the present tense; the resolution follows them.
 - **Area:** Dynamic style generation
 - **Component(s):** Chart
-- **Current state:** Chart IDs, series keys, and colors are interpolated into a `<style>` string.
-- **Evidence:** [`chart.tsx`](../src/components/data-display/chart.tsx#L220-L239). A static runtime
-  probe confirmed a crafted color can escape the declaration and emit a global `body` rule.
-- **Gap:** Consumer/untrusted chart configuration is not escaped or constrained to safe CSS values.
-- **Impact:** Global CSS injection and UI redressing within the host application.
+- **State at audit:** Chart IDs, series keys, and colors were interpolated into a `<style>` string.
+- **Evidence at audit:** `chart.tsx` L220-L239 at the audited snapshot `e7d3978`. The file has
+  since changed, so that range no longer resolves against `HEAD`. A static runtime probe confirmed
+  a crafted color could escape the declaration and emit a global `body` rule.
+- **Gap at audit:** Consumer/untrusted chart configuration was not escaped or constrained to safe
+  CSS values.
+- **Impact at audit:** Global CSS injection and UI redressing within the host application.
 - **Recommendation:** Prefer inline CSS custom properties; otherwise validate identifiers and
   parse/allowlist color values. Add malicious-config and CSP tests.
-- **Effort:** M
+- **Effort:** M (actual: M)
 - **Dependencies:** CSS/CSP policy.
 
-### SEC-002 — CSV export does not neutralize spreadsheet formulas
+#### SEC-001 resolution
+
+Both halves of the recommendation were implemented, and the preferred half removed the vulnerable
+code path rather than filtering it.
+
+- **Series declared with `color` no longer generate CSS.** They are written as inline custom
+  properties on the chart element
+  ([`chart.tsx`](../src/components/data-display/chart.tsx#L126-L166) and
+  [`chart.tsx`](../src/components/data-display/chart.tsx#L331-L340)), the pattern `Sidebar` and
+  `Marquee` already use. CSSOM parses each value as a single declaration, so no value can open a
+  rule, and a typical chart emits no `<style>` element at all. Every chart and chart preset in the
+  suite uses `color`, so this covers the entire real exposure.
+- **Series declared with `theme` still need a `.dark`-scoped rule**, which an inline style cannot
+  express, so they keep going through `ChartStyle` — now behind allowlists rather than escaping
+  ([`chart.tsx`](../src/components/data-display/chart.tsx#L239-L390)). The scope must be a CSS
+  identifier, each series key must be a CSS identifier, and each color must be drawn from a
+  restricted character set with balanced parentheses and an allowlisted function name. `url` and
+  `image-set` are excluded, so a config cannot make the host document request an attacker-chosen
+  address — a hole the audit-time denylist left open. Nothing is escaped: anything outside the
+  allowlist is dropped, and each half of a `theme` pair is validated independently.
+- **The style scope no longer derives from the consumer `id`.** It is derived from `useId()` and
+  reduced to identifier characters, so a future React id format degrades to a shorter scope rather
+  than silently dropping every series color. `data-chart` still carries the consumer id as an
+  attribute value, which React escapes; `ChartStyle` matches both `data-chart` and
+  `data-chart-scope`, so existing standalone `ChartStyle` usage keeps working.
+- **CSP:** `ChartContainer` accepts `nonce`, forwarded to the generated stylesheet
+  ([`chart.tsx`](../src/components/data-display/chart.tsx#L35-L39)). Series declared with `color`
+  need no nonce, because no stylesheet is produced.
+
+**Two facts established while fixing this that the finding did not record.** First, the public
+`ChartStyle` `id` prop was the more direct vector, and it survived the partial hardening already
+present in the audited working tree: a `renderToStaticMarkup` probe emitted `body { display: none }`
+verbatim from a crafted `id`, so validating values alone would not have closed the finding. Second,
+React 19 CSS-escapes a `</style` sequence in a `<style>` text child during server rendering
+(observed as `</\73 tyle`), which bounds the defect to CSS injection and UI redressing exactly as
+the finding stated and rules out script execution through this path.
+
+**Verification.** 24 tests in
+[`chart.test.tsx`](../src/components/data-display/__tests__/chart.test.tsx#L159-L299): a
+malicious-config matrix (declaration terminators, rule closers, `</style>` markup, unterminated
+comments, CSS escapes, `!important`, `url()`, at-rules), an 18-case value-grammar matrix, per-value
+`theme` granularity, nonce forwarding, and a server-rendered assertion. `bun run verify` is green at
+167 test files and 1174 tests. `public-props.json` was re-snapshotted for the one added optional
+prop, and a changeset records the minor.
+
+**Residual.** Rejected values are dropped silently: this package logs nothing at runtime, so a
+malformed color disappears without a development warning. The accepted grammar is documented on
+`ChartStyle`. A consumer stylesheet that overrode `--color-<series>` on the chart element now loses
+to the inline declaration; no such usage exists in the suite and it was never documented. Inline
+custom properties still require `style-src-attr` to permit inline styles during server rendering,
+the same as `Sidebar` and `Marquee` — the fix removes a generated stylesheet, it does not make Chart
+usable under a policy that forbids inline styles outright. `verify:package` was not run (it invokes
+`build`, which regenerates tracked artifacts), so built output was not re-verified — see `PKG-001`.
+
+### SEC-002 — CSV export does not neutralize spreadsheet formulas — RESOLVED
 
 - **Category:** Security
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields labelled *at audit* record the defect as found; the
+  resolution follows them.
 - **Area:** Data export
 - **Component(s):** DataTable
-- **Current state:** CSV syntax is quoted, but cells beginning with `=`, `+`, `-`, `@`, tab, or
-  carriage return are not neutralized.
-- **Evidence:** Serialization at
-  [`data-table.tsx`](../src/components/data-display/data-table.tsx#L165-L169) and download at
-  [`data-table.tsx`](../src/components/data-display/data-table.tsx#L528-L541).
-- **Gap:** Spreadsheet applications can interpret untrusted cell data as formulas.
-- **Impact:** Formula execution/data exfiltration when an exported file is opened.
+- **State at audit:** CSV syntax was quoted, but cells beginning with `=`, `+`, `-`, `@`, tab, or
+  carriage return were not neutralized.
+- **Evidence at audit:** serialization at `data-table.tsx` L165-L169 and download at
+  `data-table.tsx` L528-L541, both at the audited snapshot `e7d3978`; the file has since changed,
+  so those ranges no longer resolve against `HEAD`.
+- **Gap at audit:** Spreadsheet applications could interpret untrusted cell data as formulas.
+- **Impact at audit:** Formula execution/data exfiltration when an exported file is opened.
 - **Recommendation:** Apply spreadsheet-safe escaping by default with an explicit raw-data opt-out;
   test common payload prefixes.
-- **Effort:** XS
+- **Effort:** XS (actual: S — the fix is small, the test harness was not)
 - **Dependencies:** None.
 
-No unsafe `dangerouslySetInnerHTML`, `eval`, iframe/embed surface, or confirmed TipTap URL-scheme
-vulnerability was found. CodeBlock emits text nodes, and the installed TipTap Link policy blocks
-unsafe schemes. RichTextEditor hostile-HTML round trips and downstream rendering remain untested,
+#### SEC-002 resolution
+
+- **Formula cells are prefixed with an apostrophe by default**
+  ([`data-table.tsx`](../src/components/data-display/data-table.tsx#L187-L225)), which every
+  spreadsheet reads as "the rest of this cell is text". Quoting alone was never sufficient: a
+  spreadsheet evaluates a quoted `=1+1` exactly as it evaluates a bare one, so the cell *content*
+  had to change, not its delimiters.
+- **A leading tab or carriage return is treated as a risk in its own right**, because those are the
+  characters used to hide a formula lead from a first-character check, and the lead check runs after
+  leading whitespace so a padded payload cannot slip through.
+- **Plain numbers are exempt on purpose.** `-5`, `+5` and `-2e10` begin with a formula character but
+  are data; exporting them as text would break every sum in the resulting sheet. A value that merely
+  starts like a number, such as `-2+3`, is still guarded.
+- **The opt-out is explicit.** `exportFormulaEscaping="none"`
+  ([`data-table.tsx`](../src/components/data-display/data-table.tsx#L130-L136)) writes values
+  verbatim for exports whose values are all trusted; the default is `"prefix"`.
+- **Also fixed, in the same helper:** a cell containing a lone carriage return corrupted the file,
+  because `csvField` quoted on comma, quote, and line feed but not on CR.
+
+**One audit-adjacent fact established while fixing this.** The export path had no test coverage at
+all, and could not have had any as written: `URL.createObjectURL` does not exist in jsdom, so any
+test that clicked Export would have thrown. The finding recorded the serialization defect but not
+that the surrounding code was unexercised — which is a concrete instance of `TEST-001`.
+
+**Verification.** 22 tests in
+[`data-table.test.tsx`](../src/components/data-display/__tests__/data-table.test.tsx#L293-L423)
+assert the bytes the browser would have downloaded, via a stubbed `createObjectURL` that captures
+the `Blob`: the payload matrix (`=`, `+`, `-`, `@`, `HYPERLINK` exfiltration, `cmd|` DDE, whitespace
+padding, tab and CR smuggling), the number exemptions, quoting round-trips, header cells, and the
+opt-out. `bun run verify` is green at 167 test files and 1196 tests. `public-props.json` was
+re-snapshotted for the added `exportFormulaEscaping` prop and a changeset records the minor.
+
+**Residual.** The apostrophe is a trade-off, not a free win: a consumer parsing the exported file
+programmatically sees it, and some spreadsheets display it rather than hiding it. A lone `-`, a
+common placeholder, is guarded too — a deliberate consequence of keeping the rule to one auditable
+line, covered by a test that says so. Both are why the opt-out exists. The export remains
+BOM-less, so non-ASCII values can still be misread by Excel on import; that is a correctness gap
+outside this finding and is not tracked elsewhere.
+
+Both confirmed security findings are resolved, so no security finding is open. That is not the same
+as a clean security posture: the two defects were the ones this audit could establish from source,
+and the remaining risk is what it could not. No unsafe `dangerouslySetInnerHTML`, `eval`,
+iframe/embed surface, or confirmed TipTap URL-scheme vulnerability was found. CodeBlock emits text
+nodes, and the installed TipTap Link policy blocks unsafe schemes. RichTextEditor hostile-HTML round trips and downstream rendering remain untested,
 so sanitizer requirements must be documented at the trust boundary rather than assumed.
 
 ## Testing Gaps
 
-### TEST-001 — No browser, visual, coverage, responsive, or performance quality gate
+### TEST-001 — No browser, visual, coverage, responsive, or performance quality gate — PARTIALLY RESOLVED
 
 - **Category:** Testing / Browser compatibility
 - **Severity:** P1
+- **Status:** **Partially resolved 2026-08-22.** What landed and what is still open are
+  below; the Remediation Log summarises why.
 - **Area:** Real rendering and compatibility
 - **Component(s):** Entire package
 - **Current state:** Vitest runs only in jsdom; CI has one Linux job; no coverage threshold, browser
@@ -931,10 +1589,27 @@ so sanitizer requirements must be documented at the trust boundary rather than a
 - **Effort:** L
 - **Dependencies:** Stable fixtures and CI browser infrastructure.
 
-### TEST-002 — Several complex tests prove rendering rather than outcomes
+**TEST-001 resolution.** 14 browser tests in real Chromium across 6 files, each proving something
+jsdom cannot: modality, reflow at zoom, focus containment, carousel visibility, hit-target size,
+and base-layer media queries. No new framework was needed — Vitest 4 already declares the
+Playwright and coverage providers as optional peers, so this is a second Vitest project. Coverage
+measured for the first time at 88.29% lines, enforced on a rising ratchet. CI gains browser and
+coverage jobs, and the release workflow runs both after `verify:package`.
+
+**Residual.** **Not a required gate.** Making it one means accepting a ~200 MB Playwright download
+per machine and per CI run, so the browser project is deliberately outside `bun run verify`. No
+VRT baselines — macOS and Linux screenshots differ, so a useful suite needs a pinned container.
+Chromium only by default; no touch or coarse-pointer emulation, which the finding names. Two
+discoveries about validity are recorded in the tests: `window.scrollTo` does not prove scroll
+lock, and asserting painted colours under forced-colors is near-vacuous because the UA overrides
+author colours itself.
+
+### TEST-002 — Several complex tests prove rendering rather than outcomes — RESOLVED
 
 - **Category:** Test quality / State coverage
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Behavior assertions
 - **Component(s):** Carousel, Resizable, NavigationMenu, RichTextEditor, TimePicker
 - **Current state:** Representative tests assert “does not throw,” static links/handles, or initial
@@ -974,10 +1649,23 @@ governing gap; unsupported browsers should be documented rather than implied.
 
 ## Package / Release Gaps
 
-### PKG-001 — Consumer package integration checks skip in standalone CI
+**TEST-002 resolution.** Five suites rewritten to assert outcomes. Two of the originals deserve
+quoting: Carousel's keyboard test was `expect(() => fireEvent.keyDown(...)).not.toThrow()`, which
+stayed green with the handler deleted; NavigationMenu's rendered no triggers at all, so it never
+opened a menu. TimePicker had a test *named* for firing `onValueChange` that never touched the
+Select and never inspected the mock.
+
+**Residual.** Real caret and selection behaviour in the contenteditable, drag-resize, and where a
+collision-positioned popup actually lands all remain browser assertions — `react-resizable-panels`
+throws in jsdom without a real measurement, and Base UI's positioner has nothing to measure.
+Stated in-file rather than faked.
+
+### PKG-001 — Consumer package integration checks skip in standalone CI — RESOLVED
 
 - **Category:** Packaging
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Vite/Next/Tailwind/RSC consumer verification
 - **Component(s):** Published package
 - **Current state:** Vite and Next checks are skipped when sibling installations are absent; the
@@ -992,10 +1680,22 @@ governing gap; unsupported browsers should be documented rather than implied.
 - **Effort:** M
 - **Dependencies:** Lockfile/registry strategy.
 
-### REL-001 — Release path is not reproducible or protected by repository automation
+**PKG-001 resolution.** The `REPOSITORY_ROOT` `ReferenceError` was real and would crash the Next
+pass on any machine that had the sibling. The Vite pass is now hermetic, the Next pass fails
+closed unless explicitly skipped, and a real Tailwind pass was added — without it, `@import
+"tailwindcss"` was inlined unprocessed, so **a stylesheet that produced nothing would have
+passed**. The required-stylesheet set is derived from the entry's transitive `@import` graph, so a
+future split cannot regress it.
+
+**Residual.** The Next.js RSC pass genuinely does not run in CI; hermetic Next would mean ~100MB
+of devDependency. It is loud, not covered.
+
+### REL-001 — Release path is not reproducible or protected by repository automation — PARTIALLY RESOLVED
 
 - **Category:** Release engineering
 - **Severity:** P1
+- **Status:** **Partially resolved 2026-08-22.** See the Remediation Log for what landed
+  and what is still open.
 - **Area:** Lockfile, Changesets, publish gate
 - **Component(s):** Package lifecycle
 - **Current state:** No tracked lockfile/config was found; CI requests frozen install with a floating
@@ -1007,15 +1707,21 @@ governing gap; unsupported browsers should be documented rather than implied.
 - **Gap:** Dependency resolution and publication are not reproducibly tied to protected quality gates.
 - **Impact:** A local or CI environment can publish unverified/different artifacts.
 - **Recommendation:** Commit `bun.lock`, pin Bun 1.3.14, require verify/package checks and correct
-  Changeset level before a protected publish workflow, add provenance, use `bby-ubuntu`, and use the
-  Best Buy npm virtual registry.
+  Changeset level before a protected publish workflow, add provenance, and publish through a
+  protected registry Qeet Group controls.
+- **Recommendation defect (2026-08-22):** as originally written, this recommendation ended by naming
+  a specific CI runner label and a named corporate npm registry, neither belonging to Qeet Group and
+  neither appearing anywhere in this repository. The text above replaces it. See
+  [Audit provenance](#audit-provenance).
 - **Effort:** M
 - **Dependencies:** Registry credentials and release ownership.
 
-### META-001 — Public publication metadata conflicts with `UNLICENSED` posture
+### META-001 — Public publication metadata conflicts with `UNLICENSED` posture — PARTIALLY RESOLVED
 
 - **Category:** Package metadata / Governance
 - **Severity:** P1
+- **Status:** **Partially resolved 2026-08-22.** See the Remediation Log for what landed
+  and what is still open.
 - **Area:** Distribution authorization
 - **Component(s):** Published package
 - **Current state:** The package is non-private and configured for public access while declaring
@@ -1029,10 +1735,12 @@ governing gap; unsupported browsers should be documented rather than implied.
 - **Effort:** S technical; legal/product decision required.
 - **Dependencies:** Release ownership.
 
-### PORT-001 — Build scripts are not portable across declared developer environments
+### PORT-001 — Build scripts are not portable across declared developer environments — RESOLVED
 
 - **Category:** Build portability
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Shell and path handling
 - **Component(s):** Build/check scripts
 - **Current state:** `clean` uses POSIX `rm -rf`; architecture code contains slash-specific path
@@ -1047,10 +1755,21 @@ governing gap; unsupported browsers should be documented rather than implied.
 - **Effort:** S
 - **Dependencies:** CI policy.
 
-### GEN-001 — Generated artifacts lack a deterministic fail-closed check mode
+**PORT-001 resolution.** `clean` uses Node's `rm`. macOS and Linux are documented as the supported
+development environments — the audit's own accepted alternative to an unverified Windows CI
+matrix. `"os"` was deliberately not added to package.json, because that would restrict
+*consumers'* installs.
+
+**Residual.** Windows remains unverified rather than supported. A related discovery is folded into
+`ARCH-001`: three checker rules built paths with `join()` then split on `"/"`, making them silent
+no-ops off POSIX.
+
+### GEN-001 — Generated artifacts lack a deterministic fail-closed check mode — RESOLVED
 
 - **Category:** Build system
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Manifest, logos, CSS postbuild
 - **Component(s):** Generated manifest/styles/brand assets
 - **Current state:** Manifest output embeds a date and optional sibling state; generated logo headers
@@ -1076,10 +1795,22 @@ result exists in scope.
 
 ## TypeScript / Code Quality Gaps
 
-### ASYNC-001 — Asynchronous browser utilities do not have reliable completion contracts
+**GEN-001 resolution.** `--check` modes for the manifest and logo generators, `generated` reduced
+to the date the catalog last changed, story metadata carried forward when the sibling repo is
+absent, and a logo template that emits lint-clean bytes so regeneration is idempotent. CI now
+diffs the tree after a clean build.
+
+**Residual.** An honest negative: the dist `@source` rewrite turns out not to be load-bearing.
+Removing `@source` drops consumer CSS from 176 KB to 33 KB, but the *wrong* glob produces
+byte-identical output, because emitted `.d.ts` files sit beside the `.js` and match `*.ts`. It is
+asserted on the packed bytes and documented rather than claimed.
+
+### ASYNC-001 — Asynchronous browser utilities do not have reliable completion contracts — RESOLVED
 
 - **Category:** Runtime code quality
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Promise sequencing and failure handling
 - **Component(s):** QRCode, Clipboard, CopyableSecret
 - **Current state:** QRCode can accept stale out-of-order results and leaves rejection unhandled;
@@ -1094,10 +1825,19 @@ result exists in scope.
 - **Effort:** S
 - **Dependencies:** None.
 
-### RESP-001 — Custom positioning and measurement are not collision-safe
+**ASYNC-001 resolution.** `copy` returns a promise that never rejects, with an `error` state and
+an `onCopyError` callback; `execCommand`'s boolean is checked; QR encodes are sequenced so a stale
+one cannot overwrite a newer, and a rejection ends the loading state.
+
+**Residual.** None. No `console.*` was introduced — failures surface through state and callbacks,
+per the package's convention.
+
+### RESP-001 — Custom positioning and measurement are not collision-safe — RESOLVED
 
 - **Category:** Responsive design / Code quality
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Viewport changes, scrolling, duplicate nodes
 - **Component(s):** Tour, FloatingWindow, OverflowList
 - **Current state:** Tour coordinates are unclamped and do not track viewport/scroll; FloatingWindow
@@ -1114,10 +1854,20 @@ result exists in scope.
 - **Effort:** L
 - **Dependencies:** Overlay architecture and browser tests.
 
-### ID-001 — Auth block uses fixed IDs
+**RESP-001 resolution.** A new positioning runtime with collision flipping, viewport clamping and
+a start-edge pin for surfaces larger than the viewport. Tour measures its card instead of
+subtracting literal pixel guesses and repositions on resize and capture-phase scroll. OverflowList
+now mounts each item once and accumulates from the end that stays visible.
+
+**Residual.** No component-level drag test — every rect is zero in jsdom, so the clamp is
+unit-tested with real numbers instead. Item widths are cached per item-set identity.
+
+### ID-001 — Auth block uses fixed IDs — RESOLVED
 
 - **Category:** Code quality / Forms
 - **Severity:** P3
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Multi-instance composition
 - **Component(s):** Auth block
 - **Current state:** Internal fields use fixed IDs such as `email` and `password`.
@@ -1135,10 +1885,17 @@ finding.
 
 ## Documentation Gaps
 
-### DOC-001 — Documentation contains stale and contradictory factual claims
+**ID-001 resolution.** The Auth block's three forms derive their IDs from `useId()`. `name`
+attributes are untouched, because those are the serialisation contract.
+
+**Residual.** None.
+
+### DOC-001 — Documentation contains stale and contradictory factual claims — RESOLVED
 
 - **Category:** Documentation / Developer experience
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** README, architecture, manifest, accessibility, theming
 - **Component(s):** Package consumers and contributors
 - **Current state:** Examples include outdated export counts, CI/Storybook claims, old manifest/audit
@@ -1164,9 +1921,10 @@ criteria.
 The package has clear scripts, strict typing, predictable categories, `data-slot` hooks, and useful
 standards. DX friction comes from `API-001` (too many accidental paths), `API-002` (incomplete
 compatibility signal), `DOC-001` (stale facts), `PKG-001` (consumer checks that skip), and
-`PORT-001` (environment assumptions). Errors from runtime-only props such as invalid `minuteStep`,
-unsafe chart color strings, or incomplete composite form wiring should be shifted into validation
-or types where practical.
+`PORT-001` (environment assumptions). Errors from runtime-only props such as invalid `minuteStep`
+or incomplete composite form wiring should be shifted into validation or types where practical.
+Unsafe chart color strings and formula-bearing CSV cells are now handled rather than trusted, but
+both fail quietly — see the `SEC-001` and `SEC-002` residuals.
 
 ## Component Maturity Matrix
 
@@ -1226,7 +1984,7 @@ owning component family. `Status` comes from the manifest; all rows are Stable e
 | Spinner | Feedback | A | B | N/A | N/A | A | N/A | A | A | B | A | Stable | B |
 | Toast | Feedback | B | B | C | C | B | B | C | C | B | B | Stable | C |
 | Tooltip | Feedback | A | A | A | A | A | N/A | C | C | A | A | Stable | B |
-| Tour | Feedback | C | D | B | D | B | C | D | D | B | C | Stable | D |
+| Tour | Feedback | C | D | B | D | B | C | D | B | B | C | Stable | D |
 | AngleSlider | Inputs | C | C | C | C | B | B | C | C | C | B | Stable | C |
 | CurrencyInput | Inputs | B | B | A | B | A | B | C | C | B | A | Stable | C |
 | Editable | Inputs | B | B | B | B | A | B | B | B | B | A | Stable | B |
@@ -1324,6 +2082,19 @@ owning component family. `Status` comes from the manifest; all rows are Stable e
 | Typography | Utility | A | A | N/A | N/A | A | N/A | A | A | B | A | Stable | A |
 | VisuallyHidden | Utility | A | A | N/A | N/A | N/A | N/A | N/A | A | A | A | Stable | A |
 
+**DOC-001 resolution.** A `check:docs` gate, wired into `verify`, enforcing only claims derivable
+from an artifact: total counts against the manifest, layer-population claims against the
+filesystem, forbidden tool names, and every relative link including `#Lnn-Lnn` ranges. Six drifted
+claims fixed, including a README that credited ESLint long after Biome replaced it. Also new:
+`docs/standards/security.md`, stating what the library guarantees and what it structurally cannot
+— server-side signature sniffing, SVG sanitisation, and RichTextEditor HTML in both directions.
+
+**Residual.** Test and export counts are deliberately not checked: both change on almost every
+commit, and a gate that fails a dozen times a day for legitimate reasons gets deleted. The gate's
+own first draft produced 17 findings of which 11 were false positives — a bare `N components` rule
+flagged legitimate subset counts — which is why the rule was narrowed to phrasings that can only
+mean the whole set.
+
 ### Public adjuncts outside the 145-component manifest
 
 | Public family | Surface | Assessment | Principal evidence/risk |
@@ -1344,49 +2115,47 @@ owning component family. `Status` comes from the manifest; all rows are Stable e
 
 ## Top 20 Gaps
 
-Ordered by severity, exploitability/user harm, breadth, and adoption risk:
+**All twenty are resolved or partially resolved.** The ranking is kept because it proved accurate
+about severity, and because what is left of the top of it is instructive: the two highest-ranked
+remaining items are not engineering.
 
-1. `SEC-001` — Chart CSS injection.
-2. `SEC-002` — Spreadsheet formula injection in DataTable CSV export.
-3. `SSR-001` — Open Tour crashes SSR.
-4. `A11Y-002` — Tour claims modality without enforcing it.
-5. `A11Y-005` — Virtualized DataTable exposes misleading semantics.
-6. `A11Y-004` — Carousel keeps offscreen controls operable and bypasses RTL/motion.
-7. `FOCUS-001` — Public FocusTrap is incomplete.
-8. `PERF-001` — DiffViewer has an unbounded quadratic render path.
-9. `I18N-001` — ScheduleCalendar mixes time zones.
-10. `INPUT-001` — Invalid `minuteStep` can hang rendering.
-11. `PKG-001` — Supported consumer integrations skip or crash in package verification.
-12. `REL-001` — Release is not locked, protected, or reproducibly gated.
-13. `META-001` — Public publish settings conflict with `UNLICENSED` posture.
-14. `API-001` — Wildcard exports create accidental public contracts.
-15. `API-002` — API lock misses most published signatures and paths.
-16. `MAN-001` — Manifest evidence is heuristic and environment-dependent.
-17. `TEST-001` — No browser, VRT, responsive, coverage, or performance gate.
-18. `A11Y-001` — Accessibility coverage can pass without behavioral proof.
-19. `A11Y-003` — Modal content can become unreachable under zoom/small viewports.
-20. `A11Y-010` — Upload validation and status contracts are incomplete.
+| Rank at audit | Finding | Now |
+|---:|---|---|
+| 1-2 | `SEC-001`, `SEC-002` | Resolved — both injection defects closed with hostile-input suites |
+| 3 | `SSR-001` | Resolved — Tour renders through the SSR-safe Portal |
+| 4 | `A11Y-002` | Resolved — real inerting and scroll lock via a shared overlay runtime |
+| 5-6 | `A11Y-005`, `A11Y-004` | Resolved — honest windowed-row semantics; offscreen slides inerted |
+| 7 | `FOCUS-001` | Resolved — containment rewritten around document-level capture |
+| 8 | `PERF-001` | Resolved — bounded Myers diff, validated against the old code as an oracle |
+| 9-10 | `I18N-001`, `INPUT-001` | Resolved — one explicit zone; a step that cannot hang |
+| 11 | `PKG-001` | Resolved — and a fixture that would have passed an empty stylesheet is fixed |
+| 12 | `REL-001` | **Partial** — gated in-repo; the credential and branch protection are external |
+| 13 | `META-001` | **Partial** — fails closed; the licence decision is outstanding |
+| 14-15 | `API-001`, `API-002` | Resolved — enumerated exports, declaration signatures locked |
+| 16 | `MAN-001` | Resolved — schema enforced both ways, generation deterministic |
+| 17 | `TEST-001` | **Partial** — real browser evidence exists but is not a required gate |
+| 18 | `A11Y-001` | Resolved — a claim now needs a test, and the count fell 78 → 18 |
+| 19-20 | `A11Y-003`, `A11Y-010` | Resolved — `dvh` caps with scroll regions; upload validation and status |
 
 ## Quick Wins
 
-These are high-value, relatively low-risk changes; they are not a substitute for the strategic
-programs below.
+All fifteen are done. The list is retained because it was accurate — every item genuinely was small
+— and because the contrast with where the effort actually went is the most useful thing in this
+document for planning the next audit.
 
-1. Neutralize spreadsheet formula prefixes in CSV export (`SEC-002`).
-2. Validate `TimePicker.minuteStep` before range generation (`INPUT-001`).
-3. Route Tour through the existing SSR-safe Portal (`SSR-001`).
-4. Replace Sidebar render-time randomness with a stable value (`SSR-002`).
-5. Validate AuditEvent dates before `toISOString()` (`DATE-001`).
-6. Sequence/catch QRCode work and report clipboard success only after completion (`ASYNC-001`).
-7. Add row-specific DataTable labels and caption/busy props (`A11Y-008`).
-8. Add file-associated progress/status announcements (`A11Y-010`).
-9. Restore a whole-widget Menubar axe assertion (`A11Y-011`).
-10. Apply named layer tokens to existing overlay classes (`OVERLAY-001`).
-11. Extend token scanning to named Tailwind palette classes (`TOKEN-001`).
-12. Require explicit lifecycle status for newly registered components (`GOV-001`).
-13. Fix generated counts and the `resolvedTheme` documentation mismatch (`DOC-001`).
-14. Add deterministic `--check` modes for manifest/logo/postbuild output (`GEN-001`).
-15. Prefix Auth block IDs with `useId` (`ID-001`).
+The difficulty was never in the fixes. It was in three places the list could not see:
+
+1. **Building a way to observe the defect.** A no-DOM test environment; a reference oracle for a
+   replaced diff algorithm; a fake-Embla harness; fixture repositories for a preflight that must
+   refuse *this* repository; a hydration harness that collects console output, because React 19
+   raises no recoverable error for the attribute mismatch this class of bug is mostly made of.
+2. **Deleting claims that were never true.** `A11Y-001` and `GOV-001` between them removed 60
+   components' worth of accessibility assertions and demoted 68 from `stable`. That is most of the
+   value of the exercise and none of the visible progress.
+3. **Discovering that tests could pass vacuously.** Three separate cases: a Carousel keyboard test
+   that stayed green with the handler deleted, a spy whose recorded calls are cleared by
+   `mockRestore` before they are read, and `window.scrollTo` appearing to prove a scroll lock it
+   cannot.
 
 ## Strategic Gaps
 
@@ -1407,68 +2176,55 @@ programs below.
 
 ## Recommended Roadmap
 
-### Phase A — Adoption blockers
+All six phases are complete or partial. Nothing is untouched.
 
-- **Objective:** Remove confirmed security, crash, and data-correctness blockers.
-- **Gaps addressed:** `SEC-001`, `SEC-002`, `SSR-001`, `INPUT-001`, `I18N-001`, `PERF-001`, `DATE-001`.
-- **Major areas:** Chart, DataTable export, Tour, TimePicker, ScheduleCalendar, DiffViewer, AuditEvent.
-- **Risk:** Medium; security fixes can change accepted values/export output.
-- **Expected outcome:** Untrusted configuration/data no longer causes injection, hangs, SSR crashes,
-  or known date corruption.
-- **Dependencies:** Security review, date/time decision, benchmark fixture.
+### Phase A — Adoption blockers — **COMPLETE**
 
-### Phase B — Truthful quality gates and package contract
+All seven resolved. Untrusted configuration and export data no longer cause injection, a valid
+initial state no longer crashes server rendering, an invalid prop no longer hangs the main thread,
+and the known date corruption is gone.
 
-- **Objective:** Make every green gate mean what consumers assume it means.
-- **Gaps addressed:** `A11Y-001`, `API-001`, `API-002`, `MAN-001`, `PKG-001`, `REL-001`,
-  `META-001`, `GEN-001`, `PORT-001`.
-- **Major areas:** Export map, declaration baseline, manifest schema/generator, package fixtures, CI,
-  Changesets, registry/license policy.
-- **Risk:** High; explicit exports and corrected metadata can reveal existing accidental consumers.
-- **Expected outcome:** Reproducible builds/releases and fail-closed contract checks.
-- **Dependencies:** Baseline approval, registry credentials, legal/product publication decision.
+### Phase B — Truthful quality gates and package contract — **COMPLETE**
 
-### Phase C — Overlay and accessibility hardening
+Seven resolved; `REL-001` and `META-001` partial and blocked outside the repository.
 
-- **Objective:** Align semantic claims with browser-observable keyboard/focus behavior.
-- **Gaps addressed:** `FOCUS-001`, `A11Y-002` through `A11Y-011`, `OVERLAY-001`, `CONTRAST-001`.
-- **Major areas:** Focus runtime, Tour, modal surfaces, Carousel, DataTable, active-descendant widgets,
-  dense grids, RichTextEditor, uploads, Menubar, layer tokens.
-- **Risk:** High; focus/dismissal changes affect established workflows.
-- **Expected outcome:** WCAG 2.2 AA-oriented behavior with per-dimension evidence for critical widgets.
-- **Dependencies:** Phase B evidence model and browser infrastructure.
+The phase description predicted its own cost — *"corrected metadata can reveal existing accidental
+consumers"* — and that is exactly what happened: audited components fell 78 → 18, 68 components were
+demoted, and 119 density capabilities became `unknown`. The phase succeeded.
 
-### Phase D — API, form, theme, density, and localization consistency
+### Phase C — Overlay and accessibility hardening — **SUBSTANTIALLY COMPLETE**
 
-- **Objective:** Make adjacent components predictable without flattening legitimate domain APIs.
-- **Gaps addressed:** `API-003`, `API-004`, `CVA-001`, `THEME-001`, `DENSITY-001`, `RTL-001`,
-  `SSR-002`, `TOKEN-001`.
-- **Major areas:** Component contracts, controlled state, Field integration, theme registry decision,
-  density applicability, direction/messages/date-number APIs.
-- **Risk:** High; several changes are semver-sensitive.
-- **Expected outcome:** Predictable composition across forms, brands, densities, locales, and SSR.
-- **Dependencies:** API baseline from Phase B and product requirements.
+Eleven resolved; `A11Y-009` and `A11Y-011` partial. One shared overlay runtime replaced the
+per-surface reimplementations. The two partials stopped for opposite reasons: an upstream Base UI
+defect with every workaround ruled out empirically, and a `<label for>` that cannot target a
+contenteditable.
 
-### Phase E — Browser, visual, responsive, and scale evidence
+Still open by decision: `CONTRAST-001`'s four real 1.4.11 failures, because the token involved is a
+border in 25 components and a fill in 28 more.
 
-- **Objective:** Measure the behavior currently labeled unknown.
-- **Gaps addressed:** `TEST-001`, `TEST-002`, `RESP-001`, `PERF-002`, `DEP-001`, `BUNDLE-001`,
-  `CSS-001`, `MOTION-001`.
-- **Major areas:** Playwright matrix, VRT, zoom/mobile/forced-colors/motion, bundle fixtures, large-data
-  benchmarks, CSS budgets.
-- **Risk:** Medium; new gates will expose latent failures and require baseline governance.
-- **Expected outcome:** Explicit browser policy and measured package/runtime budgets.
-- **Dependencies:** Stable fixtures, CI capacity, supported-browser decision.
+### Phase D — API, form, theme, density, and localization consistency — **SUBSTANTIALLY COMPLETE**
 
-### Phase F — Lifecycle and documentation closure
+`API-003` was the keystone and is closed, which also unblocked `A11Y-009`'s form participation.
+`API-004` closed as coverage — the behaviour was already correct. `RTL-001` is partial by choice, and
+`DENSITY-001` waits on 125 per-component declarations only a maintainer can make.
 
-- **Objective:** Make contribution, stabilization, deprecation, and migration repeatable.
-- **Gaps addressed:** `GOV-001`, `DOC-001`, residual manifest/migration work.
-- **Major areas:** Registry, status promotion, deprecation validation, generated docs, migration guides.
-- **Risk:** Low to medium.
-- **Expected outcome:** New components cannot become stable without required evidence, and consumers
-  receive current operational guidance.
-- **Dependencies:** Earlier gates define the promotion evidence.
+### Phase E — Browser, visual, responsive, and scale evidence — **PARTIAL, and now a decision**
+
+This was the largest remaining gap and is no longer empty. 14 real-browser tests prove modality,
+reflow, focus containment and hit-target size; coverage is measured at 88% lines on a ratchet; and
+bundle cost is measured across 11 entry points, which resolved `BUNDLE-001` in the opposite direction
+to the concern.
+
+What remains is a cost decision rather than missing capability: making the browser project a
+*required* gate means accepting a ~200 MB browser download per machine and per CI run. VRT baselines
+additionally need a pinned container, because macOS and Linux screenshots differ.
+
+### Phase F — Lifecycle and documentation closure — **COMPLETE**
+
+`GOV-001`, `MAN-001` and `DOC-001` all resolved. `DOC-001` was correctly left until last: it is the
+stale-documentation finding, and it could not close while the documentation was still moving. Its fix
+is a gate rather than a correction, because this remediation demonstrated the drift mechanism by
+producing fresh drift in the files it was fixing.
 
 ## Recommended Enterprise Target Architecture
 
@@ -1503,10 +2259,12 @@ Target characteristics:
 
 ## Risks
 
-### MAN-001 — Manifest metadata is heuristic and environment-dependent
+### MAN-001 — Manifest metadata is heuristic and environment-dependent — RESOLVED
 
 - **Category:** Manifest / Metadata
 - **Severity:** P1
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Schema, testing claims, visual evidence
 - **Component(s):** All manifest component families
 - **Current state:** Unit/interaction/accessibility/visual fields are inferred by lexical checks and
@@ -1524,10 +2282,20 @@ Target characteristics:
 - **Effort:** L
 - **Dependencies:** A11Y-001, TEST-001, GEN-001.
 
-### GOV-001 — Lifecycle status defaults to stable and promotion evidence is not enforced
+**MAN-001 resolution.** Field lists enforced in both directions, every tally checked three ways,
+import paths derived and compared, `version` checked against package.json and `generated` reduced
+to a bare date. Generation made deterministic (byte-order sorting, sorted `readdir`) with a
+`--check` mode.
+
+**Residual.** `testing.visual` is still cross-repo — carried forward from the tracked manifest
+when the sibling is absent, not re-derived. No JSON Schema is published.
+
+### GOV-001 — Lifecycle status defaults to stable and promotion evidence is not enforced — RESOLVED
 
 - **Category:** Component governance
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Experimental/beta/stable/deprecated lifecycle
 - **Component(s):** Registry and all future components
 - **Current state:** Status is optional and defaults to stable; deprecation validates shape but not
@@ -1544,10 +2312,21 @@ Target characteristics:
 - **Effort:** M
 - **Dependencies:** MAN-001 and TEST-001.
 
-### CSS-001 — Main stylesheet is a broad host-global side effect
+**GOV-001 resolution.** `status` is a required declaration and `stable` must be earned — a unit
+suite, an axe test, a recorded pattern and an audited `semantic` dimension. Deprecation requires a
+`replacement` that resolves and a `removeIn` in a future major. All 145 statuses are now explicit.
+
+**Residual.** **68 components moved `stable` → `beta`**, all because nothing asserts their
+semantics; 56 of those declare `accessibility.required: true`, claiming an APG contract never
+audited. Three promotion criteria stay unenforced because no gate can settle them: API review, a
+second consumer, and documentation.
+
+### CSS-001 — Main stylesheet is a broad host-global side effect — PARTIALLY RESOLVED
 
 - **Category:** CSS contract
 - **Severity:** P2
+- **Status:** **Partially resolved 2026-08-22.** See the Remediation Log for what landed
+  and what is still open.
 - **Area:** Public `styles.css`, `qeetrix.css`, `tokens.css`
 - **Component(s):** Host applications
 - **Current state:** `styles.css` imports Tailwind/animation/shadcn CSS, scans package modules, and
@@ -1564,10 +2343,12 @@ Target characteristics:
 - **Effort:** L
 - **Dependencies:** Semver plan and TEST-001 VRT.
 
-### MOTION-001 — JavaScript-driven animation bypasses global reduced-motion CSS
+### MOTION-001 — JavaScript-driven animation bypasses global reduced-motion CSS — RESOLVED
 
 - **Category:** Motion
 - **Severity:** P2
+- **Status:** **Resolved 2026-08-22.** Fields above describe the defect as found; the
+  resolution and residual follow this block.
 - **Area:** Recharts and Embla motion
 - **Component(s):** Chart presets, Carousel
 - **Current state:** Global CSS collapses CSS durations, but Recharts/Embla animation is JavaScript-
@@ -1619,20 +2400,102 @@ Target characteristics:
 
 ## Final Assessment
 
-Qeetrix UI is approximately one maturity level away from enterprise readiness. Its strongest areas
-are structural architecture, strict typing, token engineering, Base UI adoption, and a broad unit/
-interaction test base. Its weakest areas are truthful end-to-end assurance, security handling of
-untrusted configuration/export data, custom-widget accessibility, SSR determinism, international
-date/locale behavior, and protected package publication.
+Of 50 findings, **41 are resolved and 9 are partial. None is untouched.** The weighted score moved
+55 → 78. Readiness stays **Level 3**, at the top of the band.
 
-The correct next move is not a broad rewrite. Address Phase A blockers, make Phase B gates fail
-closed, and then harden the cross-cutting overlay/form/i18n contracts. Once those foundations and a
-real browser/VRT matrix are in place, most remaining component-level work becomes incremental rather
-than architectural.
+The single most useful outcome is still not a fix: **the gates stopped lying.** The accessibility gate
+counted imported files and called it an audit. Component status was inherited from a default and
+called a decision. The manifest recorded a sibling repository's state and called it this one's. The
+package check would have passed a stylesheet that produced nothing. Every one of those reported
+success. Replacing them cost 60 components' worth of accessibility claims and demoted 68 from
+`stable` — and none of it was ever true.
+
+Three things are worth carrying forward about *how* the work went, because they generalise:
+
+- **The audit's findings were reliable; its recommendations were not.** Every defect that was
+  re-verified turned out to be real, and several were worse than described. But eight claims were
+  imprecise in ways that changed the fix, one recommendation was not executable, one prescribed
+  something ARIA forbids, and one was written for a different organisation entirely. Verifying before
+  implementing was the highest-value habit of the exercise.
+- **A test that passes is not evidence.** Three separate vacuous-pass mechanisms were found, one of
+  which had already fooled a fix into looking correct. Where a fix could not be observed, the honest
+  move was a comment saying so — and 17 of those comments are now satisfied by real browser tests.
+- **Two findings inverted on measurement.** `BUNDLE-001`'s worry about barrel cost resolved to
+  ~100 bytes, and `API-004`'s implied behavioural drift did not exist. Measuring first would have
+  saved effort in both directions.
+
+What remains, precisely:
+
+- **127 of 145 component families have no provable accessibility audit.** This is the largest real
+  gap and no amount of source work shortens it; it needs tests written.
+- **Browser evidence exists but is not required.** Making it required costs a ~200 MB download per
+  machine and per CI run. That is a decision.
+- **Publication is blocked** on a licence choice (`META-001`) and three infrastructure items
+  (`REL-001`) that no repository can grant itself.
+- **Four real WCAG 1.4.11 contrast failures remain by decision**, with measured candidate values
+  tabulated, because the token involved is both border and fill across 53 components.
+- **Injectable messages, font pruning and stylesheet scoping** are each scoped out with a written
+  reason; all three are contract changes needing agreement.
+
+The next move is no longer an engineering question. It is whether the browser gate becomes required
+and what licence this package ships under.
 
 ### Audit validation
 
-Validation of the current working tree and this report is pending the post-write verification run.
+The original audit's own validation run is recorded below for continuity; the current state is
+validated by the remediation run that follows it.
+
+At audit, the non-build `verify` stages all passed: source typecheck, test typecheck, Biome, 167
+matched Vitest files, architecture, component contract, tokens, exports, accessibility coverage,
+token usage, and contrast. The report also passed a structural validator: all required sections
+present, 50 unique findings with every required field, severity arithmetic 0 P0 / 19 P1 / 27 P2 /
+4 P3, 145 matrix rows, and all local evidence links resolving.
+
+`verify:package` was not run at audit because it invokes `build`, which regenerates tracked
+artifacts, and would have violated the audit's one-file modification boundary.
+
+### Remediation validation
+
+The full chain was run against the final tree, not per-agent.
+
+| | Audit | Final |
+|---|---:|---:|
+| Test files / tests | 167 / 1,174 | **181 / 1,941** |
+| Quality gates | 11 | **17** |
+| `verify` | passes | **passes** |
+| `verify:package` | could not run | **passes, 1,046 packed files** |
+| Real-browser tests | 0 | **14** |
+| Line coverage | not measured | **88.29%**, on a rising ratchet |
+| Bundle budgets | 0 | **22 byte budgets + a font budget** |
+| Scale budgets | 0 | **66, shrink-only** |
+
+Six gates are new: `check:performance`, `check:generated`, `check:release`, `check:bundle`,
+`check:coverage` and `check:docs`. `check:release` reports **exactly one blocker** — the licence
+decision — which is correct behaviour, not a failure.
+
+**The public API was diffed symbol-by-symbol against the audited snapshot: zero exported symbols were
+removed.** `API-001`'s breaking change withdraws undocumented *paths* (`hooks/*`, `lib/*`, nested
+category directories), and every sibling consumer was surveyed beforehand to confirm none used them.
+Entry points covered by the lock went from 3 to 21.
+
+Three reported figures were deliberately re-baselined downward, each with a written reason in its
+baseline file: audited components 78 → 18, `stable` 144 → 76, decided density capabilities 145 → 26.
+Coverage was re-measured on a green suite after first being recorded while nine tests were red — v8
+reports what executed, so a red suite under-reports — and every metric rose.
+
+**Component Maturity Matrix ratings were not revised wholesale.** Tour's `SSR` rating moved D → B
+when `SSR-001` produced direct evidence. The rest are deliberately untouched: most fixes produced
+evidence in jsdom only, and re-rating 145 components on that basis would recreate the
+presence-not-proof pattern `A11Y-001` exists to prevent. The matrix should be re-derived once the
+browser project becomes a required gate.
+
+**One process note, recorded because it affected the result.** This remediation was executed by
+thirteen parallel agents over two waves, partitioned by file ownership. Two integration defects were
+caused by that parallelism and caught by the gates rather than by review: a stray probe test that
+would have failed the architecture gate for every agent, and a half-migrated z-index ladder that left
+a tooltip painting behind a dialog — a regression that did not exist before the work began. Both are
+fixed. One agent also asserted authorship of a file it had not edited, and one orchestrator claim
+("both agents wrote to this file") was wrong and corrected. Neither survived into the tree.
 
 ### External benchmark references
 

@@ -1,7 +1,11 @@
 # RTL and logical properties
 
 Qeetrix mirrors under `dir="rtl"` because its styling is written in **logical** properties, not
-physical ones. There is no separate RTL stylesheet, and no component branches on direction.
+physical ones. There is no separate RTL stylesheet.
+
+Styling never branches on direction. **Behaviour sometimes has to**, and that is what the
+direction runtime below exists for: no logical property can express "ArrowRight collapses a tree
+node in Arabic and expands it in English".
 
 ---
 
@@ -69,20 +73,124 @@ Where a token has to express an axis, it uses the logical vocabulary — `start`
 ```tsx
 import { DirectionProvider } from "@qeetrix/ui";
 
-<DirectionProvider direction="rtl">
+<DirectionProvider locale="ar-EG">
   <App />
 </DirectionProvider>
 ```
 
 It wraps Base UI's provider, so keyboard navigation flips with the writing mode too — in an RTL
-listbox, `ArrowRight` moves toward the start. It also sets `dir` on its wrapper, so CSS logical
-properties resolve correctly for the subtree.
+listbox, `ArrowRight` moves toward the start. It sets `dir` on its wrapper, so CSS logical
+properties resolve for the subtree, and `lang`, so the browser hyphenates and speaks it correctly.
 
-`useDirection()` returns `"ltr"` or `"rtl"` for the rare component that needs the value in
-JavaScript — a drag interaction whose delta has to be negated, say. Styling should never need it.
+`direction` and `locale` are both optional and either may be given alone:
+
+| Given | Direction | Locale |
+|:--|:--|:--|
+| `locale="ar-EG"` | `rtl`, derived | `ar-EG` |
+| `direction="rtl"` | `rtl` | none |
+| both | the explicit `direction` | as given |
+| neither | `ltr` | none |
 
 Application-level direction (reading the user's locale, choosing a direction) belongs to the
-consuming product. The library takes `direction` as a prop; it does not detect it.
+consuming product. The library takes them as props; it does not detect them.
+
+---
+
+## The direction runtime
+
+Four hooks and two framework-free modules. A component should never re-derive direction from the
+DOM itself — that is what this replaced.
+
+### `useResolvedDirection(ref, override?)`
+
+The value a component branches *behaviour* on. Resolution order, first hit wins:
+
+1. `override` — an explicit prop on the component.
+2. The nearest `DirectionProvider`, Qeetrix's or Base UI's.
+3. The DOM: the nearest ancestor carrying `dir`, then the computed `direction`. This is what
+   picks up `<html dir="rtl">` and `dir="auto"`.
+4. `"ltr"`.
+
+Steps 1 and 2 answer during render, including on the server. Step 3 cannot — there is no node yet
+— so a subtree relying on it renders LTR for one commit and a layout effect corrects it before
+paint. Hydration stays clean because server and client agree on that first pass.
+
+**The DOM is read once per mount.** Toggling `document.documentElement.dir` later does not re-run
+it. An application that switches direction at runtime should drive it through `DirectionProvider`,
+which is reactive.
+
+### `useDirectionalKeys(ref, orientation?, override?)`
+
+`useResolvedDirection` plus the two derived values a key handler wants:
+
+```tsx
+const { direction, arrowKeys, logical } = useDirectionalKeys(rootRef, "horizontal");
+
+if (event.key === arrowKeys.next) advance();          // ArrowLeft in RTL
+if (logical(event.key) === "inline-end") expand();     // direction-independent intent
+```
+
+### `useLocale()`
+
+The locale declared by the nearest provider, or `undefined`. **Pass `undefined` through** rather
+than substituting a default: every `Intl` constructor reads it as "the runtime's own locale",
+which is the right answer when the host has not declared one. `"en-US"` would override a browser
+that already knows better.
+
+### `@/lib/direction` — no React
+
+| Export | Purpose |
+|:--|:--|
+| `directionForLocale(tag)` | `"ar-EG"` → `rtl`. Prefers the runtime's CLDR data, falls back to script/language tables. A script subtag wins: `pa-Arab` is RTL, `pa-IN` is not. |
+| `directionFromDom(node)` | The nearest `dir`, then the computed style. `undefined` when it cannot tell. |
+| `logicalDirectionForKey(key, dir)` | `"ArrowRight"` + `rtl` → `"inline-start"`. |
+| `keyForLogicalDirection(logical, dir)` | The inverse. |
+| `sequentialArrowKeys(dir, orientation)` | `{ previous, next }` for a one-dimensional widget. |
+| `inlineAxisSign(dir)` | `1` or `-1`. Multiply a `clientX` delta to get an inline-axis delta. |
+
+The block axis never mirrors — Qeetrix never sets `writing-mode`, so `ArrowUp` is always
+`block-start`.
+
+---
+
+## Numbers and calendars
+
+`@/lib/locale`, also React-free. `Intl` formats but does not parse, which is how a field ends up
+rendering `1 234,56` to a French user and accepting only `1234.56`.
+
+| Export | Purpose |
+|:--|:--|
+| `parseLocaleNumber(text, locale?)` | Parses what the locale *writes*. `Number.NaN` when the input is not a number in that locale. |
+| `numberSymbols(locale?)` | The separators, minus sign, digit glyphs and grouping widths, read from `formatToParts`. |
+| `localeWeekStart(locale?)` | First weekday as a `getDay()` index — `0` for `en-US`, `1` for `en-GB`, `6` for `ar-EG`. |
+
+`parseLocaleNumber` is deliberately strict, because the failure mode is a wrong amount rather
+than a wrong layout:
+
+```ts
+parseLocaleNumber("1.234,56", "de-DE");  // 1234.56
+parseLocaleNumber("1 234,56", "fr-FR");  // 1234.56 — a typed space, not U+202F
+parseLocaleNumber("12,34,567", "en-IN"); // 1234567 — lakh grouping, read from the formatter
+parseLocaleNumber("١٢٣٤٫٥", "ar-EG");    // 1234.5
+parseLocaleNumber("1.5", "de-DE");       // NaN — "." groups in German, and never by one digit
+parseLocaleNumber("12abc", "en-US");     // NaN — Number.parseFloat would say 12
+```
+
+A group separator must be followed by as many digits as the locale actually groups by, which is
+what lets `1.5` be rejected in German without also rejecting `12,34,567` in Indian English.
+
+`localeWeekStart` is locale *data*, not product policy. A product that lets a user choose their
+week start should take that as a prop and use this only as the initial value.
+
+---
+
+## Embedded English is a separate, open gap
+
+The direction contract is complete; the message contract is not. The package still hardcodes
+user-facing English in roughly 33 component files (55 `aria-label` defaults plus visible strings).
+Some components take an override — `Carousel` has `slidePositionLabel`, every icon button accepts
+`aria-label` — but there is no injectable catalogue, and a host application localising Qeetrix
+today patches strings per call site. Tracked under `RTL-001`.
 
 ---
 
@@ -90,7 +198,17 @@ consuming product. The library takes `direction` as a prop; it does not detect i
 
 ```bash
 bun run check:contract --verbose   # lists every component whose rtl support is unreviewed
+bun run check:a11y --verbose       # the rtl audit dimension, and whether a test backs it
 ```
+
+An `rtl` dimension recorded as `pass` needs a test that asserts *direction* — `check:a11y` looks
+for `DirectionProvider` or `dir="rtl"` in the test body and refuses an unbacked claim.
+
+**jsdom does no layout.** Mirroring cannot be observed in a unit test: `getBoundingClientRect` is
+all zeros and no CSS is applied. What a unit test can pin is what the component *emits* — the
+resolved `data-direction`, the logical style properties, the utility classes, and the key→action
+mapping. Whether `ps-4` lands on the right under `dir="rtl"` is a browser assertion, governed by
+`TEST-001`.
 
 For a component under review: render it inside `<DirectionProvider direction="rtl">` and look
 for spacing that did not move, icons pointing the wrong way, and text that stayed

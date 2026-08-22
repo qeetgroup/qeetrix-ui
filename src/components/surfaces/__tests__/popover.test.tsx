@@ -53,4 +53,10 @@ describe("Popover", () => {
     render(<PopoverExample open />);
     expect(await a11y(document.body)).toHaveNoViolations();
   });
+
+  it("sits on the named popover layer, above the modal band", () => {
+    render(<PopoverExample open />);
+    const popup = document.querySelector('[data-slot="popover-content"]');
+    expect(popup?.className).toContain("z-(--qx-z-popover)");
+  });
 });

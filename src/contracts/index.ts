@@ -47,12 +47,15 @@ export {
   SSR_SUPPORT_LEVELS,
   SUPPORT_LEVELS,
 } from "./component";
-export type { DensityMode } from "./density";
+export type { DensityApplicability, DensityMetric, DensityMode } from "./density";
 export {
   DEFAULT_DENSITY_MODE,
+  DENSITY_APPLICABILITY,
   DENSITY_ATTRIBUTE,
+  DENSITY_METRICS,
   DENSITY_MODES,
   DENSITY_TOKEN_PREFIX,
+  DERIVABLE_DENSITY_APPLICABILITY,
 } from "./density";
 export type { Direction } from "./direction";
 export {
@@ -76,6 +79,7 @@ export type { ResolvedThemeMode, ThemeMode } from "./theme";
 export {
   DEFAULT_THEME_MODE,
   RESOLVED_THEME_MODES,
+  THEME_ATTRIBUTE,
   THEME_DARK_CLASS,
   THEME_MODES,
   TOKEN_PREFIX,

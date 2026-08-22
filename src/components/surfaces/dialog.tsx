@@ -4,7 +4,10 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
 import { Button } from "@/components/actions/button";
+import type { MessagesFor } from "@/lib/messages";
+import { overlayMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 /** The dialog root's props, including the `open` / `defaultOpen` / `onOpenChange` triple. */
 type DialogProps = DialogPrimitive.Root.Props;
@@ -30,7 +33,7 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-[var(--qx-component-dialog-scrim)] transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 z-(--qx-z-modal-backdrop) bg-[var(--qx-component-dialog-scrim)] transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
         className,
       )}
       {...props}
@@ -42,15 +45,24 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  messages: messageOverrides,
   ...props
-}: DialogPrimitive.Popup.Props & { showCloseButton?: boolean }) {
+}: DialogPrimitive.Popup.Props & {
+  showCloseButton?: boolean;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"overlay">;
+}) {
+  const messages = useMessages("overlay", overlayMessages, messageOverrides);
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-[var(--qx-component-dialog-corner)] border border-[var(--qx-component-dialog-border)] bg-[var(--qx-component-dialog-background)] p-6 text-sm text-[var(--qx-component-dialog-foreground)] shadow-[var(--qx-component-dialog-elevation)] transition duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0",
+          "fixed left-1/2 top-1/2 z-(--qx-z-modal) grid max-h-[calc(100dvh-2rem)] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain rounded-[var(--qx-component-dialog-corner)] border border-[var(--qx-component-dialog-border)] bg-[var(--qx-component-dialog-background)] p-6 text-sm text-[var(--qx-component-dialog-foreground)] shadow-[var(--qx-component-dialog-elevation)] transition duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0",
           className,
         )}
         {...props}
@@ -62,7 +74,7 @@ function DialogContent({
             render={<Button variant="ghost" size="icon-sm" className="absolute end-3 top-3" />}
           >
             <XIcon aria-hidden />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{messages.close}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>

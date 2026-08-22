@@ -74,21 +74,31 @@ The published surface is **only** what the entry points export:
 | `@qeetrix/ui/components/<slug>` | one component, stable regardless of its category |
 | `@qeetrix/ui/components/<category>` | a category group |
 | `@qeetrix/ui/brand` · `/blocks` · `/providers` | `src/brand` · `src/blocks` · `src/providers` |
-| `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens |
+| `@qeetrix/ui/blocks/<name>` · `/providers/<name>` | one block · one provider |
+| `@qeetrix/ui/hooks/<name>` | the four public hooks — `use-media-query`, `use-mobile`, `use-motion`, `use-prefers-reduced-motion` |
+| `@qeetrix/ui/lib/<name>` | the four public helpers — `utils` (`cn`), `motion`, `responsive`, `token-values` |
+| `@qeetrix/ui/styles.css` · `/base.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens; `base.css` is the host-global layer, separately importable |
 | `@qeetrix/ui/manifest.json` | the generated component manifest |
 
-Everything else — including `src/contracts/` and `src/manifests/` — is internal. The
+Everything else is **denied**, not merely undocumented.
+`@qeetrix/ui/components/<category>/<slug>`, `@qeetrix/ui/components/index` and
+`@qeetrix/ui/hooks/use-controllable-state` resolve to nothing — `null` export targets, in Node,
+Bun and TypeScript alike. `src/contracts/` and `src/manifests/` were never reachable at all. The
 *governance data* is public as `@qeetrix/ui/manifest.json`; the TypeScript that produces it is
 not, so it can keep evolving without a semver event.
 
-Two mechanisms keep the surface honest, both in
-[`scripts/check/exports.mjs`](../../scripts/check/exports.mjs):
+Three inputs keep the surface honest, all in
+[`scripts/check/exports.mjs`](../../scripts/check/exports.mjs), across 21 entry points rather
+than the original three:
 
 1. **the lock** — every exported symbol is snapshotted in
    [`src/__tests__/public-api.json`](../../src/__tests__/public-api.json). Any addition or
    removal fails `verify` until it is re-snapshotted deliberately, so an API change is always a
    visible line in a diff and always ships with a changeset.
-2. **intentionality** — every component module must contribute at least one symbol to the
+2. **the signature lock** — [`public-props.json`](../../src/__tests__/public-props.json) records
+   the declaration shape, not just the member names, so a required prop becoming optional or a
+   literal union losing a member is a visible change too.
+3. **intentionality** — every component module must contribute at least one symbol to the
    published surface; a `@barrel-exclude` module must really be excluded; and no two
    barrel-exported modules may export the same name (`export *` resolves a collision by
    dropping the symbol, so an ambiguity is a public API that vanishes silently).
@@ -117,7 +127,10 @@ something a block has is describing a missing component.
 
 ## Runtime versus primitives
 
-Both layers are declared and empty; the distinction is what they will hold.
+Both layers are populated. `runtime` holds `focus-trap`, `overlay`, `overlay-position`,
+`collapse` and `storage`; `primitives` holds `Portal` and `VisuallyHidden`. The distinction is
+what each may contain: `runtime` is behaviour with no markup, `primitives` render but make no
+design decision.
 
 - **runtime** — framework-level behaviour with no markup: focus management, collection
   handling, keyboard navigation, id generation. Headless, testable without rendering.

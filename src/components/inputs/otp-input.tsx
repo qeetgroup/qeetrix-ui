@@ -1,8 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { FieldHiddenInput, useFieldControl } from "@/components/inputs/field";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import { logicalDirectionForKey } from "@/lib/direction";
+import type { MessagesFor } from "@/lib/messages";
+import { otpInputMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useResolvedDirection } from "@/providers/direction-provider";
+import { useMessages } from "@/providers/messages-provider";
 
 interface OTPInputProps {
   /** Number of digit boxes. Defaults to 6 (RFC 6238 / standard OTP). */
@@ -14,10 +20,28 @@ interface OTPInputProps {
   onChange?: (value: string) => void;
   /** Fires when every box is filled with a digit. */
   onComplete?: (value: string) => void;
+  /** Submits the joined code under this name. Omit and nothing is serialised. */
+  name?: string;
+  /** Associate the submitted value with a form it is not nested inside, by form `id`. */
+  form?: string;
+  /**
+   * Marks every digit box `required`. Unlike most composites this *is* browser-enforced:
+   * the boxes are real, focusable text inputs, so an empty code blocks submission and
+   * `:invalid` matches.
+   */
+  required?: boolean;
+  /** Applied to the group, so a `Field` label and description resolve against it. */
+  id?: string;
   autoFocus?: boolean;
   disabled?: boolean;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"otpInput">;
   className?: string;
   "aria-label"?: string;
+  "aria-describedby"?: string;
   "aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling";
 }
 
@@ -30,6 +54,12 @@ interface OTPInputProps {
  * Controlled or uncontrolled: pass `value` to own the joined string, or `defaultValue` and let
  * the component own it. `onChange` fires with the new joined string on every edit in both modes.
  * `onComplete` fires once when all boxes are filled.
+ *
+ * Forms: implements the composite-field contract (see `field.tsx`). Inside a `Field` the group
+ * takes the label, description and error association; `name` submits the joined code as one
+ * value; and `required` is genuine constraint validation because the digit boxes are native
+ * inputs. The individual boxes are never named for submission — a six-part code posted as six
+ * fields is not what a server asked for.
  */
 function OTPInput({
   length = 6,
@@ -37,17 +67,25 @@ function OTPInput({
   defaultValue = "",
   onChange,
   onComplete,
+  name,
+  form,
+  required,
+  id,
   autoFocus,
   disabled,
+  messages: messageOverrides,
   className,
   ...aria
 }: OTPInputProps) {
+  const messages = useMessages("otpInput", otpInputMessages, messageOverrides);
   const [value, setValue] = useControllableState<string>({
     value: valueProp,
     defaultValue,
     onChange,
   });
   const inputsRef = React.useRef<(HTMLInputElement | null)[]>([]);
+  const rootRef = React.useRef<HTMLFieldSetElement>(null);
+  const direction = useResolvedDirection(rootRef);
   const uid = React.useId();
 
   const digits = React.useMemo(
@@ -103,12 +141,12 @@ function OTPInput({
       }
       // Else: let the native backspace clear the current digit; the change handler
       // will pick that up and propagate.
-    } else if (e.key === "ArrowLeft") {
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      // The boxes sit on the inline axis, so the key that points at the next box is
+      // ArrowLeft under `dir="rtl"`. The digits themselves keep their order — only the
+      // spatial mapping mirrors.
       e.preventDefault();
-      focusAt(idx - 1);
-    } else if (e.key === "ArrowRight") {
-      e.preventDefault();
-      focusAt(idx + 1);
+      focusAt(logicalDirectionForKey(e.key, direction) === "inline-end" ? idx + 1 : idx - 1);
     } else if (e.key === "Home") {
       e.preventDefault();
       focusAt(0);
@@ -128,11 +166,29 @@ function OTPInput({
     focusAt(Math.min(slice.length, length - 1));
   };
 
+  const field = useFieldControl({
+    id,
+    "aria-label": aria["aria-label"],
+    "aria-describedby": aria["aria-describedby"],
+    "aria-invalid": aria["aria-invalid"],
+  });
+  // A Field label wins over the built-in fallback; without one the group still needs a name.
+  const groupLabel = field["aria-labelledby"] ? undefined : (aria["aria-label"] ?? messages.label);
+
   return (
     <fieldset
-      aria-label={aria["aria-label"] ?? "One-time code"}
+      ref={rootRef}
+      data-slot="otp-input"
+      data-direction={direction}
+      id={field.id}
+      aria-label={groupLabel}
+      aria-labelledby={field["aria-labelledby"]}
+      aria-describedby={field["aria-describedby"]}
+      aria-errormessage={field["aria-errormessage"]}
+      aria-invalid={field["aria-invalid"]}
       className={cn("flex min-w-0 items-center gap-2 border-0 p-0", className)}
     >
+      <FieldHiddenInput name={name} value={value} form={form} disabled={disabled} />
       {boxKeys.map((boxKey, i) => (
         <input
           key={boxKey}
@@ -150,8 +206,9 @@ function OTPInput({
           onPaste={handlePaste}
           onFocus={(e) => e.currentTarget.select()}
           disabled={disabled}
-          aria-label={`Digit ${i + 1} of ${length}`}
-          aria-invalid={aria["aria-invalid"]}
+          required={required}
+          aria-label={messages.digit(i + 1, length)}
+          aria-invalid={field["aria-invalid"]}
           data-slot="otp-input-digit"
           className={cn(
             "h-12 w-10 rounded-lg border border-input bg-transparent text-center font-mono text-lg outline-none transition-colors",

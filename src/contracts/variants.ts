@@ -79,6 +79,71 @@ export const CANONICAL_VARIANTS = [
 export type CanonicalVariant = (typeof CANONICAL_VARIANTS)[number];
 
 /**
+ * Prop names that are a *design axis*: a closed set of values that changes how a component
+ * looks or how large it is, as opposed to content or behaviour.
+ *
+ * The manifest records a component's axes from its `cva()` call, which is statically readable.
+ * A component that styles without `cva` records `null` — and `null` was doing double duty:
+ * "this component has no design axis" and "this component has one and nobody wrote it down"
+ * looked identical to every consumer and every docs generator.
+ *
+ * This list is what makes the two distinguishable. If a component's public props declare one of
+ * these names, it *has* that axis, whether or not `cva` produced it — so the axis must be
+ * recorded: as `cva` members, as `api.domainAxes` when the value names are domain concepts, or
+ * as an `api.axisSources` note saying where the values come from. A component whose props
+ * declare none of them has no axis, and that is now a derived fact rather than an absence.
+ *
+ * @see docs/governance/variant-axes.md
+ */
+export const AXIS_PROP_NAMES = [
+  "variant",
+  "size",
+  "tone",
+  "kind",
+  "orientation",
+  "severity",
+  "intent",
+  "appearance",
+] as const;
+export type AxisPropName = (typeof AXIS_PROP_NAMES)[number];
+
+/**
+ * Where an axis prop's values come from, when they do not come from `cva`.
+ *
+ * - `cva`            — the canonical case; the members are in the manifest already.
+ * - `data-attribute` — the prop is written to `data-<axis>` and the styling is
+ *                      `data-[<axis>=…]` utilities. A real design axis with a readable value
+ *                      set; simply not expressed through `cva`.
+ * - `forwarded`      — the prop is passed straight to another component's axis, so that
+ *                      component's `cva` is the definition (`IconButton.size` → `Button.size`).
+ * - `class-map`      — the values index a lookup table or a conditional of class strings. A
+ *                      real design axis with a readable value set, one step short of `cva`.
+ * - `measurement`    — a number, not a closed set: a diameter, a pixel size. Not a design axis.
+ * - `layout`         — a structural choice (`orientation`) rather than an appearance.
+ * - `not-an-axis`    — the name collides with the axis vocabulary but the prop is content
+ *                      (`FileCard.size` is the file's byte size, rendered as text).
+ */
+export const AXIS_SOURCES = [
+  "cva",
+  "data-attribute",
+  "forwarded",
+  "class-map",
+  "measurement",
+  "layout",
+  "not-an-axis",
+] as const;
+export type AxisSource = (typeof AXIS_SOURCES)[number];
+
+/**
+ * A recorded axis: where its values live, and a note a reviewer can check.
+ * The note is prose on purpose — the machine-readable part is the axis name and the `source`.
+ */
+export type AxisSourceRecord = {
+  source: AxisSource;
+  note: string;
+};
+
+/**
  * A controlled-state triple: the authoritative prop, the uncontrolled seed, and the callback.
  *
  * The names follow one shape — `x` / `default<X>` / `on<X>Change` — so a consumer who has used

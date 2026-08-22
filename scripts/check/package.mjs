@@ -1,3 +1,26 @@
+/**
+ * package.mjs — the consumer contract.
+ *
+ * Packs the real tarball and compiles real consumers against it. Everything a consumer can
+ * legitimately import must resolve, everything internal must NOT, and the CSS entry must still
+ * produce Tailwind output after the dist rewrite.
+ *
+ * Three properties this file exists to hold:
+ *
+ *   1. **The published path list is exactly the allowlist.** `"./components/*"` is a pattern, so
+ *      it publishes whatever `dist/components/` contains. The allowlist
+ *      (scripts/config/category-map.json + src/providers + src/blocks) is what may be there, and
+ *      the packed tarball is audited against it — a stray compiled module is a failure, not a new
+ *      public subpath.
+ *   2. **Every published path resolves; every denied path is denied.** Both are asserted from a
+ *      consumer, in ESM resolution and in TypeScript, including the `null` denials that keep
+ *      category-nested implementation paths out of the contract.
+ *   3. **Consumer passes fail closed.** A missing framework used to downgrade a whole integration
+ *      pass to a warning and a zero exit, so "verified" could mean "did not run". The Vite and
+ *      Tailwind passes are hermetic (this repo's own devDependencies) and always run; the Next.js
+ *      RSC pass needs the sibling qeetrix-docs install and can only be skipped by asking for it
+ *      with QEETRIX_SKIP_NEXT_CONSUMER=1.
+ */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
@@ -16,12 +39,28 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
-// Sibling clones under qeetrix/ — optional: the Vite and Next integration passes are
-// skipped (with a warning) when they are not checked out next to this repo.
+// Sibling clones under qeetrix/ — only the Next.js RSC pass still needs one.
 const SIBLINGS = join(ROOT, "..");
-const STORY_ROOT = join(SIBLINGS, "qeetrix-story");
 const DOCS_ROOT = join(SIBLINGS, "qeetrix-docs");
 const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
+const categoryMap = JSON.parse(
+  readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"),
+);
+
+const categories = Object.keys(categoryMap);
+const slugs = Object.values(categoryMap).flat();
+const providers = readdirSync(join(ROOT, "src/providers"))
+  .filter((file) => file.endsWith(".tsx"))
+  .map((file) => file.replace(/\.tsx$/, ""))
+  .sort();
+const blocks = readdirSync(join(ROOT, "src/blocks"))
+  .filter((file) => file.endsWith(".tsx"))
+  .map((file) => file.replace(/\.tsx$/, ""))
+  .sort();
+const hooks = ["use-media-query", "use-mobile", "use-motion", "use-prefers-reduced-motion"];
+const libs = ["motion", "responsive", "token-values", "utils"];
+
+/* ── 1. the export map is the allowlist ───────────────────────────────────────────────────── */
 
 // The flat façade: @qeetrix/ui/components/<slug|category|name-provider> all resolve
 // through one pattern, backed by the shims in scripts/build/subpath-shims.mjs.
@@ -33,22 +72,52 @@ const subpath = (base) => ({
 
 assert.deepEqual(packageJson.exports["./components/*"], subpath("./dist/components/*"));
 assert.deepEqual(packageJson.exports["./components/ui/*"], subpath("./dist/components/ui/*"));
-assert.deepEqual(packageJson.exports["./providers/*"], subpath("./dist/providers/*"));
 assert.deepEqual(packageJson.exports["./providers"], subpath("./dist/providers/index"));
 assert.equal(packageJson.exports["./styles.css"], "./dist/styles/index.css");
+assert.equal(packageJson.exports["./base.css"], "./dist/styles/base.css");
 assert.equal(packageJson.exports["./qeetrix.css"], "./dist/styles/tokens.css");
 assert.equal(packageJson.exports["./tokens.css"], "./dist/styles/tokens.raw.css");
 assert.equal(packageJson.exports["./tokens.json"], "./dist/styles/tokens.json");
 assert.equal(packageJson.exports["./manifest.json"], "./dist/component-manifest.json");
 assert.equal(packageJson.exports["./i18n"], undefined, "the ./i18n entry point was removed");
 
-function run(command, args, cwd) {
+// Wildcards that used to publish undocumented internals. `./hooks/*` made
+// useControllableState public; `./lib/*` and `./providers/*` published whatever compiled.
+for (const pattern of ["./hooks/*", "./lib/*", "./providers/*", "./blocks/*"]) {
+  assert.equal(
+    packageJson.exports[pattern],
+    undefined,
+    `${pattern} is a wildcard export: it publishes every module in that directory, including ` +
+      "ones nobody decided to support. Enumerate the supported modules instead.",
+  );
+}
+for (const [key, expected] of [
+  ...providers.map((name) => [`./providers/${name}`, `./dist/providers/${name}`]),
+  ...blocks.map((name) => [`./blocks/${name}`, `./dist/blocks/${name}`]),
+  ...hooks.map((name) => [`./hooks/${name}`, `./dist/hooks/${name}`]),
+  ...libs.map((name) => [`./lib/${name}`, `./dist/lib/${name}`]),
+]) {
+  assert.deepEqual(packageJson.exports[key], subpath(expected), `${key} must be exported`);
+}
+// Denials. More specific than "./components/*", so Node picks them first.
+assert.equal(packageJson.exports["./components/index"], null);
+for (const category of categories) {
+  assert.equal(
+    packageJson.exports[`./components/${category}/*`],
+    null,
+    `./components/${category}/* must be denied — the category a component lives in is an ` +
+      "implementation detail, and publishing it would make moving a file a breaking change",
+  );
+}
+
+function run(command, args, cwd, extraEnv = {}) {
   const result = spawnSync(command, args, {
     cwd,
     encoding: "utf8",
     env: {
       ...process.env,
       NEXT_TELEMETRY_DISABLED: "1",
+      ...extraEnv,
     },
   });
 
@@ -68,6 +137,14 @@ function run(command, args, cwd) {
   }
 
   return result.stdout;
+}
+
+/** For the negative cases: the command must fail, and fail for the stated reason. */
+function runExpectingFailure(command, args, cwd, because) {
+  const result = spawnSync(command, args, { cwd, encoding: "utf8", env: process.env });
+  if (result.error) throw result.error;
+  assert.notEqual(result.status, 0, `${because}\n${result.stdout}\n${result.stderr}`);
+  return `${result.stdout}\n${result.stderr}`;
 }
 
 function writeJson(filePath, value) {
@@ -117,7 +194,9 @@ try {
     "package.json",
     "dist/index.js",
     "dist/index.d.ts",
-    // CSS entry + generated tokens
+    // CSS entry + generated tokens. Everything the entry @imports is checked separately,
+    // transitively, below — a hand-kept list is exactly what lets the next stylesheet split
+    // ship a tarball that installs cleanly and silently drops every rule it forgot.
     "dist/styles/index.css",
     "dist/styles/tokens.css",
     "dist/styles/tokens.raw.css",
@@ -150,6 +229,59 @@ try {
     "source files leaked into pack",
   );
 
+  // Whatever the published entry @imports has to be in the tarball, transitively. A stylesheet
+  // that imports a file the tarball does not contain still installs and still resolves — it just
+  // silently drops every rule in the missing file. base.css, which carries the document
+  // defaults, the resets, reduced-motion and the whole forced-colors remap, is one @import away
+  // from being that file.
+  const styleImports = (relative, seen = new Set()) => {
+    if (seen.has(relative)) return seen;
+    seen.add(relative);
+    const directory = dirname(relative);
+    const contents = readFileSync(join(packedRoot, relative), "utf8");
+    for (const [, specifier] of contents.matchAll(/@import\s+["']([^"']+)["']/g)) {
+      // Bare specifiers are packages (tailwindcss, tw-animate-css, shadcn) — the consumer's
+      // resolver finds those. Only relative imports have to travel with us.
+      if (!specifier.startsWith(".")) continue;
+      styleImports(join(directory, specifier), seen);
+    }
+    return seen;
+  };
+  const requiredStyles = [...styleImports("dist/styles/index.css")];
+  for (const stylesheet of requiredStyles) {
+    assert.ok(
+      files.includes(stylesheet),
+      `dist/styles/index.css @imports ${stylesheet}, which is not in the packed tarball — the ` +
+        "published stylesheet would resolve and silently drop every rule in it",
+    );
+  }
+  assert.ok(
+    requiredStyles.includes("dist/styles/base.css"),
+    "dist/styles/index.css no longer imports base.css — the host-global layer is not published",
+  );
+
+  // The pattern export publishes every file at the root of dist/components. That set must be
+  // exactly the allowlist plus the denied barrel — otherwise a compiled module became a
+  // supported import path without anyone deciding it should be.
+  const facade = files
+    .filter((file) => /^dist\/components\/[^/]+\.(js|d\.ts)$/.test(file))
+    .map((file) => file.replace(/^dist\/components\//, ""));
+  const expectedFacade = new Set(
+    [...slugs, ...categories, ...providers, "index"].flatMap((name) => [
+      `${name}.js`,
+      `${name}.d.ts`,
+    ]),
+  );
+  const strayFacade = facade.filter((file) => !expectedFacade.has(file));
+  assert.deepEqual(
+    strayFacade,
+    [],
+    `dist/components publishes ${strayFacade.length} path(s) that are not on the allowlist: ` +
+      `${strayFacade.join(", ")}`,
+  );
+  const missingFacade = [...expectedFacade].filter((file) => !facade.includes(file));
+  assert.deepEqual(missingFacade, [], `the flat façade is missing ${missingFacade.join(", ")}`);
+
   linkPackage(consumerRoot, packedRoot);
   for (const dependency of [
     ...Object.keys(packageJson.dependencies ?? {}),
@@ -167,6 +299,50 @@ try {
   }
   linkDependency(consumerRoot, "csstype", join(ROOT, "node_modules"));
   writeJson(join(consumerRoot, "package.json"), { private: true, type: "module" });
+
+  /* ── 2. every published path resolves, every denied path is denied ─────────────────────── */
+
+  const published = [
+    "@qeetrix/ui",
+    "@qeetrix/ui/brand",
+    "@qeetrix/ui/blocks",
+    "@qeetrix/ui/providers",
+    ...blocks.map((name) => `@qeetrix/ui/blocks/${name}`),
+    ...providers.map((name) => `@qeetrix/ui/providers/${name}`),
+    ...slugs.map((slug) => `@qeetrix/ui/components/${slug}`),
+    ...slugs.map((slug) => `@qeetrix/ui/components/ui/${slug}`),
+    ...categories.map((category) => `@qeetrix/ui/components/${category}`),
+    ...providers.map((name) => `@qeetrix/ui/components/${name}`),
+    ...hooks.map((name) => `@qeetrix/ui/hooks/${name}`),
+    ...libs.map((name) => `@qeetrix/ui/lib/${name}`),
+    "@qeetrix/ui/styles.css",
+    "@qeetrix/ui/base.css",
+    "@qeetrix/ui/qeetrix.css",
+    "@qeetrix/ui/tokens.css",
+    "@qeetrix/ui/tokens.json",
+    "@qeetrix/ui/manifest.json",
+    "@qeetrix/ui/package.json",
+  ];
+  const denied = [
+    // category-nested implementation paths — the flat specifier is the contract
+    ...categories.map((category) => `@qeetrix/ui/components/${category}/button`),
+    "@qeetrix/ui/components/actions/button",
+    "@qeetrix/ui/components/data-display/access-review",
+    "@qeetrix/ui/components/actions/index",
+    // the components barrel duplicates the root entry point
+    "@qeetrix/ui/components/index",
+    // internal hooks and modules that a wildcard used to publish
+    "@qeetrix/ui/hooks/use-controllable-state",
+    "@qeetrix/ui/lib/token-values-internal",
+    "@qeetrix/ui/primitives/portal",
+    "@qeetrix/ui/contracts/layers",
+    "@qeetrix/ui/manifests/component-registry",
+    "@qeetrix/ui/foundations/token-values",
+    // reaching past the export map entirely
+    "@qeetrix/ui/dist/components/actions/button.js",
+    "@qeetrix/ui/dist/index.js",
+  ];
+
   writeFileSync(
     join(consumerRoot, "runtime.mjs"),
     `import assert from "node:assert/strict";
@@ -196,6 +372,8 @@ import { FormErrorSummary as CanonicalFormErrorSummary } from "@qeetrix/ui/compo
 import { SecurityItem as CanonicalSecurityItem } from "@qeetrix/ui/components/security-item";
 import { ThemeProvider } from "@qeetrix/ui/components/theme-provider";
 import { Button as LegacyButton } from "@qeetrix/ui/components/ui/button";
+import { cn } from "@qeetrix/ui/lib/utils";
+import { LoginForm } from "@qeetrix/ui/blocks/auth";
 
 assert.equal(RootButton, CanonicalButton);
 assert.equal(CanonicalButton, LegacyButton);
@@ -211,6 +389,34 @@ assert.equal(FieldControl, CanonicalFieldControl);
 assert.equal(FormErrorSummary, CanonicalFormErrorSummary);
 assert.equal(SecurityItem, CanonicalSecurityItem);
 assert.equal(typeof ThemeProvider, "function");
+assert.equal(typeof cn, "function");
+assert.equal(typeof LoginForm, "function");
+
+// Every published path resolves to a file that exists. A shim that was never generated, or a
+// component whose category moved without its façade, fails here rather than at a consumer.
+const published = ${JSON.stringify(published, null, 2)};
+for (const specifier of published) {
+  let resolved;
+  try {
+    resolved = fileURLToPath(import.meta.resolve(specifier));
+  } catch (error) {
+    throw new Error(\`published path does not resolve: \${specifier} (\${error.code ?? error.message})\`);
+  }
+  assert.ok(existsSync(resolved), \`published path resolves to a missing file: \${specifier}\`);
+}
+
+// …and nothing else does. These are internals: publishing them would make every file move a
+// semver event. Bun and Node report a blocked subpath with different error codes.
+const denied = ${JSON.stringify(denied, null, 2)};
+for (const specifier of denied) {
+  let resolved = null;
+  try {
+    resolved = import.meta.resolve(specifier);
+  } catch {
+    continue;
+  }
+  throw new Error(\`internal path is published: \${specifier} → \${resolved}\`);
+}
 
 for (const specifier of [
   "@qeetrix/ui/styles.css",
@@ -225,10 +431,12 @@ const internalError = await import("@qeetrix/ui/dist/components/actions/button.j
   () => null,
   (error) => error,
 );
-assert.equal(internalError?.code, "ERR_PACKAGE_PATH_NOT_EXPORTED");
+assert.ok(internalError, "a dist/ path must not be importable");
+
+console.log(\`[package] \${published.length} published paths resolve, \${denied.length} internal paths blocked\`);
 `,
   );
-  run(process.execPath, [join(consumerRoot, "runtime.mjs")], consumerRoot);
+  const resolutionReport = run(process.execPath, [join(consumerRoot, "runtime.mjs")], consumerRoot);
 
   writeFileSync(
     join(consumerRoot, "consumer.tsx"),
@@ -256,6 +464,8 @@ import { DataTable } from "@qeetrix/ui/components/data-table";
 import { ThemeProvider } from "@qeetrix/ui/components/theme-provider";
 import { DensityProvider } from "@qeetrix/ui/providers";
 import { Button as LegacyButton } from "@qeetrix/ui/components/ui/button";
+import { cn } from "@qeetrix/ui/lib/utils";
+import { useMediaQuery } from "@qeetrix/ui/hooks/use-media-query";
 
 const buttonProps: ComponentProps<typeof CanonicalButton> = { children: "Save" };
 const rootButton: typeof CanonicalButton = RootButton;
@@ -277,6 +487,7 @@ const chartTableProps: ChartDataTableProps<Record<string, unknown>> = {
   columns: [],
 };
 const securityProps: SecurityItemProps = { title: "Passkey", status: "verified" };
+const classes: string = cn("a", false && "b");
 void [
   Badge,
   DensityProvider,
@@ -284,11 +495,13 @@ void [
   auditProps,
   buttonProps,
   chartTableProps,
+  classes,
   rootButton,
   legacyButton,
   securityProps,
   tableState,
   summaryProps,
+  useMediaQuery,
   AccessReview,
   AuditEvent,
   ChartDataTable,
@@ -298,6 +511,16 @@ void [
   SecurityItem,
   ThemeProvider,
 ];
+`,
+  );
+
+  // TypeScript must agree with Node about what is internal: a path the runtime blocks but the
+  // compiler resolves would still look supported in an editor.
+  writeFileSync(
+    join(consumerRoot, "denied.ts"),
+    `import { Button } from "@qeetrix/ui/components/actions/button";
+import { useControllableState } from "@qeetrix/ui/hooks/use-controllable-state";
+void [Button, useControllableState];
 `,
   );
 
@@ -324,10 +547,36 @@ void [
     },
     include: ["consumer.tsx"],
   });
+  writeJson(join(consumerRoot, "tsconfig.denied.json"), {
+    compilerOptions: {
+      ...sharedCompilerOptions,
+      module: "ESNext",
+      moduleResolution: "Bundler",
+    },
+    include: ["denied.ts"],
+  });
 
   const typescriptCli = join(ROOT, "node_modules", "typescript", "bin", "tsc");
   run(process.execPath, [typescriptCli, "-p", "tsconfig.bundler.json"], consumerRoot);
   run(process.execPath, [typescriptCli, "-p", "tsconfig.nodenext.json"], consumerRoot);
+  const deniedTypes = runExpectingFailure(
+    process.execPath,
+    [typescriptCli, "-p", "tsconfig.denied.json"],
+    consumerRoot,
+    "TypeScript resolved an internal subpath that the export map denies",
+  );
+  assert.match(
+    deniedTypes,
+    /Cannot find module '@qeetrix\/ui\/components\/actions\/button'/,
+    "expected the category-nested path to be unresolvable for TypeScript",
+  );
+  assert.match(
+    deniedTypes,
+    /Cannot find module '@qeetrix\/ui\/hooks\/use-controllable-state'/,
+    "expected the internal hook to be unresolvable for TypeScript",
+  );
+
+  /* ── 3. framework consumers ────────────────────────────────────────────────────────────── */
 
   mkdirSync(join(consumerRoot, "src"), { recursive: true });
   writeFileSync(
@@ -344,24 +593,82 @@ document.body.dataset.qeetrixLoaded = String(
 );
 `,
   );
-  const viteCli = join(STORY_ROOT, "node_modules", "vite", "bin", "vite.js");
-  const viteAvailable = existsSync(viteCli);
-  if (viteAvailable) {
-    run(process.execPath, [viteCli, "build"], consumerRoot);
-    assert.ok(existsSync(join(consumerRoot, "dist", "index.html")), "Vite did not emit index.html");
-  } else {
+  // The published stylesheet is a Tailwind v4 entry point, and until now no consumer pass ran
+  // Tailwind over it at all: the fixture had no plugin, so `@import "tailwindcss"` was inlined
+  // unprocessed and a stylesheet that produced nothing would still have "passed".
+  writeFileSync(
+    join(consumerRoot, "vite.config.ts"),
+    `import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({ plugins: [tailwindcss()] });
+`,
+  );
+  for (const dependency of ["vite", "@tailwindcss/vite", "tailwindcss"]) {
+    linkDependency(consumerRoot, dependency, join(ROOT, "node_modules"));
+  }
+  const viteCli = join(ROOT, "node_modules", "vite", "bin", "vite.js");
+  assert.ok(
+    existsSync(viteCli),
+    "vite is not installed in this repository — the consumer bundler pass cannot run. It is a " +
+      "devDependency of the test runner; run `bun install`.",
+  );
+  run(process.execPath, [viteCli, "build"], consumerRoot);
+  assert.ok(existsSync(join(consumerRoot, "dist", "index.html")), "Vite did not emit index.html");
+
+  const assetsDir = join(consumerRoot, "dist", "assets");
+  assert.ok(existsSync(assetsDir), "the consumer build emitted no assets");
+  const emittedCss = readdirSync(assetsDir)
+    .filter((file) => file.endsWith(".css"))
+    .map((file) => readFileSync(join(assetsDir, file), "utf8"))
+    .join("\n");
+  assert.ok(emittedCss.length > 0, "the consumer build emitted no CSS at all");
+  assert.match(emittedCss, /--qx-/, "the design tokens are missing from the consumer stylesheet");
+  // Tailwind must find the packaged components as candidate sources. Measured: deleting the
+  // `@source` line from the published stylesheet takes this output from ~176 KB to ~33 KB and
+  // drops the component utilities, so this is the assertion that a consumer actually receives
+  // component styles rather than tokens and preflight only.
+  assert.match(
+    emittedCss,
+    /\.inline-flex\s*\{/,
+    "Tailwind generated no component utility from the packed stylesheet — a consumer would " +
+      "render Qeetrix components unstyled, with no build error anywhere",
+  );
+  // The @source rewrite itself, asserted on the bytes that ship rather than inferred from the
+  // compiled CSS: the dist tree contains no .tsx, so the published entry must not claim to scan
+  // it. (Both globs happen to produce the same output today, because the emitted .d.ts files
+  // sit beside the .js and match `*.ts` — the rewrite is a correctness statement, not a
+  // load-bearing one, and this is the assertion that keeps it honest.)
+  const packedEntry = readFileSync(join(packedRoot, "dist/styles/index.css"), "utf8");
+  assert.match(
+    packedEntry,
+    /@source "\.\.\/\*\*\/\*\.js";/,
+    "the packed CSS entry lost its @source",
+  );
+  assert.doesNotMatch(
+    packedEntry,
+    /@source "\.\.\/\*\*\/\*\.\{ts,tsx\}";/,
+    "the packed CSS entry still points @source at sources that are not published",
+  );
+
+  const skipNext = process.env.QEETRIX_SKIP_NEXT_CONSUMER === "1";
+  const nextCliPath = join(DOCS_ROOT, "node_modules", "next", "dist", "bin", "next");
+  const nextAvailable = existsSync(nextCliPath);
+  if (!nextAvailable && !skipNext) {
+    throw new Error(
+      "the Next.js RSC consumer pass cannot run: no installed next at " +
+        `${nextCliPath}. Clone and install qeetrix-docs next to this repo, or run with ` +
+        "QEETRIX_SKIP_NEXT_CONSUMER=1 to state deliberately that server-component support is " +
+        "going unverified in this run.",
+    );
+  }
+  if (!nextAvailable) {
     console.warn(
-      "[package] ⚠ skipped Vite pass — clone qeetrix-story next to this repo to enable it",
+      "\n[package] ⚠⚠ SKIPPED the Next.js RSC pass (QEETRIX_SKIP_NEXT_CONSUMER=1) — server\n" +
+        "[package] ⚠⚠ component and 'use client' boundary regressions are NOT covered by this run.\n",
     );
   }
 
-  const nextCliPath = join(DOCS_ROOT, "node_modules", "next", "dist", "bin", "next");
-  const nextAvailable = existsSync(nextCliPath);
-  if (!nextAvailable) {
-    console.warn(
-      "[package] ⚠ skipped Next RSC pass — clone qeetrix-docs next to this repo to enable it",
-    );
-  }
   const nextRoot = join(temporaryRoot, "next-consumer");
   if (nextAvailable) {
     mkdirSync(join(nextRoot, "app"), { recursive: true });
@@ -385,7 +692,7 @@ document.body.dataset.qeetrixLoaded = String(
       });
     }
     for (const dependency of ["csstype", "undici-types"]) {
-      linkDependency(nextRoot, dependency, join(REPOSITORY_ROOT, "node_modules"));
+      linkDependency(nextRoot, dependency, join(ROOT, "node_modules"));
     }
     writeJson(join(nextRoot, "package.json"), {
       private: true,
@@ -469,17 +776,16 @@ document.body.dataset.qeetrixLoaded = String(
   }
   `,
     );
-  }
-
-  if (nextAvailable) {
     run(process.execPath, [nextCliPath, "build", "--webpack"], nextRoot);
     assert.ok(existsSync(join(nextRoot, ".next", "BUILD_ID")), "Next did not emit a build");
   }
 
   console.log(
-    `[package] verified ${files.length} packed files — ESM, Bundler/NodeNext types, flat + legacy + group ` +
-      "subpaths, providers, CSS entry points, blocked internals" +
-      `${viteAvailable ? ", Vite" : ""}${nextAvailable ? ", Next RSC" : ""}`,
+    `[package] verified ${files.length} packed files — ESM, Bundler/NodeNext types, flat + legacy ` +
+      `+ group subpaths, providers, blocks, hooks, lib, ${requiredStyles.length} @import-ed ` +
+      "stylesheets, CSS entry points, denied internals " +
+      `(runtime + types), Vite + Tailwind output${nextAvailable ? ", Next RSC" : ""}\n` +
+      `${resolutionReport.trim()}`,
   );
 } finally {
   if (process.env.QEETRIX_KEEP_PACKAGE_FIXTURE === "1") {

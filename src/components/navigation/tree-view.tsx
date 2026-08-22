@@ -3,7 +3,10 @@
 import { ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 
+import { logicalDirectionForKey } from "@/lib/direction";
 import { cn } from "@/lib/utils";
+import type { Direction } from "@/providers/direction-provider";
+import { useResolvedDirection } from "@/providers/direction-provider";
 
 interface TreeNode {
   id: string;
@@ -24,6 +27,10 @@ interface TreeViewProps extends React.ComponentProps<"div"> {
  */
 function TreeView({ data, className, ...props }: TreeViewProps) {
   const [focusedId, setFocusedId] = React.useState<string | null>(data[0]?.id ?? null);
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  // Resolved once at the root and passed down: a tree can hold hundreds of nodes,
+  // and each one calling the hook would be a DOM read and a state cell per node.
+  const direction = useResolvedDirection(rootRef);
 
   React.useEffect(() => {
     setFocusedId((currentId) => {
@@ -36,7 +43,14 @@ function TreeView({ data, className, ...props }: TreeViewProps) {
   }, [data]);
 
   return (
-    <div role="tree" data-slot="tree-view" className={cn("text-sm", className)} {...props}>
+    <div
+      ref={rootRef}
+      role="tree"
+      data-slot="tree-view"
+      data-direction={direction}
+      className={cn("text-sm", className)}
+      {...props}
+    >
       {data.map((node, index) => (
         <TreeNodeItem
           key={node.id}
@@ -46,6 +60,7 @@ function TreeView({ data, className, ...props }: TreeViewProps) {
           setSize={data.length}
           focusedId={focusedId}
           onFocusedIdChange={setFocusedId}
+          direction={direction}
         />
       ))}
     </div>
@@ -63,6 +78,8 @@ interface TreeNodeItemProps {
   setSize: number;
   focusedId: string | null;
   onFocusedIdChange: (id: string) => void;
+  /** Resolved reading direction, decided once by the root. */
+  direction: Direction;
 }
 
 function TreeNodeItem({
@@ -72,6 +89,7 @@ function TreeNodeItem({
   setSize,
   focusedId,
   onFocusedIdChange,
+  direction,
 }: TreeNodeItemProps) {
   const hasChildren = Boolean(node.children?.length);
   const [open, setOpen] = React.useState(node.defaultOpen ?? false);
@@ -118,22 +136,26 @@ function TreeNodeItem({
         event.preventDefault();
         focusItem(visibleItems[visibleItems.length - 1]);
         break;
+      // The APG maps expand/collapse to the *inline* axis, so both keys mirror
+      // under `dir="rtl"`: ArrowLeft expands in Arabic exactly as ArrowRight does
+      // in English. `logicalDirectionForKey` is the single place that decides.
+      case "ArrowLeft":
       case "ArrowRight": {
         event.preventDefault();
-        if (!hasChildren) {
-          break;
-        }
-        if (!open) {
-          setOpen(true);
+        if (logicalDirectionForKey(event.key, direction) === "inline-end") {
+          if (!hasChildren) {
+            break;
+          }
+          if (!open) {
+            setOpen(true);
+            break;
+          }
+
+          const group = event.currentTarget.querySelector<HTMLElement>(':scope > [role="group"]');
+          focusItem(group?.querySelector<HTMLElement>(':scope > [role="treeitem"]'));
           break;
         }
 
-        const group = event.currentTarget.querySelector<HTMLElement>(':scope > [role="group"]');
-        focusItem(group?.querySelector<HTMLElement>(':scope > [role="treeitem"]'));
-        break;
-      }
-      case "ArrowLeft": {
-        event.preventDefault();
         if (hasChildren && open) {
           setOpen(false);
           break;
@@ -195,7 +217,11 @@ function TreeNodeItem({
             aria-hidden
             className={cn(
               "size-4 shrink-0 text-muted-foreground transition-transform",
-              open && "rotate-90",
+              // Closed, the glyph points along the inline axis, so it mirrors: a
+              // physical rotation is correct here because the glyph itself has a
+              // direction. Open, it points down in both directions, so the RTL
+              // flip must not compose with the 90° turn.
+              open ? "rotate-90" : "rtl:rotate-180",
             )}
           />
         ) : (
@@ -218,6 +244,7 @@ function TreeNodeItem({
               setSize={node.children?.length ?? 0}
               focusedId={focusedId}
               onFocusedIdChange={onFocusedIdChange}
+              direction={direction}
             />
           ))}
         </div>

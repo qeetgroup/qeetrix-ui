@@ -4,7 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { XIcon } from "lucide-react";
 import * as React from "react";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import type { MessagesFor } from "@/lib/messages";
+import { chipMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const chipVariants = cva(
   "inline-flex items-center gap-1.5 rounded-full border font-medium whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled",
@@ -116,6 +119,11 @@ interface ChipProps
   /** Renders a remove (×) affordance and fires this on activation. */
   onRemove?: () => void;
   icon?: React.ReactNode;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"chip">;
 }
 
 function Chip({
@@ -125,11 +133,13 @@ function Chip({
   value,
   onRemove,
   icon,
+  messages: messageOverrides,
   children,
   disabled,
   onClick,
   ...props
 }: ChipProps) {
+  const messages = useMessages("chip", chipMessages, messageOverrides);
   const group = React.useContext(ChipGroupContext);
   const inGroup = group != null && value != null;
   const isSelected = inGroup ? group.value.includes(value) : !!selected;
@@ -185,7 +195,7 @@ function Chip({
         <button
           type="button"
           data-slot="chip-remove"
-          aria-label="Remove"
+          aria-label={messages.remove}
           disabled={isDisabled}
           onClick={onRemove}
           className="ms-0.5 inline-flex size-4 items-center justify-center rounded-full text-current/70 transition-colors hover:bg-foreground/10 hover:text-current focus-visible:ring-3 focus-visible:ring-ring/50"

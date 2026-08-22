@@ -79,9 +79,9 @@ that belong here; moving them is a later phase.
 
 ---
 
-## runtime — `src/runtime/` *(declared, not yet populated)*
+## runtime — `src/runtime/`
 
-**What it will be.** Framework-level behaviour with no markup: focus management, collection and
+**What it is.** Framework-level behaviour with no markup: focus management, collection and
 selection handling, keyboard navigation, stable id generation. Headless, and testable without
 rendering anything.
 
@@ -116,9 +116,9 @@ component.
 
 ---
 
-## primitives — `src/primitives/` *(declared, not yet populated)*
+## primitives — `src/primitives/`
 
-**What it will be.** The smallest renderable pieces that carry no design opinion: a slot, a
+**What it is.** The smallest renderable pieces that carry no design opinion: a slot, a
 polymorphic element, a portal, a visually-hidden wrapper. They render; they do not decide how
 anything looks.
 

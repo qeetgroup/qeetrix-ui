@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
-
+import { PALETTE_UTILITY } from "@/__tests__/palette-utility";
 import { JSONTree } from "@/components/data-display/json-tree";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
@@ -44,5 +44,22 @@ describe("JSONTree", () => {
       <JSONTree value={{ status: "ok", count: 3, items: ["a", "b"] }} />,
     );
     expect(await a11y(container)).toHaveNoViolations();
+  });
+
+  // Same defect class as CodeBlock: the node colours were named palette utilities, invisible to
+  // check:token-usage and unreachable from a theme. Assert the class attributes that were wrong.
+  it("colours nodes through semantic syntax roles, never the Tailwind palette", () => {
+    const { container } = render(
+      <JSONTree value={{ id: 1, name: "Ada", ok: true, missing: null }} initialOpenDepth={2} />,
+    );
+    const classes = [...container.querySelectorAll("[class]")]
+      .map((el) => el.getAttribute("class") ?? "")
+      .join(" ");
+
+    expect(classes).toContain("text-syntax-key");
+    expect(classes).toContain("text-syntax-string");
+    expect(classes).toContain("text-syntax-number");
+    expect(classes).toContain("text-syntax-literal");
+    expect(classes).not.toMatch(PALETTE_UTILITY);
   });
 });

@@ -118,6 +118,22 @@ const STATE_MARKERS = {
 
 const matchesAny = (source, patterns) => patterns.some((pattern) => pattern.test(source));
 
+/**
+ * Motion this component drives from JavaScript.
+ *
+ * The document-wide `prefers-reduced-motion` rule in the base stylesheet collapses CSS
+ * transitions and animations, and cannot touch a `requestAnimationFrame` loop, a
+ * `scrollIntoView({ behavior: "smooth" })` or a carousel autoplay plugin. So this is the line
+ * between "the global mechanism covers this component" and "this component has to handle it
+ * itself, and prove that it does" — see scripts/config/a11y-evidence.json.
+ *
+ * Comments are stripped by the caller: a doc comment mentioning `requestAnimationFrame` is
+ * documentation, not an animation.
+ */
+export function hasScriptedMotion(source) {
+  return matchesAny(source, SCRIPTED_MOTION_MARKERS);
+}
+
 /** `"use client"` must be the first statement to open a client boundary. */
 export function hasClientDirective(source) {
   const head = source.trimStart();
@@ -152,20 +168,36 @@ export function deriveDarkModeSupport(source) {
  * graph, so a component reading `--qx-component-button-height` counts even though the word never
  * appears in its source.
  *
- * Deliberately two-valued. An earlier version reported `unknown` for any component with padding
- * that did not read a density metric, which flagged 102 of 145 — a Card, a Tooltip, a Badge.
- * That was not a review queue: whether a Card *should* shrink under `compact` is a design
- * decision, and a derived capability cannot answer it. What the source can answer is whether the
- * component participates today, so that is what this reports. Widening participation is tracked
- * in docs/standards/density.md; a component the design team has decided should participate and
- * does not yet is declared `unsupported` in the registry.
+ * Two-valued, and the two values are `supported` and `unknown`. This function used to return
+ * `not-applicable` for everything that did not read a density metric, on the argument that
+ * whether a Card should shrink under `compact` is a design decision a derived capability cannot
+ * answer. The argument is right; the conclusion was backwards. `not-applicable` *is* that design
+ * decision — it says the component would look no different at any density and never should — so
+ * emitting it from source inspection had 125 of 145 families asserting a decision nobody made.
+ * And because the contract ratchet counts `unknown`, the manifest showed no backlog at all.
+ *
+ * `unknown` is what the source actually knows: this component does not participate today, and
+ * nobody has said whether it should. A reviewed answer — `not-applicable` or `unsupported` — is
+ * declared in src/manifests/component-registry.ts, where `check:contract` requires it to be.
+ *
+ * One thing this function cannot see, by construction: composition. `IconButton` renders
+ * `Button size="icon"`, whose height *is* density-resolved, but the variable never appears in
+ * icon-button.tsx. Four such wrappers are declared `supported` in the registry for that reason.
+ * Following imports here would mean resolving which of a sibling's `cva` sizes the wrapper
+ * actually asks for — Button's density-resolved height is on `default` and `icon` only, and
+ * `CloseButton` pins `icon-sm`, which is literal — so the answer depends on a prop default, not
+ * on an import. That is a review, and it is recorded as one.
+ *
+ * @see src/contracts/density.ts § DERIVABLE_DENSITY_APPLICABILITY
+ * @see scripts/config/density-applicability.json
+ * @see docs/standards/density.md § Applicability
  */
 export function deriveDensitySupport(source, densityAware = new Set()) {
   if (matchesAny(source, DENSITY_MARKERS)) return "supported";
   for (const variable of densityAware) {
     if (source.includes(`var(${variable})`)) return "supported";
   }
-  return "not-applicable";
+  return "unknown";
 }
 
 /**
@@ -217,6 +249,43 @@ export function deriveVariantContract(cvaGroups) {
   };
 }
 
+/**
+ * Is *this component* deprecated?
+ *
+ * Only top-level comments count — a block or line comment that starts in column 0. An
+ * `@deprecated` tag indented inside an interface documents one **prop** going away, and reading
+ * the whole file could not tell the two apart: a single deprecated `Carousel` message prop
+ * flagged the entire component, which then failed `check:contract` for carrying a `stable`
+ * status alongside a `deprecated` marker. The distinction is structural, so the detector reads
+ * structure rather than widening the pattern.
+ *
+ * A module header comment (`pagination-bar.tsx`) and the JSDoc directly above an exported
+ * `function` both sit in column 0, so both still count.
+ */
+export function hasDeprecationMarker(raw) {
+  let topLevel = "";
+  let inBlock = false;
+  let blockIsTopLevel = false;
+
+  for (const line of raw.split("\n")) {
+    if (inBlock) {
+      if (blockIsTopLevel) topLevel += `${line}\n`;
+      if (line.includes("*/")) inBlock = false;
+      continue;
+    }
+    const opensBlock = /^(\s*)\/\*/.exec(line);
+    if (opensBlock) {
+      blockIsTopLevel = opensBlock[1].length === 0;
+      inBlock = !line.includes("*/");
+      if (blockIsTopLevel) topLevel += `${line}\n`;
+      continue;
+    }
+    if (line.startsWith("//")) topLevel += `${line}\n`;
+  }
+
+  return /@deprecated\b/.test(topLevel);
+}
+
 /** Everything derivable from one component's source, in one call. */
 export function describeComponentSource({ source: raw, cvaGroups, stateVocabulary, densityAware }) {
   const source = stripComments(raw);
@@ -234,6 +303,6 @@ export function describeComponentSource({ source: raw, cvaGroups, stateVocabular
      * The legacy `@deprecated` marker, still read so source and registry cannot disagree.
      * Read from the raw source: it lives in a comment by definition.
      */
-    deprecatedMarker: /@deprecated\b/.test(raw),
+    deprecatedMarker: hasDeprecationMarker(raw),
   };
 }

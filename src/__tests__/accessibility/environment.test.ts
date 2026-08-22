@@ -7,19 +7,59 @@
  * what makes it honest to record `forcedColors: pass` for a component that only ever paints with
  * bridge variables: the remapping covers every one of them, and `check:token-usage` guarantees
  * the component cannot paint with anything else.
+ *
+ * These two suites are the declared global evidence for the `forcedColors` and `reducedMotion`
+ * dimensions (scripts/config/a11y-evidence.json), and `check:a11y` fails if either stops
+ * existing or stops asserting. Their titles are therefore load-bearing.
+ *
+ * Everything is asserted against the *effective* stylesheet — the entry with its relative
+ * `@import`s inlined — so which file a rule lives in is an implementation detail and moving it
+ * cannot make a guarantee silently disappear. The entry is `styles.css`, the full one: these are
+ * guarantees `@qeetrix/ui/styles.css` makes, and `@qeetrix/ui/core.css` deliberately does not —
+ * a consumer that declines the host-global layer is taking responsibility for both of them.
  */
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const read = (p: string) => readFileSync(resolve(process.cwd(), p), "utf8");
-const entry = read("src/styles/index.css");
+
+/**
+ * The **effective** stylesheet: the entry with every relative `@import` inlined, in order.
+ *
+ * Reading `src/styles/index.css` directly was the wrong assertion. It coupled a guarantee
+ * ("forced colors are remapped for the whole document") to a file name, so splitting the
+ * globals out into `base.css` turned a green suite red without anything about the guarantee
+ * changing — and, worse, the same coupling would let the block be *deleted* from one file and
+ * added to another the entry does not import, with the suite none the wiser. Adding the
+ * `core.css` opt-out moved the entry again, from `index.css` to `styles.css`, and this function
+ * is why that cost nothing.
+ *
+ * Package `@import`s (`tailwindcss`, `tw-animate-css`, `shadcn/tailwind.css`) are not followed:
+ * they are not this library's guarantees to make, and nothing here should pass because a
+ * dependency happened to ship a rule.
+ */
+function effectiveStylesheet(entryPath: string, seen = new Set<string>()): string {
+  const absolute = resolve(process.cwd(), entryPath);
+  if (seen.has(absolute)) return "";
+  seen.add(absolute);
+
+  return readFileSync(absolute, "utf8").replace(
+    /^[ \t]*@import\s+["'](\.[^"']+)["'][^;]*;/gm,
+    (_match, specifier: string) => effectiveStylesheet(resolve(dirname(absolute), specifier), seen),
+  );
+}
+
+const entry = effectiveStylesheet("src/styles/styles.css");
 const runtime = read("src/styles/tokens.css");
 
 /** The `@media (forced-colors: active)` block. */
 const forcedColorsBlock = (() => {
   const start = entry.indexOf("@media (forced-colors: active)");
-  expect(start, "the forced-colors block is missing from the style entry").toBeGreaterThan(-1);
+  expect(
+    start,
+    "the forced-colors block is missing from the effective stylesheet reached from src/styles/styles.css",
+  ).toBeGreaterThan(-1);
   return entry.slice(start);
 })();
 
@@ -100,7 +140,10 @@ describe("forced colors", () => {
 describe("reduced motion", () => {
   const block = (() => {
     const start = entry.indexOf("@media (prefers-reduced-motion: reduce)");
-    expect(start, "the reduced-motion block is missing").toBeGreaterThan(-1);
+    expect(
+      start,
+      "the reduced-motion block is missing from the effective stylesheet",
+    ).toBeGreaterThan(-1);
     return entry.slice(start);
   })();
 

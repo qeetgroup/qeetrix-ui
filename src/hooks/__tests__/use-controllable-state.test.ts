@@ -150,3 +150,52 @@ describe("useControllableState", () => {
     expect(second).toHaveBeenCalledExactlyOnceWith("b");
   });
 });
+
+/*
+ * Mode transitions.
+ *
+ * The forward transition is the one applications actually perform (a parent starts owning a
+ * value once it has loaded it), and it is proved per component in the sibling `.tsx` file. These
+ * pin the hook-level answer to both, including the backwards jump — an asserted wart is a
+ * decision; an unasserted one is a surprise.
+ */
+describe("switching modes mid-life", () => {
+  it("hands authority to a value that arrives, discarding what it displaced", () => {
+    const { result, rerender } = renderHook(
+      ({ value }: { value?: string }) => useControllableState({ value, defaultValue: "seed" }),
+      { initialProps: {} as { value?: string } },
+    );
+    act(() => result.current[1]("owned-locally"));
+    expect(result.current[0]).toBe("owned-locally");
+
+    rerender({ value: "from-parent" });
+    expect(result.current[0]).toBe("from-parent");
+
+    // And the prop stays in charge: a local set no longer moves it.
+    act(() => result.current[1]("ignored"));
+    expect(result.current[0]).toBe("from-parent");
+  });
+
+  it("falls back to the state it left behind when the value disappears", () => {
+    const { result, rerender } = renderHook(
+      ({ value }: { value?: string }) => useControllableState({ value, defaultValue: "seed" }),
+      { initialProps: { value: "from-parent" } as { value?: string } },
+    );
+    rerender({ value: undefined });
+    // Documented, not desirable: the internal state was never written while controlled, so it
+    // still holds the original default and the control jumps back to it.
+    expect(result.current[0]).toBe("seed");
+  });
+
+  it("keeps an uncontrolled edit made before the parent took over, once it is uncontrolled again", () => {
+    const { result, rerender } = renderHook(
+      ({ value }: { value?: string }) => useControllableState({ value, defaultValue: "seed" }),
+      { initialProps: {} as { value?: string } },
+    );
+    act(() => result.current[1]("edited"));
+    rerender({ value: "from-parent" });
+    rerender({ value: undefined });
+    // The last *internally owned* value, not the last displayed one.
+    expect(result.current[0]).toBe("edited");
+  });
+});

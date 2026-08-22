@@ -3,11 +3,13 @@
 import { cva } from "class-variance-authority";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import * as React from "react";
-import { createPortal } from "react-dom";
 import { Button } from "@/components/actions/button";
 import { useFocusTrap } from "@/components/utility/focus-trap";
 import { COMPONENT } from "@/lib/token-values";
 import { cn } from "@/lib/utils";
+import { Portal } from "@/primitives/portal";
+import { useModalOverlay } from "@/runtime/overlay";
+import { type AnchorSide, resolveAnchoredPosition } from "@/runtime/overlay-position";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -16,7 +18,11 @@ interface TourStepDef {
   target: string;
   title: string;
   content: React.ReactNode;
-  placement?: "top" | "bottom" | "left" | "right";
+  /**
+   * Preferred side of the target. Flipped to the opposite side when there is not enough room,
+   * then clamped inside the viewport; the side actually used is exposed as `data-side`.
+   */
+  placement?: AnchorSide;
 }
 
 interface UseTourOptions {
@@ -121,47 +127,43 @@ const tourCardVariants = cva(
 const CARD_WIDTH = Number.parseFloat(COMPONENT.tour.cardWidth);
 const CARD_OFFSET = Number.parseFloat(COMPONENT.tour.offset);
 
+/** Distance kept between the card and the viewport edge when a position has to be clamped. */
+const VIEWPORT_MARGIN = 8;
+
 interface Coords {
   top: number;
   left: number;
+  side: AnchorSide;
 }
 
-function computePosition(
-  target: Element | null,
-  placement: TourStepDef["placement"] = "bottom",
-): Coords {
-  if (!target) {
-    // Target not found — center the card on screen
-    return {
-      top: window.innerHeight / 2 - 100,
-      left: window.innerWidth / 2 - CARD_WIDTH / 2,
-    };
-  }
+/**
+ * Resolve the card's position from the current DOM.
+ *
+ * The card measures itself rather than assuming a height: the previous implementation
+ * subtracted literal 80/100/200px estimates, which put the card off screen whenever the
+ * content was taller than the guess. Collision flipping and viewport clamping live in
+ * `@/runtime/overlay-position` so they can be tested with real numbers — jsdom reports every
+ * box as zero, so a rendered assertion cannot see a placement decision at all.
+ */
+function measurePosition(step: TourStepDef, card: HTMLElement | null): Coords {
+  const anchor = document.querySelector(step.target)?.getBoundingClientRect() ?? null;
+  const cardRect = card?.getBoundingClientRect();
 
-  const rect = target.getBoundingClientRect();
+  const { top, left, side } = resolveAnchoredPosition({
+    anchor: anchor && {
+      top: anchor.top,
+      left: anchor.left,
+      width: anchor.width,
+      height: anchor.height,
+    },
+    side: step.placement ?? "bottom",
+    size: { width: cardRect?.width || CARD_WIDTH, height: cardRect?.height ?? 0 },
+    viewport: { width: window.innerWidth, height: window.innerHeight },
+    offset: CARD_OFFSET,
+    margin: VIEWPORT_MARGIN,
+  });
 
-  switch (placement) {
-    case "top":
-      return {
-        top: rect.top - CARD_OFFSET - 200,
-        left: rect.left + rect.width / 2 - CARD_WIDTH / 2,
-      };
-    case "left":
-      return {
-        top: rect.top + rect.height / 2 - 80,
-        left: rect.left - CARD_WIDTH - CARD_OFFSET,
-      };
-    case "right":
-      return {
-        top: rect.top + rect.height / 2 - 80,
-        left: rect.right + CARD_OFFSET,
-      };
-    default: // "bottom"
-      return {
-        top: rect.bottom + CARD_OFFSET,
-        left: rect.left + rect.width / 2 - CARD_WIDTH / 2,
-      };
-  }
+  return { top, left, side };
 }
 
 // ─── TourStep ─────────────────────────────────────────────────────────────────
@@ -191,16 +193,34 @@ function TourStep({
   onDismiss,
   className,
 }: TourStepProps) {
-  const [coords, setCoords] = React.useState<Coords>({ top: 0, left: 0 });
+  const [coords, setCoords] = React.useState<Coords>({ top: 0, left: 0, side: "bottom" });
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === totalSteps - 1;
   const { containerRef } = useFocusTrap(true);
 
-  // Recompute position whenever the target or placement changes
+  const reposition = React.useCallback(() => {
+    const next = measurePosition(step, containerRef.current);
+    // Same-value guard: reposition runs from a layout effect and from a ResizeObserver on the
+    // card it measures, so returning a fresh object every time would re-render forever.
+    setCoords((prev) =>
+      prev.top === next.top && prev.left === next.left && prev.side === next.side ? prev : next,
+    );
+  }, [step, containerRef]);
+
+  // Position follows the target: recompute on step change, on viewport resize, when anything
+  // scrolls (capture, so scroll containers count) and when the card's own size changes.
   React.useLayoutEffect(() => {
-    const el = document.querySelector(step.target);
-    setCoords(computePosition(el, step.placement));
-  }, [step.target, step.placement]);
+    reposition();
+    window.addEventListener("resize", reposition);
+    window.addEventListener("scroll", reposition, { capture: true, passive: true });
+    const observer = new ResizeObserver(reposition);
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => {
+      window.removeEventListener("resize", reposition);
+      window.removeEventListener("scroll", reposition, { capture: true });
+      observer.disconnect();
+    };
+  }, [reposition, containerRef]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.defaultPrevented) {
@@ -223,12 +243,18 @@ function TourStep({
     <div
       ref={containerRef}
       data-slot="tour-step"
+      data-side={coords.side}
       role="dialog"
       aria-label={step.title}
       aria-modal="true"
       onKeyDown={handleKeyDown}
       className={cn(tourCardVariants(), className)}
       style={{ top: coords.top, left: coords.left }}
+      // OVERLAY_ROOT_ATTRIBUTE from @/runtime/overlay: this is the tour's own chrome, so
+      // background inerting must skip it. Written literally rather than spread from the
+      // constant, because a spread hides the element's other attributes from lint analysis;
+      // the tour tests assert the two stay in step.
+      data-qx-overlay-root=""
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
@@ -306,6 +332,12 @@ function Tour({
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const isOpen = isControlled ? controlledOpen : internalOpen;
+  const isModal = isOpen && steps.length > 0;
+
+  // `aria-modal="true"` is a promise about the rest of the page, not a decoration: while the
+  // tour is open the background is inert and the page cannot scroll, so keyboard, pointer and
+  // virtual-cursor users all see the same boundary the attribute advertises.
+  useModalOverlay(isModal);
 
   // Reset to step 0 each time the tour becomes open
   React.useEffect(() => {
@@ -337,14 +369,19 @@ function Tour({
   const currentStep = steps[currentIndex];
   if (!currentStep) return null;
 
-  return createPortal(
-    <>
+  // Portal, not createPortal: `createPortal(..., document.body)` during render throws on the
+  // server for the perfectly valid initial state `defaultOpen`. Portal defers mounting to an
+  // effect, so the server emits nothing, the first client render matches it, and the overlay
+  // appears once there is a document to attach it to.
+  return (
+    <Portal>
       {/* Semi-transparent backdrop — clicking it dismisses the tour */}
       <div
         data-slot="tour-backdrop"
         className="fixed inset-0 z-(--qx-z-tour-backdrop) bg-black/40"
         onClick={handleDismiss}
         aria-hidden="true"
+        data-qx-overlay-root=""
       />
       {/* Floating step card */}
       <TourStep
@@ -356,8 +393,7 @@ function Tour({
         onDismiss={handleDismiss}
         className={className}
       />
-    </>,
-    document.body,
+    </Portal>
   );
 }
 

@@ -1,0 +1,31 @@
+{
+  "$note": "Measured coverage floors for the jsdom suite. Read by vitest.config.ts, which enforces them under `bun run test:coverage`; governed by scripts/check/coverage.mjs, which refuses a lowered one.",
+  "environment": "vitest 4 + jsdom, @vitest/coverage-v8. Measures src/**/*.{ts,tsx} minus tests, barrels, generated token values, generated logo components and src/manifests/**. Barrels are excluded because a re-export-only module is covered by definition and dilutes the ratio until it stops meaning anything.",
+  "metrics": {
+    "lines": "Executed lines as a percentage of instrumentable lines.",
+    "statements": "Executed statements. Lower than lines wherever a line holds several statements.",
+    "functions": "Functions entered at least once. The most useful of the four here: an untouched function is usually an untested prop or an unreachable branch of a variant map.",
+    "branches": "Conditional branches taken. Lowest of the four, and expected to be: every optional prop, every `??`, and every variant fallback is a branch."
+  },
+  "policy": "A ratchet, not a target. Each floor is the measurement below rounded down, minus about a point of slack for the noise a single skipped test creates. Floors may only rise: scripts/check/coverage.mjs fails a commit that lowers one, or that parks a floor more than 5 points under its measurement. There is deliberately no aspirational number here \u2014 a threshold nobody can meet is a threshold somebody deletes.",
+  "recording": "`bun run test:coverage`, then copy the summary into `measured` and raise `thresholds` in the same commit. The suite must be green: coverage over a failing run is measured against tests that did not finish.",
+  "recorded": "2026-08-22",
+  "suite": {
+    "files": 181,
+    "tests": 1926,
+    "caveat": "Recorded on a fully green suite."
+  },
+  "measured": {
+    "lines": 88.29,
+    "statements": 86.05,
+    "functions": 82.44,
+    "branches": 79.36
+  },
+  "thresholds": {
+    "lines": 87,
+    "statements": 85,
+    "functions": 81,
+    "branches": 78
+  },
+  "$rerecord": "Re-recorded on a green suite. The first measurement was taken while 9 tests across 7 files were failing in concurrent work; v8 reports what executed, so a red suite under-reports every path those tests would have reached. All four metrics rose on re-measure (lines 87.16->88.29, statements 84.79->86.05, functions 81.01->82.44, branches 77.81->79.36) and the thresholds rose with them ({'lines': 86, 'statements': 83, 'functions': 79, 'branches': 76} -> {'lines': 87, 'statements': 85, 'functions': 81, 'branches': 78}), which the ratchet permits. Thresholds sit about a point under measurement so one skipped test does not fail the gate."
+}

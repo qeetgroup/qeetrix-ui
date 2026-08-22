@@ -1,0 +1,10 @@
+{
+  "color": {
+    "syntax": {
+      "key": { "$value": "{color.sky.400}", "$type": "color" },
+      "string": { "$value": "{color.emerald.400}", "$type": "color" },
+      "number": { "$value": "{color.amber.400}", "$type": "color" },
+      "literal": { "$value": "{color.violet.400}", "$type": "color" }
+    }
+  }
+}

@@ -4,11 +4,21 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import type * as React from "react";
+import { breadcrumbMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
+/**
+ * The breadcrumb landmark. Its accessible name comes from the message catalogue, so a
+ * `MessagesProvider` translates it; an explicit `aria-label` still wins, because `props`
+ * spreads last. These parts take no `messages` prop of their own — they are unstyled
+ * wrappers over one element each, and a prop per part would be more surface than the two
+ * strings involved.
+ */
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
+  const messages = useMessages("breadcrumb", breadcrumbMessages);
   return (
-    <nav aria-label="breadcrumb" data-slot="breadcrumb" className={cn(className)} {...props} />
+    <nav aria-label={messages.label} data-slot="breadcrumb" className={cn(className)} {...props} />
   );
 }
 
@@ -77,6 +87,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
 }
 
 function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span">) {
+  const messages = useMessages("breadcrumb", breadcrumbMessages);
   return (
     <span
       data-slot="breadcrumb-ellipsis"
@@ -86,7 +97,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span"
       {...props}
     >
       <MoreHorizontalIcon aria-hidden />
-      <span className="sr-only">More</span>
+      <span className="sr-only">{messages.more}</span>
     </span>
   );
 }

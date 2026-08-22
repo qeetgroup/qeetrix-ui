@@ -9,6 +9,12 @@ if a layer needs a new edge, someone adds it deliberately and the reason ends up
 to files with TypeScript's own dependency scanner and the tsconfig `@/*` alias, so re-exports,
 type-only imports and dynamic `import()` are all seen and nothing is matched by substring.
 
+Every rule is written against the **resolved file**, never against the shape of the specifier
+that named it. `../inputs/input`, `../../components/inputs/input` and
+`@/components/inputs/input` all reduce to the same canonical identity, so a rule cannot be
+evaded by spelling an import differently. `.css` and `.json` files are nodes in the graph too —
+see [Non-TypeScript inputs](#non-typescript-inputs).
+
 ---
 
 ## The table
@@ -95,6 +101,66 @@ Rule:
 
 ---
 
+## Non-TypeScript inputs
+
+A stylesheet and a token file are dependencies. They used to sit outside the graph entirely: the
+traversal collected `.ts` and `.tsx` and nothing else, so a component could `import
+"@/styles/index.css"` or `import colors from "@/tokens/primitive/color.json"` and
+`check:architecture` would report a clean TypeScript tree.
+
+They are now nodes, with layers like any other file, governed by a second table —
+`LAYER_ALLOWED_ASSET_DEPENDENCIES`. Deny by default, and **currently empty**: no shipped
+TypeScript module may import a `.css` or `.json` file.
+
+Two different reasons for two different tables:
+
+- `components` may depend on the `tokens` layer, because it reads *generated TypeScript* derived
+  from it. Importing a raw token JSON is a different act — it bypasses the CSS bridge, ships the
+  whole token file into the bundle, and hides the component's colour source from
+  `check:token-usage`.
+- A stylesheet is a side effect. A component that imports one has decided, on behalf of every
+  consumer, that the styles load. That is the choice `styles.css` exists to make once, at the
+  package boundary.
+
+```text
+src/components/actions/button.tsx
+  imports the styles asset src/styles/index.css — components may not import a
+  non-TypeScript input from styles; add the layer to LAYER_ALLOWED_ASSET_DEPENDENCIES if
+  this is intended
+```
+
+CSS `@import` between stylesheets is not in this graph — nothing here parses CSS, and claiming
+otherwise would be a guess. `src/__tests__/accessibility/environment.test.ts` follows the entry's
+relative `@import`s when it asserts the global accessibility guarantees, so moving a rule between
+stylesheets cannot make one disappear.
+
+Test files are exempt, as they are for module dependencies: a harness legitimately reads the
+generated stylesheet to assert what it contains.
+
+---
+
+## Relative imports
+
+A module reaches a sibling with `./` and everything else with the `@/` alias.
+
+This was enforced by matching one specifier shape, `../../components/<category>/`, which is the
+form somebody happened to think of. `../inputs/input` — a cross-category import one directory
+up — passed. So did `../../lib/utils` from a component, and every deeper spelling.
+
+It is now enforced on the resolved path: any relative specifier in a shipped module that leaves
+its own directory is a violation, and the message names the canonical destination.
+
+```text
+src/components/actions/button.tsx
+  imports "../inputs/input" → src/components/inputs/input.tsx — reaches category "inputs"
+  with a relative path — use "@/components/inputs/…" so the dependency is visible
+```
+
+Test files are exempt from this one specifically: a harness legitimately reaches outside `src/`
+for a checker script or the built manifest.
+
+---
+
 ## Rules about the rules
 
 The rule set is validated independently of any code, by `findRuleSetProblems`:
@@ -126,12 +192,17 @@ Beyond layers:
 2. every component is re-exported by its category barrel, unless the file is `@barrel-exclude`
 3. no module inside `src/` imports a barrel (`@/components`, `@/components/<category>`, the
    root entry) — barrel imports create cycles and defeat tree-shaking
-4. cross-category imports go through the `@/` alias, never `../../<other-category>`
+4. relative imports do not leave their own directory, checked against the resolved file — see
+   [Relative imports](#relative-imports)
 5. filenames are kebab-case, and every test sits in a `__tests__/` folder beside a component of
    the same name
 6. a `"use client"` directive, where one exists, is the first statement in the file — parsed as
    a statement, so the phrase in a doc comment is correctly not a directive
-7. every source file is claimed by a layer, and every `@/` specifier resolves to a real file
+7. every source file is claimed by a layer, and every internal specifier resolves to a real
+   file — including the `./thing.js` → `./thing.tsx` rewrite the brand subtree re-exports
+   through, which used to resolve to nothing and drop that whole subtree out of the graph
+8. no shipped module imports a `.css` or `.json` file — see
+   [Non-TypeScript inputs](#non-typescript-inputs)
 
 ---
 

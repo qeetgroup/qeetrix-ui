@@ -242,10 +242,22 @@ Design decisions belong in tokens, not in class names.
 | Rejected | Instead |
 |:--|:--|
 | `#123456`, `rgb()`, `hsl()`, `oklch()` | a semantic or component token |
+| `text-sky-700`, `fill-amber-400`, `bg-rose-500/20` | a semantic role utility |
 | `z-[9999]` | `--qx-z-*` |
 | `shadow-[…#000…]` | `--qx-elevation-*` |
 | `opacity-50` | `opacity-disabled` |
 | `text-[11px]`, `rounded-[2px]`, `w-[32px]` | a scale step, or a component token |
+
+The second row is the one that is easy to get wrong. A **named Tailwind palette class looks
+token-backed** — it is a class name, not a hex literal — but the palette is deliberately absent
+from the runtime stylesheet, so `text-sky-700` is a value baked into the component: no brand theme
+re-points it, the forced-colors mapping never sees it, and `check:contrast` has no pair to measure.
+Only the semantic namespaces are governed. CodeBlock, JSONTree and Rating passed the scan for
+months this way; they now render `text-syntax-key` and `fill-rating-filled`, which are semantic
+roles with a value per theme and a blocking contrast pair each.
+
+If a component genuinely needs a colour vocabulary the semantic roles do not cover, add the roles
+— that is what `color.syntax.*` and `color.data.categorical.*` are.
 
 What is *not* rejected, because it is arithmetic rather than a design decision:
 `calc()`, `min()`, `max()`, and anything containing `var()`. `translate-x-[calc(100%-2px)]`

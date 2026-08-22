@@ -168,6 +168,75 @@ export function findClientDirectiveIndex(filePath) {
 }
 
 /**
+ * The design-axis props a component's public `…Props` types declare.
+ *
+ * Read from the AST rather than by grepping for `variant?:`, so a local helper type, a comment
+ * or a string cannot be mistaken for a public prop. Only exported `type`/`interface`
+ * declarations whose name ends in `Props` are considered, which is this library's convention
+ * for the props of an exported component, and every member of an intersection is walked so
+ * `BaseUI.Root.Props & { size?: … }` is seen.
+ *
+ * The point is to distinguish "no design axis" from "axis not recorded": a `cva`-less component
+ * with a `size?: "sm" | "lg"` prop has a size axis nobody wrote down, and that used to look
+ * exactly like a component with no axis at all.
+ */
+export function readPropAxes(filePath, axisNames) {
+  const source = parse(filePath);
+  const wanted = new Set(axisNames);
+  const found = new Set();
+
+  const collectMembers = (typeNode) => {
+    if (typeNode === undefined) return;
+    if (ts.isTypeLiteralNode(typeNode) || ts.isInterfaceDeclaration(typeNode)) {
+      for (const member of typeNode.members) {
+        if (!ts.isPropertySignature(member)) continue;
+        const name = propertyName(member);
+        if (name !== null && wanted.has(name)) found.add(name);
+      }
+      return;
+    }
+    if (ts.isIntersectionTypeNode(typeNode) || ts.isUnionTypeNode(typeNode)) {
+      for (const branch of typeNode.types) collectMembers(branch);
+      return;
+    }
+    if (ts.isParenthesizedTypeNode(typeNode)) collectMembers(typeNode.type);
+  };
+
+  const isComponentName = (name) => /^[A-Z]/.test(name);
+
+  const visit = (node) => {
+    // A `…Props` type or interface, wherever it is declared in the file.
+    if (
+      (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) &&
+      /Props$/.test(node.name.text)
+    ) {
+      collectMembers(ts.isInterfaceDeclaration(node) ? node : node.type);
+    }
+
+    // The overwhelmingly common shape in this library: the props type written inline on the
+    // component's parameter — `function Avatar({ size }: Root.Props & { size?: … })`. Reading
+    // only named exported types would have missed almost every axis there is.
+    if (ts.isFunctionDeclaration(node) && node.name && isComponentName(node.name.text)) {
+      collectMembers(node.parameters[0]?.type);
+    }
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      isComponentName(node.name.text) &&
+      node.initializer &&
+      (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer))
+    ) {
+      collectMembers(node.initializer.parameters[0]?.type);
+    }
+
+    ts.forEachChild(node, visit);
+  };
+
+  visit(source);
+  return [...found].sort();
+}
+
+/**
  * The `cva()` variant groups declared in a component file, as `{ group: [members] }`.
  *
  * Reads every `cva(base, { variants: { … } })` call in the file and merges the groups, which

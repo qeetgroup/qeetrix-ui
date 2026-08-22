@@ -2,8 +2,11 @@
 
 import { StarIcon } from "lucide-react";
 import * as React from "react";
+import { FieldHiddenInput, useFieldControl } from "@/components/inputs/field";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import { inlineAxisSign, logicalDirectionForKey } from "@/lib/direction";
 import { cn } from "@/lib/utils";
+import { useResolvedDirection } from "@/providers/direction-provider";
 
 interface RatingProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   /** Current rating. Supports halves (e.g. `3.5`) when `allowHalf`. */
@@ -21,6 +24,10 @@ interface RatingProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   size?: "sm" | "default" | "lg";
   /** Swap the star for any lucide-style icon (e.g. `HeartIcon`). */
   icon?: React.ComponentType<{ className?: string }>;
+  /** Submits the numeric rating under this name. Omit and nothing is serialised. */
+  name?: string;
+  /** Associate the submitted value with a form it is not nested inside, by form `id`. */
+  form?: string;
 }
 
 const sizeClasses = {
@@ -33,6 +40,17 @@ const sizeClasses = {
  * Star (or custom icon) rating. Interactive when `onChange` is supplied:
  * click an icon to set the value, or focus and use arrow keys. Renders as a
  * read-only `img` otherwise. Half values are supported via `allowHalf`.
+ *
+ * Mirrors under `dir="rtl"` on both input paths: the arrow key that points at the next star is
+ * the one that raises the value, and the half-star split is measured from each star's
+ * inline-start edge — the edge the partial fill grows from — so the two agree about which way
+ * is "more".
+ *
+ * Forms: implements the composite-field contract (see `field.tsx`). Inside a `Field` the
+ * slider takes the label, description and error association — the numeric value moves to
+ * `aria-valuetext` ("3 of 5") so naming it after the field does not lose it. `name` submits
+ * the number. There is no `required`: `aria-required` is not permitted on `slider`, and a
+ * hidden value cannot be constraint-validated, so an empty rating is the consumer's check.
  */
 function Rating({
   value: valueProp,
@@ -44,8 +62,13 @@ function Rating({
   disabled,
   size = "default",
   icon: Icon = StarIcon,
+  name,
+  form,
   className,
   "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
+  id,
   ...props
 }: RatingProps) {
   const [value, setValue] = useControllableState<number>({
@@ -53,6 +76,8 @@ function Rating({
     defaultValue,
     onChange,
   });
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const direction = useResolvedDirection(rootRef);
   // Interactive when the consumer can receive changes, or when the component owns the value.
   // Before uncontrolled support existed this was `!!onChange`, which would have left a
   // `defaultValue`-only Rating inert.
@@ -76,27 +101,49 @@ function Rating({
   // Resolve a rating value from a pointer event on the container by locating the
   // star under the cursor via its data-rating-index. Keeping this on the
   // container (the role="slider" widget) avoids nesting interactive controls.
+  //
+  // The half-star split is measured from the star's *inline-start* edge, which is its right
+  // edge under `dir="rtl"`. Measuring from `left` unconditionally split every mirrored star
+  // the wrong way round: a click on the inline-start half — the half the partial fill
+  // occupies, since `inset-0` plus an explicit width anchors to the right in an RTL
+  // containing block — returned `index + 1` instead of `index + 0.5`. This is the same
+  // mirroring the arrow keys do above, so a click one star further toward the inline end and
+  // the key that raises the value now move in the same direction.
+  //
+  // Asserted in `src/__tests__/browser/rating-pointer.test.tsx`, not in jsdom: jsdom reports
+  // an all-zero `getBoundingClientRect`, so both branches return the same value there and the
+  // mirrored arithmetic is indistinguishable from the unmirrored.
   function valueFromPointer(e: React.MouseEvent<HTMLElement>): number | null {
     const starEl = (e.target as HTMLElement).closest<HTMLElement>("[data-rating-index]");
     if (!starEl) return null;
     const index = Number(starEl.dataset.ratingIndex);
     if (!allowHalf) return index + 1;
-    const { left, width } = starEl.getBoundingClientRect();
-    return e.clientX - left < width / 2 ? index + 0.5 : index + 1;
+    const rect = starEl.getBoundingClientRect();
+    const inlineStartEdge = direction === "rtl" ? rect.right : rect.left;
+    const fromInlineStart = inlineAxisSign(direction) * (e.clientX - inlineStartEdge);
+    return fromInlineStart < rect.width / 2 ? index + 0.5 : index + 1;
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (!interactive) return;
     switch (e.key) {
-      case "ArrowRight":
+      // The block axis does not mirror, so Up/Down are fixed. The inline axis does:
+      // in RTL the higher rating is to the *left*, and `logicalDirectionForKey` is the
+      // single place that decides which physical key that is.
       case "ArrowUp":
         e.preventDefault();
         commit(value + step);
         break;
-      case "ArrowLeft":
       case "ArrowDown":
         e.preventDefault();
         commit(value - step);
+        break;
+      case "ArrowLeft":
+      case "ArrowRight":
+        e.preventDefault();
+        commit(
+          logicalDirectionForKey(e.key, direction) === "inline-end" ? value + step : value - step,
+        );
         break;
       case "Home":
         e.preventDefault();
@@ -122,21 +169,39 @@ function Rating({
       >
         <Icon className={cn(iconSize, "text-muted-foreground/40")} />
         <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-          <Icon className={cn(iconSize, "fill-amber-400 text-amber-400")} />
+          <Icon className={cn(iconSize, "fill-rating-filled text-rating-filled")} />
         </span>
       </span>
     );
   });
 
-  const label = ariaLabel ?? `Rating: ${value} of ${max}`;
+  const field = useFieldControl({
+    id,
+    "aria-label": ariaLabel,
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+  });
+  // A Field label wins over the built-in fallback; the value it displaces is carried by
+  // aria-valuetext, which a slider exposes alongside its name rather than instead of it.
+  const valueText = `${value} of ${max}`;
+  const selfLabel = ariaLabel ?? `Rating: ${valueText}`;
+  const hidden = <FieldHiddenInput name={name} value={value} form={form} disabled={disabled} />;
 
   if (interactive) {
     return (
       <div
+        ref={rootRef}
         data-slot="rating"
+        data-direction={direction}
         role="slider"
-        aria-label={label}
+        id={field.id}
+        aria-label={field["aria-labelledby"] ? undefined : selfLabel}
+        aria-labelledby={field["aria-labelledby"]}
+        aria-describedby={field["aria-describedby"]}
+        aria-errormessage={field["aria-errormessage"]}
+        aria-invalid={field["aria-invalid"]}
         aria-valuenow={value}
+        aria-valuetext={valueText}
         aria-valuemin={0}
         aria-valuemax={max}
         tabIndex={0}
@@ -157,16 +222,24 @@ function Rating({
         )}
         {...props}
       >
+        {hidden}
         {stars}
       </div>
     );
   }
 
+  // Display-only: role="img" has no aria-valuetext, so it keeps its self-contained name —
+  // borrowing the Field label here would drop the value from the announcement entirely. The
+  // description and error still reach it, and a read-only value still submits, as a native
+  // `readOnly` input's does.
   return (
     <div
       data-slot="rating"
       role="img"
-      aria-label={label}
+      id={field.id}
+      aria-label={selfLabel}
+      aria-describedby={field["aria-describedby"]}
+      aria-invalid={field["aria-invalid"]}
       className={cn(
         "inline-flex items-center gap-0.5 outline-none",
         disabled && "opacity-disabled",
@@ -174,6 +247,7 @@ function Rating({
       )}
       {...props}
     >
+      {hidden}
       {stars}
     </div>
   );

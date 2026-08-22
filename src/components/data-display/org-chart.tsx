@@ -3,7 +3,10 @@
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
 
+import type { DisclosureMessages, MessagesFor } from "@/lib/messages";
+import { disclosureMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface OrgNode {
   id: string;
@@ -16,6 +19,11 @@ interface OrgChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: OrgNode;
   /** Render a custom card for each node. */
   renderNode?: (node: OrgNode) => React.ReactNode;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"disclosure">;
 }
 
 function NodeCard({
@@ -45,10 +53,13 @@ function Subtree({
   node,
   renderNode,
   isRoot,
+  messages,
 }: {
   node: OrgNode;
   renderNode?: OrgChartProps["renderNode"];
   isRoot?: boolean;
+  /** Resolved once at the root and threaded down, so every toggle names itself alike. */
+  messages: DisclosureMessages;
 }) {
   const [open, setOpen] = React.useState(true);
   const kids = node.children ?? [];
@@ -60,7 +71,7 @@ function Subtree({
         {kids.length > 0 && (
           <button
             type="button"
-            aria-label={open ? "Collapse" : "Expand"}
+            aria-label={open ? messages.collapse : messages.expand}
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
             className="absolute -bottom-2 left-1/2 z-10 flex size-4 -translate-x-1/2 items-center justify-center rounded-full border border-border bg-background text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
@@ -75,7 +86,7 @@ function Subtree({
       {kids.length > 0 && open && (
         <ul className="relative flex pt-4 before:absolute before:top-0 before:left-1/2 before:h-4 before:w-px before:-translate-x-1/2 before:bg-border">
           {kids.map((k) => (
-            <Subtree key={k.id} node={k} renderNode={renderNode} />
+            <Subtree key={k.id} node={k} renderNode={renderNode} messages={messages} />
           ))}
         </ul>
       )}
@@ -84,11 +95,18 @@ function Subtree({
 }
 
 /** Top-down organisation / hierarchy chart with collapsible branches (CSS connectors). */
-function OrgChart({ data, renderNode, className, ...props }: OrgChartProps) {
+function OrgChart({
+  data,
+  renderNode,
+  messages: messageOverrides,
+  className,
+  ...props
+}: OrgChartProps) {
+  const messages = useMessages("disclosure", disclosureMessages, messageOverrides);
   return (
     <div data-slot="org-chart" className={cn("overflow-x-auto p-2", className)} {...props}>
       <ul className="flex justify-center">
-        <Subtree node={data} renderNode={renderNode} isRoot />
+        <Subtree node={data} renderNode={renderNode} isRoot messages={messages} />
       </ul>
     </div>
   );

@@ -1,7 +1,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { presenceIndicatorMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const presenceVariants = cva("inline-block shrink-0 rounded-full ring-2 ring-background", {
   variants: {
@@ -23,6 +26,11 @@ interface PresenceIndicatorProps
   label?: string;
   /** Soft pulse to signal active presence (honors reduced-motion). */
   pulse?: boolean;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"presenceIndicator">;
 }
 
 /** A presence/status dot (online · away · busy · offline) for avatars and rows. */
@@ -31,13 +39,15 @@ function PresenceIndicator({
   size,
   label,
   pulse,
+  messages: messageOverrides,
   className,
   ...props
 }: PresenceIndicatorProps) {
+  const messages = useMessages("presenceIndicator", presenceIndicatorMessages, messageOverrides);
   return (
     <span
       role="status"
-      aria-label={label ?? status ?? "offline"}
+      aria-label={label ?? messages.status(status ?? "offline")}
       data-slot="presence-indicator"
       className={cn(
         presenceVariants({ status, size }),

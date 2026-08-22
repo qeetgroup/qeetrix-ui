@@ -32,6 +32,11 @@ interface ChartContainerProps extends React.ComponentProps<"div"> {
   accessibilityTable?: React.ReactNode;
   /** Keep the table screen-reader-only or expose it below the plot. */
   accessibilityTableVisibility?: "screen-reader" | "visible";
+  /**
+   * CSP nonce for the stylesheet a `theme` series pair requires. Series declared with `color`
+   * need no stylesheet and no nonce.
+   */
+  nonce?: string;
 }
 
 interface ChartDataTableColumn<TData extends Record<string, unknown>> {
@@ -91,6 +96,8 @@ function ChartContainer({
   className,
   children,
   config,
+  style,
+  nonce,
   accessibleTitle,
   accessibleDescription,
   accessibleSummary,
@@ -99,7 +106,12 @@ function ChartContainer({
   ...props
 }: ChartContainerProps) {
   const uniqueId = React.useId();
-  const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
+  // `id` is consumer data and is only ever an attribute value. The style scope is derived from
+  // useId() and reduced to a CSS identifier, so it stays selector-safe whatever format a future
+  // React release adopts.
+  const scopeSuffix = toCssIdentifier(uniqueId);
+  const chartId = `chart-${id || scopeSuffix}`;
+  const chartScopeId = `chart-${scopeSuffix}`;
   const titleId = `${chartId}-title`;
   const descriptionId = `${chartId}-description`;
   const summaryId = `${chartId}-summary`;
@@ -111,6 +123,8 @@ function ChartContainer({
   ]
     .filter(Boolean)
     .join(" ");
+  const seriesVariables = inlineSeriesVariables(config);
+  const themedConfig = themedSeries(config);
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -140,13 +154,17 @@ function ChartContainer({
           ref={containerRef}
           data-slot="chart"
           data-chart={chartId}
+          data-chart-scope={chartScopeId}
           className={cn(
             "relative flex aspect-video min-h-0 w-full min-w-0 justify-center overflow-hidden text-xs [&_.recharts-cartesian-axis-tick_text]:fill-chart-axis [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-chart-grid [&_.recharts-curve.recharts-tooltip-cursor]:stroke-chart-reference [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-chart-grid [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-chart-reference [&_.recharts-sector]:outline-none [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-none",
             className,
           )}
+          style={{ ...seriesVariables, ...style } as React.CSSProperties}
           {...props}
         >
-          <ChartStyle id={chartId} config={config} />
+          {themedConfig ? (
+            <ChartStyle id={chartScopeId} config={themedConfig} nonce={nonce} />
+          ) : null}
           {ready ? (
             <RechartsPrimitive.ResponsiveContainer width={size.width} height={size.height}>
               {children}
@@ -218,28 +236,157 @@ function ChartDataTable<TData extends Record<string, unknown>>({
   );
 }
 
-const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([, c]) => c.theme || c.color);
+/* ── Generated-CSS safety ──────────────────────────────────────────────────────────────────
+ * A chart config is consumer data: series keys usually come from a dataset and colours are
+ * frequently read from a tenant theme, a saved dashboard or an API response. Anything
+ * interpolated into CSS therefore has to be validated rather than merely quoted — a value
+ * carrying `;` or a closing brace would otherwise end Qeetrix's declaration and start a rule
+ * of the author's choosing, anywhere in the host document.
+ *
+ * Two mechanisms, in order of preference:
+ *
+ *   1. Series declared with `color` become inline custom properties on the chart element.
+ *      React writes those through CSSOM in the browser, and CSSOM parses each value as one
+ *      declaration — a value cannot open a rule, and no stylesheet is generated at all.
+ *   2. Series declared with `theme` need a `.dark`-scoped rule, which an inline style cannot
+ *      express, so they go through `ChartStyle` behind the allowlists below. Nothing is
+ *      escaped: a key, scope or value outside the allowlist is dropped.
+ */
+
+/** The `<custom-ident>` subset Qeetrix will interpolate into a selector or property name. */
+const CSS_IDENTIFIER = /^[a-zA-Z0-9_-]+$/;
+
+/**
+ * The character set every accepted colour value is drawn from. Declaration and rule
+ * terminators, string and escape openers, element-closing markup, at-rule and precedence
+ * markers, the comment character and all control characters are absent by construction, so a
+ * value cannot leave the declaration it is written into.
+ */
+const CSS_VALUE_CHARACTERS = /^[a-zA-Z0-9#%(),./+\s_-]+$/;
+
+/**
+ * Functions a colour value may call: the colour spaces, `var` and the maths functions. `url`
+ * and `image-set` are deliberately absent, so a config cannot make the host document issue a
+ * request for an attacker-chosen address.
+ */
+const ALLOWED_VALUE_FUNCTIONS = new Set([
+  "calc",
+  "clamp",
+  "color",
+  "color-mix",
+  "hsl",
+  "hsla",
+  "hwb",
+  "lab",
+  "lch",
+  "light-dark",
+  "max",
+  "min",
+  "oklab",
+  "oklch",
+  "rgb",
+  "rgba",
+  "var",
+]);
+
+const VALUE_FUNCTION_CALL = /([a-zA-Z-]*)\(/g;
+const MAX_VALUE_LENGTH = 128;
+const MAX_VALUE_DEPTH = 4;
+
+/**
+ * Reduces a React `useId()` value to a CSS identifier. React 19 already emits identifier-safe
+ * ids; deriving rather than trusting means a future format change degrades to a shorter scope
+ * instead of silently dropping every series colour.
+ */
+function toCssIdentifier(value: string) {
+  return value.replace(/[^a-zA-Z0-9_-]/g, "");
+}
+
+/** Whether a config colour can be written into generated CSS unchanged. */
+function isSafeCssValue(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const candidate = value.trim();
+  if (!candidate || candidate.length > MAX_VALUE_LENGTH) return false;
+  if (!CSS_VALUE_CHARACTERS.test(candidate)) return false;
+
+  let depth = 0;
+  for (const character of candidate) {
+    if (character === "(") {
+      depth += 1;
+      if (depth > MAX_VALUE_DEPTH) return false;
+    } else if (character === ")") {
+      depth -= 1;
+      if (depth < 0) return false;
+    }
+  }
+  if (depth !== 0) return false;
+
+  // An empty captured name is a bare parenthesised group, which no colour value needs.
+  for (const [, name] of candidate.matchAll(VALUE_FUNCTION_CALL)) {
+    if (!ALLOWED_VALUE_FUNCTIONS.has(name.toLowerCase())) return false;
+  }
+  return true;
+}
+
+/** Series declared with `color`, as inline custom properties. */
+function inlineSeriesVariables(config: ChartConfig) {
+  const variables: Record<string, string> = {};
+  for (const [key, item] of Object.entries(config)) {
+    if (item.theme || !CSS_IDENTIFIER.test(key)) continue;
+    if (isSafeCssValue(item.color)) variables[`--color-${key}`] = item.color.trim();
+  }
+  return variables;
+}
+
+/** Series declared with `theme`, which need the light/dark rule pair `ChartStyle` generates. */
+function themedSeries(config: ChartConfig): ChartConfig | null {
+  const entries = Object.entries(config).filter(([, item]) => item.theme);
+  return entries.length ? (Object.fromEntries(entries) as ChartConfig) : null;
+}
+
+/**
+ * Scoped custom properties for series that vary by theme. `ChartContainer` renders this only
+ * when a config uses `theme`; it is exported for consumers driving Recharts directly.
+ *
+ * `id` must be a CSS identifier and is matched against both `data-chart` and the
+ * `data-chart-scope` attribute `ChartContainer` sets. Keys and values outside the documented
+ * allowlists are omitted, so an untrusted config yields fewer declarations — never a
+ * different rule.
+ */
+const ChartStyle = ({
+  id,
+  config,
+  nonce,
+}: {
+  id: string;
+  config: ChartConfig;
+  /** CSP nonce, required when `style-src` does not allow inline stylesheets. */
+  nonce?: string;
+}) => {
+  if (!CSS_IDENTIFIER.test(id)) return null;
+
+  const colorConfig = Object.entries(config).filter(
+    ([key, item]) => CSS_IDENTIFIER.test(key) && (item.theme || item.color),
+  );
   if (!colorConfig.length) return null;
 
-  // Chart-scoped CSS custom properties. React renders a string child of <style>
-  // verbatim, so no dangerouslySetInnerHTML is required here.
   const css = Object.entries(THEMES)
-    .map(
-      ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .join("\n")}
-}
-`,
-    )
-    .join("\n");
+    .flatMap(([theme, prefix]) => {
+      const declarations = colorConfig.flatMap(([key, itemConfig]) => {
+        const color =
+          itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
+        return isSafeCssValue(color) ? [`  --color-${key}: ${color.trim()};`] : [];
+      });
+      if (!declarations.length) return [];
+      const scope = prefix ? `${prefix} ` : "";
+      const selector = `${scope}[data-chart="${id}"],\n${scope}[data-chart-scope="${id}"]`;
+      return [`${selector} {\n${declarations.join("\n")}\n}`];
+    })
+    .join("\n\n");
 
-  return <style>{css}</style>;
+  if (!css) return null;
+
+  return <style nonce={nonce}>{css}</style>;
 };
 
 const ChartTooltip = RechartsPrimitive.Tooltip;

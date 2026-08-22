@@ -6,7 +6,10 @@
  *
  *   - **Raw colours, z-indexes and shadows** are never acceptable in component source. Domain
  *     values and third-party selector shims need a narrow, reasoned exemption in
- *     scripts/config/raw-value-exemptions.json.
+ *     scripts/config/raw-value-exemptions.json. "Raw colour" includes the *named Tailwind
+ *     palette* (`text-sky-700`, `fill-amber-400`): it looks token-backed because it is a class
+ *     name, but the palette is not published to the runtime stylesheet, so a brand theme and the
+ *     contrast gate cannot reach it. Only the semantic namespaces are governed.
  *   - **Raw lengths in arbitrary values** (`text-[11px]`, `rounded-[2px]`, `w-[32px]`) are a
  *     pre-existing backlog, not a new mistake. They run on a ratchet:
  *     scripts/config/raw-dimension-baseline.json records what exists today, the gate fails on
@@ -39,6 +42,20 @@ const RULES = [
     message:
       "Use a semantic/primitive token; literal colors are allowed only as documented domain data.",
     pattern: /#[0-9a-fA-F]{3,8}\b|\b(?:rgb|rgba|hsl|hsla|oklch)\([^\n)]*\)/g,
+  },
+  {
+    id: "palette-utility",
+    message:
+      "Use a semantic role utility (bg-muted, text-success, text-syntax-key, …) — a named " +
+      "Tailwind palette class is a colour decision the component owns, so brand themes, " +
+      "forced-colors and the contrast gate cannot reach it.",
+    // Named palette utilities: `text-sky-700`, `dark:fill-amber-400`, `bg-rose-500/20`. The
+    // ramp name is what makes this unambiguous — `duration-300` and `z-50` do not match, and
+    // neither do the semantic namespaces (`bg-muted`, `text-primary`) or Qeetrix's own
+    // `--chart-*`/`--syntax-*` roles. Deliberately includes `neutral`: the palette is not
+    // published to the runtime stylesheet, so `bg-neutral-100` is still an unthemed decision.
+    pattern:
+      /\b(?:bg|text|border|fill|stroke|ring|outline|decoration|divide|accent|caret|placeholder|from|via|to|shadow)-(?:red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)-(?:50|[1-9]\d{2})\b(?:\/\d{1,3})?/g,
   },
   {
     id: "arbitrary-z-index",

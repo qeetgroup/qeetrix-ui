@@ -3,7 +3,10 @@
 import { ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 
+import type { DisclosureMessages, MessagesFor } from "@/lib/messages";
+import { disclosureMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface JSONTreeProps {
   /** Any JSON-serialisable value: object, array, string, number, boolean, null. */
@@ -13,15 +16,23 @@ interface JSONTreeProps {
   initialOpenDepth?: number;
   /** Default root label (e.g. "payload"). Not shown when null. */
   rootLabel?: string | null;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"disclosure">;
   className?: string;
 }
 
+// The same semantic syntax roles CodeBlock uses, so a payload reads identically whether it is
+// rendered as a tree or as a block. Punctuation is structure rather than syntax, so it stays on
+// the muted text role.
 const TOKEN = {
   punct: "text-muted-foreground",
-  key: "text-sky-700 dark:text-sky-400",
-  string: "text-emerald-700 dark:text-emerald-400",
-  number: "text-amber-700 dark:text-amber-400",
-  literal: "text-violet-700 dark:text-violet-400",
+  key: "text-syntax-key",
+  string: "text-syntax-string",
+  number: "text-syntax-number",
+  literal: "text-syntax-literal",
 } as const;
 
 function summary(value: unknown): string {
@@ -42,9 +53,11 @@ interface NodeProps {
   depth: number;
   initialOpenDepth: number;
   isLast: boolean;
+  /** Resolved once at the root and threaded down, so every triangle names itself alike. */
+  messages: DisclosureMessages;
 }
 
-function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
+function Node({ name, value, depth, initialOpenDepth, isLast, messages }: NodeProps) {
   const isContainer = value !== null && typeof value === "object" && (Array.isArray(value) || true);
   const [open, setOpen] = React.useState(depth < initialOpenDepth);
   const indent = { paddingInlineStart: `${depth * 14}px` } as const;
@@ -106,7 +119,7 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
-            aria-label={open ? "Collapse" : "Expand"}
+            aria-label={open ? messages.collapse : messages.expand}
             className="grid size-3 place-items-center"
           >
             <ChevronRightIcon
@@ -141,6 +154,7 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
                   depth={depth + 1}
                   initialOpenDepth={initialOpenDepth}
                   isLast={i === value.length - 1}
+                  messages={messages}
                 />
               );
             })}
@@ -163,7 +177,7 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
-            aria-label={open ? "Collapse" : "Expand"}
+            aria-label={open ? messages.collapse : messages.expand}
             className="grid size-3 place-items-center"
           >
             <ChevronRightIcon
@@ -196,6 +210,7 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
                 depth={depth + 1}
                 initialOpenDepth={initialOpenDepth}
                 isLast={i === entries.length - 1}
+                messages={messages}
               />
             ))}
             <div style={indent}>
@@ -227,7 +242,14 @@ function Node({ name, value, depth, initialOpenDepth, isLast }: NodeProps) {
  * OIDC discovery documents — anywhere the data is large enough that
  * `<CodeBlock>` would scroll forever.
  */
-function JSONTree({ value, initialOpenDepth = 1, rootLabel = null, className }: JSONTreeProps) {
+function JSONTree({
+  value,
+  initialOpenDepth = 1,
+  rootLabel = null,
+  messages: messageOverrides,
+  className,
+}: JSONTreeProps) {
+  const messages = useMessages("disclosure", disclosureMessages, messageOverrides);
   return (
     <div
       data-slot="json-tree"
@@ -242,6 +264,7 @@ function JSONTree({ value, initialOpenDepth = 1, rootLabel = null, className }: 
         depth={0}
         initialOpenDepth={initialOpenDepth}
         isLast
+        messages={messages}
       />
     </div>
   );

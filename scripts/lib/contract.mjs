@@ -16,6 +16,17 @@
  *   - **warning** — the manifest is valid but drifts from a convention (a non-standard `cva`
  *                   group, a size outside the recommended scale). Reported, never fatal:
  *                   Phase 1 does not break anything that already shipped.
+ *
+ * Three groups of rules exist because the metadata used to be trusted rather than checked:
+ *
+ *   - **schema** (MAN-001) — the field list is data (`MANIFEST_*_FIELDS`), checked in both
+ *     directions, so the published artifact and the declared TypeScript shape cannot drift.
+ *     Every tally is checked for completeness as well as for its counts, and every import path
+ *     is derived and compared rather than assumed.
+ *   - **evidence** (MAN-001, A11Y-001) — `testing.*` is re-derived from the test sources here
+ *     and compared, so a claim cannot outlive the assertion that proved it.
+ *   - **promotion** (GOV-001) — `status` must be declared, and `stable` must be earned. A
+ *     component does not become a stability promise by being added to a table.
  */
 
 const MANIFEST_LOCATION = "component-manifest.json";
@@ -56,6 +67,10 @@ export function validateManifest({
   registryDefaults = {},
   categoryMap = {},
   schemaVersion,
+  schemaFields = {},
+  packageVersion,
+  testEvidence,
+  propAxes,
 }) {
   const errors = [];
   const warnings = [];
@@ -84,6 +99,9 @@ export function validateManifest({
     KEYBOARD_KEYS,
     FOCUS_MODELS,
     LIVE_REGION_POLITENESS,
+    AXIS_PROP_NAMES,
+    AXIS_SOURCES,
+    DERIVABLE_DENSITY_APPLICABILITY,
   } = vocabulary;
 
   // ── the document itself ─────────────────────────────────────────────────────────────
@@ -103,6 +121,50 @@ export function validateManifest({
 
   if (manifest.count !== manifest.components.length) {
     error(null, `count is ${manifest.count} but there are ${manifest.components.length} entries`);
+  }
+
+  // ── the local schema (MAN-001) ──────────────────────────────────────────────────────
+  // Checked in both directions. `accessibilityAudit` was emitted for a whole schema version
+  // without appearing in the declared shape, because nothing compared the two.
+  //
+  // Passing `schemaFields.document` is what asks for whole-document validation. Without it,
+  // only the per-component rules run — which is how the negative-case suite exercises one rule
+  // at a time against a two-field synthetic manifest without tripping the other twenty.
+  const documentFields = schemaFields.document;
+  const fullDocument = Array.isArray(documentFields);
+  if (fullDocument) {
+    for (const key of Object.keys(manifest)) {
+      if (!documentFields.includes(key)) {
+        error(null, `emits an undeclared top-level field "${key}"`, {
+          location: "src/manifests/component-manifest.ts",
+          hint: "add it to MANIFEST_DOCUMENT_FIELDS and to the ComponentManifest type, or stop emitting it",
+        });
+      }
+    }
+    for (const key of documentFields) {
+      if (!(key in manifest)) {
+        error(null, `is missing the declared top-level field "${key}"`, {
+          location: "src/manifests/component-manifest.ts",
+        });
+      }
+    }
+  }
+
+  if (packageVersion !== undefined && manifest.version !== packageVersion) {
+    error(null, `version is "${manifest.version}" but package.json says "${packageVersion}"`, {
+      hint: "the manifest is stale — regenerate it",
+    });
+  }
+  // Date-only and UTC-derived. A timestamp with an offset would make the tracked artifact
+  // depend on the timezone of the machine that generated it.
+  if (
+    fullDocument &&
+    (typeof manifest.generated !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(manifest.generated))
+  ) {
+    error(null, `generated is "${manifest.generated}"`, {
+      expected: "an ISO date, YYYY-MM-DD",
+      hint: "anything with a time or an offset leaks the generating machine's clock into a tracked file",
+    });
   }
 
   // The category vocabulary in the contract must match the category map on disk, or every
@@ -128,6 +190,8 @@ export function validateManifest({
   // ── per component ───────────────────────────────────────────────────────────────────
   const seenSlugs = new Map();
   const seenNames = new Map();
+  /** Collected during the loop and resolved after it, once every name is known. */
+  const deprecationReplacements = [];
   const slugToCategory = new Map(
     Object.entries(categoryMap).flatMap(([category, slugs]) =>
       slugs.map((slug) => [slug, category]),
@@ -170,6 +234,44 @@ export function validateManifest({
       }
     }
 
+    // ── the entry's own schema, and its import surface (MAN-001) ─────────────────
+    const entryFields = schemaFields.entry;
+    if (Array.isArray(entryFields)) {
+      for (const key of Object.keys(entry)) {
+        if (!entryFields.includes(key)) {
+          error(label, `emits an undeclared field "${key}"`, {
+            location: "src/manifests/component-manifest.ts",
+            hint: "add it to MANIFEST_ENTRY_FIELDS and to ComponentManifestEntry, or stop emitting it",
+          });
+        }
+      }
+      for (const key of entryFields) {
+        if (!(key in entry)) {
+          error(label, `is missing the declared field "${key}"`, {
+            location: "src/manifests/component-manifest.ts",
+          });
+        }
+      }
+    }
+
+    // Every published path is derived, so it can be recomputed and compared rather than
+    // trusted. A wrong deep import is a 404 for a consumer and invisible to a type check.
+    if (typeof entry.slug === "string" && typeof entry.category === "string") {
+      const deep = `@qeetrix/ui/components/${entry.slug}`;
+      const group = `@qeetrix/ui/components/${entry.category}`;
+      if (entry.deepImport !== deep) {
+        error(label, `deepImport is "${entry.deepImport}"`, { expected: deep });
+      }
+      if (entry.groupImport !== group) {
+        error(label, `groupImport is "${entry.groupImport}"`, { expected: group });
+      }
+      if (entry.import !== "@qeetrix/ui" && entry.import !== deep) {
+        error(label, `import is "${entry.import}"`, {
+          expected: `"@qeetrix/ui", or "${deep}" when the file is @barrel-exclude`,
+        });
+      }
+    }
+
     // category + layer
     if (!(COMPONENT_CATEGORIES ?? []).includes(entry.category)) {
       error(label, `category "${entry.category}" is not a valid category`, {
@@ -187,12 +289,44 @@ export function validateManifest({
       });
     }
 
-    // status
+    // ── status: declared, and earned (GOV-001) ───────────────────────────────────
     if (!(COMPONENT_STATUSES ?? []).includes(entry.status)) {
       error(label, `status "${entry.status}" is not a valid status`, {
         expected: `one of ${(COMPONENT_STATUSES ?? []).join(", ")}`,
         location: REGISTRY_LOCATION,
       });
+    }
+
+    const declaration = registry[entry.slug];
+    if (declaration !== undefined && declaration.status === undefined) {
+      error(label, "does not declare a status", {
+        expected: 'status: "experimental" | "beta" | "stable" | "deprecated"',
+        location: REGISTRY_LOCATION,
+        hint: "maturity is a decision; inheriting it from a default makes every component a promise nobody made",
+      });
+    }
+
+    // Promotion evidence. `stable` is a commitment about API, accessibility and support, so it
+    // has to be backed by the three things this repository can actually check.
+    if (entry.status === "stable") {
+      const missing = [];
+      if (entry.testing?.unit !== true) missing.push("a unit test suite (testing.unit)");
+      if (entry.testing?.accessibility !== true) {
+        missing.push("a test that runs axe (testing.accessibility)");
+      }
+      if (entry.accessibility?.pattern === null || entry.accessibility?.pattern === undefined) {
+        missing.push("a reviewed accessibility pattern (accessibility.pattern)");
+      }
+      if (entry.accessibility?.dimensions?.semantic === "not-audited") {
+        missing.push('an audited `semantic` dimension (currently "not-audited")');
+      }
+      if (missing.length > 0) {
+        error(label, `is "stable" without the evidence for it — missing ${missing.join(", ")}`, {
+          expected: 'status: "beta" until the evidence exists',
+          location: REGISTRY_LOCATION,
+          hint: "see docs/governance/component-status.md § Promotion evidence",
+        });
+      }
     }
 
     // capabilities
@@ -211,6 +345,21 @@ export function validateManifest({
         error(label, `capabilities.ssr is "${entry.capabilities.ssr}"`, {
           expected: `one of ${(SSR_SUPPORT_LEVELS ?? []).join(", ")}`,
         });
+      }
+      // Density applicability: `not-applicable` and `unsupported` are claims about design
+      // intent — "this would look no different at any density and never should" — so they may
+      // only come from an explicit registry entry. Derivation may emit `supported` (the source
+      // reads a density metric) or `unknown` (nobody has said), and nothing else.
+      const derivable = DERIVABLE_DENSITY_APPLICABILITY;
+      if (Array.isArray(derivable) && !derivable.includes(entry.capabilities.density)) {
+        const declared = registry[entry.slug]?.capabilities?.density;
+        if (declared !== entry.capabilities.density) {
+          error(label, `capabilities.density is "${entry.capabilities.density}" but undeclared`, {
+            expected: `an explicit capabilities.density declaration, or one of ${derivable.join(" / ")}`,
+            location: REGISTRY_LOCATION,
+            hint: "source inspection cannot decide that density is irrelevant to a component",
+          });
+        }
       }
     }
 
@@ -357,12 +506,44 @@ export function validateManifest({
           });
         }
       }
+      // The claims are re-derived here from the same sources and compared (MAN-001). A
+      // derived field is only trustworthy if something checks that it still matches what it
+      // was derived from — otherwise it outlives the assertion that produced it, which is
+      // exactly how a manifest ends up advertising an interaction test nobody wrote.
+      const observed = testEvidence?.[entry.slug];
+      if (observed !== undefined) {
+        for (const [gate, actual] of Object.entries(observed)) {
+          if (entry.testing[gate] === actual) continue;
+          error(label, `testing.${gate} is ${entry.testing[gate]} but the sources say ${actual}`, {
+            expected: String(actual),
+            hint: "regenerate the manifest; if it still disagrees, the generator's rule and this check have drifted apart",
+          });
+        }
+      }
     }
 
     // api / variants
     if (!isPlainObject(entry.api)) {
       error(label, "api block is missing");
     } else {
+      const apiFields = schemaFields.api;
+      if (Array.isArray(apiFields)) {
+        for (const key of Object.keys(entry.api)) {
+          if (!apiFields.includes(key)) {
+            error(label, `api emits an undeclared field "${key}"`, {
+              location: "src/manifests/component-manifest.ts",
+              hint: "add it to MANIFEST_API_FIELDS and to ComponentManifestEntry['api']",
+            });
+          }
+        }
+        for (const key of apiFields) {
+          if (!(key in entry.api)) {
+            error(label, `api is missing the declared field "${key}"`, {
+              location: "src/manifests/component-manifest.ts",
+            });
+          }
+        }
+      }
       for (const field of ["variants", "sizes", "variantGroups", "domainAxes"]) {
         if (!isStringArrayOrNull(entry.api[field])) {
           error(label, `api.${field} must be an array of strings or null`);
@@ -479,6 +660,62 @@ export function validateManifest({
         }
       }
 
+      // ── axis metadata (CVA-001) ──────────────────────────────────────────────────
+      // `null` variants used to mean two different things: "no design axis" and "there is an
+      // axis and nobody recorded it". The source settles which: if the component's public
+      // props declare an axis-shaped name, the axis exists and must be recorded.
+      // The manifest is what consumers read, so it is what is checked. The registry fallback
+      // is only reached for a manifest generated before the field existed.
+      const axisSources = entry.api.axisSources ?? declaration?.api?.axisSources ?? {};
+      for (const [axis, record] of Object.entries(axisSources)) {
+        if (!(AXIS_PROP_NAMES ?? []).includes(axis)) {
+          error(label, `records an axis source for "${axis}", which is not an axis prop name`, {
+            expected: `one of ${(AXIS_PROP_NAMES ?? []).join(", ")}`,
+            location: REGISTRY_LOCATION,
+          });
+        }
+        if (!isPlainObject(record) || !(AXIS_SOURCES ?? []).includes(record.source)) {
+          error(label, `api.axisSources.${axis}.source is "${record?.source}"`, {
+            expected: `one of ${(AXIS_SOURCES ?? []).join(", ")}`,
+            location: REGISTRY_LOCATION,
+          });
+        } else if (typeof record.note !== "string" || record.note.trim().length === 0) {
+          error(label, `api.axisSources.${axis} has no note`, {
+            expected: "a sentence a reviewer can check",
+            location: REGISTRY_LOCATION,
+            hint: 'a bare "source" is the same shrug as a null, with more characters',
+          });
+        }
+      }
+
+      const declaredAxes = propAxes?.[entry.slug];
+      if (Array.isArray(declaredAxes)) {
+        const recorded = new Set([
+          ...(entry.api.variants !== null ? ["variant"] : []),
+          ...(entry.api.sizes !== null ? ["size"] : []),
+          ...(entry.api.variantGroups ?? []),
+          ...domainAxes,
+          ...Object.keys(axisSources),
+        ]);
+        for (const axis of declaredAxes) {
+          if (recorded.has(axis)) continue;
+          error(label, `has a public "${axis}" prop but records no axis for it`, {
+            expected: `api.axisSources.${axis} = { source, note }`,
+            location: REGISTRY_LOCATION,
+            hint: "null in the manifest cannot mean both \u201cno axis\u201d and \u201cnot written down\u201d",
+          });
+        }
+        // The reverse: a recorded axis for a prop the component does not declare is a stale
+        // note, and a stale note is worse than none.
+        for (const axis of Object.keys(axisSources)) {
+          if (declaredAxes.includes(axis)) continue;
+          error(label, `records an axis source for "${axis}", which its props do not declare`, {
+            location: REGISTRY_LOCATION,
+            hint: "remove the record, or restore the prop",
+          });
+        }
+      }
+
       // Convention: the visual and size axes have one name each in this library.
       for (const group of entry.api.variantGroups ?? []) {
         const canonical = VARIANT_GROUP_ALIASES?.[group];
@@ -513,6 +750,44 @@ export function validateManifest({
             });
           }
         }
+        // A replacement nobody can import is a migration path to nowhere. Validated by
+        // resolving the name, not by checking that the field is non-empty (GOV-001).
+        if (typeof deprecation.replacement === "string") {
+          deprecationReplacements.push({ label, name: deprecation.replacement });
+        } else if (deprecation.removeIn !== null) {
+          error(label, "announces a removal version with no replacement", {
+            expected: "a replacement component, or a migration note explaining there is none",
+            location: REGISTRY_LOCATION,
+          });
+        }
+        // `removeIn` is a promise to consumers, so it has to be a version they can plan
+        // against: a major, and a future one.
+        if (typeof deprecation.removeIn === "string") {
+          const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(deprecation.removeIn);
+          if (match === null) {
+            error(label, `deprecation.removeIn is "${deprecation.removeIn}"`, {
+              expected: "a semver release, e.g. 2.0.0",
+              location: REGISTRY_LOCATION,
+            });
+          } else if (match[2] !== "0" || match[3] !== "0") {
+            error(label, `deprecation.removeIn is "${deprecation.removeIn}"`, {
+              expected: "a major release — a removal cannot ship in a minor or a patch",
+              location: REGISTRY_LOCATION,
+            });
+          } else if (packageVersion !== undefined) {
+            const current = Number.parseInt(packageVersion.split(".")[0], 10);
+            if (Number.parseInt(match[1], 10) <= current) {
+              error(
+                label,
+                `deprecation.removeIn is "${deprecation.removeIn}" but the package is already ${packageVersion}`,
+                {
+                  expected: `${current + 1}.0.0 or later`,
+                  location: REGISTRY_LOCATION,
+                },
+              );
+            }
+          }
+        }
       }
     } else if (deprecation !== null && deprecation !== undefined) {
       error(label, `has a deprecation record but status is "${entry.status}"`, {
@@ -543,17 +818,48 @@ export function validateManifest({
   }
 
   // ── tallies ─────────────────────────────────────────────────────────────────────────
-  const tally = (field, keyOf) => {
-    if (!isPlainObject(manifest[field])) return;
+  // Every tally is checked three ways: each recorded count is right, no vocabulary key is
+  // missing, and the totals add up. Checking only the keys that happen to be present let a
+  // whole state disappear from the summary without a word.
+  const tally = (field, keyOf, allKeys) => {
+    const expectedKeys = fullDocument ? allKeys : undefined;
+    if (!isPlainObject(manifest[field])) {
+      if (fullDocument) error(null, `${field} tally is missing`);
+      return;
+    }
     for (const [key, value] of Object.entries(manifest[field])) {
       const actual = manifest.components.filter((entry) => keyOf(entry) === key).length;
       if (value !== actual) {
         error(null, `${field}.${key} is ${value} but ${actual} components match`);
       }
     }
+    for (const key of expectedKeys ?? []) {
+      if (!(key in manifest[field])) {
+        error(null, `${field} has no entry for "${key}"`, {
+          hint: "a state missing from the summary reads as zero to every consumer",
+        });
+      }
+    }
+    const summed = Object.values(manifest[field]).reduce((n, value) => n + value, 0);
+    if (expectedKeys !== undefined && summed !== manifest.components.length) {
+      error(
+        null,
+        `${field} totals ${summed} across ${manifest.components.length} components — ` +
+          "every component must fall in exactly one bucket",
+      );
+    }
   };
-  tally("categories", (entry) => entry.category);
-  tally("statuses", (entry) => entry.status);
+  tally("categories", (entry) => entry.category, Object.keys(categoryMap));
+  tally("statuses", (entry) => entry.status, COMPONENT_STATUSES);
+  tally("accessibilityAudit", (entry) => entry.accessibility?.audit, A11Y_AUDIT_STATES);
+
+  for (const { label, name } of deprecationReplacements) {
+    if (seenNames.has(name) || seenSlugs.has(name)) continue;
+    error(label, `names "${name}" as its replacement, which is not a component in this library`, {
+      expected: "the PascalCase name or the slug of a component that exists",
+      location: REGISTRY_LOCATION,
+    });
+  }
 
   // ── registry ↔ filesystem ───────────────────────────────────────────────────────────
   for (const slug of Object.keys(registry)) {

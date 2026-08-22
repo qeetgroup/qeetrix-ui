@@ -65,4 +65,20 @@ describe("Sheet", () => {
     render(<SheetExample open />);
     expect(await a11y(document.body)).toHaveNoViolations();
   });
+
+  // jsdom performs no layout: these assert the declarations that keep a tall sheet reachable
+  // on a short viewport, not the resulting geometry, which needs a browser.
+  it("bounds its height to the dynamic viewport and scrolls its own content", () => {
+    render(<SheetExample open />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("max-h-[100dvh]");
+    expect(dialog.className).toContain("overflow-y-auto");
+  });
+
+  it("sits on the named drawer layer rather than an ad-hoc z-index", () => {
+    render(<SheetExample open />);
+    expect(screen.getByRole("dialog").className).toContain("z-(--qx-z-drawer)");
+    const backdrop = document.querySelector('[data-slot="sheet-overlay"]');
+    expect(backdrop?.className).toContain("z-(--qx-z-drawer-backdrop)");
+  });
 });

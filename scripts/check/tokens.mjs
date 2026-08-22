@@ -20,7 +20,7 @@
  *   deprecation           an incomplete deprecation record, a replacement that does not exist,
  *                         or a live token still pointing at a deprecated one
  *   naming                non-kebab segments, physical directions, un-namespaced component tokens
- *   theme-parity          a dark token with no base value, or a type that changes across themes
+ *   theme-parity          a token with no base-theme value, or a type that changes across themes
  *
  * It also reports two things without failing, because resolving them is a design decision
  * rather than a correctness one: components whose inline density fallback disagrees with the
@@ -32,6 +32,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadThemeNames } from "../lib/themes.mjs";
 import {
   formatTokenFinding,
   loadTokenGraph,
@@ -44,7 +45,12 @@ const VERBOSE = process.argv.includes("--verbose");
 
 const graph = loadTokenGraph({ root: ROOT });
 const themeVariables = readThemeVariables(join(ROOT, "src/styles/index.css"));
-const findings = validateTokenGraph({ graph, themeVariables });
+// Every registered theme, base first — not the validator's ["light", "dark"] default. Parity,
+// cycle detection and reference resolution all run per theme, so a theme that is not in this
+// list is a theme nothing checks. loadThemeNames throws if the registry and
+// src/tokens/theme/* disagree.
+const themes = loadThemeNames();
+const findings = validateTokenGraph({ graph, themeVariables, themes });
 
 const errors = findings.filter((f) => f.severity !== "warning");
 const warnings = findings.filter((f) => f.severity === "warning");
@@ -111,7 +117,8 @@ const perLayer = ["primitive", "semantic", "component"].map((layer) => {
 });
 
 console.log(
-  `✓ tokens — ${total} tokens valid (${perLayer.join(" · ")}), no cycles, themes in parity.`,
+  `✓ tokens — ${total} tokens valid (${perLayer.join(" · ")}), no cycles, ` +
+    `${themes.length} registered theme(s) in parity (${themes.join(", ")}).`,
 );
 
 if (mismatches.length > 0) {

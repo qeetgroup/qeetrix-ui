@@ -21,6 +21,14 @@ import * as React from "react";
  * Both modes call `onChange` with the *intended* next value, so a controlled parent and an
  * uncontrolled observer receive the same thing.
  *
+ * **Switching modes mid-life.** Going *uncontrolled → controlled* is safe: the prop takes over
+ * from that render on, and the internal state it displaces is never read again. Going the other
+ * way is not, and is not made safe here: when `value` becomes `undefined` again the hook falls
+ * back to the internal state, which is whatever it held before the parent took over — usually
+ * the original `defaultValue` — so the control jumps backwards. React's own inputs behave the
+ * same way and warn about it; this hook cannot warn (there is no logging in `src/`), so the
+ * behaviour is pinned by a test instead. Pick one mode per mounted lifetime, or remount.
+ *
  * @example
  * const [value, setValue] = useControllableState({ value, defaultValue, onChange: onValueChange });
  * // functional updates work in both modes

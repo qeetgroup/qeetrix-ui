@@ -20,7 +20,11 @@
  * Schema version 2 adds the contract fields; every version-1 field is still emitted, so
  * existing consumers keep working. See docs/standards/component-manifest.md.
  *
- *   node scripts/build/manifest.mjs
+ * The output is a tracked artifact, so it has to be reproducible from those inputs alone: no
+ * wall-clock stamp, and no dependence on which sibling repos happen to be checked out.
+ *
+ *   node scripts/build/manifest.mjs            # regenerate
+ *   node scripts/build/manifest.mjs --check    # prove the tracked file is current (CI)
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -39,6 +43,18 @@ const COMPONENTS = join(PKG, "src/components");
 const STORIES = join(PKG, "../qeetrix-story/stories");
 const GLOBAL_A11Y_HARNESS = join(PKG, "src/__tests__/a11y.test.tsx");
 const HYDRATION_HARNESS = join(PKG, "src/__tests__/hydration.test.tsx");
+const OUTPUT = join(PKG, "component-manifest.json");
+
+/** `--check` regenerates in memory and diffs against the tracked file; it never writes. */
+const CHECK = process.argv.includes("--check");
+
+/**
+ * The manifest currently on disk. Two things read it back:
+ *   - `--check`, to prove the tracked artifact is current;
+ *   - the story index and the `generated` date, so a machine without the sibling story repo
+ *     reproduces the same bytes instead of quietly rewriting 145 entries.
+ */
+const tracked = existsSync(OUTPUT) ? JSON.parse(readFileSync(OUTPUT, "utf8")) : null;
 
 const { version } = JSON.parse(readFileSync(join(PKG, "package.json"), "utf8"));
 
@@ -83,7 +99,7 @@ for (const category of categories) {
   }
   const testDir = join(dir, "__tests__");
   if (!existsSync(testDir)) continue;
-  for (const file of readdirSync(testDir)) {
+  for (const file of readdirSync(testDir).sort()) {
     const match = /^(.*)\.test\.tsx?$/.exec(file);
     if (!match) continue;
     // A slug may have both a .test.ts and a .test.tsx suite; treat them as one body of tests.
@@ -92,8 +108,16 @@ for (const category of categories) {
   }
 }
 
-// Story files live in the sibling qeetrix-story repo; index their basenames once. Read-only —
-// this build never writes outside the package.
+/**
+ * Story files live in the sibling qeetrix-story repo; index their basenames once. Read-only —
+ * this build never writes outside the package.
+ *
+ * The sibling is not part of this package, so its absence must not change the output: it used
+ * to flip `story` and `testing.visual` to `false` for every component, which made a *tracked*
+ * artifact depend on the checkout topology of the machine that ran the build. When the sibling
+ * is missing the last indexed answer is carried forward from the tracked manifest, and the
+ * source of the index is reported, so the manifest is reproducible everywhere.
+ */
 const storySlugs = new Set();
 const walk = (dir) => {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -102,10 +126,16 @@ const walk = (dir) => {
       storySlugs.add(e.name.replace(/\.stories\.tsx?$/, "").toLowerCase());
   }
 };
-try {
+let storyIndexSource = "qeetrix-story";
+if (existsSync(STORIES)) {
   walk(STORIES);
-} catch {
-  // stories directory is optional
+} else if (tracked) {
+  storyIndexSource = "carried forward from component-manifest.json";
+  for (const component of tracked.components ?? []) {
+    if (component.story) storySlugs.add(component.slug);
+  }
+} else {
+  storyIndexSource = "none";
 }
 
 // Components covered by a global harness rather than a colocated suite.
@@ -123,7 +153,8 @@ const globalA11ySlugs = harnessSlugs(read(GLOBAL_A11Y_HARNESS));
 const hydrationSlugs = harnessSlugs(read(HYDRATION_HARNESS));
 
 const components = entries
-  .sort((a, b) => a.slug.localeCompare(b.slug))
+  // Not localeCompare: it is locale-sensitive, and this file's byte order is a tracked artifact.
+  .sort((a, b) => (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0))
   .map(({ slug, category }) => {
     const relativePath = `src/components/${category}/${slug}.tsx`;
     const source = readFileSync(join(PKG, relativePath), "utf8");
@@ -168,6 +199,7 @@ const components = entries
         ...derived.api,
         variantAliases: declared.api?.variantAliases ?? null,
         domainAxes: declared.api?.domainAxes ?? null,
+        axisSources: declared.api?.axisSources ?? null,
         controlled: declared.api?.controlled ?? null,
       },
       accessibility: accessibilityFor(declared),
@@ -226,6 +258,21 @@ function accessibilityFor(declared) {
 const countBy = (keys, predicate) =>
   Object.fromEntries(keys.map((key) => [key, components.filter((c) => predicate(c, key)).length]));
 
+/**
+ * `generated` is the date the catalog last *changed*, not the date this script last ran.
+ *
+ * A wall-clock stamp made every run non-reproducible: two machines, or the same machine on two
+ * days, produced a different tracked file from identical inputs, so "is the committed manifest
+ * current?" could not be answered by regenerating and diffing. Holding the tracked date while
+ * the content is identical makes that check exact. `QEETRIX_MANIFEST_DATE` pins it outright for
+ * hermetic builds.
+ */
+const withoutDate = (value) => {
+  if (!value) return null;
+  const { generated: _generated, ...rest } = value;
+  return JSON.stringify(rest);
+};
+
 const manifest = {
   $schema: "https://qeetrix.qeet.in/manifest.schema.json",
   schemaVersion: MANIFEST_SCHEMA_VERSION,
@@ -233,7 +280,7 @@ const manifest = {
   version,
   description:
     "Qeet Group design system — accessible, token-driven React components (Base UI + Tailwind v4).",
-  generated: new Date().toISOString().slice(0, 10),
+  generated: "",
   styles: "@qeetrix/ui/styles.css",
   tokens: "@qeetrix/ui/tokens.json",
   count: components.length,
@@ -247,7 +294,51 @@ const manifest = {
   components,
 };
 
-writeFileSync(join(PKG, "component-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+const unchanged = withoutDate(manifest) === withoutDate(tracked);
+manifest.generated =
+  process.env.QEETRIX_MANIFEST_DATE ??
+  (unchanged && tracked?.generated ? tracked.generated : new Date().toISOString().slice(0, 10));
+
+const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
+
+if (CHECK) {
+  const current = existsSync(OUTPUT) ? readFileSync(OUTPUT, "utf8") : null;
+  if (current === serialized) {
+    console.log(
+      `✓ component-manifest.json is current and reproducible — ${components.length} components ` +
+        `(story index: ${storyIndexSource})`,
+    );
+    process.exit(0);
+  }
+  console.error("✗ component-manifest.json is stale — regenerating it produces different bytes.");
+  if (current === null) {
+    console.error("  the file does not exist");
+  } else {
+    const before = JSON.parse(current);
+    const changed = [];
+    for (const key of new Set([...Object.keys(before), ...Object.keys(manifest)])) {
+      if (key === "components") continue;
+      if (JSON.stringify(before[key]) !== JSON.stringify(manifest[key])) {
+        changed.push(`${key}: ${JSON.stringify(before[key])} → ${JSON.stringify(manifest[key])}`);
+      }
+    }
+    const bySlug = new Map((before.components ?? []).map((c) => [c.slug, c]));
+    for (const component of components) {
+      const previous = bySlug.get(component.slug);
+      if (!previous) changed.push(`components.${component.slug}: added`);
+      else if (JSON.stringify(previous) !== JSON.stringify(component))
+        changed.push(`components.${component.slug}: changed`);
+      bySlug.delete(component.slug);
+    }
+    for (const slug of bySlug.keys()) changed.push(`components.${slug}: removed`);
+    for (const line of changed.slice(0, 20)) console.error(`  ${line}`);
+    if (changed.length > 20) console.error(`  … and ${changed.length - 20} more`);
+  }
+  console.error("\nRun `bun run build:manifest` and commit the result.");
+  process.exit(1);
+}
+
+writeFileSync(OUTPUT, serialized);
 
 const reviewed = components.filter((c) => c.accessibility.pattern !== null).length;
 const unknowns = components.reduce(
@@ -257,5 +348,6 @@ const unknowns = components.reduce(
 console.log(
   `✔ component-manifest.json (schema v${MANIFEST_SCHEMA_VERSION}) — ${components.length} components across ${categories.length} categories ` +
     `(${components.filter((c) => c.tested).length} tested, ${components.filter((c) => c.story).length} with stories)\n` +
-    `  accessibility reviewed: ${reviewed}/${components.length} · unknown capabilities: ${unknowns}`,
+    `  accessibility reviewed: ${reviewed}/${components.length} · unknown capabilities: ${unknowns} · ` +
+    `story index: ${storyIndexSource}`,
 );

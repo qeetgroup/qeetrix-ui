@@ -3,7 +3,10 @@
 import * as React from "react";
 
 import { Input } from "@/components/inputs/input";
+import type { MessagesFor } from "@/lib/messages";
+import { editableMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 // ---------------------------------------------------------------------------
 // Context
@@ -44,10 +47,18 @@ export interface EditableProps extends Omit<React.ComponentProps<"div">, "defaul
   onEdit?: () => void;
   /** Called when the user cancels an in-progress edit (Escape). */
   onCancel?: () => void;
-  /** Placeholder shown when value is empty. Defaults to "Click to edit". */
+  /**
+   * Placeholder shown when value is empty. Defaults to "Click to edit". Equivalent to
+   * `messages={{ placeholder }}` and wins over it.
+   */
   placeholder?: string;
   /** Disables the editable. */
   disabled?: boolean;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"editable">;
   children: React.ReactNode;
 }
 
@@ -66,12 +77,14 @@ function Editable({
   onValueChange,
   onEdit,
   onCancel,
-  placeholder = "Click to edit",
+  placeholder,
   disabled = false,
+  messages: messageOverrides,
   className,
   children,
   ...props
 }: EditableProps) {
+  const messages = useMessages("editable", editableMessages, messageOverrides);
   const [internalValue, setInternalValue] = React.useState(defaultValue);
   const [isEditing, setIsEditing] = React.useState(false);
 
@@ -104,7 +117,7 @@ function Editable({
       value={{
         isEditing,
         value: committedValue,
-        placeholder,
+        placeholder: placeholder ?? messages.placeholder,
         disabled,
         startEditing,
         submit,

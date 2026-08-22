@@ -44,7 +44,7 @@
 | 🌗 **First-class dark mode** | Every component themed through semantic tokens — no hard-coded greys |
 | 🏢 **Enterprise breadth** | Data tables, command palette, rich-text editor, charts, sidebar shells, date/time pickers, and more |
 | 🧱 **Consistent foundation** | Shared `cva` + `cn()` conventions, `data-slot` hooks, tree-shakeable named exports |
-| 🔒 **Quality-gated** | Typecheck + ESLint + Vitest/axe + WCAG contrast + Storybook build run in CI on every PR |
+| 🔒 **Quality-gated** | Typecheck, Biome, Vitest + axe, real-browser tests, coverage, WCAG contrast, architecture, API, manifest, bundle and performance gates — all on every PR |
 
 ---
 
@@ -105,15 +105,29 @@ dependencies are **deny by default**. The allow-list lives in [`src/contracts/la
 
 ### Import paths
 
+Every published path is **enumerated** in the `exports` map — there are no wildcards over
+`hooks/`, `lib/`, `providers/` or `blocks/`, so a new module in one of those folders is internal
+until someone adds it to the map. `bun run check:package` proves each path below resolves in the
+packed tarball, and that everything under *Not published* does not.
+
 | Specifier | Resolves to |
 |:--|:--|
-| `@qeetrix/ui` | the full barrel (680 exports) |
+| `@qeetrix/ui` | the full barrel — every component, provider, brand asset and helper |
 | `@qeetrix/ui/components/button` | one component — **stable regardless of its category** |
 | `@qeetrix/ui/components/actions` | a whole category |
 | `@qeetrix/ui/providers` · `/providers/theme-provider` | the providers |
-| `@qeetrix/ui/brand` · `/blocks` | brand assets · page-level blocks |
+| `@qeetrix/ui/brand` · `/blocks` · `/blocks/auth` | brand assets · page-level blocks |
+| `@qeetrix/ui/hooks/use-media-query` · `/use-mobile` · `/use-motion` · `/use-prefers-reduced-motion` | the public hooks (also on the barrel) |
+| `@qeetrix/ui/lib/utils` · `/motion` · `/responsive` · `/token-values` | the public helpers (also on the barrel) |
 | `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens |
 | `@qeetrix/ui/manifest.json` | the machine-readable component catalog + governance contract |
+| `@qeetrix/ui/components/ui/button` | legacy pre-1.0 path, kept resolvable |
+
+**Not published** — these resolve to nothing, deliberately:
+`@qeetrix/ui/components/<category>/<slug>` (the category a component lives in is an
+implementation detail; use the flat path), `@qeetrix/ui/components/index` (use the barrel),
+`@qeetrix/ui/hooks/use-controllable-state` and anything under `primitives/`, `contracts/`,
+`manifests/`, `runtime/` or `foundations/`.
 
 ---
 
@@ -200,20 +214,28 @@ bun run build            # tokens → manifest → tsc → aliases → subpath s
 bun run test             # Vitest + vitest-axe
 bun run verify           # typecheck · lint · test · architecture · API lock · a11y · tokens · contrast
 bun run verify:package   # build, pack, and compile real consumers against the tarball
+bun run check:generated  # the tracked generated artifacts match their generators
+bun run check:release    # the publication preflight (release gate, not a build gate)
 bun run format           # biome check --write
 ```
 
-`verify` is the gate to run before pushing. Its seven structural checks are what keep the architecture honest:
+`verify:package` fails closed. The Vite + Tailwind consumer passes are hermetic; the Next.js RSC
+pass needs `qeetrix-docs` installed next to this repo, and skipping it has to be asked for with
+`QEETRIX_SKIP_NEXT_CONSUMER=1` — a run that could not verify server components says so loudly
+instead of exiting green.
+
+`verify` is the gate to run before pushing. Its eight structural checks are what keep the architecture honest:
 
 | Check | Enforces |
 |:--|:--|
 | `check:architecture` | category map ↔ filesystem, complete barrels, no barrel imports, kebab-case, client directives, **layer boundaries** |
 | `check:contract` | every component satisfies the component contract — valid status, capabilities, states, ARIA pattern, deprecation record |
-| `check:exports` | the published surface matches `src/__tests__/public-api.json`, and is *intentional* — no unreachable component, no leaking `@barrel-exclude`, no duplicate export |
+| `check:exports` | the published surface of all 21 entry points matches `src/__tests__/public-api.json` **down to each export's kind and each declared prop's optionality, type, generics and base types**, and is *intentional* — no unreachable component, no leaking `@barrel-exclude`, no duplicate export |
 | `check:a11y` | every component has an axe test (currently **145/145**) |
 | `check:tokens` | the token graph — layer direction, references, cycles, types, theme parity, deprecations |
 | `check:token-usage` | no raw colours, z-indexes, shadows or bare lengths in component source |
 | `check:contrast` | WCAG-AA on every semantic text/surface pair, both themes |
+| `check:performance` | the scale baseline in `src/__tests__/performance/baseline.json` — budgets may only shrink |
 
 **Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/component-api.md](docs/standards/component-api.md).
 
@@ -221,15 +243,30 @@ bun run format           # biome check --write
 
 ## 🚢 Release
 
-Versioning + npm publishing run on [Changesets](.changeset/README.md):
+Versioning + publishing run on [Changesets](https://github.com/changesets/changesets) and are
+documented in [docs/governance/release.md](docs/governance/release.md), behind a gate:
 
 ```bash
 bun run changeset          # record a change + bump level
 bun run version-packages   # apply bumps + changelog (usually CI)
-bun run release            # build, then publish
+bun run check:release      # the publication preflight — posture, lockfile, pinned toolchain
+bun run release            # check:release → verify → verify:package → publish
 ```
 
-CI runs `verify` on every PR; merging the **Version Packages** PR publishes to the `@qeetrix` npm org (needs `NPM_TOKEN`).
+`bun run release` cannot publish something the quality gate rejects, and
+[`.github/workflows/release.yml`](.github/workflows/release.yml) is the only place it is meant to
+run: merging to `main` opens the **Version Packages** PR, and merging *that* publishes — after
+`check:release`, `verify` and `verify:package` all pass in the protected `npm-publish` environment.
+
+> **Publication is currently blocked, on purpose.** `bun run check:release` fails while
+> `license: "UNLICENSED"` sits next to public publication settings, and while `bun.lock` is
+> uncommitted. Both are decisions, not defects — see
+> [docs/governance/release.md](docs/governance/release.md) for what a human still has to do
+> (licence posture, registry, `npm-publish` environment reviewers, branch protection).
+
+**Supported development environments: macOS and Linux.** The scripts use Node's filesystem and
+path APIs rather than a POSIX shell, but only Linux is exercised in CI, so Windows is unverified
+rather than supported.
 
 ---
 
@@ -245,5 +282,7 @@ CI runs `verify` on every PR; merging the **Version Packages** PR publishes to t
 | 🗺 Component backlog | the sibling `qeetrix-files` repo → `COMPONENT-PROPOSALS.md` |
 | 🔧 Contributing | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 
-Part of the **Qeet Group** workspace. Licensed **UNLICENSED** (private to Qeet Group) pending the public-release decision.
+Part of the **Qeet Group** workspace. Licensed **UNLICENSED** (private to Qeet Group) pending the
+public-release decision — which is why `bun run check:release` refuses to publish. See
+[docs/governance/release.md](docs/governance/release.md).
 

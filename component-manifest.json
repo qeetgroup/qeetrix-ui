@@ -22,14 +22,14 @@
   },
   "statuses": {
     "experimental": 0,
-    "beta": 0,
-    "stable": 144,
+    "beta": 68,
+    "stable": 76,
     "deprecated": 1
   },
   "accessibilityAudit": {
-    "not-audited": 67,
-    "partial": 6,
-    "audited": 72,
+    "not-audited": 127,
+    "partial": 1,
+    "audited": 17,
     "exception": 0
   },
   "components": [
@@ -41,11 +41,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/access-review",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -58,6 +58,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -104,7 +105,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -119,6 +120,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "value",
@@ -130,12 +132,12 @@
       "accessibility": {
         "required": true,
         "pattern": "accordion",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -179,7 +181,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -190,6 +192,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "variant": {
+            "source": "forwarded",
+            "note": "ActionBarItem.variant is passed straight to Button's variant, so Button's cva is the definition: default | destructive | outline | ghost."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -244,7 +252,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -266,18 +274,19 @@
           "danger": "destructive"
         },
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "alert",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -312,7 +321,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -325,6 +334,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -336,11 +346,11 @@
       "accessibility": {
         "required": true,
         "pattern": "alertdialog",
-        "audit": "partial",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
+          "keyboard": "not-audited",
           "focus": "partial",
           "screenReader": "pass",
           "rtl": "not-applicable",
@@ -383,7 +393,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/angle-slider",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -403,6 +413,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "measurement",
+            "note": "A pixel diameter for the dial, not a closed set of appearances."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -445,11 +461,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/app-shell",
       "groupImport": "@qeetrix/ui/components/layout",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -460,6 +476,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -517,18 +534,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "not-applicable",
@@ -563,7 +581,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -576,6 +594,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "severity": {
+            "source": "forwarded",
+            "note": "Mapped through SEVERITY_KIND onto StatusPill's kind, which maps onto Badge's variant. The value set is the AuditSeverity domain vocabulary."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -639,18 +663,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "combobox",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -693,17 +718,19 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/availability-grid",
       "groupImport": "@qeetrix/ui/components/selection",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "hover",
-        "focus-visible"
+        "focus-visible",
+        "disabled",
+        "selected"
       ],
       "api": {
         "variants": null,
@@ -711,11 +738,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none",
+        "pattern": "grid",
         "audit": "not-audited",
         "dimensions": {
           "semantic": "not-audited",
@@ -723,7 +751,7 @@
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
-          "rtl": "not-audited",
+          "rtl": "pass",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
@@ -768,18 +796,24 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "data-attribute",
+            "note": "Written to data-size and styled with data-[size=sm|lg] utilities: default | sm | lg."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -835,6 +869,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -877,11 +912,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/banner",
       "groupImport": "@qeetrix/ui/components/feedback",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -905,6 +940,7 @@
           "danger": "destructive"
         },
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -968,18 +1004,19 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -1014,7 +1051,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -1027,17 +1064,18 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "breadcrumb",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -1117,6 +1155,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -1167,7 +1206,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/button-group",
       "groupImport": "@qeetrix/ui/components/actions",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "not-applicable",
@@ -1182,6 +1221,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "orientation": {
+            "source": "layout",
+            "note": "Structural: horizontal or vertical stacking, written to data-orientation. Not an appearance axis."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -1224,11 +1269,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/calendar",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -1244,6 +1289,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -1290,7 +1336,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -1311,18 +1357,19 @@
           "error": "destructive"
         },
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -1357,7 +1404,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "supported"
       },
@@ -1370,18 +1417,24 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "data-attribute",
+            "note": "Written to data-size and styled with data-[size=sm] utilities: default | sm."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -1416,9 +1469,9 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [],
       "api": {
@@ -1427,19 +1480,25 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "orientation": {
+            "source": "layout",
+            "note": "Structural: sets Embla's scroll axis and swaps the inline/block spacing utilities. Not an appearance axis."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "carousel",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
-          "rtl": "not-applicable",
+          "rtl": "pass",
           "reducedMotion": "not-applicable",
           "forcedColors": "not-applicable",
           "contrast": "not-applicable"
@@ -1477,11 +1536,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chart",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -1492,6 +1551,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -1534,13 +1594,13 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chart-presets",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [],
       "api": {
@@ -1549,6 +1609,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -1595,7 +1656,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unknown",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -1612,6 +1673,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "checked",
@@ -1623,12 +1685,12 @@
       "accessibility": {
         "required": true,
         "pattern": "checkbox",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -1671,7 +1733,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -1685,18 +1747,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "checkbox",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
-          "screenReader": "pass",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -1734,11 +1797,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chip",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -1762,6 +1825,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "value",
@@ -1814,7 +1878,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -1825,18 +1889,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "button",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
+          "keyboard": "not-audited",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "not-applicable",
@@ -1858,7 +1923,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -1879,7 +1944,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -1890,18 +1955,24 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "forwarded",
+            "note": "Passed straight to Button's size, restricted to the icon sizes: icon-sm | icon."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "button",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
-          "screenReader": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -1940,11 +2011,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/code-block",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -1958,6 +2029,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -1983,7 +2055,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -2017,6 +2089,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -2028,12 +2101,12 @@
       "accessibility": {
         "required": true,
         "pattern": "disclosure",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
@@ -2073,7 +2146,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/color-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -2085,7 +2158,8 @@
         "hover",
         "focus-visible",
         "disabled",
-        "invalid"
+        "invalid",
+        "required"
       ],
       "api": {
         "variants": null,
@@ -2093,6 +2167,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2100,11 +2175,11 @@
         "pattern": "none",
         "audit": "not-audited",
         "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
+          "semantic": "pass",
+          "name": "pass",
           "keyboard": "not-audited",
           "focus": "not-audited",
-          "screenReader": "not-audited",
+          "screenReader": "pass",
           "rtl": "not-audited",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
@@ -2135,7 +2210,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/color-swatch",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -2163,6 +2238,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2205,7 +2281,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/combobox",
       "groupImport": "@qeetrix/ui/components/selection",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
@@ -2227,6 +2303,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2269,11 +2346,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/command-palette",
       "groupImport": "@qeetrix/ui/components/navigation",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -2288,6 +2365,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2330,11 +2408,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/comment-thread",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -2345,6 +2423,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2412,18 +2491,19 @@
         "domainAxes": [
           "size"
         ],
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "not-applicable",
@@ -2458,7 +2538,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -2473,18 +2553,24 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "variant": {
+            "source": "data-attribute",
+            "note": "ContextMenuItem writes data-variant and styles with data-[variant=destructive]: default | destructive."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "menu",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -2527,11 +2613,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/copyable-secret",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -2544,6 +2630,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "class-map",
+            "note": "Selects padding and text-size utilities in a conditional, and forwards a mapped value to Button: sm | md."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -2586,7 +2678,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/country-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -2604,6 +2696,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2646,11 +2739,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/currency-input",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -2661,6 +2754,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2707,7 +2801,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -2720,18 +2814,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "alert",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -2762,18 +2857,20 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/data-table",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "hover",
         "focus-visible",
-        "indeterminate"
+        "indeterminate",
+        "expanded",
+        "busy"
       ],
       "api": {
         "variants": null,
@@ -2781,6 +2878,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2798,8 +2896,20 @@
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
-        "keyboard": null,
-        "focus": null,
+        "keyboard": [
+          "tab",
+          "enter",
+          "space",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
         "liveRegion": null,
         "exceptions": null
       },
@@ -2808,7 +2918,7 @@
         "accessibility": true,
         "interaction": true,
         "visual": true,
-        "hydration": false
+        "hydration": true
       },
       "deprecation": null,
       "story": true,
@@ -2823,16 +2933,17 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/date-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
       "states": [
         "disabled",
+        "invalid",
         "empty"
       ],
       "api": {
@@ -2841,6 +2952,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2848,8 +2960,8 @@
         "pattern": "none",
         "audit": "not-audited",
         "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
+          "semantic": "pass",
+          "name": "pass",
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
@@ -2883,11 +2995,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/date-time-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -2901,6 +3013,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -2947,7 +3060,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -2958,18 +3071,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -3004,7 +3118,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -3017,6 +3131,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -3075,11 +3190,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/diff-viewer",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -3090,6 +3205,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3132,11 +3248,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/drawer",
       "groupImport": "@qeetrix/ui/components/surfaces",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -3149,6 +3265,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -3160,13 +3277,13 @@
       "accessibility": {
         "required": true,
         "pattern": "dialog",
-        "audit": "partial",
+        "audit": "not-audited",
         "dimensions": {
-          "semantic": "pass",
-          "name": "pass",
-          "keyboard": "pass",
-          "focus": "partial",
-          "screenReader": "pass",
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -3211,7 +3328,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -3226,6 +3343,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "variant": {
+            "source": "data-attribute",
+            "note": "DropdownMenuItem writes data-variant and styles with data-[variant=destructive]: default | destructive."
+          }
+        },
         "controlled": [
           {
             "value": "open",
@@ -3286,11 +3409,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/editable",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -3304,6 +3427,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3350,7 +3474,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -3361,18 +3485,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -3403,11 +3528,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/feed",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -3422,6 +3547,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3485,6 +3611,12 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "variant": {
+            "source": "data-attribute",
+            "note": "FieldLegend writes data-variant and styles with data-[variant=label|legend]: legend | label."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -3531,7 +3663,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "supported"
       },
@@ -3545,18 +3677,24 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "not-an-axis",
+            "note": "The file's byte size, rendered as content. The name collides with the axis vocabulary; there is no size axis."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -3602,15 +3740,16 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
           "screenReader": "pass",
@@ -3644,17 +3783,18 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-upload",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "focus-visible",
-        "disabled"
+        "disabled",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -3662,6 +3802,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3670,7 +3811,7 @@
         "audit": "not-audited",
         "dimensions": {
           "semantic": "not-audited",
-          "name": "not-audited",
+          "name": "pass",
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
@@ -3704,11 +3845,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/filter-bar",
       "groupImport": "@qeetrix/ui/components/layout",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -3719,6 +3860,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3761,11 +3903,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/floating-window",
       "groupImport": "@qeetrix/ui/components/surfaces",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -3780,6 +3922,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3822,7 +3965,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/focus-trap",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
@@ -3837,6 +3980,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3879,11 +4023,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/form",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -3897,6 +4041,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -3954,15 +4099,16 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
           "screenReader": "pass",
@@ -4000,7 +4146,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -4013,6 +4159,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -4024,13 +4171,13 @@
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -4068,7 +4215,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/icon",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
@@ -4083,6 +4230,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "measurement",
+            "note": "A pixel value, either a number or a key into the ICON_SIZE table that resolves to one."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -4129,7 +4282,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -4140,17 +4293,23 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "forwarded",
+            "note": "Passed straight to Button's size, restricted to the icon sizes: icon-sm | icon | icon-lg."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "button",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -4209,6 +4368,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4274,18 +4434,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
+          "keyboard": "not-audited",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -4322,11 +4483,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/json-tree",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -4340,6 +4501,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4397,18 +4559,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -4456,18 +4619,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "not-applicable",
@@ -4528,18 +4692,19 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "link",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
-          "screenReader": "pass",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -4581,7 +4746,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -4597,6 +4762,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "value",
@@ -4657,16 +4823,17 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/logo-uploader",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "supported"
+        "reducedMotion": "not-applicable"
       },
       "states": [
-        "disabled"
+        "disabled",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -4674,6 +4841,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4699,7 +4867,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -4716,7 +4884,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/marquee",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
@@ -4733,6 +4901,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4775,11 +4944,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/mask-input",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -4790,6 +4959,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4832,7 +5002,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/master-detail",
       "groupImport": "@qeetrix/ui/components/layout",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -4847,6 +5017,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4859,7 +5030,7 @@
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
-          "rtl": "not-audited",
+          "rtl": "pass",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
@@ -4889,11 +5060,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/mention-input",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -4906,6 +5077,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -4967,19 +5139,25 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "variant": {
+            "source": "data-attribute",
+            "note": "MenubarItem writes data-variant and styles with data-[variant=destructive]: default | destructive."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "menubar",
-        "audit": "partial",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "partial",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
           "screenReader": "pass",
-          "rtl": "pass",
+          "rtl": "not-audited",
           "reducedMotion": "pass",
           "forcedColors": "pass",
           "contrast": "pass"
@@ -5002,7 +5180,7 @@
         },
         "liveRegion": null,
         "exceptions": {
-          "semantic": "Base UI renders its focus guards and aria-owns bridges as direct children of the role=menubar element, so while a menu is open the menubar owns non-menuitem children and axe's aria-required-children fails. A structural detail of the primitive with no supported workaround; asserted in composites.test.tsx so a Base UI fix surfaces."
+          "semantic": "Base UI renders an aria-owns bridge span as a direct child of the role=menubar element while a menu is open, so the menubar owns a generic child and axe's aria-required-children fails. No supported workaround in @base-ui/react 1.7.0: Menu.Positioner throws without Menu.Portal, the bridge is only emitted for non-modal focus managers and Menu.Popup hard-codes modal: isContextMenu, and a role=\"none\" wrapper does not help because axe recurses through presentational wrappers. Asserted in composites.test.tsx and subtracted from a whole-widget axe run in menubar.test.tsx, so a Base UI fix surfaces as a failure."
         }
       },
       "testing": {
@@ -5042,6 +5220,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5102,18 +5281,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
-          "screenReader": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -5156,7 +5336,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/navigation-menu",
       "groupImport": "@qeetrix/ui/components/navigation",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -5177,6 +5357,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5202,7 +5383,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -5219,11 +5400,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification",
       "groupImport": "@qeetrix/ui/components/feedback",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -5248,6 +5429,7 @@
           "error": "destructive"
         },
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5290,11 +5472,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification-center",
       "groupImport": "@qeetrix/ui/components/feedback",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -5308,6 +5490,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5350,11 +5533,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification-preference-matrix",
       "groupImport": "@qeetrix/ui/components/selection",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -5365,6 +5548,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5425,18 +5609,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "spinbutton",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
-          "screenReader": "pass",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -5490,15 +5675,16 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
           "screenReader": "pass",
@@ -5532,11 +5718,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/org-chart",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -5551,6 +5737,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5597,14 +5784,15 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "focus-visible",
         "disabled",
-        "invalid"
+        "invalid",
+        "required"
       ],
       "api": {
         "variants": null,
@@ -5612,19 +5800,20 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
-          "rtl": "not-applicable",
+          "screenReader": "not-audited",
+          "rtl": "pass",
           "reducedMotion": "pass",
           "forcedColors": "pass",
           "contrast": "pass"
@@ -5663,11 +5852,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/overflow-list",
       "groupImport": "@qeetrix/ui/components/layout",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -5681,6 +5870,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5727,7 +5917,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -5738,18 +5928,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -5782,9 +5973,9 @@
       "groupImport": "@qeetrix/ui/components/navigation",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -5797,19 +5988,20 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
           "screenReader": "pass",
-          "rtl": "not-applicable",
+          "rtl": "pass",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
           "contrast": "pass"
@@ -5851,7 +6043,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -5862,6 +6054,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -5914,7 +6107,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -5925,18 +6118,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
-          "screenReader": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "not-applicable",
@@ -5975,7 +6169,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/password-strength-meter",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -5990,6 +6184,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6036,7 +6231,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -6049,6 +6244,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -6104,7 +6300,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/portal",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
@@ -6119,6 +6315,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6183,18 +6380,19 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -6225,11 +6423,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/preview-card",
       "groupImport": "@qeetrix/ui/components/surfaces",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -6240,6 +6438,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6299,6 +6498,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6362,6 +6562,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6404,7 +6605,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/qr-code",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
@@ -6419,6 +6620,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "measurement",
+            "note": "The rendered edge length in pixels, passed to the QR encoder. Not a closed set."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -6465,7 +6672,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -6479,18 +6686,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "radio-group",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -6536,7 +6744,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unknown",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -6552,6 +6760,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6609,14 +6818,15 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unknown",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
       "states": [
         "focus-visible",
         "disabled",
-        "read-only"
+        "read-only",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -6624,19 +6834,25 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "class-map",
+            "note": "Indexes the sizeClasses table to size the icon: sm | default | lg."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "slider",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
-          "rtl": "not-applicable",
+          "rtl": "pass",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
           "contrast": "pass"
@@ -6676,11 +6892,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/reaction-bar",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -6694,6 +6910,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6736,7 +6953,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/resizable",
       "groupImport": "@qeetrix/ui/components/layout",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -6753,6 +6970,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6795,17 +7013,20 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rich-text-editor",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
       "states": [
         "focus",
-        "disabled"
+        "disabled",
+        "read-only",
+        "invalid",
+        "required"
       ],
       "api": {
         "variants": null,
@@ -6813,18 +7034,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
-        "pattern": "none",
+        "pattern": "toolbar",
         "audit": "not-audited",
         "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
+          "semantic": "pass",
+          "name": "pass",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
           "rtl": "not-audited",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
@@ -6838,7 +7060,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -6855,7 +7077,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rolling-number",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
@@ -6870,6 +7092,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6912,11 +7135,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/schedule-calendar",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -6930,6 +7153,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -6972,7 +7196,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/scroll-area",
       "groupImport": "@qeetrix/ui/components/layout",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -6989,6 +7213,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -7035,7 +7260,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -7046,18 +7271,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -7092,7 +7318,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -7115,6 +7341,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "value",
@@ -7126,13 +7353,13 @@
       "accessibility": {
         "required": true,
         "pattern": "radio-group",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "pass",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -7194,6 +7421,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "data-attribute",
+            "note": "SelectTrigger writes data-size and styles with data-[size=sm] utilities: default | sm."
+          }
+        },
         "controlled": [
           {
             "value": "value",
@@ -7271,18 +7504,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -7313,11 +7547,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/sheet",
       "groupImport": "@qeetrix/ui/components/surfaces",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -7330,6 +7564,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "open",
@@ -7341,13 +7576,13 @@
       "accessibility": {
         "required": true,
         "pattern": "dialog",
-        "audit": "partial",
+        "audit": "not-audited",
         "dimensions": {
-          "semantic": "pass",
-          "name": "pass",
-          "keyboard": "pass",
-          "focus": "partial",
-          "screenReader": "pass",
+          "semantic": "not-audited",
+          "name": "not-audited",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -7388,7 +7623,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/sidebar",
       "groupImport": "@qeetrix/ui/components/navigation",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
@@ -7420,6 +7655,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -7447,7 +7683,7 @@
         "accessibility": true,
         "interaction": true,
         "visual": true,
-        "hydration": false
+        "hydration": true
       },
       "deprecation": null,
       "story": true,
@@ -7477,18 +7713,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -7536,18 +7773,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -7589,7 +7827,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "supported"
       },
@@ -7605,17 +7843,18 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "slider",
-        "audit": "partial",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "partial",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "pass",
           "reducedMotion": "pass",
@@ -7683,6 +7922,7 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -7744,6 +7984,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "expanded",
@@ -7755,12 +7996,12 @@
       "accessibility": {
         "required": true,
         "pattern": "disclosure",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "pass",
-          "focus": "pass",
+          "keyboard": "not-audited",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
@@ -7804,7 +8045,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -7817,18 +8058,19 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -7877,18 +8119,24 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "kind": {
+            "source": "forwarded",
+            "note": "Mapped through KIND_TO_BADGE onto Badge's variant, so Badge's cva is the definition. `kind` is also a VARIANT_GROUP_ALIASES synonym for `variant`."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -7923,7 +8171,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -7934,15 +8182,16 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
           "screenReader": "pass",
@@ -7980,7 +8229,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unknown",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -7996,17 +8245,23 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": {
+          "size": {
+            "source": "data-attribute",
+            "note": "Written to data-size and styled with data-[size=sm] utilities: default | sm."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "switch",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -8045,7 +8300,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/table",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
@@ -8062,6 +8317,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8104,11 +8360,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/table-of-contents",
       "groupImport": "@qeetrix/ui/components/navigation",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -8121,6 +8377,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8183,6 +8440,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": [
           {
             "value": "value",
@@ -8243,11 +8501,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tag-input",
       "groupImport": "@qeetrix/ui/components/inputs",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -8261,6 +8519,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8307,7 +8566,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "supported"
       },
@@ -8322,18 +8581,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -8370,11 +8630,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -8387,6 +8647,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8394,8 +8655,8 @@
         "pattern": "none",
         "audit": "not-audited",
         "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
+          "semantic": "pass",
+          "name": "pass",
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
@@ -8412,7 +8673,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -8429,11 +8690,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-range-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -8444,6 +8705,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8469,7 +8731,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -8486,7 +8748,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-since",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -8501,6 +8763,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8543,11 +8806,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timeline",
       "groupImport": "@qeetrix/ui/components/data-display",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -8558,6 +8821,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8600,11 +8864,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timer",
       "groupImport": "@qeetrix/ui/components/utility",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -8615,6 +8879,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8657,7 +8922,7 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timezone-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
@@ -8675,6 +8940,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8717,11 +8983,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toast",
       "groupImport": "@qeetrix/ui/components/feedback",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -8734,6 +9000,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8806,17 +9073,18 @@
         ],
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "button",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "pass",
+          "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -8856,11 +9124,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toggle-tip",
       "groupImport": "@qeetrix/ui/components/actions",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "not-applicable",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
@@ -8871,6 +9139,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -8932,18 +9201,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "toolbar",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "pass",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -8988,7 +9258,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -9001,18 +9271,19 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "tooltip",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
           "focus": "pass",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
           "forcedColors": "pass",
@@ -9050,11 +9321,11 @@
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tour",
       "groupImport": "@qeetrix/ui/components/feedback",
-      "status": "stable",
+      "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -9068,7 +9339,14 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
-        "controlled": null
+        "axisSources": null,
+        "controlled": [
+          {
+            "value": "open",
+            "default": "defaultOpen",
+            "change": "onOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
@@ -9085,8 +9363,18 @@
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
-        "keyboard": null,
-        "focus": null,
+        "keyboard": [
+          "tab",
+          "shift+tab",
+          "escape",
+          "arrow-left",
+          "arrow-right"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": true,
+          "restored": true
+        },
         "liveRegion": null,
         "exceptions": null
       },
@@ -9095,7 +9383,7 @@
         "accessibility": true,
         "interaction": true,
         "visual": true,
-        "hydration": false
+        "hydration": true
       },
       "deprecation": null,
       "story": true,
@@ -9114,7 +9402,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "not-applicable",
+        "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -9130,6 +9418,7 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
@@ -9217,18 +9506,19 @@
         "domainAxes": [
           "variant"
         ],
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "pass",
+          "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -9274,15 +9564,16 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
+        "axisSources": null,
         "controlled": null
       },
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "audited",
+        "audit": "not-audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "pass",
+          "name": "not-audited",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
           "screenReader": "pass",

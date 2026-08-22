@@ -7,20 +7,44 @@
  * The shared mask id ("qBowlHole") is suffixed per variant to avoid collisions
  * when both variants render on the same page (adaptive <QeetLogo/>).
  *
- * Re-run with: bun run build:logos
+ * The output is tracked, so it must be reproducible from the raw SVG alone:
+ *
+ *   bun run build:logos               # regenerate
+ *   bun run build:logos -- --check    # prove the tracked files match the generator (CI)
+ *
+ * The template emits the exact bytes Biome accepts — the wrapped `extends` clause and the
+ * `biome-ignore` for `dangerouslySetInnerHTML`. Without them the output had to be hand-patched
+ * after every run, which is how the tracked files came to differ from their generator.
+ *
+ * `--check` exists because the tracked output had drifted: its header still credited
+ * `scripts/generate-logos.mjs`, a script this repo no longer contains, so nothing proved the
+ * committed component was what today's generator produces from today's artwork.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const PKG = join(dirname(fileURLToPath(import.meta.url)), "../..");
+const CHECK = process.argv.includes("--check");
 
 const VARIANTS = [
-  { file: "qeet-logo-on-light.svg", name: "QeetLogoOnLight", suffix: "onlight" },
-  { file: "qeet-logo-on-dark.svg", name: "QeetLogoOnDark", suffix: "ondark" },
+  {
+    file: "qeet-logo-on-light.svg",
+    name: "QeetLogoOnLight",
+    suffix: "onlight",
+    out: "qeet-logo-on-light",
+  },
+  {
+    file: "qeet-logo-on-dark.svg",
+    name: "QeetLogoOnDark",
+    suffix: "ondark",
+    out: "qeet-logo-on-dark",
+  },
 ];
 
-for (const { file, name, suffix } of VARIANTS) {
+let stale = 0;
+
+for (const { file, name, suffix, out } of VARIANTS) {
   const raw = readFileSync(join(PKG, "src/brand/assets/raw", file), "utf8");
 
   const viewBox = raw.match(/viewBox="([^"]+)"/)?.[1] ?? "0 0 1254 1254";
@@ -40,7 +64,8 @@ import type { SVGProps } from "react";
 
 const INNER = \`${inner}\`;
 
-export interface QeetLogoVariantProps extends Omit<SVGProps<SVGSVGElement>, "dangerouslySetInnerHTML"> {
+export interface QeetLogoVariantProps
+  extends Omit<SVGProps<SVGSVGElement>, "dangerouslySetInnerHTML"> {
   /** Width and height in px (the mark is square). Defaults to 32. */
   size?: number | string;
   /** Accessible label. Defaults to "Qeet". Pass \`null\` to mark decorative. */
@@ -58,6 +83,7 @@ export function ${name}({ size = 32, title = "Qeet", ...props }: QeetLogoVariant
       role={title === null ? undefined : "img"}
       aria-label={title === null ? undefined : title}
       aria-hidden={title === null ? true : undefined}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: INNER is a static, build-generated SVG constant (see the file header); inline SVG child markup cannot be expressed as React children.
       dangerouslySetInnerHTML={{ __html: INNER }}
       {...props}
     />
@@ -65,15 +91,35 @@ export function ${name}({ size = 32, title = "Qeet", ...props }: QeetLogoVariant
 }
 `;
 
-  writeFileSync(
-    join(
-      PKG,
-      "src/brand/logos",
-      `${name === "QeetLogoOnLight" ? "qeet-logo-on-light" : "qeet-logo-on-dark"}.tsx`,
-    ),
-    tsx,
+  const target = join(PKG, "src/brand/logos", `${out}.tsx`);
+
+  if (CHECK) {
+    let current = null;
+    try {
+      current = readFileSync(target, "utf8");
+    } catch {
+      current = null;
+    }
+    if (current === tsx) {
+      console.log(`✓ src/brand/logos/${out}.tsx matches ${file}`);
+    } else {
+      stale += 1;
+      console.error(
+        current === null
+          ? `✗ src/brand/logos/${out}.tsx is missing`
+          : `✗ src/brand/logos/${out}.tsx does not match what ${file} generates`,
+      );
+    }
+    continue;
+  }
+
+  writeFileSync(target, tsx);
+  console.log(`✔ generated src/brand/logos/${out}.tsx`);
+}
+
+if (CHECK && stale > 0) {
+  console.error(
+    `\n✗ ${stale} generated logo component(s) are stale — run \`bun run build:logos\` and commit the result.`,
   );
-  console.log(
-    `✔ generated src/brand/logos/${name === "QeetLogoOnLight" ? "qeet-logo-on-light" : "qeet-logo-on-dark"}.tsx`,
-  );
+  process.exit(1);
 }

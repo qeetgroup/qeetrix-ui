@@ -29,6 +29,14 @@ function toArray(v: string | string[] | undefined): string[] {
  * Standalone listbox primitive (APG Listbox) — single or multi-select with
  * roving `aria-activedescendant`. Exposes the `role=listbox`/`role=option`
  * structure that `Select`/`Combobox` keep internal.
+ *
+ * Option IDs are positional, not value-derived: an option value containing a
+ * space would otherwise produce an `aria-activedescendant` with two IDREFs, and
+ * one containing a quote would produce an unqueryable ID.
+ *
+ * The active option is reconciled against the current options on every render,
+ * so filtering the list can never leave `aria-activedescendant` pointing at an
+ * element that no longer exists.
  */
 function Listbox({
   options,
@@ -47,8 +55,37 @@ function Listbox({
     onChange: (next) => onValueChange?.(multiple ? next : (next[0] ?? "")),
   });
   const enabled = React.useMemo(() => options.filter((o) => !o.disabled), [options]);
-  const [activeValue, setActiveValue] = React.useState<string | null>(enabled[0]?.value ?? null);
+  const [requestedActive, setActiveValue] = React.useState<string | null>(
+    enabled[0]?.value ?? null,
+  );
   const baseId = React.useId();
+  const listRef = React.useRef<HTMLDivElement | null>(null);
+  const scrollOnNextPaint = React.useRef(false);
+
+  // Derived, never stored: if the requested option has been filtered out or
+  // disabled, the first enabled option becomes active instead.
+  const activeValue =
+    requestedActive !== null && enabled.some((o) => o.value === requestedActive)
+      ? requestedActive
+      : (enabled[0]?.value ?? null);
+  const activeIndex = activeValue === null ? -1 : options.findIndex((o) => o.value === activeValue);
+  const activeId = activeIndex >= 0 ? `${baseId}-option-${activeIndex}` : undefined;
+
+  const setActive = (value: string | null) => {
+    // Only interaction scrolls. Mount and re-render must not hijack the scroll
+    // position of the page or of a parent scroller.
+    scrollOnNextPaint.current = true;
+    setActiveValue(value);
+  };
+
+  React.useEffect(() => {
+    if (!scrollOnNextPaint.current) return;
+    scrollOnNextPaint.current = false;
+    if (!activeId) return;
+    const node = listRef.current?.querySelector(`[id="${activeId}"]`);
+    // `block: "nearest"` keeps the option visible without recentring the list.
+    (node as HTMLElement | null)?.scrollIntoView?.({ block: "nearest" });
+  }, [activeId]);
 
   const commit = (next: string[]) => setSelection(next);
   const toggle = (val: string) => {
@@ -65,7 +102,7 @@ function Listbox({
     if (enabled.length === 0) return;
     const idx = enabled.findIndex((o) => o.value === activeValue);
     const next = enabled[(idx + dir + enabled.length) % enabled.length];
-    if (next) setActiveValue(next.value);
+    if (next) setActive(next.value);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -80,11 +117,11 @@ function Listbox({
         break;
       case "Home":
         e.preventDefault();
-        setActiveValue(enabled[0]?.value ?? null);
+        setActive(enabled[0]?.value ?? null);
         break;
       case "End":
         e.preventDefault();
-        setActiveValue(enabled[enabled.length - 1]?.value ?? null);
+        setActive(enabled[enabled.length - 1]?.value ?? null);
         break;
       case "Enter":
       case " ":
@@ -98,10 +135,11 @@ function Listbox({
 
   return (
     <div
+      ref={listRef}
       role="listbox"
       aria-multiselectable={multiple || undefined}
       aria-label={ariaLabel}
-      aria-activedescendant={activeValue ? `${baseId}-${activeValue}` : undefined}
+      aria-activedescendant={activeId}
       tabIndex={0}
       data-slot="listbox"
       onKeyDown={onKeyDown}
@@ -111,22 +149,23 @@ function Listbox({
       )}
       {...props}
     >
-      {options.map((o) => {
+      {options.map((o, index) => {
         const isSel = selected.includes(o.value);
         const isActive = activeValue === o.value;
         return (
           <button
             key={o.value}
             type="button"
-            id={`${baseId}-${o.value}`}
+            id={`${baseId}-option-${index}`}
             role="option"
             tabIndex={-1}
             aria-selected={isSel}
             aria-disabled={o.disabled || undefined}
             data-active={isActive || undefined}
+            data-value={o.value}
             onClick={() => {
               if (o.disabled) return;
-              setActiveValue(o.value);
+              setActive(o.value);
               toggle(o.value);
             }}
             className={cn(

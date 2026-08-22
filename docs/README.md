@@ -24,6 +24,7 @@ library itself is built and changed.
 | [density.md](./standards/density.md) | The density model and how a component consumes it |
 | [motion.md](./standards/motion.md) | The motion vocabulary and reduced-motion handling |
 | [rtl.md](./standards/rtl.md) | Logical properties, and why tokens carry no direction |
+| [security.md](./standards/security.md) | Trust boundaries: what the library guarantees, and the upload/HTML sanitisation your server must still do |
 | [accessibility.md](./standards/accessibility.md) | The WCAG 2.2 AA baseline, the audit matrix, ARIA and naming policy, forms, overlays, live regions |
 | [keyboard-interactions.md](./standards/keyboard-interactions.md) | The keyboard model per pattern |
 | [focus-management.md](./standards/focus-management.md) | Focus models, entry, containment, restoration, visibility |

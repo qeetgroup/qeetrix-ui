@@ -59,4 +59,12 @@ describe("Drawer", () => {
     render(<DrawerExample open />);
     expect(await a11y(document.body)).toHaveNoViolations();
   });
+
+  it("caps its height in dynamic viewport units so mobile browser chrome is accounted for", () => {
+    render(<DrawerExample open />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("max-h-[85dvh]");
+    expect(dialog.className).not.toContain("max-h-[85vh]");
+    expect(dialog.className).toContain("overflow-y-auto");
+  });
 });

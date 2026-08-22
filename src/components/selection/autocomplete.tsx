@@ -3,10 +3,13 @@
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
 import { XIcon } from "lucide-react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { autocompleteMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 const POPUP_CLASS =
-  "z-50 max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-popover ring-1 ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
+  "z-(--qx-z-popover) max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-popover ring-1 ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
 
 const ITEM_CLASS =
   "relative flex w-full cursor-default items-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden transition-colors select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-selected:font-medium";
@@ -27,6 +30,11 @@ interface AutocompleteProps {
   name?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"autocomplete">;
   /** Class applied to the text input. */
   className?: string;
   /** Class applied to the dropdown popup. */
@@ -43,16 +51,18 @@ function Autocomplete({
   value,
   defaultValue,
   onValueChange,
-  placeholder = "Type to search…",
-  emptyMessage = "No suggestions.",
+  placeholder,
+  emptyMessage,
   disabled,
   id,
   name,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledby,
+  messages: messageOverrides,
   className,
   contentClassName,
 }: AutocompleteProps) {
+  const messages = useMessages("autocomplete", autocompleteMessages, messageOverrides);
   return (
     <AutocompletePrimitive.Root
       items={items}
@@ -65,14 +75,14 @@ function Autocomplete({
       <div data-slot="autocomplete" className="relative w-full">
         <AutocompletePrimitive.Input
           id={id}
-          placeholder={placeholder}
+          placeholder={placeholder ?? messages.placeholder}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           className={cn(INPUT_CLASS, className)}
         />
         <div className="absolute end-1 top-1/2 flex -translate-y-1/2 items-center">
           <AutocompletePrimitive.Clear
-            aria-label="Clear"
+            aria-label={messages.clear}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
             <XIcon aria-hidden className="size-4" />
@@ -80,10 +90,10 @@ function Autocomplete({
         </div>
       </div>
       <AutocompletePrimitive.Portal>
-        <AutocompletePrimitive.Positioner sideOffset={4} className="z-50">
+        <AutocompletePrimitive.Positioner sideOffset={4} className="z-(--qx-z-popover)">
           <AutocompletePrimitive.Popup className={cn(POPUP_CLASS, contentClassName)}>
             <AutocompletePrimitive.Empty className="px-2 py-4 text-center text-sm text-muted-foreground">
-              {emptyMessage}
+              {emptyMessage ?? messages.empty}
             </AutocompletePrimitive.Empty>
             <AutocompletePrimitive.List>
               {(item: string) => (

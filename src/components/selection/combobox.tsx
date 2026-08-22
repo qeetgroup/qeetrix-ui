@@ -3,7 +3,10 @@
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
 import { CheckIcon, ChevronsUpDownIcon, XIcon } from "lucide-react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { comboboxMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface ComboboxOption {
   label: string;
@@ -12,7 +15,7 @@ interface ComboboxOption {
 }
 
 const POPUP_CLASS =
-  "z-50 max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-popover ring-1 ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
+  "z-(--qx-z-popover) max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-popover ring-1 ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
 
 const ITEM_CLASS =
   "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1.5 ps-2 pe-8 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-selected:font-medium data-disabled:pointer-events-none data-disabled:opacity-disabled";
@@ -30,7 +33,7 @@ function ComboboxListPopup({
 }) {
   return (
     <ComboboxPrimitive.Portal>
-      <ComboboxPrimitive.Positioner sideOffset={4} className="z-50">
+      <ComboboxPrimitive.Positioner sideOffset={4} className="z-(--qx-z-popover)">
         <ComboboxPrimitive.Popup className={cn(POPUP_CLASS, className)}>
           <ComboboxPrimitive.Empty className="px-2 py-4 text-center text-sm text-muted-foreground">
             {emptyMessage}
@@ -66,6 +69,11 @@ interface ComboboxProps {
   disabled?: boolean;
   id?: string;
   name?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"combobox">;
   /** Class applied to the text input. */
   className?: string;
   /** Class applied to the dropdown popup. */
@@ -83,9 +91,11 @@ function Combobox({
   disabled,
   id,
   name,
+  messages: messageOverrides,
   className,
   contentClassName,
 }: ComboboxProps) {
+  const messages = useMessages("combobox", comboboxMessages, messageOverrides);
   const selected = value === undefined ? undefined : (items.find((i) => i.value === value) ?? null);
   const selectedDefault =
     defaultValue == null ? undefined : items.find((i) => i.value === defaultValue);
@@ -102,18 +112,18 @@ function Combobox({
       <div data-slot="combobox" className="relative w-full">
         <ComboboxPrimitive.Input
           id={id}
-          placeholder={placeholder ?? "Select…"}
+          placeholder={placeholder ?? messages.placeholder}
           className={cn(INPUT_CLASS, className)}
         />
         <div className="absolute end-1 top-1/2 flex -translate-y-1/2 items-center">
           <ComboboxPrimitive.Clear
-            aria-label="Clear selection"
+            aria-label={messages.clearSelection}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
             <XIcon aria-hidden className="size-4" />
           </ComboboxPrimitive.Clear>
           <ComboboxPrimitive.Trigger
-            aria-label="Open"
+            aria-label={messages.open}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronsUpDownIcon aria-hidden className="size-4" />
@@ -121,7 +131,7 @@ function Combobox({
         </div>
       </div>
       <ComboboxListPopup
-        emptyMessage={emptyMessage ?? "No results."}
+        emptyMessage={emptyMessage ?? messages.empty}
         className={contentClassName}
       />
     </ComboboxPrimitive.Root>
@@ -138,6 +148,11 @@ interface MultiSelectProps {
   disabled?: boolean;
   id?: string;
   name?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"combobox">;
   /** Class applied to the chips container. */
   className?: string;
   /** Class applied to the dropdown popup. */
@@ -155,9 +170,11 @@ function MultiSelect({
   disabled,
   id,
   name,
+  messages: messageOverrides,
   className,
   contentClassName,
 }: MultiSelectProps) {
+  const messages = useMessages("combobox", comboboxMessages, messageOverrides);
   const selected = value === undefined ? undefined : items.filter((i) => value.includes(i.value));
   const selectedDefault =
     defaultValue === undefined ? undefined : items.filter((i) => defaultValue.includes(i.value));
@@ -188,7 +205,7 @@ function MultiSelect({
                 >
                   {item.label}
                   <ComboboxPrimitive.ChipRemove
-                    aria-label={`Remove ${item.label}`}
+                    aria-label={messages.removeItem(item.label)}
                     className="flex items-center rounded-sm text-secondary-foreground/70 transition-colors hover:text-secondary-foreground"
                   >
                     <XIcon aria-hidden className="size-3" />
@@ -199,13 +216,13 @@ function MultiSelect({
           </ComboboxPrimitive.Value>
           <ComboboxPrimitive.Input
             id={id}
-            placeholder={placeholder ?? "Select…"}
+            placeholder={placeholder ?? messages.placeholder}
             className="h-6 min-w-16 flex-1 bg-transparent px-1 outline-none placeholder:text-muted-foreground"
           />
         </ComboboxPrimitive.Chips>
         <div className="absolute end-1 top-1.5 flex items-center">
           <ComboboxPrimitive.Trigger
-            aria-label="Open"
+            aria-label={messages.open}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronsUpDownIcon aria-hidden className="size-4" />
@@ -213,7 +230,7 @@ function MultiSelect({
         </div>
       </div>
       <ComboboxListPopup
-        emptyMessage={emptyMessage ?? "No results."}
+        emptyMessage={emptyMessage ?? messages.empty}
         className={contentClassName}
       />
     </ComboboxPrimitive.Root>

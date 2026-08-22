@@ -13,7 +13,7 @@
  *      migration provably non-visual.
  */
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { DENSITY_MODES, DENSITY_TOKEN_PREFIX } from "@/contracts/density";
 import { DURATION, EASING, SHADOW, Z_INDEX } from "@/foundations/token-values";
@@ -35,6 +35,26 @@ const read = (p: string) => readFileSync(resolve(ROOT, p), "utf8");
 const graph = loadTokenGraph({ root: ROOT });
 const themeVariables = readThemeVariables(resolve(ROOT, "src/styles/index.css"));
 const findings = validateTokenGraph({ graph, themeVariables });
+
+/**
+ * The full style entry with its relative `@import`s inlined.
+ *
+ * There are two entries now — `styles.css` (everything) and `index.css` (no host-global layer,
+ * published as `@qeetrix/ui/core.css`) — so "what the stylesheet references" is a property of the
+ * composition, not of one file. Package `@import`s are not followed: a dependency's variables are
+ * not this library's to resolve.
+ */
+const effectiveEntry = ((entryPath: string, seen = new Set<string>()): string => {
+  const inline = (path: string): string => {
+    const absolute = resolve(ROOT, path);
+    if (seen.has(absolute)) return "";
+    seen.add(absolute);
+    return read(path).replace(/^[ \t]*@import\s+["'](\.[^"']+)["'][^;]*;/gm, (_m, specifier) =>
+      inline(relative(ROOT, resolve(dirname(absolute), specifier))),
+    );
+  };
+  return inline(entryPath);
+})("src/styles/styles.css");
 
 const tokensJson = JSON.parse(read("src/styles/tokens.json"));
 const runtimeCss = read("src/styles/tokens.css");
@@ -430,7 +450,8 @@ describe("what the runtime can resolve", () => {
   });
 
   it("resolves every --qx-* variable the style entry references", () => {
-    const entry = read("src/styles/index.css");
+    // The full entry, so a variable referenced only by the host-global layer is still checked.
+    const entry = effectiveEntry;
     const referenced = new Set([...entry.matchAll(/var\((--qx-[a-z0-9-]+)/g)].map((m) => m[1]));
     const unresolved = [...referenced].filter((v) => !runtimeCss.includes(`${v}:`));
     // The marquee variables are supplied per element as inline styles, by design.
@@ -444,6 +465,59 @@ describe("what the runtime can resolve", () => {
         names.length,
       );
     }
+  });
+});
+
+// ── CSS-001 · two published entries, one body ────────────────────────────────────────────
+describe("published stylesheet entries", () => {
+  const core = read("src/styles/index.css");
+  const full = read("src/styles/styles.css");
+
+  /**
+   * The opt-out is a composition, not a copy.
+   *
+   * `styles.css` is the entry every consumer already imports and its behaviour is unchanged;
+   * `index.css` is the same stylesheet with `base.css` left out, published as
+   * `@qeetrix/ui/core.css`. The failure this suite exists to catch is the obvious one: someone
+   * "simplifies" the two-line entry by inlining it, or by copying the `@theme` block, and the two
+   * entries start to drift. Only one file may declare the theme mapping.
+   */
+  it("composes the full entry from the core plus the host-global layer, in that order", () => {
+    const imports = [...full.matchAll(/^\s*@import\s+"(\.[^"]+)"/gm)].map((m) => m[1]);
+    expect(imports).toEqual(["./index.css", "./base.css"]);
+  });
+
+  it("keeps the host-global layer out of the core entry", () => {
+    // `@qeetrix/ui/core.css` exists to give a consumer the components without these rules. If
+    // index.css imports base.css again, the opt-out is a lie that still compiles.
+    expect(core).not.toContain('@import "./base.css"');
+    expect(core).not.toContain("@layer base {");
+    expect(core).not.toContain("forced-colors: active");
+  });
+
+  it("declares the theme mapping in exactly one of them", () => {
+    expect(core).toContain("@theme inline {");
+    expect(full).not.toContain("@theme");
+    // …and the fonts too, so a font is never requested twice by one compilation.
+    expect((full.match(/@font-face/g) ?? []).length).toBe(0);
+    expect((core.match(/@font-face/g) ?? []).length).toBeGreaterThan(0);
+  });
+
+  it("keeps every @import contiguous at the top of the full entry", () => {
+    // CSS only honours `@import` before any other rule, so appending base.css below one would
+    // silently drop the entire host-global layer with no error anywhere.
+    const withoutComments = full.replace(/\/\*[\s\S]*?\*\//g, "");
+    const lastImport = withoutComments.lastIndexOf("@import");
+    const firstOtherRule = withoutComments.search(/^\s*(?!@import)(?:@|[.:[*a-z#])/im);
+    expect(lastImport).toBeGreaterThan(-1);
+    expect(firstOtherRule === -1 || lastImport < firstOtherRule).toBe(true);
+  });
+
+  it("scans the package for utilities from the core, so both entries emit them", () => {
+    // postbuild rewrites this one directive for dist. Two copies would mean one gets rewritten
+    // and the other ships scanning `.tsx` files the tarball does not contain.
+    expect((full.match(/@source/g) ?? []).length).toBe(0);
+    expect((core.match(/@source /g) ?? []).length).toBe(1);
   });
 });
 

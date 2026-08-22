@@ -172,6 +172,26 @@
     "$value": "{color.data.warning}",
     "$type": "color"
   },
+  "syntax-key": {
+    "$value": "{color.syntax.key}",
+    "$type": "color"
+  },
+  "syntax-string": {
+    "$value": "{color.syntax.string}",
+    "$type": "color"
+  },
+  "syntax-number": {
+    "$value": "{color.syntax.number}",
+    "$type": "color"
+  },
+  "syntax-literal": {
+    "$value": "{color.syntax.literal}",
+    "$type": "color"
+  },
+  "rating-filled": {
+    "$value": "{color.rating.filled}",
+    "$type": "color"
+  },
   "radius": {
     "$value": "{corner.base}",
     "$type": "dimension"

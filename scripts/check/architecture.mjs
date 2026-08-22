@@ -7,7 +7,9 @@
  *      marked `@barrel-exclude`
  *   3. no module inside src/ imports a barrel (`@/components`, `@/components/<cat>`)
  *      or the root entry — barrel imports create cycles and defeat tree-shaking
- *   4. cross-category imports go through the `@/` alias, never `../<other-category>`
+ *   4. cross-category imports go through the `@/` alias — checked against the *resolved*
+ *      file, so `../inputs/input`, `../../components/inputs/input` and every deeper form are
+ *      the same finding rather than the one shape a regex happened to name
  *   5. filenames are kebab-case; every test sits in a __tests__/ folder next to a
  *      component of the same name
  *   6. a `"use client"` directive, where one exists, is the first statement in the file
@@ -18,20 +20,29 @@
  *      the target architecture reserves but has not populated yet.
  *   8. the rule set itself is coherent — acyclic, and transitively closed, so a chain of
  *      individually legal imports can never add up to an illegal dependency
+ *   9. **non-TypeScript production inputs** — a `.css` or `.json` file is a node in the graph
+ *      like any other, and importing one is governed by LAYER_ALLOWED_ASSET_DEPENDENCIES.
+ *      Deny by default: a stylesheet is a side effect and a raw token file bypasses the CSS
+ *      bridge, so neither is something a component may pull in unreviewed
  *
  * Imports are resolved to real files with TypeScript's own dependency scanner and the
  * tsconfig `@/*` alias, so re-exports, type-only imports and dynamic `import()` are all seen
- * and nothing is matched by substring.
+ * and nothing is matched by substring. Path decisions go through `basename`/`sep`, so the
+ * per-file rules do not quietly stop testing anything on a platform where the separator is not
+ * `/` (they did: `path.split("/")` returned the whole path, and every rule that read a segment
+ * out of it passed by accident).
  *
  *   node scripts/check/architecture.mjs
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { basename, dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildModuleGraph,
+  findAssetDependencyViolations,
   findDeepLayerViolations,
   findLayerViolations,
+  findRelativeEscapes,
   findRuleSetProblems,
 } from "../lib/layers.mjs";
 import { findClientDirectiveIndex, readLiteralExportsFromDirectory } from "../lib/ts-literals.mjs";
@@ -103,7 +114,6 @@ for (const category of categories) {
 
 // 3–6. per-file rules across src/
 const BARREL_IMPORT = /from "(@\/components|@\/components\/[a-z-]+|@\/index|@\/)"/;
-const RELATIVE_ESCAPE = /from "\.\.\/\.\.\/components\//;
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 function* walk(dir) {
@@ -115,18 +125,20 @@ function* walk(dir) {
 }
 
 for (const path of walk(join(ROOT, "src"))) {
-  const name = path.split("/").pop();
+  // `join` produces the platform separator, so every path decision below goes through
+  // `basename`/`sep` rather than assuming "/". Splitting on "/" on Windows put the whole path
+  // in `name`, which silently turned the kebab-case and test-location rules into no-ops.
+  const name = basename(path);
   const base = name.replace(/\.(test\.)?(ts|tsx)$/, "").replace(/\.d$/, "");
   const source = readFileSync(path, "utf8");
-  const inTests = path.includes("/__tests__/");
+  const segments = path.split(sep);
+  const inTests = segments.includes("__tests__");
 
   if (BARREL_IMPORT.test(source))
     fail(
       path,
       "imports a barrel — import the component file directly (@/components/<category>/<slug>)",
     );
-  if (RELATIVE_ESCAPE.test(source))
-    fail(path, "reaches into another category with a relative path — use the @/ alias");
   if (!KEBAB.test(base)) fail(path, "filename is not kebab-case");
   // Parsed, not string-matched: the phrase in a doc comment is not a directive.
   if (!inTests && findClientDirectiveIndex(path) > 0) {
@@ -135,7 +147,7 @@ for (const path of walk(join(ROOT, "src"))) {
   if (/\.test\.tsx?$/.test(name) && !inTests)
     fail(path, "test file must live in a __tests__/ folder");
   if (inTests && /\.test\.tsx?$/.test(name)) {
-    const category = path.split("/").at(-3);
+    const category = segments.at(-3);
     const slug = name.replace(/\.test\.tsx?$/, "");
     const componentDir = dirname(dirname(path));
     if (categories.includes(category) && !existsSync(join(componentDir, `${slug}.tsx`))) {
@@ -148,6 +160,7 @@ for (const path of walk(join(ROOT, "src"))) {
 // so this script and `tsc` enforce the same table.
 const contracts = readLiteralExportsFromDirectory(join(ROOT, "src/contracts"));
 const allowed = contracts.LAYER_ALLOWED_DEPENDENCIES;
+const allowedAssets = contracts.LAYER_ALLOWED_ASSET_DEPENDENCIES ?? {};
 const layerDirectories = contracts.LAYER_DIRECTORIES;
 const explanations = contracts.LAYER_RULE_EXPLANATIONS ?? {};
 
@@ -174,6 +187,24 @@ const deepViolations = findDeepLayerViolations({ modules, allowed }).filter((vio
   const chain = violation.path;
   return !reportedEdges.has(`${chain[chain.length - 2]}->${chain[chain.length - 1]}`);
 });
+
+// 4 + 9. The two rules that need the resolved graph rather than the specifier text: a relative
+// import's canonical destination, and a dependency on a non-TypeScript production input.
+const relativeEscapes = findRelativeEscapes({ modules });
+const assetViolations = findAssetDependencyViolations({ modules, allowedAssets });
+
+for (const leak of relativeEscapes) {
+  fail(
+    join(ROOT, leak.file),
+    `imports "${leak.specifier}" → ${leak.dependency ?? "(unresolved)"} — ${leak.rule}`,
+  );
+}
+for (const violation of assetViolations) {
+  fail(
+    join(ROOT, violation.file),
+    `imports the ${violation.targetLayer} asset ${violation.dependency} — ${violation.rule}`,
+  );
+}
 
 const layerFindings = layerViolations.length + deepViolations.length + ruleProblems.length;
 
@@ -222,9 +253,14 @@ if (problems.length) {
 if (problems.length || layerFindings) process.exit(1);
 
 const total = [...slugsOnDisk.values()].reduce((n, s) => n + s.length, 0);
-const shipped = [...modules.values()].filter((node) => !node.test).length;
+const nodes = [...modules.values()];
+const shipped = nodes.filter((node) => !node.test && !node.asset).length;
+const assets = nodes.filter((node) => node.asset && !node.test).length;
 console.log(
   `✓ architecture — ${total} components across ${categories.length} categories, barrels complete, no barrel imports.\n` +
-    `✓ layers — ${shipped} modules across ${Object.keys(allowed).length} layers, ${modules.size - shipped} test modules exempt; ` +
-    "dependency rules acyclic, transitively closed, no violations.",
+    `✓ layers — ${shipped} modules across ${Object.keys(allowed).length} layers, ` +
+    `${nodes.length - shipped - assets} test modules exempt; ` +
+    "dependency rules acyclic, transitively closed, no violations.\n" +
+    `✓ assets — ${assets} non-TypeScript production inputs in the graph, ` +
+    "no ungoverned stylesheet or token-file dependency, no relative import leaving its own directory.",
 );

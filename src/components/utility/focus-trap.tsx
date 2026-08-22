@@ -17,6 +17,12 @@ interface FocusTrapProps extends React.ComponentProps<"div"> {
  * Component wrapper around `useFocusTrap`. Renders a `<div>` that contains
  * keyboard focus when `active` is `true`. Intended for custom overlay patterns
  * that cannot use the Base UI Dialog primitive.
+ *
+ * Containment only: focus is kept inside, pulled back when a script or a removed
+ * element sends it out, and restored on deactivation. It does **not** inert the
+ * page or lock scroll, so it is not on its own a modal boundary — a pointer or a
+ * virtual cursor can still reach the content behind it. Prefer `Dialog`,
+ * `AlertDialog` or `Sheet` for anything that claims to be modal.
  */
 function FocusTrap({
   active = true,

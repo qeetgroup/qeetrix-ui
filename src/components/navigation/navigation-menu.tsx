@@ -27,7 +27,7 @@ function NavigationMenu({ className, children, ...props }: NavigationMenuPrimiti
       <NavigationMenuPrimitive.Portal>
         <NavigationMenuPrimitive.Positioner
           sideOffset={6}
-          className="isolate z-50 box-border transition-[top,left,right,bottom] duration-200"
+          className="isolate z-(--qx-z-popover) box-border transition-[top,left,right,bottom] duration-200"
         >
           <NavigationMenuPrimitive.Popup
             data-slot="navigation-menu-popup"

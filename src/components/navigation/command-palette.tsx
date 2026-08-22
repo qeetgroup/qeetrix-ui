@@ -2,7 +2,11 @@
 
 import * as React from "react";
 
+import type { MessagesFor } from "@/lib/messages";
+import { commandPaletteMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { VisuallyHidden } from "@/primitives/visually-hidden";
+import { useMessages } from "@/providers/messages-provider";
 
 export interface CommandPaletteItem {
   /** Stable id used as React key. */
@@ -28,6 +32,18 @@ interface CommandPaletteProps {
   emptyMessage?: string;
   /** Show the footer hint with ↑↓ / ↵ / esc. Default true. */
   showHint?: boolean;
+  /**
+   * Text announced politely when the result count changes. Replace it to
+   * translate; return `""` to opt out of the announcement.
+   *
+   * Equivalent to `messages={{ resultCount }}` and wins over it.
+   */
+  resultCountLabel?: (count: number) => string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"commandPalette">;
   className?: string;
 }
 
@@ -51,7 +67,9 @@ function matches(item: CommandPaletteItem, q: string): boolean {
  * filtered list.
  *
  * Keyboard: ↑↓ moves highlight, ↵ selects, ESC closes. Clicking the
- * backdrop also closes.
+ * backdrop also closes. The highlighted result is scrolled into view and the
+ * result count is announced politely, so a keyboard or screen-reader user is
+ * never operating an option that has scrolled out of the list.
  */
 function CommandPalette({
   open,
@@ -61,12 +79,16 @@ function CommandPalette({
   placeholder,
   emptyMessage,
   showHint = true,
+  resultCountLabel,
+  messages: messageOverrides,
   className,
 }: CommandPaletteProps) {
-  const resolvedPlaceholder = placeholder ?? "Search…";
-  const resolvedEmptyMessage = emptyMessage ?? "No matches";
+  const messages = useMessages("commandPalette", commandPaletteMessages, messageOverrides);
+  const resolvedPlaceholder = placeholder ?? messages.placeholder;
+  const resolvedEmptyMessage = emptyMessage ?? messages.empty;
   const dialogRef = React.useRef<HTMLDialogElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
   const listboxId = React.useId();
   const [query, setQuery] = React.useState("");
   const [highlight, setHighlight] = React.useState(0);
@@ -109,10 +131,19 @@ function CommandPalette({
     }
   }, [open]);
 
-  // Clamp highlight when caller-owned items change the filtered list.
+  // Clamped in render, not in an effect: an effect would leave one committed
+  // frame where `aria-activedescendant` points past the end of the list.
+  const activeIndex =
+    filtered.length === 0 ? -1 : Math.min(Math.max(highlight, 0), filtered.length - 1);
+  const activeId = activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined;
+
+  // The result list scrolls at 24rem; without this the highlight can move to a
+  // row that is not on screen.
   React.useEffect(() => {
-    setHighlight((current) => Math.max(0, Math.min(current, filtered.length - 1)));
-  }, [filtered.length]);
+    if (!open || !activeId) return;
+    const node = listRef.current?.querySelector(`[id="${activeId}"]`);
+    (node as HTMLElement | null)?.scrollIntoView?.({ block: "nearest" });
+  }, [open, activeId]);
 
   function commit(item: CommandPaletteItem | undefined) {
     if (!item) return;
@@ -131,7 +162,7 @@ function CommandPalette({
       setHighlight((h) => Math.max(0, h - 1));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      commit(filtered[highlight]);
+      commit(activeIndex >= 0 ? filtered[activeIndex] : undefined);
     }
     // Native <dialog> handles Esc → close → onClose handler below.
   }
@@ -146,7 +177,7 @@ function CommandPalette({
         // child content box) closes the palette.
         if (e.target === dialogRef.current) onOpenChange(false);
       }}
-      aria-label="Command palette"
+      aria-label={messages.label}
       className={cn(
         // Native <dialog>:modal centers via the UA's `margin: auto` —
         // setting margin-top to 10vh would silently kill that. Fix by
@@ -173,17 +204,19 @@ function CommandPalette({
             role="combobox"
             aria-autocomplete="list"
             aria-controls={listboxId}
-            aria-activedescendant={
-              filtered[highlight] ? `${listboxId}-option-${highlight}` : undefined
-            }
+            aria-activedescendant={activeId}
             aria-expanded={open}
             className="h-12 w-full border-0 bg-transparent px-4 text-base outline-none placeholder:text-muted-foreground"
           />
         </div>
+        <VisuallyHidden role="status" aria-live="polite" data-slot="command-palette-status">
+          {open ? (resultCountLabel ?? messages.resultCount)(filtered.length) : ""}
+        </VisuallyHidden>
         <div
+          ref={listRef}
           id={listboxId}
           role="listbox"
-          aria-label="Results"
+          aria-label={messages.results}
           className="max-h-96 overflow-y-auto p-1"
         >
           {filtered.length === 0 ? (
@@ -200,7 +233,7 @@ function CommandPalette({
                 )}
                 {groupItems.map((item) => {
                   const idx = filtered.indexOf(item);
-                  const isHighlighted = idx === highlight;
+                  const isHighlighted = idx === activeIndex;
                   return (
                     <button
                       key={item.id}

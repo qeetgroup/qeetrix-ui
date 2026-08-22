@@ -66,4 +66,18 @@ describe("AlertDialog", () => {
     render(<AlertExample open />);
     expect(await a11y(document.body)).toHaveNoViolations();
   });
+
+  it("bounds its height to the viewport and scrolls its own content", () => {
+    render(<AlertExample open />);
+    const dialog = screen.getByRole("alertdialog");
+    expect(dialog.className).toContain("max-h-[calc(100dvh-2rem)]");
+    expect(dialog.className).toContain("overflow-y-auto");
+  });
+
+  it("sits on the named modal layer rather than an ad-hoc z-index", () => {
+    render(<AlertExample open />);
+    expect(screen.getByRole("alertdialog").className).toContain("z-(--qx-z-modal)");
+    const backdrop = document.querySelector('[data-slot="alert-dialog-overlay"]');
+    expect(backdrop?.className).toContain("z-(--qx-z-modal-backdrop)");
+  });
 });
