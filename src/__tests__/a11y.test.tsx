@@ -1,11 +1,11 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
-import { Button } from "@/components/actions/button";
-import { Badge } from "@/components/data-display/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/feedback/alert";
-import { Field, FieldGroup, FieldLabel } from "@/components/inputs/field";
-import { Input } from "@/components/inputs/input";
+import { Button } from "@/components/Button/button";
+import { Badge } from "@/components/Badge/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/Alert/alert";
+import { Field, FieldGroup, FieldLabel } from "@/components/Input/field";
+import { Input } from "@/components/Input/input";
 
 // color-contrast needs real layout/getComputedStyle, which jsdom can't provide,
 // so disable just that rule; everything else (labels, roles, names) still runs.

@@ -14,7 +14,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@/components/surfaces/dialog";
+} from "@/components/Dialog/dialog";
 
 describe("base.css host-global media blocks", () => {
   it("collapses a declared 150ms transition to nothing under prefers-reduced-motion", () => {

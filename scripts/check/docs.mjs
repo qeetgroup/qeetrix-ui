@@ -64,7 +64,7 @@ const componentCount = Array.isArray(manifest.components)
   : Object.keys(manifest.components ?? {}).length;
 
 const categoryCount = (() => {
-  const map = JSON.parse(readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"));
+  const map = JSON.parse(readFileSync(join(ROOT, "scripts/config/component-map.json"), "utf8"));
   return Object.keys(map).length;
 })();
 
@@ -83,9 +83,7 @@ const statusCounts = (() => {
 
 /** A layer is populated when it holds at least one non-test source file. */
 const populatedLayers = (() => {
-  const layers = JSON.parse(
-    readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"),
-  ) && ["runtime", "primitives", "foundations", "hooks", "lib", "providers", "manifests"];
+  const layers = ["runtime", "internal", "foundations", "hooks", "lib", "providers", "manifests"];
   const populated = new Set();
   for (const layer of layers) {
     const dir = join(ROOT, "src", layer);
@@ -130,7 +128,7 @@ for (const file of markdownFiles) {
     }
     for (const [, n] of text.matchAll(/\b(\d{1,3})\s+categor(?:y|ies)\b/g)) {
       if (Number(n) !== categoryCount) {
-        add(file, lineNo, `claims ${n} categories; category-map.json has ${categoryCount}`);
+        add(file, lineNo, `claims ${n} categories; component-map.json has ${categoryCount}`);
       }
     }
     for (const status of ["experimental", "beta", "stable", "deprecated"]) {

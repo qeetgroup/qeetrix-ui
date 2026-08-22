@@ -19,39 +19,39 @@ import { render } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it } from "vitest";
 import { expectNoA11yViolations } from "@/__tests__/accessibility";
-import { AuditEvent } from "@/components/data-display/audit-event";
-import { Avatar, AvatarFallback } from "@/components/data-display/avatar";
-import { Badge } from "@/components/data-display/badge";
+import { AuditEvent } from "@/components/AuditEvent/audit-event";
+import { Avatar, AvatarFallback } from "@/components/Avatar/avatar";
+import { Badge } from "@/components/Badge/badge";
 import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
-} from "@/components/data-display/description-list";
-import { FileCard } from "@/components/data-display/file-card";
-import { FileTypeIcon } from "@/components/data-display/file-type-icon";
-import { PresenceIndicator } from "@/components/data-display/presence-indicator";
-import { SecurityItem } from "@/components/data-display/security-item";
-import { Stat } from "@/components/data-display/stat";
-import { StatusPill } from "@/components/data-display/status-pill";
-import { Callout } from "@/components/feedback/callout";
-import { DataState } from "@/components/feedback/data-state";
-import { EmptyState } from "@/components/feedback/empty-state";
-import { Meter } from "@/components/feedback/meter";
-import { ProgressCircle } from "@/components/feedback/progress-circle";
-import { Skeleton } from "@/components/feedback/skeleton";
-import { Spinner } from "@/components/feedback/spinner";
-import { AspectRatio } from "@/components/layout/aspect-ratio";
-import { Container } from "@/components/layout/container";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/surfaces/card";
-import { Blockquote } from "@/components/utility/blockquote";
-import { Highlight } from "@/components/utility/highlight";
-import { Kbd } from "@/components/utility/kbd";
-import { Label } from "@/components/utility/label";
-import { NumberFormatter } from "@/components/utility/number-formatter";
-import { Separator } from "@/components/utility/separator";
-import { Typography } from "@/components/utility/typography";
-import { VisuallyHidden } from "@/components/utility/visually-hidden";
+} from "@/components/DescriptionList/description-list";
+import { FileCard } from "@/components/FileCard/file-card";
+import { FileTypeIcon } from "@/components/FileCard/file-type-icon";
+import { PresenceIndicator } from "@/components/PresenceIndicator/presence-indicator";
+import { SecurityItem } from "@/components/SecurityItem/security-item";
+import { Stat } from "@/components/Stat/stat";
+import { StatusPill } from "@/components/Badge/status-pill";
+import { Callout } from "@/components/Alert/callout";
+import { DataState } from "@/components/EmptyState/data-state";
+import { EmptyState } from "@/components/EmptyState/empty-state";
+import { Meter } from "@/components/Progress/meter";
+import { ProgressCircle } from "@/components/Progress/progress-circle";
+import { Skeleton } from "@/components/Spinner/skeleton";
+import { Spinner } from "@/components/Spinner/spinner";
+import { AspectRatio } from "@/components/AspectRatio/aspect-ratio";
+import { Container } from "@/components/Container/container";
+import { PageHeader } from "@/components/PageHeader/page-header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card/card";
+import { Blockquote } from "@/components/Blockquote/blockquote";
+import { Highlight } from "@/components/Highlight/highlight";
+import { Kbd } from "@/components/Kbd/kbd";
+import { Label } from "@/components/Label/label";
+import { NumberFormatter } from "@/components/NumberFormatter/number-formatter";
+import { Separator } from "@/components/Separator/separator";
+import { Typography } from "@/components/Typography/typography";
+import { VisuallyHidden } from "@/components/VisuallyHidden/visually-hidden";
 
 /**
  * slug → [render the fixture, expected data-slot].

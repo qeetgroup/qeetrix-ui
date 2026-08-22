@@ -100,7 +100,7 @@ describe("token-usage: named Tailwind palette utilities", () => {
         }
       }
     };
-    for (const root of ["src/components", "src/blocks", "src/providers"]) walk(root);
+    for (const root of ["src/components", "src/providers"]) walk(root);
     expect(offenders).toEqual([]);
   });
 });

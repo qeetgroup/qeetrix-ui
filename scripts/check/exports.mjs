@@ -93,11 +93,11 @@ const config = ts.parseJsonConfigFileContent(
 
 // Every component module is a root file, not only the entry points: a `@barrel-exclude` alias
 // is reachable from no entry by design, and it still has to be checked.
-const categoryMap = JSON.parse(
-  readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"),
+const componentMap = JSON.parse(
+  readFileSync(join(ROOT, "scripts/config/component-map.json"), "utf8"),
 );
-const componentFiles = Object.entries(categoryMap).flatMap(([category, slugs]) =>
-  slugs.map((slug) => join(ROOT, "src/components", category, `${slug}.tsx`)),
+const componentFiles = Object.entries(componentMap).flatMap(([family, slugs]) =>
+  slugs.map((slug) => join(ROOT, "src/components", family, `${slug}.tsx`)),
 );
 
 const program = ts.createProgram(
@@ -384,19 +384,19 @@ if (failed) {
 const rootSurface = new Set(Object.keys(surface["."] ?? {}));
 
 const modules = [];
-for (const [category, slugs] of Object.entries(categoryMap)) {
+for (const [family, slugs] of Object.entries(componentMap)) {
   for (const slug of slugs) {
-    const file = join(ROOT, "src/components", category, `${slug}.tsx`);
+    const file = join(ROOT, "src/components", family, `${slug}.tsx`);
     const source = program.getSourceFile(file);
     if (!source) {
       failed += 1;
-      console.error(`✗ ${category}/${slug}.tsx is listed in category-map.json but has no source`);
+      console.error(`✗ ${family}/${slug}.tsx is listed in component-map.json but has no source`);
       continue;
     }
     const symbol = checker.getSymbolAtLocation(source);
     modules.push({
       slug,
-      category,
+      category: family,
       excluded: readFileSync(file, "utf8").includes("@barrel-exclude"),
       exports: symbol ? checker.getExportsOfModule(symbol).map((s) => s.getName()) : [],
     });

@@ -30,7 +30,6 @@ const JSON_OUTPUT = process.argv.includes("--json");
 const INIT = process.argv.includes("--init");
 const SOURCE_ROOTS = [
   join(PACKAGE_ROOT, "src/components"),
-  join(PACKAGE_ROOT, "src/blocks"),
   join(PACKAGE_ROOT, "src/providers"),
 ];
 const CODE_FILE = /\.(?:ts|tsx)$/;

@@ -1,8 +1,8 @@
 /**
  * @qeetrix/ui — the Qeet Group design system.
  *
- * Components are grouped by category under src/components/<category>/; this barrel
- * re-exports every category, the providers, brand assets, hooks and lib helpers.
+ * Components are organized by family under src/components/<Family>/; this barrel
+ * re-exports every family, the providers, brand assets, hooks and lib helpers.
  *
  * The published surface is locked by src/__tests__/public-api.json — any addition or
  * removal must be re-snapshotted via `bun run check:exports -- --update` and land in
@@ -24,7 +24,7 @@ export type { DateRange } from "react-day-picker";
 
 // Brand — Qeet logos + custom icons (also at the @qeetrix/ui/brand subpath).
 export * from "./brand";
-// Components — 145 modules across 11 categories.
+// Components — 145 modules across 102 families.
 export * from "./components";
 export { useMediaQuery } from "./hooks/use-media-query";
 export { useIsMobile } from "./hooks/use-mobile";

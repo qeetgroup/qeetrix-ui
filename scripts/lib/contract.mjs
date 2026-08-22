@@ -4,7 +4,7 @@
  * The contract is authored in TypeScript (src/contracts/, src/manifests/) and `tsc` already
  * rejects an invalid status or ARIA pattern in the registry. This is the second gate: it checks
  * the *generated* manifest — the artifact consumers actually read — against the same
- * vocabularies, and cross-checks it against scripts/config/category-map.json so metadata can
+ * vocabularies, and cross-checks it against scripts/config/component-map.json so metadata can
  * neither outlive its component nor go missing when one is added.
  *
  * `validateManifest` is a pure function over plain data so it can be exercised with synthetic
@@ -56,7 +56,7 @@ export function pascalCase(slug) {
  * @param {object}   input.vocabulary      the literal exports of src/contracts/
  * @param {object}   input.registry        COMPONENT_REGISTRY
  * @param {object}   input.registryDefaults REGISTRY_DEFAULTS
- * @param {object}   input.categoryMap     scripts/config/category-map.json
+ * @param {object}   input.componentMap     scripts/config/component-map.json
  * @param {number}   input.schemaVersion   MANIFEST_SCHEMA_VERSION
  * @returns {{ errors: object[], warnings: object[] }}
  */
@@ -65,7 +65,7 @@ export function validateManifest({
   vocabulary,
   registry = {},
   registryDefaults = {},
-  categoryMap = {},
+  componentMap = {},
   schemaVersion,
   schemaFields = {},
   packageVersion,
@@ -169,13 +169,13 @@ export function validateManifest({
 
   // The category vocabulary in the contract must match the category map on disk, or every
   // per-component category check below is validating against the wrong list.
-  const mappedCategories = Object.keys(categoryMap).sort();
+  const mappedCategories = Object.keys(componentMap).sort();
   if (mappedCategories.length > 0) {
     const declared = [...(COMPONENT_CATEGORIES ?? [])].sort();
     const missing = mappedCategories.filter((c) => !declared.includes(c));
     const extra = declared.filter((c) => !mappedCategories.includes(c));
     for (const category of missing) {
-      error(null, `category "${category}" exists in category-map.json but not in the contract`, {
+      error(null, `category "${category}" exists in component-map.json but not in the contract`, {
         location: "src/contracts/component.ts",
         hint: "add it to COMPONENT_CATEGORIES",
       });
@@ -193,7 +193,7 @@ export function validateManifest({
   /** Collected during the loop and resolved after it, once every name is known. */
   const deprecationReplacements = [];
   const slugToCategory = new Map(
-    Object.entries(categoryMap).flatMap(([category, slugs]) =>
+    Object.entries(componentMap).flatMap(([category, slugs]) =>
       slugs.map((slug) => [slug, category]),
     ),
   );
@@ -278,9 +278,9 @@ export function validateManifest({
         expected: `one of ${(COMPONENT_CATEGORIES ?? []).join(", ")}`,
       });
     } else if (slugToCategory.size > 0 && slugToCategory.get(entry.slug) !== entry.category) {
-      error(label, `category "${entry.category}" disagrees with category-map.json`, {
+      error(label, `category "${entry.category}" disagrees with component-map.json`, {
         expected: slugToCategory.get(entry.slug) ?? "(not listed at all)",
-        location: "scripts/config/category-map.json",
+        location: "scripts/config/component-map.json",
       });
     }
     if (!(COMPONENT_LAYERS ?? []).includes(entry.layer)) {
@@ -849,7 +849,7 @@ export function validateManifest({
       );
     }
   };
-  tally("categories", (entry) => entry.category, Object.keys(categoryMap));
+  tally("categories", (entry) => entry.category, Object.keys(componentMap));
   tally("statuses", (entry) => entry.status, COMPONENT_STATUSES);
   tally("accessibilityAudit", (entry) => entry.accessibility?.audit, A11Y_AUDIT_STATES);
 
@@ -872,7 +872,7 @@ export function validateManifest({
   }
   for (const slug of slugToCategory.keys()) {
     if (!seenSlugs.has(slug)) {
-      error(pascalCase(slug), "is in category-map.json but missing from the manifest", {
+      error(pascalCase(slug), "is in component-map.json but missing from the manifest", {
         hint: "regenerate with `node scripts/build/manifest.mjs`",
       });
     }

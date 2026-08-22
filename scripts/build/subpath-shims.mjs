@@ -2,17 +2,17 @@
  * subpath-shims.mjs — keeps the public deep-import surface flat while the source
  * tree is organised by category.
  *
- * Source lives at   src/components/<category>/<slug>.tsx
+ * Source lives at   src/components/<Family>/<slug>.tsx
  * Consumers import  @qeetrix/ui/components/<slug>        (canonical, unchanged)
  *                   @qeetrix/ui/components/ui/<slug>     (legacy, pre-1.0)
- *                   @qeetrix/ui/components/<category>    (group import)
+ *                   @qeetrix/ui/components/<Family>      (group import)
  *
- * After tsc emits dist/components/<category>/<slug>.js, this writes the thin
+ * After tsc emits dist/components/<Family>/<slug>.js, this writes the thin
  * re-export files those specifiers resolve to. Moving a component between
- * categories therefore never breaks a consumer — only the shim target changes.
+ * families therefore never breaks a consumer — only the shim target changes.
  *
  * The generated set is driven by an **allowlist**, not by whatever tsc happened to emit:
- * scripts/config/category-map.json for components, src/providers/ for providers. That is what
+ * scripts/config/component-map.json for components, src/providers/ for providers. That is what
  * makes `"./components/*"` in package.json equivalent to an enumerated export map — the pattern
  * can only resolve a name this script wrote, and this script only writes allowlisted names.
  * A compiled module that is not on the allowlist is an error, not a new public path.
@@ -33,8 +33,8 @@ if (!existsSync(DIST_COMPONENTS)) {
   process.exit(1);
 }
 
-const categoryMap = JSON.parse(
-  readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"),
+const componentMap = JSON.parse(
+  readFileSync(join(ROOT, "scripts/config/component-map.json"), "utf8"),
 );
 const providers = readdirSync(SRC_PROVIDERS)
   .filter((file) => file.endsWith(".tsx"))
@@ -59,14 +59,14 @@ const shim = (slug, target) => {
   written.add(`${slug}.js`).add(`${slug}.d.ts`);
 };
 
-for (const [category, slugs] of Object.entries(categoryMap)) {
-  const dir = join(DIST_COMPONENTS, category);
+for (const [family, slugs] of Object.entries(componentMap)) {
+  const dir = join(DIST_COMPONENTS, family);
   if (!existsSync(dir)) {
-    errors.push(`dist/components/${category} is missing — did tsc emit it?`);
+    errors.push(`dist/components/${family} is missing — did tsc emit it?`);
     continue;
   }
 
-  // Fail closed: the compiled category may not contain a module the allowlist does not name,
+  // Fail closed: the compiled family may not contain a module the allowlist does not name,
   // otherwise "./components/*" would publish it.
   const compiled = readdirSync(dir)
     .filter((file) => file.endsWith(".js") && file !== "index.js")
@@ -74,7 +74,7 @@ for (const [category, slugs] of Object.entries(categoryMap)) {
   for (const slug of compiled) {
     if (!slugs.includes(slug)) {
       errors.push(
-        `dist/components/${category}/${slug}.js is not listed in scripts/config/category-map.json — ` +
+        `dist/components/${family}/${slug}.js is not listed in scripts/config/component-map.json — ` +
           "add it there or delete the module; it must not become a public subpath by accident",
       );
     }
@@ -83,25 +83,25 @@ for (const [category, slugs] of Object.entries(categoryMap)) {
   for (const slug of slugs) {
     if (!existsSync(join(dir, `${slug}.js`))) {
       errors.push(
-        `${category}/${slug} is on the allowlist but dist/components/${category}/${slug}.js is missing`,
+        `${family}/${slug} is on the allowlist but dist/components/${family}/${slug}.js is missing`,
       );
       continue;
     }
     // @qeetrix/ui/components/<slug>
-    shim(slug, `./${category}/${slug}.js`);
+    shim(slug, `./${family}/${slug}.js`);
     // @qeetrix/ui/components/ui/<slug> — legacy path kept alive for pre-1.0 consumers.
-    write(join(DIST_COMPONENTS, "ui", `${slug}.js`), `../${category}/${slug}.js`);
-    write(join(DIST_COMPONENTS, "ui", `${slug}.d.ts`), `../${category}/${slug}.js`);
+    write(join(DIST_COMPONENTS, "ui", `${slug}.js`), `../${family}/${slug}.js`);
+    write(join(DIST_COMPONENTS, "ui", `${slug}.d.ts`), `../${family}/${slug}.js`);
   }
 
-  // @qeetrix/ui/components/<category> — group import, resolved by the same pattern.
+  // @qeetrix/ui/components/<Family> — group import, resolved by the same pattern.
   if (!existsSync(join(dir, "index.js"))) {
     errors.push(
-      `dist/components/${category}/index.js is missing — the category barrel did not compile`,
+      `dist/components/${family}/index.js is missing — the family barrel did not compile`,
     );
     continue;
   }
-  shim(category, `./${category}/index.js`);
+  shim(family, `./${family}/index.js`);
 }
 
 // Providers moved to src/providers/, but @qeetrix/ui/components/<name>-provider
@@ -136,6 +136,6 @@ if (errors.length) {
 
 console.log(
   `✔ subpath shims: ${files} files from the allowlist — ` +
-    `${Object.values(categoryMap).flat().length} components (flat + legacy ui/), ` +
-    `${Object.keys(categoryMap).length} category group imports, ${providers.length} providers`,
+    `${Object.values(componentMap).flat().length} components (flat + legacy ui/), ` +
+    `${Object.keys(componentMap).length} family group imports, ${providers.length} providers`,
 );

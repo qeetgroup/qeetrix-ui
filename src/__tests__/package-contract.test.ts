@@ -23,7 +23,7 @@ const readJson = (path: string) => JSON.parse(read(path));
 const pkg = readJson("/package.json") as {
   exports: Record<string, null | string | Record<string, string>>;
 };
-const categoryMap = readJson("/scripts/config/category-map.json") as Record<string, string[]>;
+const componentMap = readJson("/scripts/config/component-map.json") as Record<string, string[]>;
 
 const modulesIn = (directory: string, extension: string) =>
   readdirSync(`${ROOT}${directory}`)
@@ -73,13 +73,12 @@ describe("the export map is an allowlist", () => {
     expect([...published, ...INTERNAL.lib].sort()).toEqual(modulesIn("/src/lib", ".ts"));
   });
 
-  it("publishes every block and every provider by name", () => {
+  it("publishes every provider by name", () => {
     const published = (prefix: string) =>
       Object.keys(pkg.exports)
         .filter((key) => key.startsWith(prefix))
         .map((key) => key.replace(prefix, ""))
         .sort();
-    expect(published("./blocks/")).toEqual(modulesIn("/src/blocks", ".tsx"));
     expect(published("./providers/").filter((name) => name !== "")).toEqual(
       modulesIn("/src/providers", ".tsx"),
     );
@@ -93,11 +92,11 @@ describe("the export map is an allowlist", () => {
 });
 
 describe("implementation paths are denied, not merely undocumented", () => {
-  it("denies every category directory", () => {
-    for (const category of Object.keys(categoryMap)) {
+  it("denies every family directory", () => {
+    for (const family of Object.keys(componentMap)) {
       expect(
-        pkg.exports[`./components/${category}/*`],
-        `./components/${category}/* must be denied`,
+        pkg.exports[`./components/${family}/*`],
+        `./components/${family}/* must be denied`,
       ).toBeNull();
     }
   });

@@ -6,13 +6,13 @@ import { render } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it } from "vitest";
 
-import { DataTable } from "@/components/data-display/data-table";
-import { DiffViewer } from "@/components/data-display/diff-viewer";
-import { Feed } from "@/components/data-display/feed";
-import { JSONTree } from "@/components/data-display/json-tree";
-import { OrgChart } from "@/components/data-display/org-chart";
-import { type TreeNode, TreeView } from "@/components/navigation/tree-view";
-import { ScheduleCalendar, type ScheduleEvent } from "@/components/pickers/schedule-calendar";
+import { DataTable } from "@/components/DataTable/data-table";
+import { DiffViewer } from "@/components/DiffViewer/diff-viewer";
+import { Feed } from "@/components/Feed/feed";
+import { JSONTree } from "@/components/JsonTree/json-tree";
+import { OrgChart } from "@/components/OrgChart/org-chart";
+import { type TreeNode, TreeView } from "@/components/TreeView/tree-view";
+import { ScheduleCalendar, type ScheduleEvent } from "@/components/Calendar/schedule-calendar";
 
 /* ── What this file measures ───────────────────────────────────────────────────────────────
  * The gap this closes is that nothing in the repo carried a number: no render budget, no

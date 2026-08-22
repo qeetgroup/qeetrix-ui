@@ -9,12 +9,12 @@
  *
  *   1. **The published path list is exactly the allowlist.** `"./components/*"` is a pattern, so
  *      it publishes whatever `dist/components/` contains. The allowlist
- *      (scripts/config/category-map.json + src/providers + src/blocks) is what may be there, and
+ *      (scripts/config/component-map.json + src/providers) is what may be there, and
  *      the packed tarball is audited against it — a stray compiled module is a failure, not a new
  *      public subpath.
  *   2. **Every published path resolves; every denied path is denied.** Both are asserted from a
  *      consumer, in ESM resolution and in TypeScript, including the `null` denials that keep
- *      category-nested implementation paths out of the contract.
+ *      family-nested implementation paths out of the contract.
  *   3. **Consumer passes fail closed.** A missing framework used to downgrade a whole integration
  *      pass to a warning and a zero exit, so "verified" could mean "did not run". The Vite and
  *      Tailwind passes are hermetic (this repo's own devDependencies) and always run; the Next.js
@@ -43,17 +43,13 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const SIBLINGS = join(ROOT, "..");
 const DOCS_ROOT = join(SIBLINGS, "qeetrix-docs");
 const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
-const categoryMap = JSON.parse(
-  readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"),
+const componentMap = JSON.parse(
+  readFileSync(join(ROOT, "scripts/config/component-map.json"), "utf8"),
 );
 
-const categories = Object.keys(categoryMap);
-const slugs = Object.values(categoryMap).flat();
+const families = Object.keys(componentMap);
+const slugs = Object.values(componentMap).flat();
 const providers = readdirSync(join(ROOT, "src/providers"))
-  .filter((file) => file.endsWith(".tsx"))
-  .map((file) => file.replace(/\.tsx$/, ""))
-  .sort();
-const blocks = readdirSync(join(ROOT, "src/blocks"))
   .filter((file) => file.endsWith(".tsx"))
   .map((file) => file.replace(/\.tsx$/, ""))
   .sort();
@@ -62,7 +58,7 @@ const libs = ["motion", "responsive", "token-values", "utils"];
 
 /* ── 1. the export map is the allowlist ───────────────────────────────────────────────────── */
 
-// The flat façade: @qeetrix/ui/components/<slug|category|name-provider> all resolve
+// The flat façade: @qeetrix/ui/components/<slug|family|name-provider> all resolve
 // through one pattern, backed by the shims in scripts/build/subpath-shims.mjs.
 const subpath = (base) => ({
   types: `${base}.d.ts`,
@@ -93,7 +89,6 @@ for (const pattern of ["./hooks/*", "./lib/*", "./providers/*", "./blocks/*"]) {
 }
 for (const [key, expected] of [
   ...providers.map((name) => [`./providers/${name}`, `./dist/providers/${name}`]),
-  ...blocks.map((name) => [`./blocks/${name}`, `./dist/blocks/${name}`]),
   ...hooks.map((name) => [`./hooks/${name}`, `./dist/hooks/${name}`]),
   ...libs.map((name) => [`./lib/${name}`, `./dist/lib/${name}`]),
 ]) {
@@ -101,11 +96,11 @@ for (const [key, expected] of [
 }
 // Denials. More specific than "./components/*", so Node picks them first.
 assert.equal(packageJson.exports["./components/index"], null);
-for (const category of categories) {
+for (const family of families) {
   assert.equal(
-    packageJson.exports[`./components/${category}/*`],
+    packageJson.exports[`./components/${family}/*`],
     null,
-    `./components/${category}/* must be denied — the category a component lives in is an ` +
+    `./components/${family}/* must be denied — the family a component lives in is an ` +
       "implementation detail, and publishing it would make moving a file a breaking change",
   );
 }
@@ -202,17 +197,17 @@ try {
     "dist/styles/tokens.raw.css",
     "dist/styles/tokens.json",
     "dist/component-manifest.json",
-    // canonical category source
-    "dist/components/actions/button.js",
-    "dist/components/data-display/access-review.js",
+    // canonical family source
+    "dist/components/Button/button.js",
+    "dist/components/AccessReview/access-review.js",
     // flat façade
     "dist/components/button.js",
     "dist/components/button.d.ts",
     "dist/components/chart.d.ts",
     "dist/components/access-review.js",
-    // category group imports
-    "dist/components/actions.js",
-    "dist/components/actions.d.ts",
+    // family group imports
+    "dist/components/Button.js",
+    "dist/components/Button.d.ts",
     // legacy pre-1.0 path
     "dist/components/ui/button.js",
     "dist/components/ui/button.d.ts",
@@ -267,7 +262,7 @@ try {
     .filter((file) => /^dist\/components\/[^/]+\.(js|d\.ts)$/.test(file))
     .map((file) => file.replace(/^dist\/components\//, ""));
   const expectedFacade = new Set(
-    [...slugs, ...categories, ...providers, "index"].flatMap((name) => [
+    [...slugs, ...families, ...providers, "index"].flatMap((name) => [
       `${name}.js`,
       `${name}.d.ts`,
     ]),
@@ -305,13 +300,11 @@ try {
   const published = [
     "@qeetrix/ui",
     "@qeetrix/ui/brand",
-    "@qeetrix/ui/blocks",
     "@qeetrix/ui/providers",
-    ...blocks.map((name) => `@qeetrix/ui/blocks/${name}`),
     ...providers.map((name) => `@qeetrix/ui/providers/${name}`),
     ...slugs.map((slug) => `@qeetrix/ui/components/${slug}`),
     ...slugs.map((slug) => `@qeetrix/ui/components/ui/${slug}`),
-    ...categories.map((category) => `@qeetrix/ui/components/${category}`),
+    ...families.map((family) => `@qeetrix/ui/components/${family}`),
     ...providers.map((name) => `@qeetrix/ui/components/${name}`),
     ...hooks.map((name) => `@qeetrix/ui/hooks/${name}`),
     ...libs.map((name) => `@qeetrix/ui/lib/${name}`),
@@ -324,22 +317,25 @@ try {
     "@qeetrix/ui/package.json",
   ];
   const denied = [
-    // category-nested implementation paths — the flat specifier is the contract
-    ...categories.map((category) => `@qeetrix/ui/components/${category}/button`),
-    "@qeetrix/ui/components/actions/button",
-    "@qeetrix/ui/components/data-display/access-review",
-    "@qeetrix/ui/components/actions/index",
+    // family-nested implementation paths — the flat specifier is the contract
+    ...families.map((family) => `@qeetrix/ui/components/${family}/button`),
+    "@qeetrix/ui/components/Button/button",
+    "@qeetrix/ui/components/AccessReview/access-review",
+    "@qeetrix/ui/components/Button/index",
+    // blocks were removed in the enterprise architecture migration
+    "@qeetrix/ui/blocks",
+    "@qeetrix/ui/blocks/auth",
     // the components barrel duplicates the root entry point
     "@qeetrix/ui/components/index",
     // internal hooks and modules that a wildcard used to publish
     "@qeetrix/ui/hooks/use-controllable-state",
     "@qeetrix/ui/lib/token-values-internal",
-    "@qeetrix/ui/primitives/portal",
+    "@qeetrix/ui/internal/portal",
     "@qeetrix/ui/contracts/layers",
     "@qeetrix/ui/manifests/component-registry",
     "@qeetrix/ui/foundations/token-values",
     // reaching past the export map entirely
-    "@qeetrix/ui/dist/components/actions/button.js",
+    "@qeetrix/ui/dist/components/Button/button.js",
     "@qeetrix/ui/dist/index.js",
   ];
 
@@ -362,7 +358,7 @@ import {
 import { AccessReview as CanonicalAccessReview } from "@qeetrix/ui/components/access-review";
 import { AuditEvent as CanonicalAuditEvent, AuditLog as CanonicalAuditLog } from "@qeetrix/ui/components/audit-event";
 import { Button as CanonicalButton } from "@qeetrix/ui/components/button";
-import { Button as GroupButton } from "@qeetrix/ui/components/actions";
+import { Button as GroupButton } from "@qeetrix/ui/components/Button";
 import { ThemeProvider as ProvidersEntryThemeProvider } from "@qeetrix/ui/providers";
 import { ThemeProvider as ProvidersDeepThemeProvider } from "@qeetrix/ui/providers/theme-provider";
 import { ChartDataTable as CanonicalChartDataTable } from "@qeetrix/ui/components/chart";
@@ -373,7 +369,6 @@ import { SecurityItem as CanonicalSecurityItem } from "@qeetrix/ui/components/se
 import { ThemeProvider } from "@qeetrix/ui/components/theme-provider";
 import { Button as LegacyButton } from "@qeetrix/ui/components/ui/button";
 import { cn } from "@qeetrix/ui/lib/utils";
-import { LoginForm } from "@qeetrix/ui/blocks/auth";
 
 assert.equal(RootButton, CanonicalButton);
 assert.equal(CanonicalButton, LegacyButton);
@@ -390,7 +385,6 @@ assert.equal(FormErrorSummary, CanonicalFormErrorSummary);
 assert.equal(SecurityItem, CanonicalSecurityItem);
 assert.equal(typeof ThemeProvider, "function");
 assert.equal(typeof cn, "function");
-assert.equal(typeof LoginForm, "function");
 
 // Every published path resolves to a file that exists. A shim that was never generated, or a
 // component whose category moved without its façade, fails here rather than at a consumer.
@@ -427,7 +421,7 @@ for (const specifier of [
   assert.ok(existsSync(fileURLToPath(import.meta.resolve(specifier))), specifier);
 }
 
-const internalError = await import("@qeetrix/ui/dist/components/actions/button.js").then(
+const internalError = await import("@qeetrix/ui/dist/components/Button/button.js").then(
   () => null,
   (error) => error,
 );
@@ -459,7 +453,7 @@ import {
   SecurityItem,
 } from "@qeetrix/ui";
 import { Button as CanonicalButton } from "@qeetrix/ui/components/button";
-import { Badge } from "@qeetrix/ui/components/data-display";
+import { Badge } from "@qeetrix/ui/components/Badge";
 import { DataTable } from "@qeetrix/ui/components/data-table";
 import { ThemeProvider } from "@qeetrix/ui/components/theme-provider";
 import { DensityProvider } from "@qeetrix/ui/providers";
@@ -518,7 +512,7 @@ void [
   // compiler resolves would still look supported in an editor.
   writeFileSync(
     join(consumerRoot, "denied.ts"),
-    `import { Button } from "@qeetrix/ui/components/actions/button";
+    `import { Button } from "@qeetrix/ui/components/Button/button";
 import { useControllableState } from "@qeetrix/ui/hooks/use-controllable-state";
 void [Button, useControllableState];
 `,
@@ -567,7 +561,7 @@ void [Button, useControllableState];
   );
   assert.match(
     deniedTypes,
-    /Cannot find module '@qeetrix\/ui\/components\/actions\/button'/,
+    /Cannot find module '@qeetrix/ui/components/Button/button'/,
     "expected the category-nested path to be unresolvable for TypeScript",
   );
   assert.match(
@@ -782,7 +776,7 @@ export default defineConfig({ plugins: [tailwindcss()] });
 
   console.log(
     `[package] verified ${files.length} packed files — ESM, Bundler/NodeNext types, flat + legacy ` +
-      `+ group subpaths, providers, blocks, hooks, lib, ${requiredStyles.length} @import-ed ` +
+      `+ family group subpaths, providers, hooks, lib, ${requiredStyles.length} @import-ed ` +
       "stylesheets, CSS entry points, denied internals " +
       `(runtime + types), Vite + Tailwind output${nextAvailable ? ", Next RSC" : ""}\n` +
       `${resolutionReport.trim()}`,

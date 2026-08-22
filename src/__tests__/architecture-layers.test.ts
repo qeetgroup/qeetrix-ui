@@ -81,7 +81,7 @@ const check = (modules: ReturnType<typeof graph>, allowed = LAYER_ALLOWED_DEPEND
 describe("layer attribution", () => {
   it("maps each directory to its layer", () => {
     expect(layerOf("src/components/actions/button.tsx", LAYER_DIRECTORIES)).toBe("components");
-    expect(layerOf("src/blocks/auth.tsx", LAYER_DIRECTORIES)).toBe("blocks");
+    expect(layerOf("src/internal/portal.tsx", LAYER_DIRECTORIES)).toBe("internal");
     expect(layerOf("src/lib/utils.ts", LAYER_DIRECTORIES)).toBe("lib");
     expect(layerOf("src/contracts/component.ts", LAYER_DIRECTORIES)).toBe("contracts");
     expect(layerOf("src/manifests/component-registry.ts", LAYER_DIRECTORIES)).toBe("manifests");
@@ -111,8 +111,8 @@ describe("module resolution", () => {
   });
 
   it("resolves a relative sibling", () => {
-    expect(resolveSpecifier("./button", "src/components/actions/index.ts", ROOT)).toBe(
-      "src/components/actions/button.tsx",
+    expect(resolveSpecifier("./button", "src/components/Button/index.ts", ROOT)).toBe(
+      "src/components/Button/button.tsx",
     );
   });
 
@@ -148,10 +148,10 @@ describe("allowed dependencies", () => {
     expect(check(modules)).toEqual([]);
   });
 
-  it("permits a block importing a component", () => {
+  it("permits entry importing a component", () => {
     const modules = graph({
-      "src/blocks/auth.tsx": { layer: "blocks", imports: ["src/components/actions/button.tsx"] },
-      "src/components/actions/button.tsx": { layer: "components" },
+      "src/index.ts": { layer: "entry", imports: ["src/components/Button/button.tsx"] },
+      "src/components/Button/button.tsx": { layer: "components" },
     });
     expect(check(modules)).toEqual([]);
   });
@@ -166,31 +166,25 @@ describe("allowed dependencies", () => {
 });
 
 describe("forbidden dependencies", () => {
-  it("rejects a component importing a block, and says why", () => {
+  it("rejects a component importing entry, and says why", () => {
     const modules = graph({
-      "src/components/actions/button.tsx": {
+      "src/components/Button/button.tsx": {
         layer: "components",
-        imports: ["src/blocks/dashboard-shell.tsx"],
+        imports: ["src/index.ts"],
       },
-      "src/blocks/dashboard-shell.tsx": { layer: "blocks" },
+      "src/index.ts": { layer: "entry" },
     });
-    expect(check(modules)).toEqual([
-      {
-        file: "src/components/actions/button.tsx",
-        dependency: "src/blocks/dashboard-shell.tsx",
-        sourceLayer: "components",
-        targetLayer: "blocks",
-        rule: "components cannot depend on blocks — blocks compose components",
-      },
-    ]);
+    expect(check(modules)).toHaveLength(1);
+    expect(check(modules)[0].sourceLayer).toBe("components");
+    expect(check(modules)[0].targetLayer).toBe("entry");
   });
 
-  it("rejects a primitive importing a block", () => {
+  it("rejects internal importing components", () => {
     const modules = graph({
-      "src/primitives/press.ts": { layer: "primitives", imports: ["src/blocks/auth.tsx"] },
-      "src/blocks/auth.tsx": { layer: "blocks" },
+      "src/internal/portal.tsx": { layer: "internal", imports: ["src/components/Button/button.tsx"] },
+      "src/components/Button/button.tsx": { layer: "components" },
     });
-    expect(check(modules)[0]?.rule).toBe("a primitive must not depend on a block");
+    expect(check(modules)[0]?.rule).toBe("an internal primitive must not depend on a composed component");
   });
 
   it("rejects runtime reaching into components", () => {
@@ -226,10 +220,10 @@ describe("forbidden dependencies", () => {
     const modules = graph({
       "src/lib/__tests__/motion.test.ts": {
         layer: "lib",
-        imports: ["src/components/actions/button.tsx", "src/blocks/auth.tsx"],
+        imports: ["src/components/Button/button.tsx", "src/index.ts"],
       },
-      "src/components/actions/button.tsx": { layer: "components" },
-      "src/blocks/auth.tsx": { layer: "blocks" },
+      "src/components/Button/button.tsx": { layer: "components" },
+      "src/index.ts": { layer: "entry" },
     });
     expect(check(modules)).toEqual([]);
   });
@@ -360,7 +354,7 @@ describe("relative imports that leave their own directory", () => {
         layer: "components",
         edges: [
           { specifier: "./button-parts", target: "src/components/actions/button-parts.tsx" },
-          { specifier: "@/components/inputs/input", target: "src/components/inputs/input.tsx" },
+          { specifier: "@/components/Input/input", target: "src/components/inputs/input.tsx" },
           { specifier: "react", target: null },
         ],
       },

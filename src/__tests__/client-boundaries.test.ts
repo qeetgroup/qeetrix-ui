@@ -54,10 +54,10 @@ const SERVER_SAFE_MODULES = [
   "timeline",
 ] as const;
 
-// Components live under src/components/<category>/; scripts/config/category-map.json
+// Components live under src/components/<category>/; scripts/config/component-map.json
 // is the single source of truth for that mapping (build, checks and tests all read it).
 const categoryMap: Record<string, string[]> = JSON.parse(
-  readFileSync(resolve(process.cwd(), "scripts/config/category-map.json"), "utf8"),
+  readFileSync(resolve(process.cwd(), "scripts/config/component-map.json"), "utf8"),
 );
 const categoryOf = new Map(
   Object.entries(categoryMap).flatMap(([category, slugs]) =>
@@ -71,7 +71,7 @@ const manifest = JSON.parse(
 
 function sourceFor(moduleName: string) {
   const category = categoryOf.get(moduleName);
-  if (!category) throw new Error(`${moduleName} is not in scripts/config/category-map.json`);
+  if (!category) throw new Error(`${moduleName} is not in scripts/config/component-map.json`);
   const filePath = resolve(process.cwd(), "src", "components", category, `${moduleName}.tsx`);
   return readFileSync(filePath, "utf8");
 }

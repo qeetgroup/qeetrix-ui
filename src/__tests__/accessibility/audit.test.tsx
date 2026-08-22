@@ -38,12 +38,12 @@ import {
   pressTab,
   tabThrough,
 } from "@/__tests__/accessibility";
-import { Button } from "@/components/actions/button";
-import { CloseButton } from "@/components/actions/close-button";
-import { IconButton } from "@/components/actions/icon-button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/feedback/alert";
-import { Progress } from "@/components/feedback/progress";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/feedback/tooltip";
+import { Button } from "@/components/Button/button";
+import { CloseButton } from "@/components/Button/close-button";
+import { IconButton } from "@/components/Button/icon-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/Alert/alert";
+import { Progress } from "@/components/Progress/progress";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/Tooltip/tooltip";
 import {
   Field,
   FieldContent,
@@ -51,23 +51,23 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/inputs/field";
-import { Input } from "@/components/inputs/input";
+} from "@/components/Input/field";
+import { Input } from "@/components/Input/input";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/navigation/accordion";
+} from "@/components/Accordion/accordion";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/navigation/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs";
-import { Checkbox } from "@/components/selection/checkbox";
-import { Switch } from "@/components/selection/switch";
+} from "@/components/DropdownMenu/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs/tabs";
+import { Checkbox } from "@/components/Checkbox/checkbox";
+import { Switch } from "@/components/Switch/switch";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,15 +77,15 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/surfaces/alert-dialog";
+} from "@/components/Dialog/alert-dialog";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "@/components/surfaces/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/surfaces/popover";
+} from "@/components/Dialog/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
 import { DirectionProvider } from "@/providers/direction-provider";
 
 const StarIcon = () => <svg aria-hidden />;
