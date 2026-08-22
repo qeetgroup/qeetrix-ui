@@ -5,7 +5,10 @@ import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
+/** The menu root's props, including the `open` / `defaultOpen` / `onOpenChange` triple. */
+type DropdownMenuProps = MenuPrimitive.Root.Props;
+
+function DropdownMenu({ ...props }: DropdownMenuProps) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
@@ -238,6 +241,7 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"spa
   );
 }
 
+export type { DropdownMenuProps };
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { useControllableState } from "@/hooks/use-controllable-state";
 import { cn } from "@/lib/utils";
 
 interface SpoilerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -9,7 +10,15 @@ interface SpoilerProps extends React.HTMLAttributes<HTMLDivElement> {
   maxLines?: number;
   showLabel?: string;
   hideLabel?: string;
+  /**
+   * Controlled expanded state. When provided, Spoiler does not manage it — the consumer owns it
+   * and `onExpandedChange` reports the intent.
+   */
+  expanded?: boolean;
+  /** Initial expanded state when uncontrolled. */
   defaultExpanded?: boolean;
+  /** Fires with the intended next state, in both controlled and uncontrolled mode. */
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 /** Truncates content to `maxLines` with an inline show-more/less toggle (Disclosure). */
@@ -17,12 +26,18 @@ function Spoiler({
   maxLines = 3,
   showLabel = "Show more",
   hideLabel = "Show less",
+  expanded: expandedProp,
   defaultExpanded = false,
+  onExpandedChange,
   className,
   children,
   ...props
 }: SpoilerProps) {
-  const [expanded, setExpanded] = React.useState(defaultExpanded);
+  const [expanded, setExpanded] = useControllableState<boolean>({
+    value: expandedProp,
+    defaultValue: defaultExpanded,
+    onChange: onExpandedChange,
+  });
   const contentId = React.useId();
 
   return (

@@ -17,7 +17,7 @@ const toggleVariants = cva(
       },
       size: {
         default:
-          "h-[var(--qx-density-control-height,2rem)] min-w-[var(--qx-density-control-height,2rem)] px-2",
+          "h-[var(--qx-control-height)] min-w-[var(--qx-control-height)] px-2",
         sm: "h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-1.5",
         lg: "h-9 min-w-9 px-2.5",
       },

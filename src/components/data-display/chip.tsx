@@ -5,6 +5,7 @@ import { XIcon } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useControllableState } from "@/hooks/use-controllable-state";
 
 const chipVariants = cva(
   "inline-flex items-center gap-1.5 rounded-full border font-medium whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled",
@@ -65,9 +66,13 @@ function ChipGroup({
   className,
   children,
 }: ChipGroupProps) {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = React.useState<string[]>(() => toArray(defaultValue));
-  const current = isControlled ? toArray(value) : internal;
+  // State is always an array internally; the public callback reports a single value in
+  // single-select mode, which is why onChange is adapted rather than passed straight through.
+  const [current, setSelection] = useControllableState<string[]>({
+    value: value === undefined ? undefined : toArray(value),
+    defaultValue: () => toArray(defaultValue),
+    onChange: (next) => onValueChange?.(multiple ? next : (next[0] ?? "")),
+  });
 
   const toggle = React.useCallback(
     (next: string) => {
@@ -79,11 +84,9 @@ function ChipGroup({
         set.clear();
         set.add(next);
       }
-      const out = Array.from(set);
-      if (!isControlled) setInternal(out);
-      onValueChange?.(multiple ? out : (out[0] ?? ""));
+      setSelection(Array.from(set));
     },
-    [current, multiple, isControlled, onValueChange],
+    [current, multiple, setSelection],
   );
 
   const ctx = React.useMemo<ChipGroupContextValue>(

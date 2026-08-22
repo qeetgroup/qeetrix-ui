@@ -6,13 +6,13 @@ import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const POPUP_CLASS =
-  "z-50 max-h-(--available-height) w-(--anchor-width) min-w-[12rem] origin-(--transform-origin) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-popover ring-1 ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
+  "z-50 max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-popover ring-1 ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
 
 const ITEM_CLASS =
   "relative flex w-full cursor-default items-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden transition-colors select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-selected:font-medium";
 
 const INPUT_CLASS =
-  "h-[var(--qx-density-control-height,2rem)] w-full min-w-0 rounded-lg border border-input bg-transparent py-1 ps-2.5 pe-8 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled md:text-sm dark:bg-input/30";
+  "h-[var(--qx-control-height)] w-full min-w-0 rounded-lg border border-input bg-transparent py-1 ps-2.5 pe-8 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled md:text-sm dark:bg-input/30";
 
 interface AutocompleteProps {
   /** Advisory suggestion strings shown beneath the input. */

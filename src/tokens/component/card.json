@@ -1,0 +1,31 @@
+{
+  "component": {
+    "card": {
+      "$description": "Card. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "corner": {
+        "$value": "{corner.surface}",
+        "$type": "dimension"
+      },
+      "background": {
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color"
+      },
+      "foreground": {
+        "$value": "var(--qx-color-text-primary)",
+        "$type": "color"
+      },
+      "ring": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 10%, transparent)",
+        "$type": "color"
+      },
+      "elevation": {
+        "$value": "{elevation.raised}",
+        "$type": "shadow"
+      },
+      "elevation-hover": {
+        "$value": "{elevation.hover}",
+        "$type": "shadow"
+      }
+    }
+  }
+}

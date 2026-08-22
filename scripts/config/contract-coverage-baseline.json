@@ -1,0 +1,5 @@
+{
+  "$comment": "Contract-coverage ratchet. These counts may only go DOWN. `node scripts/check/component-contract.mjs` fails if the library regresses past them \u2014 an unreviewed accessibility pattern or an unknown capability that was previously resolved. Reseed with --update after genuinely reducing a count.",
+  "unreviewedAccessibility": 0,
+  "unknownCapabilities": 0
+}

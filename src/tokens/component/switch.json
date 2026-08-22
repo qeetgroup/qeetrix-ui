@@ -1,0 +1,12 @@
+{
+  "component": {
+    "switch": {
+      "$description": "Switch track and thumb geometry. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "thumb-size": {
+        "$value": "18.4px",
+        "$type": "dimension",
+        "$description": "The default track height. Derived from the 32px track width at the design's 1.74:1 ratio, so it is not a scale step."
+      }
+    }
+  }
+}

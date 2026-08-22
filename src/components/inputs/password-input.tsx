@@ -16,13 +16,13 @@ function PasswordInput({ showToggle = true, className, ...props }: PasswordInput
 
   return (
     <div data-slot="password-input" className={cn("relative flex items-center", className)}>
-      <Input type={shown ? "text" : "password"} className="pr-10" {...props} />
+      <Input type={shown ? "text" : "password"} className="pe-10" {...props} />
       {showToggle && (
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="absolute right-1 top-1/2 -translate-y-1/2"
+          className="absolute end-1 top-1/2 -translate-y-1/2"
           aria-label={shown ? "Hide password" : "Show password"}
           aria-controls={props.id}
           tabIndex={0}

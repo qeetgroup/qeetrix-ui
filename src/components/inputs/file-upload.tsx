@@ -249,7 +249,7 @@ function FileUploadItem({
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-center gap-2">
           <span className="truncate font-medium">{file.name}</span>
-          <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+          <span className="ms-auto shrink-0 text-xs text-muted-foreground">
             {formatBytes(file.size)}
           </span>
         </div>

@@ -1,0 +1,909 @@
+{
+  ".": {
+    "QeetIconProps": [
+      "size",
+      "title"
+    ],
+    "QeetLogoProps": [
+      "variant"
+    ],
+    "QeetLogoVariantProps": [
+      "size",
+      "title"
+    ],
+    "ButtonGroupProps": [
+      "orientation"
+    ],
+    "CloseButtonProps": [
+      "aria-label",
+      "size"
+    ],
+    "IconButtonProps": [
+      "aria-label",
+      "icon",
+      "size"
+    ],
+    "SegmentedControlItemProps": [
+      "value"
+    ],
+    "SegmentedControlProps": [
+      "defaultValue",
+      "disabled",
+      "onValueChange",
+      "value"
+    ],
+    "AccessReviewProps": [
+      "aria-label",
+      "emptyMessage",
+      "items",
+      "onStateChange",
+      "renderActions"
+    ],
+    "AuditEventProps": [
+      "action",
+      "actions",
+      "actor",
+      "description",
+      "detailsLabel",
+      "diff",
+      "eventId",
+      "locale",
+      "metadata",
+      "raw",
+      "resource",
+      "severity",
+      "timestamp"
+    ],
+    "ChartContainerProps": [
+      "accessibilityTable",
+      "accessibilityTableVisibility",
+      "accessibleDescription",
+      "accessibleSummary",
+      "accessibleTitle",
+      "children",
+      "config"
+    ],
+    "ChartDataTableProps": [
+      "caption",
+      "columns",
+      "data",
+      "getRowKey"
+    ],
+    "CartesianChartProps": [
+      "categoryKey",
+      "className",
+      "config",
+      "data",
+      "dataKeys",
+      "showGrid",
+      "showLegend",
+      "showTooltip",
+      "showXAxis",
+      "showYAxis",
+      "stacked"
+    ],
+    "RadialOrPieProps": [
+      "className",
+      "config",
+      "data",
+      "dataKey",
+      "nameKey",
+      "showLegend",
+      "showTooltip"
+    ],
+    "SparklineProps": [
+      "className",
+      "color",
+      "data",
+      "height",
+      "type",
+      "width"
+    ],
+    "ChipGroupProps": [
+      "children",
+      "className",
+      "defaultValue",
+      "disabled",
+      "multiple",
+      "onValueChange",
+      "size",
+      "value"
+    ],
+    "ChipProps": [
+      "icon",
+      "onRemove",
+      "selected",
+      "value"
+    ],
+    "CodeBlockProps": [
+      "caption",
+      "className",
+      "copy",
+      "language",
+      "lineNumbers",
+      "maxHeight",
+      "value"
+    ],
+    "CommentThreadProps": [
+      "comments",
+      "currentUser",
+      "onReact",
+      "onSubmit",
+      "placeholder"
+    ],
+    "DataTableProps": [
+      "bulkActions",
+      "className",
+      "columns",
+      "data",
+      "defaultDensity",
+      "emptyState",
+      "enableColumnResizing",
+      "enableColumnVisibility",
+      "enableDensity",
+      "enableExpanding",
+      "enableExport",
+      "enablePinning",
+      "enableRowSelection",
+      "enableSearch",
+      "enableVirtualization",
+      "estimateRowHeight",
+      "exportFilename",
+      "facetedFilters",
+      "getRowCanExpand",
+      "getRowId",
+      "manualFiltering",
+      "manualPagination",
+      "manualSorting",
+      "maxHeight",
+      "onColumnFiltersChange",
+      "onGlobalFilterChange",
+      "onPaginationChange",
+      "onRowSelectionChange",
+      "onSortingChange",
+      "pageCount",
+      "pageSize",
+      "persistKey",
+      "renderSubComponent",
+      "rowCount",
+      "searchPlaceholder",
+      "state",
+      "toolbarActions"
+    ],
+    "DiffViewerProps": [
+      "after",
+      "before",
+      "mode"
+    ],
+    "FeedProps": [
+      "aria-label",
+      "busy",
+      "itemClassName"
+    ],
+    "FileCardProps": [
+      "actions",
+      "meta",
+      "name",
+      "selected",
+      "size",
+      "thumbnail",
+      "type"
+    ],
+    "FileTypeIconProps": [
+      "type"
+    ],
+    "JSONTreeProps": [
+      "className",
+      "initialOpenDepth",
+      "rootLabel",
+      "value"
+    ],
+    "MarqueeProps": [
+      "direction",
+      "gap",
+      "pauseOnHover",
+      "speed"
+    ],
+    "OrgChartProps": [
+      "data",
+      "renderNode"
+    ],
+    "PresenceIndicatorProps": [
+      "label",
+      "pulse"
+    ],
+    "QRCodeProps": [
+      "aria-label",
+      "bgColor",
+      "className",
+      "fgColor",
+      "level",
+      "size",
+      "value"
+    ],
+    "ReactionBarProps": [
+      "choices",
+      "onToggle",
+      "reactions"
+    ],
+    "SecurityItemProps": [
+      "actions",
+      "description",
+      "details",
+      "icon",
+      "status",
+      "statusKind",
+      "title"
+    ],
+    "StatProps": [
+      "delta",
+      "hint",
+      "icon",
+      "label",
+      "value"
+    ],
+    "StatusPillProps": [
+      "children",
+      "className",
+      "dot",
+      "kind",
+      "status"
+    ],
+    "BannerProps": [
+      "onDismiss"
+    ],
+    "CalloutProps": [
+      "icon",
+      "title"
+    ],
+    "DataStateProps": [
+      "children",
+      "className",
+      "empty",
+      "emptyDescription",
+      "emptyIcon",
+      "emptyTitle",
+      "error",
+      "errorFallback",
+      "isEmpty",
+      "isError",
+      "isLoading",
+      "loading",
+      "skeletonHeight",
+      "skeletonRows"
+    ],
+    "EmptyStateProps": [
+      "action",
+      "description",
+      "icon",
+      "title"
+    ],
+    "MeterProps": [
+      "hideValue",
+      "label"
+    ],
+    "NotificationProps": [
+      "action",
+      "description",
+      "icon",
+      "loading",
+      "onClose",
+      "title"
+    ],
+    "NotificationCenterProps": [
+      "align",
+      "className",
+      "emptyMessage",
+      "items",
+      "onDismiss",
+      "onMarkAllRead"
+    ],
+    "ProgressCircleProps": [
+      "label",
+      "showLabel",
+      "size",
+      "strokeWidth",
+      "value"
+    ],
+    "TourProps": [
+      "className",
+      "defaultOpen",
+      "onComplete",
+      "onDismiss",
+      "onOpenChange",
+      "open",
+      "steps"
+    ],
+    "AngleSliderProps": [
+      "aria-label",
+      "className",
+      "defaultValue",
+      "disabled",
+      "onValueChange",
+      "readOnly",
+      "size",
+      "step",
+      "value"
+    ],
+    "CurrencyInputProps": [
+      "currency",
+      "locale",
+      "onValueChange",
+      "value"
+    ],
+    "EditableProps": [
+      "children",
+      "defaultValue",
+      "disabled",
+      "onCancel",
+      "onEdit",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "FieldProps": [
+      "controlId",
+      "data-invalid",
+      "invalid"
+    ],
+    "DropzoneProps": [
+      "accept",
+      "children",
+      "disabled",
+      "maxFiles",
+      "maxSize",
+      "multiple",
+      "onDrop"
+    ],
+    "FileUploadItemProps": [
+      "error",
+      "file",
+      "onRemove",
+      "previewUrl",
+      "progress",
+      "status"
+    ],
+    "FormErrorSummaryProps": [
+      "errors",
+      "title"
+    ],
+    "FormProps": [
+      "focusInvalidOnSubmit"
+    ],
+    "LogoUploaderProps": [
+      "accept",
+      "className",
+      "disabled",
+      "hint",
+      "maxSizeMB",
+      "onChange",
+      "value"
+    ],
+    "MaskInputProps": [
+      "className",
+      "defaultValue",
+      "mask",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "MentionInputProps": [
+      "onMention",
+      "onValueChange",
+      "people",
+      "trigger",
+      "value"
+    ],
+    "OTPInputProps": [
+      "aria-invalid",
+      "aria-label",
+      "autoFocus",
+      "className",
+      "disabled",
+      "length",
+      "onChange",
+      "onComplete",
+      "value"
+    ],
+    "PasswordInputProps": [
+      "showToggle"
+    ],
+    "PasswordStrengthMeterProps": [
+      "className",
+      "feedback",
+      "hideLabel",
+      "labels",
+      "score",
+      "value"
+    ],
+    "RatingProps": [
+      "allowHalf",
+      "disabled",
+      "icon",
+      "max",
+      "onChange",
+      "readOnly",
+      "size",
+      "value"
+    ],
+    "RichTextEditorProps": [
+      "aria-label",
+      "className",
+      "defaultValue",
+      "editable",
+      "onChange",
+      "onChangeJSON",
+      "placeholder",
+      "value"
+    ],
+    "TagInputProps": [
+      "addOnComma",
+      "className",
+      "dedupe",
+      "disabled",
+      "maxTags",
+      "onChange",
+      "validate",
+      "value"
+    ],
+    "ActionBarItemProps": [
+      "variant"
+    ],
+    "ActionBarProps": [
+      "children",
+      "className",
+      "onClearSelection",
+      "open",
+      "selectionCount"
+    ],
+    "AspectRatioProps": [
+      "ratio"
+    ],
+    "FilterBarProps": [
+      "addLabel",
+      "fields",
+      "onValueChange",
+      "value"
+    ],
+    "MasterDetailProps": [
+      "className",
+      "defaultListSize",
+      "detail",
+      "detailOpen",
+      "detailTitle",
+      "list",
+      "minListSize",
+      "onDetailOpenChange"
+    ],
+    "OverflowListProps": [
+      "collapseFrom",
+      "gap",
+      "items",
+      "renderOverflow"
+    ],
+    "PageHeaderProps": [
+      "actions",
+      "breadcrumb",
+      "description",
+      "title"
+    ],
+    "CommandPaletteProps": [
+      "className",
+      "emptyMessage",
+      "items",
+      "onOpenChange",
+      "onSelect",
+      "open",
+      "placeholder",
+      "showHint"
+    ],
+    "PaginationProps": [
+      "className",
+      "hasNext",
+      "hasPrev",
+      "itemsOnPage",
+      "label",
+      "loading",
+      "onFirst",
+      "onNext",
+      "pageSize",
+      "total"
+    ],
+    "SkipNavContentProps": [
+      "id"
+    ],
+    "SkipNavProps": [
+      "to"
+    ],
+    "StepperProps": [
+      "activeStep",
+      "steps"
+    ],
+    "TableOfContentsProps": [
+      "activeId",
+      "items"
+    ],
+    "TreeViewProps": [
+      "data"
+    ],
+    "ColorPickerProps": [
+      "ariaLabel",
+      "className",
+      "disabled",
+      "onChange",
+      "placeholder",
+      "presets",
+      "value"
+    ],
+    "ColorSwatchProps": [
+      "className",
+      "color",
+      "disabled",
+      "label",
+      "onClick",
+      "selected",
+      "size"
+    ],
+    "CountryPickerProps": [
+      "ariaLabel",
+      "className",
+      "disabled",
+      "locale",
+      "onChange",
+      "placeholder",
+      "value"
+    ],
+    "DatePickerProps": [
+      "className",
+      "defaultValue",
+      "disabled",
+      "id",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "DateRangePickerProps": [
+      "className",
+      "defaultValue",
+      "disabled",
+      "id",
+      "numberOfMonths",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "DateTimePickerProps": [
+      "className",
+      "defaultValue",
+      "disabled",
+      "hourCycle",
+      "id",
+      "minuteStep",
+      "onValueChange",
+      "placeholder",
+      "value",
+      "withSeconds"
+    ],
+    "ScheduleCalendarProps": [
+      "date",
+      "defaultDate",
+      "defaultView",
+      "events",
+      "onDateChange",
+      "onEventClick",
+      "onRangeSelect",
+      "onViewChange",
+      "timezone",
+      "view"
+    ],
+    "TimePickerProps": [
+      "aria-label",
+      "className",
+      "defaultValue",
+      "disabled",
+      "hourCycle",
+      "id",
+      "minuteStep",
+      "onValueChange",
+      "value",
+      "withSeconds"
+    ],
+    "TimeRangePickerProps": [
+      "align",
+      "className",
+      "defaultValue",
+      "onValueChange",
+      "value"
+    ],
+    "TimezonePickerProps": [
+      "ariaLabel",
+      "className",
+      "disabled",
+      "onChange",
+      "placeholder",
+      "value"
+    ],
+    "AutocompleteProps": [
+      "aria-label",
+      "aria-labelledby",
+      "className",
+      "contentClassName",
+      "defaultValue",
+      "disabled",
+      "emptyMessage",
+      "id",
+      "items",
+      "name",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "AvailabilityGridProps": [
+      "className",
+      "days",
+      "onValueChange",
+      "times",
+      "unavailable",
+      "value"
+    ],
+    "CheckboxCardProps": [
+      "checked",
+      "children",
+      "className",
+      "defaultChecked",
+      "disabled",
+      "onCheckedChange",
+      "value"
+    ],
+    "ComboboxProps": [
+      "className",
+      "contentClassName",
+      "defaultValue",
+      "disabled",
+      "emptyMessage",
+      "id",
+      "items",
+      "name",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "MultiSelectProps": [
+      "className",
+      "contentClassName",
+      "defaultValue",
+      "disabled",
+      "emptyMessage",
+      "id",
+      "items",
+      "name",
+      "onValueChange",
+      "placeholder",
+      "value"
+    ],
+    "ListboxProps": [
+      "aria-label",
+      "defaultValue",
+      "multiple",
+      "onValueChange",
+      "options",
+      "value"
+    ],
+    "NotificationPreferenceMatrixProps": [
+      "categories",
+      "channels",
+      "className",
+      "onValueChange",
+      "value"
+    ],
+    "RadioCardGroupProps": [
+      "defaultValue",
+      "name",
+      "onValueChange",
+      "value"
+    ],
+    "RadioCardProps": [
+      "children",
+      "className",
+      "disabled",
+      "value"
+    ],
+    "FloatingWindowProps": [
+      "defaultPosition",
+      "onClose",
+      "open",
+      "title",
+      "width"
+    ],
+    "BlockquoteProps": [
+      "attribution",
+      "icon"
+    ],
+    "CopyButtonProps": [
+      "copiedLabel",
+      "label",
+      "onCopy",
+      "timeout",
+      "value"
+    ],
+    "CopyableSecretProps": [
+      "className",
+      "copiedDurationMs",
+      "copiedLabel",
+      "copyLabel",
+      "disabled",
+      "label",
+      "onCopy",
+      "oneLine",
+      "size",
+      "value"
+    ],
+    "FocusTrapProps": [
+      "active",
+      "children",
+      "initialFocusRef",
+      "restoreFocus"
+    ],
+    "HighlightProps": [
+      "caseSensitive",
+      "children",
+      "markClassName",
+      "query"
+    ],
+    "IconProps": [
+      "className",
+      "icon",
+      "size",
+      "stroke",
+      "title"
+    ],
+    "NumberFormatterProps": [
+      "decimals",
+      "locale",
+      "notation",
+      "options",
+      "prefix",
+      "suffix",
+      "value"
+    ],
+    "PortalProps": [
+      "children",
+      "container"
+    ],
+    "RollingNumberProps": [
+      "decimals",
+      "duration",
+      "locale",
+      "value"
+    ],
+    "SpoilerProps": [
+      "defaultExpanded",
+      "expanded",
+      "hideLabel",
+      "maxLines",
+      "onExpandedChange",
+      "showLabel"
+    ],
+    "TimeSinceProps": [
+      "absoluteAfterDays",
+      "className",
+      "refreshIntervalMs",
+      "value"
+    ],
+    "TimerProps": [
+      "aria-label",
+      "autoStart",
+      "className",
+      "format",
+      "initialSeconds",
+      "mode",
+      "onComplete",
+      "showControls"
+    ],
+    "TypographyProps": [
+      "as"
+    ],
+    "DensityProviderProps": [
+      "density",
+      "scope"
+    ],
+    "DirectionProviderProps": [
+      "direction"
+    ]
+  },
+  "./brand": {
+    "QeetIconProps": [
+      "size",
+      "title"
+    ],
+    "QeetLogoProps": [
+      "variant"
+    ],
+    "QeetLogoVariantProps": [
+      "size",
+      "title"
+    ]
+  },
+  "./blocks": {
+    "AuthShellProps": [
+      "description",
+      "footer",
+      "logo",
+      "title"
+    ],
+    "ForgotPasswordFormProps": [
+      "className",
+      "error",
+      "loading",
+      "onSubmit"
+    ],
+    "LoginFormProps": [
+      "className",
+      "error",
+      "forgotHref",
+      "loading",
+      "onSubmit",
+      "socialButtons"
+    ],
+    "OtpFormProps": [
+      "className",
+      "error",
+      "length",
+      "loading",
+      "onResend",
+      "onSubmit"
+    ],
+    "SignupFormProps": [
+      "className",
+      "error",
+      "loading",
+      "onSubmit",
+      "showStrength"
+    ],
+    "DashboardShellProps": [
+      "contained",
+      "header",
+      "sidebar"
+    ],
+    "OnboardingWizardProps": [
+      "backLabel",
+      "className",
+      "defaultStep",
+      "finishLabel",
+      "nextLabel",
+      "onComplete",
+      "onStepChange",
+      "step",
+      "steps"
+    ],
+    "PageStateProps": [
+      "actions",
+      "code",
+      "description",
+      "icon",
+      "title"
+    ],
+    "PricingTierProps": [
+      "badge",
+      "className",
+      "cta",
+      "description",
+      "featured",
+      "features",
+      "name",
+      "period",
+      "price"
+    ],
+    "SettingsLayoutProps": [
+      "actions",
+      "description",
+      "title"
+    ],
+    "SettingsSectionProps": [
+      "actions",
+      "description",
+      "footer",
+      "title"
+    ]
+  }
+}

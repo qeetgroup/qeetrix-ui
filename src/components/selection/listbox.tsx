@@ -4,6 +4,7 @@ import { CheckIcon } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useControllableState } from "@/hooks/use-controllable-state";
 
 interface ListboxOption {
   label: string;
@@ -40,17 +41,17 @@ function Listbox({
   "aria-label": ariaLabel,
   ...props
 }: ListboxProps) {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = React.useState<string[]>(() => toArray(defaultValue));
-  const selected = isControlled ? toArray(value) : internal;
+  // As with Chip: an array internally, a single value on the callback when not multi-select.
+  const [selected, setSelection] = useControllableState<string[]>({
+    value: value === undefined ? undefined : toArray(value),
+    defaultValue: () => toArray(defaultValue),
+    onChange: (next) => onValueChange?.(multiple ? next : (next[0] ?? "")),
+  });
   const enabled = React.useMemo(() => options.filter((o) => !o.disabled), [options]);
   const [activeValue, setActiveValue] = React.useState<string | null>(enabled[0]?.value ?? null);
   const baseId = React.useId();
 
-  const commit = (next: string[]) => {
-    if (!isControlled) setInternal(next);
-    onValueChange?.(multiple ? next : (next[0] ?? ""));
-  };
+  const commit = (next: string[]) => setSelection(next);
   const toggle = (val: string) => {
     if (multiple) {
       const set = new Set(selected);

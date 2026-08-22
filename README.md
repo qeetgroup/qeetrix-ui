@@ -77,18 +77,31 @@ flowchart TB
 
 ```
 src/
-├── tokens/            DTCG token source (primitive + light/dark theme)
-├── components/        11 category folders, each with index.ts + __tests__/
+├── tokens/            DTCG token source — primitive · semantic · component · theme overlays
+├── components/        10 category folders, each with index.ts + __tests__/
 │   ├── actions/ inputs/ selection/ pickers/ navigation/
 │   └── feedback/ surfaces/ data-display/ layout/ utility/
+├── contracts/         component contract: types + closed vocabularies + the layer table
+├── manifests/         the manifest's type, and the declarations it is generated from
+├── foundations/       typed token values — GENERATED from src/tokens/
 ├── providers/         theme · density · direction
 ├── blocks/ brand/ hooks/ lib/ fonts/
 ├── styles/            index.css (entry) + generated token CSS/JSON
-└── __tests__/         global harness: setup, a11y smoke, client boundaries, API lock
+└── __tests__/         global harness: setup, a11y smoke, client boundaries, API lock, governance
 scripts/
 ├── build/             tokens · manifest · subpath-shims · postbuild · logos
-└── check/             architecture · exports · a11y-coverage · token-usage · contrast · package
+├── check/             architecture · component-contract · exports · a11y-coverage · token-usage · contrast · package
+└── lib/               shared analysis: layer graph, contract validator, TS literal reader
+docs/
+├── architecture/      overview · component-layers · dependency-rules
+├── standards/         api-guidelines · component-manifest
+└── governance/        component-status · deprecations · versioning
 ```
+
+Layers flow one way — `tokens → foundations → runtime/primitives → components → blocks` — and
+dependencies are **deny by default**. The allow-list lives in [`src/contracts/layers.ts`](src/contracts/layers.ts);
+`bun run check:architecture` enforces it against the real module graph. See
+[docs/architecture/](docs/architecture/overview.md).
 
 ### Import paths
 
@@ -100,7 +113,7 @@ scripts/
 | `@qeetrix/ui/providers` · `/providers/theme-provider` | the providers |
 | `@qeetrix/ui/brand` · `/blocks` | brand assets · page-level blocks |
 | `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens |
-| `@qeetrix/ui/manifest.json` | the machine-readable component catalog |
+| `@qeetrix/ui/manifest.json` | the machine-readable component catalog + governance contract |
 
 ---
 
@@ -161,15 +174,18 @@ Light/dark is driven by the `.dark` class (managed by `ThemeProvider`). Its keyb
 
 ## 🎨 Design tokens
 
-The single source of truth lives in [`src/tokens/`](src/tokens/) as **W3C DTCG JSON** (primitives → light/dark semantic + shadcn bridge). [Style Dictionary](scripts/build/tokens.mjs) compiles them to:
+The single source of truth lives in [`src/tokens/`](src/tokens/) as **W3C DTCG JSON**, in four layers — **primitive** (values) → **semantic** (meaning) → **component** (per-component mapping, including the shadcn bridge) → component styles. [Style Dictionary](scripts/build/tokens.mjs) compiles them to:
 
-- `@qeetrix/ui/styles.css` — the full entry (semantic `:root` / `.dark` vars, baked in)
-- `@qeetrix/ui/tokens.css` — the raw `--qx-*` ramp · `@qeetrix/ui/tokens.json` — resolved per theme
-- `@qeetrix/ui/qeetrix.css` — semantic layer only
+- `@qeetrix/ui/styles.css` — the full entry (`:root` / `.dark`, `@theme` mappings, fonts, base layer)
+- `@qeetrix/ui/qeetrix.css` — the semantic + component layers, as `--qx-*` vars
+- `@qeetrix/ui/tokens.css` — everything including the primitive ramps · `@qeetrix/ui/tokens.json` — resolved per theme
+- `src/foundations/token-values.ts` — the same values, typed, re-exported from `@qeetrix/ui`
+
+The **primitive layer is not published to the stylesheet components render against**, so a component physically cannot resolve a palette value — the ownership rule is a fact, not a convention. Full detail: [docs/standards/tokens.md](docs/standards/tokens.md).
 
 Colour is authored in **OKLCH**; elevation uses a **layered shadow ladder** (rest · hover · popover · modal). Every semantic text/surface pair is held to **WCAG-AA contrast** by a build gate (part of `bun run verify`).
 
-> The brand palette (`OD-DS-03`) is a documented open decision — tokens stay neutral until it lands; the Qeet orange (`#F26D0E`) is the leading candidate.
+Re-branding is one alias hop: re-point the nine `color.brand.*` aliases and every semantic token, component token and component follows. Retuning corners is one variable (`--radius`).
 
 ---
 
@@ -187,17 +203,19 @@ bun run verify:package   # build, pack, and compile real consumers against the t
 bun run format           # biome check --write
 ```
 
-`verify` is the gate to run before pushing. Its five structural checks are what keep the category layout honest:
+`verify` is the gate to run before pushing. Its seven structural checks are what keep the architecture honest:
 
 | Check | Enforces |
 |:--|:--|
-| `architecture` | category map ↔ filesystem, complete barrels, no barrel imports, kebab-case, tests in `__tests__/` |
-| `exports` | the published API surface matches `src/__tests__/public-api.json` — nothing added or removed by accident |
-| `a11y-coverage` | every component has an axe test (currently **145/145**) |
-| `token-usage` | no raw colours, z-indexes or shadows outside documented exemptions |
-| `contrast` | WCAG-AA on every semantic text/surface pair, both themes |
+| `check:architecture` | category map ↔ filesystem, complete barrels, no barrel imports, kebab-case, client directives, **layer boundaries** |
+| `check:contract` | every component satisfies the component contract — valid status, capabilities, states, ARIA pattern, deprecation record |
+| `check:exports` | the published surface matches `src/__tests__/public-api.json`, and is *intentional* — no unreachable component, no leaking `@barrel-exclude`, no duplicate export |
+| `check:a11y` | every component has an axe test (currently **145/145**) |
+| `check:tokens` | the token graph — layer direction, references, cycles, types, theme parity, deprecations |
+| `check:token-usage` | no raw colours, z-indexes, shadows or bare lengths in component source |
+| `check:contrast` | WCAG-AA on every semantic text/surface pair, both themes |
 
-**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `node scripts/check/exports.mjs --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md).
+**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/api-guidelines.md](docs/standards/api-guidelines.md).
 
 ---
 
@@ -219,6 +237,10 @@ CI runs `verify` on every PR; merging the **Version Packages** PR publishes to t
 
 | Topic | Where |
 |:--|:--|
+| 🏗 Architecture · layers · dependency rules | [docs/architecture/](docs/architecture/overview.md) |
+| 📐 API conventions · manifest schema | [docs/standards/](docs/standards/api-guidelines.md) |
+| 🎨 Tokens · theming · density · motion · RTL | [docs/standards/tokens.md](docs/standards/tokens.md) |
+| 🏛 Component status · deprecation · versioning | [docs/governance/](docs/governance/component-status.md) |
 | 🧱 Component workshop | the sibling `qeetrix-story` repo → <http://localhost:6006> |
 | 🗺 Component backlog | the sibling `qeetrix-files` repo → `COMPONENT-PROPOSALS.md` |
 | 🔧 Contributing | [CONTRIBUTING.md](./CONTRIBUTING.md) |

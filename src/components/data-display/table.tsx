@@ -56,7 +56,7 @@ function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCell
     <th
       data-slot="table-head"
       className={cn(
-        "h-[var(--qx-density-row-height,2.5rem)] px-3 text-left align-middle font-medium text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        "h-[var(--qx-control-row-height)] px-3 text-start align-middle font-medium text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pe-0",
         className,
       )}
       {...props}
@@ -69,7 +69,7 @@ function TableCell({ className, ...props }: React.TdHTMLAttributes<HTMLTableCell
     <td
       data-slot="table-cell"
       className={cn(
-        "px-3 py-[var(--qx-density-cell-padding-y,0.75rem)] align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        "px-3 py-[var(--qx-control-cell-padding-y)] align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
         className,
       )}
       {...props}

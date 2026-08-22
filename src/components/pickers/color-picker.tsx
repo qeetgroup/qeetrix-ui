@@ -109,7 +109,7 @@ function ColorPicker({
           aria-label={ariaLabel ?? "Hex colour"}
           aria-invalid={value !== "" && !valid}
           className={cn(
-            "h-[var(--qx-density-control-height,2.25rem)] w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 font-mono text-sm transition-colors outline-none",
+            "h-[var(--qx-control-height)] w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 font-mono text-sm transition-colors outline-none",
             "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
             "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-disabled",
             "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",

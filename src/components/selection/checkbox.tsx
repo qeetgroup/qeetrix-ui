@@ -16,12 +16,15 @@ function CheckboxGroup({ className, ...props }: CheckboxGroupPrimitive.Props) {
   );
 }
 
-function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
+/** The checkbox's props, including the `checked` / `defaultChecked` / `onCheckedChange` triple. */
+type CheckboxProps = CheckboxPrimitive.Root.Props;
+
+function Checkbox({ className, ...props }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        "peer flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input bg-transparent text-current outline-none transition-[color,background-color,border-color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground data-indeterminate:border-primary data-indeterminate:bg-primary data-indeterminate:text-primary-foreground dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+        "peer flex size-4 shrink-0 items-center justify-center rounded-[var(--qx-corner-sm)] border border-input bg-transparent text-current outline-none transition-[color,background-color,border-color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground data-indeterminate:border-primary data-indeterminate:bg-primary data-indeterminate:text-primary-foreground dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
         className,
       )}
       {...props}
@@ -40,4 +43,5 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   );
 }
 
+export type { CheckboxProps };
 export { Checkbox, CheckboxGroup };

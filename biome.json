@@ -66,6 +66,12 @@
   },
   "overrides": [
     {
+      "includes": ["component-manifest.json"],
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["**/*.css"],
       "linter": {
         "rules": {

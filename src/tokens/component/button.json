@@ -1,0 +1,48 @@
+{
+  "component": {
+    "button": {
+      "$description": "Button. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "corner": {
+        "$value": "{corner.control}",
+        "$type": "dimension"
+      },
+      "corner-xs": {
+        "$value": "min(var(--radius-md), 10px)",
+        "$type": "dimension",
+        "$description": "Corners for the xs sizes, capped so a 24px control never reads as over-rounded."
+      },
+      "corner-sm": {
+        "$value": "min(var(--radius-md), 12px)",
+        "$type": "dimension",
+        "$description": "Corners for the sm sizes, capped a little looser than xs."
+      },
+      "height": {
+        "$value": "{control.height}",
+        "$type": "dimension"
+      },
+      "font-size-sm": {
+        "$value": "{typography.label-compact.font-size}",
+        "$type": "dimension"
+      },
+      "primary": {
+        "background": {
+          "$value": "var(--qx-color-action-primary)",
+          "$type": "color"
+        },
+        "background-hover": {
+          "$value": "color-mix(in oklab, var(--qx-color-action-primary) 90%, transparent)",
+          "$type": "color"
+        },
+        "background-active": {
+          "$value": "color-mix(in oklab, var(--qx-color-action-primary) 80%, transparent)",
+          "$type": "color",
+          "$description": "The pressed tone. Also used for an anchor-styled button's hover, which is deliberately stronger than a plain button's \u2014 same tone, one decision."
+        },
+        "foreground": {
+          "$value": "var(--qx-color-text-on-brand)",
+          "$type": "color"
+        }
+      }
+    }
+  }
+}

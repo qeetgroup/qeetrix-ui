@@ -135,7 +135,7 @@ function NotificationCenter({
           >
             <BellIcon />
             {unread.length > 0 && (
-              <Badge className="absolute -inset-e-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[10px] tabular-nums">
+              <Badge className="absolute -inset-e-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[length:var(--qx-component-notification-center-count-font-size)] tabular-nums">
                 {unread.length > 9 ? "9+" : unread.length}
               </Badge>
             )}

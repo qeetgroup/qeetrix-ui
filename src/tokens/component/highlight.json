@@ -1,0 +1,12 @@
+{
+  "component": {
+    "highlight": {
+      "$description": "Highlight (marked text). Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "corner": {
+        "$value": "0.2em",
+        "$type": "dimension",
+        "$description": "Corner is em-relative on purpose: a highlight sits inline and must scale with the text it marks, which a rem or px corner would not."
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "corner": {
+    "$description": "Corner-radius roles. Named `corner` rather than `radius` because the shadcn bridge already publishes a single `--radius` knob at that path \u2014 a group and a leaf cannot share a token path, and the build resolves such a collision silently. These roles reference the Tailwind corner ramp (--radius-*), which is derived from --radius, so retuning that one knob still retunes every role. Fixed shapes alias the primitive scale directly.",
+    "control": {
+      "$value": "var(--radius-lg)",
+      "$type": "dimension"
+    },
+    "field": {
+      "$value": "var(--radius-lg)",
+      "$type": "dimension"
+    },
+    "chip": {
+      "$value": "var(--radius-md)",
+      "$type": "dimension"
+    },
+    "surface": {
+      "$value": "var(--radius-xl)",
+      "$type": "dimension"
+    },
+    "overlay": {
+      "$value": "var(--radius-lg)",
+      "$type": "dimension"
+    },
+    "pill": {
+      "$value": "{radii.pill}",
+      "$type": "dimension"
+    },
+    "circle": {
+      "$value": "{radii.circle}",
+      "$type": "dimension"
+    },
+    "none": {
+      "$value": "{radii.none}",
+      "$type": "dimension"
+    },
+    "base": {
+      "$value": "{radii.base}",
+      "$type": "dimension",
+      "$description": "The white-label corner knob. Published unprefixed as --radius by the bridge; the Tailwind corner ramp is derived from it, so overriding --radius at runtime retunes every corner role."
+    },
+    "xs": {
+      "$value": "{radii.xs}",
+      "$type": "dimension",
+      "$description": "A hairline corner (2px) for dense chrome \u2014 chart swatches, tooltip arrows. Fixed rather than ramp-derived: at this size the ramp would round it away."
+    },
+    "sm": {
+      "$value": "{radii.s}",
+      "$type": "dimension",
+      "$description": "A small fixed corner (4px) for controls that must stay squarer than the ramp \u2014 the checkbox box."
+    }
+  }
+}

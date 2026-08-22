@@ -4,7 +4,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const calloutVariants = cva("flex gap-3 rounded-lg border-l-4 p-4 text-sm", {
+const calloutVariants = cva("flex gap-3 rounded-lg border-s-4 p-4 text-sm", {
   variants: {
     variant: {
       info: "border-info bg-info/10 text-info-foreground",

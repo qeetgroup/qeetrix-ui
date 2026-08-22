@@ -150,7 +150,7 @@ function CodeBlock({
       )}
     >
       {caption && (
-        <div className="flex items-center justify-between border-b px-3 py-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between border-b px-3 py-1.5 text-micro text-muted-foreground">
           {caption}
         </div>
       )}

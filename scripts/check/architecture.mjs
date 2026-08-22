@@ -10,13 +10,31 @@
  *   4. cross-category imports go through the `@/` alias, never `../<other-category>`
  *   5. filenames are kebab-case; every test sits in a __tests__/ folder next to a
  *      component of the same name
- *   6. `"use client"` is the first statement in files that declare it
+ *   6. a `"use client"` directive, where one exists, is the first statement in the file
+ *   7. **layer boundaries** — every module belongs to a layer (src/contracts/layers.ts) and
+ *      may only import from the layers its own layer is allowed to reach. Deny by default, so
+ *      `tokens → components`, `components → blocks`, `primitives → blocks` and
+ *      `runtime → components` hold without being listed one by one — including for the layers
+ *      the target architecture reserves but has not populated yet.
+ *   8. the rule set itself is coherent — acyclic, and transitively closed, so a chain of
+ *      individually legal imports can never add up to an illegal dependency
+ *
+ * Imports are resolved to real files with TypeScript's own dependency scanner and the
+ * tsconfig `@/*` alias, so re-exports, type-only imports and dynamic `import()` are all seen
+ * and nothing is matched by substring.
  *
  *   node scripts/check/architecture.mjs
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildModuleGraph,
+  findDeepLayerViolations,
+  findLayerViolations,
+  findRuleSetProblems,
+} from "../lib/layers.mjs";
+import { findClientDirectiveIndex, readLiteralExportsFromDirectory } from "../lib/ts-literals.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const COMPONENTS = join(ROOT, "src/components");
@@ -110,11 +128,8 @@ for (const path of walk(join(ROOT, "src"))) {
   if (RELATIVE_ESCAPE.test(source))
     fail(path, "reaches into another category with a relative path — use the @/ alias");
   if (!KEBAB.test(base)) fail(path, "filename is not kebab-case");
-  if (
-    !inTests &&
-    source.includes('"use client"') &&
-    !source.trimStart().startsWith('"use client"')
-  ) {
+  // Parsed, not string-matched: the phrase in a doc comment is not a directive.
+  if (!inTests && findClientDirectiveIndex(path) > 0) {
     fail(path, '"use client" must be the first statement in the file');
   }
   if (/\.test\.tsx?$/.test(name) && !inTests)
@@ -129,13 +144,87 @@ for (const path of walk(join(ROOT, "src"))) {
   }
 }
 
+// 7–8. layer boundaries. The rules live in src/contracts/layers.ts and are read statically
+// so this script and `tsc` enforce the same table.
+const contracts = readLiteralExportsFromDirectory(join(ROOT, "src/contracts"));
+const allowed = contracts.LAYER_ALLOWED_DEPENDENCIES;
+const layerDirectories = contracts.LAYER_DIRECTORIES;
+const explanations = contracts.LAYER_RULE_EXPLANATIONS ?? {};
+
+const ruleProblems = findRuleSetProblems(allowed);
+const { modules, unmapped, unresolved } = buildModuleGraph({ root: ROOT, layerDirectories });
+
+for (const file of unmapped) {
+  fail(
+    join(ROOT, file),
+    "no layer claims this file — add its directory to LAYER_DIRECTORIES in src/contracts/layers.ts",
+  );
+}
+for (const { file, specifier } of unresolved) {
+  fail(join(ROOT, file), `imports "${specifier}", which resolves to no file under src/`);
+}
+
+const layerViolations = findLayerViolations({ modules, allowed, explanations });
+// Only report a chain when its last edge is not already reported on its own — otherwise every
+// consumer of a bad import repeats the same finding.
+const reportedEdges = new Set(
+  layerViolations.map((violation) => `${violation.file}->${violation.dependency}`),
+);
+const deepViolations = findDeepLayerViolations({ modules, allowed }).filter((violation) => {
+  const chain = violation.path;
+  return !reportedEdges.has(`${chain[chain.length - 2]}->${chain[chain.length - 1]}`);
+});
+
+const layerFindings = layerViolations.length + deepViolations.length + ruleProblems.length;
+
+for (const problem of ruleProblems) {
+  console.error(`\nArchitecture rule-set problem\n\n  ${problem.message}\n`);
+}
+for (const violation of layerViolations) {
+  console.error(
+    [
+      "\nArchitecture violation",
+      "",
+      "Source:",
+      `  ${violation.file}`,
+      "",
+      "Dependency:",
+      `  ${violation.dependency ?? "(none)"}`,
+      "",
+      "Rule:",
+      `  ${violation.rule}`,
+      "",
+    ].join("\n"),
+  );
+}
+for (const violation of deepViolations) {
+  console.error(
+    [
+      "\nArchitecture violation (transitive)",
+      "",
+      "Source:",
+      `  ${violation.file}`,
+      "",
+      "Chain:",
+      ...violation.path.map((step, i) => `  ${i === 0 ? "" : "→ "}${step}`),
+      "",
+      "Rule:",
+      `  ${violation.sourceLayer} cannot reach ${violation.targetLayer}`,
+      "",
+    ].join("\n"),
+  );
+}
+
 if (problems.length) {
   console.error(`✗ ${problems.length} architecture violation(s):\n`);
   for (const { file, message } of problems) console.error(`  ${file}\n    ${message}`);
-  process.exit(1);
 }
+if (problems.length || layerFindings) process.exit(1);
 
 const total = [...slugsOnDisk.values()].reduce((n, s) => n + s.length, 0);
+const shipped = [...modules.values()].filter((node) => !node.test).length;
 console.log(
-  `✓ architecture — ${total} components across ${categories.length} categories, barrels complete, no barrel imports.`,
+  `✓ architecture — ${total} components across ${categories.length} categories, barrels complete, no barrel imports.\n` +
+    `✓ layers — ${shipped} modules across ${Object.keys(allowed).length} layers, ${modules.size - shipped} test modules exempt; ` +
+    "dependency rules acyclic, transitively closed, no violations.",
 );

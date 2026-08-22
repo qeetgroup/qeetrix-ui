@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useControllableState } from "@/hooks/use-controllable-state";
 
 const rootVariants = cva("relative inline-flex rounded-lg bg-muted p-1 text-muted-foreground", {
   variants: {
@@ -51,19 +52,13 @@ function SegmentedControl({
   children,
   ...props
 }: SegmentedControlProps) {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = React.useState<string | undefined>(defaultValue);
-  const current = isControlled ? value : internal;
+  const [current, setValue] = useControllableState<string | undefined>({
+    value,
+    defaultValue,
+    onChange: onValueChange as (next: string | undefined) => void,
+  });
   const rootRef = React.useRef<HTMLDivElement>(null);
   const [indicator, setIndicator] = React.useState<React.CSSProperties>({ opacity: 0 });
-
-  const setValue = React.useCallback(
-    (next: string) => {
-      if (!isControlled) setInternal(next);
-      onValueChange?.(next);
-    },
-    [isControlled, onValueChange],
-  );
 
   // Position the floating indicator under the active segment.
   React.useLayoutEffect(() => {

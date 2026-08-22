@@ -23,7 +23,7 @@ type ActionBarItemProps = Omit<ComponentProps<typeof Button>, "size" | "variant"
 
 function ActionBarSelection({ count, onClear }: { count: number; onClear?: () => void }) {
   return (
-    <div className="flex items-center gap-2 pl-1 pr-1">
+    <div className="flex items-center gap-2 px-1">
       <span className="text-sm font-medium tabular-nums text-foreground">{count} selected</span>
       {onClear && (
         <Button variant="ghost" size="icon-sm" aria-label="Clear selection" onClick={onClear}>

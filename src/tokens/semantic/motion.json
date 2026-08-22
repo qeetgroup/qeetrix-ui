@@ -1,0 +1,60 @@
+{
+  "motion": {
+    "$description": "The motion vocabulary components should reach for. Every value aliases an existing primitive duration/easing \u2014 no new timing was introduced. Honour prefers-reduced-motion via the reduced-motion scale, not by hard-coding a media query per component.",
+    "duration": {
+      "instant": {
+        "$value": "{duration.instant}",
+        "$type": "duration"
+      },
+      "fast": {
+        "$value": "{duration.fast}",
+        "$type": "duration"
+      },
+      "normal": {
+        "$value": "{duration.standard}",
+        "$type": "duration"
+      },
+      "slow": {
+        "$value": "{duration.slow}",
+        "$type": "duration"
+      },
+      "deliberate": {
+        "$value": "{duration.deliberate}",
+        "$type": "duration"
+      }
+    },
+    "easing": {
+      "standard": {
+        "$value": "{easing.standard}",
+        "$type": "cubicBezier"
+      },
+      "emphasized": {
+        "$value": "{easing.sharp}",
+        "$type": "cubicBezier"
+      },
+      "enter": {
+        "$value": "{easing.decelerate}",
+        "$type": "cubicBezier"
+      },
+      "exit": {
+        "$value": "{easing.accelerate}",
+        "$type": "cubicBezier"
+      },
+      "linear": {
+        "$value": "{easing.linear}",
+        "$type": "cubicBezier"
+      }
+    },
+    "reduced": {
+      "$description": "What motion collapses to when the user asks for less of it. Duration goes to zero; the easing is irrelevant but kept linear so a transition that is still running finishes predictably.",
+      "duration": {
+        "$value": "{duration.instant}",
+        "$type": "duration"
+      },
+      "easing": {
+        "$value": "{easing.linear}",
+        "$type": "cubicBezier"
+      }
+    }
+  }
+}

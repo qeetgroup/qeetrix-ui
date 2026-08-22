@@ -17,7 +17,7 @@ const typographyVariants = cva("", {
       small: "text-sm font-medium leading-none",
       muted: "text-sm text-muted-foreground",
       inlineCode:
-        "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
+        "relative rounded bg-muted px-[var(--qx-component-typography-code-padding-inline)] py-[var(--qx-component-typography-code-padding-block)] font-mono text-sm font-semibold",
       list: "my-6 ms-6 list-disc [&>li]:mt-2",
     },
   },

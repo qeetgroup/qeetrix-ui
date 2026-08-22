@@ -7,7 +7,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigationMenuTriggerStyle = cva(
-  "inline-flex h-[var(--qx-density-control-height,2.25rem)] w-max items-center justify-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled data-popup-open:bg-accent data-popup-open:text-accent-foreground",
+  "inline-flex h-[var(--qx-control-height)] w-max items-center justify-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled data-popup-open:bg-accent data-popup-open:text-accent-foreground",
 );
 
 /**

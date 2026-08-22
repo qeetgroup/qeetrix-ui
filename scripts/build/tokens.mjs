@@ -2,8 +2,14 @@
  * Qeetrix token build (folded in from the former @qeetrix/tokens package).
  *
  * Single source (src/tokens/**) → three artifacts under src/styles/ (generated, gitignored):
- *   src/styles/tokens.css      — shadcn / Base-UI bridge (:root + .dark, UNPREFIXED vars)
- *   src/styles/tokens.raw.css  — full raw token export (--qx- prefixed)
+ *   src/styles/tokens.css      — what the runtime needs: the shadcn / Base-UI bridge
+ *                                (UNPREFIXED :root + .dark) plus the semantic and component
+ *                                layers (--qx- prefixed) and the density mode selectors.
+ *                                Primitives are deliberately excluded — a component physically
+ *                                cannot resolve a palette value.
+ *   src/styles/tokens.raw.css  — the complete export including primitives (--qx- prefixed),
+ *                                published as @qeetrix/ui/tokens.css for consumers that want
+ *                                the ramps.
  *   src/styles/tokens.json     — resolved tokens per theme (cross-platform)
  *
  * src/styles/index.css imports ./tokens.css; postbuild copies src/styles → dist/styles
@@ -100,13 +106,26 @@ StyleDictionary.registerFormat({
 const isBridge = (t) => t.filePath.includes("bridge");
 const notBridge = (t) => !isBridge(t);
 const themeOverride = (t) => t.filePath.includes(`${"/theme/"}`) && !isBridge(t);
+const isPrimitive = (t) => t.filePath.includes(`${"/primitive/"}`);
+// What the runtime that components render in is allowed to see: the semantic and component
+// layers, never the primitives. Keeping the palette out of tokens.css is what makes
+// "components must not depend on primitive values" a physical fact rather than a convention.
+const isConsumable = (t) => !isPrimitive(t) && !isBridge(t);
+const consumableOverride = (t) => isConsumable(t) && t.filePath.includes(`${"/theme/"}`);
 
 // ---- per-theme instance -----------------------------------------------------
 
 function sdForTheme(theme) {
   const selector = theme === "light" ? ":root" : ".dark";
   return new StyleDictionary({
-    source: [join(TOKENS, "primitive/**/*.json"), join(TOKENS, `theme/${theme}/**/*.json`)],
+    // The three authored layers, then the theme overlay. Later sources win, which is how
+    // a theme re-points a semantic colour without redeclaring the whole layer.
+    source: [
+      join(TOKENS, "primitive/**/*.json"),
+      join(TOKENS, "semantic/**/*.json"),
+      join(TOKENS, "component/**/*.json"),
+      join(TOKENS, `theme/${theme}/**/*.json`),
+    ],
     log: { verbosity: "silent", warnings: "disabled" },
     platforms: {
       bridge: {
@@ -130,6 +149,21 @@ function sdForTheme(theme) {
             format: "qeetrix/css",
             // light carries the primitives + semantic in :root; dark only the overrides.
             filter: theme === "light" ? notBridge : themeOverride,
+            options: { selector, prefix: "qx" },
+          },
+        ],
+      },
+      // The semantic + component layers, for the public style entry. src/styles/index.css
+      // imports tokens.css, so these are the --qx-* tokens a component or an @theme mapping
+      // can actually resolve; primitives are deliberately absent.
+      consumable: {
+        buildPath: `${BUILD}/`,
+        transforms: [],
+        files: [
+          {
+            destination: `consumable-${theme}.css`,
+            format: "qeetrix/css",
+            filter: theme === "light" ? isConsumable : consumableOverride,
             options: { selector, prefix: "qx" },
           },
         ],
@@ -175,25 +209,30 @@ function densityModeCss(tokens) {
       .map(([name, value]) => `  --qx-density-${name}: ${value};`)
       .join("\n");
 
+  // `default` is published under its own name rather than on :root, so a component can spell
+  // its fallback as a token — var(--qx-density-control-height, var(--qx-density-control-height-default))
+  // — without :root silently overriding the density a provider set.
+  const defaults = [
+    ["control-height", density["control-height"].default],
+    ["row-height", density["row-height"].default],
+    ["cell-padding-y", density["cell-padding-y"].default],
+    ["field-gap", density["field-gap"].default],
+  ]
+    .map(([name, value]) => `  --qx-density-${name}-default: ${value};`)
+    .join("\n");
+
   return [
+    `:root {\n${defaults}\n}`,
     `[data-qx-density="comfortable"] {\n${declarations("comfortable")}\n}`,
     `[data-qx-density="compact"] {\n${declarations("compact")}\n}`,
   ].join("\n\n");
 }
 
-function focusCss(tokens) {
-  return [
-    ":root {",
-    `  --qx-focus-ring-width: ${tokens.focus["ring-width"]};`,
-    `  --qx-focus-outline-width: ${tokens.focus["outline-width"]};`,
-    `  --qx-focus-offset: ${tokens.focus.offset};`,
-    "}",
-  ].join("\n");
-}
-
 writeFileSync(
   join(OUT, "tokens.css"),
-  `${header}\n${read("bridge-light.css")}\n${read("bridge-dark.css")}\n${focusCss(lightTokens)}\n\n${densityModeCss(lightTokens)}\n`,
+  `${header}\n${read("bridge-light.css")}\n${read("bridge-dark.css")}\n` +
+    `${read("consumable-light.css")}\n${read("consumable-dark.css")}\n` +
+    `${densityModeCss(lightTokens)}\n`,
 );
 writeFileSync(
   join(OUT, "tokens.raw.css"),
@@ -212,4 +251,105 @@ writeFileSync(
   )}\n`,
 );
 
-console.log("✔ Qeetrix tokens built → src/styles/{tokens.css, tokens.raw.css, tokens.json}");
+// ---- typed foundations ------------------------------------------------------
+// The same resolved tokens, as TypeScript. This is the *only* place these values exist in
+// code: src/lib/token-values.ts re-exports it, so `@qeetrix/ui/lib/token-values` and the root
+// barrel keep working while the numbers stay generated. Editing the .ts by hand is how a
+// design system ends up with two truths.
+
+const camel = (s) => s.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+const ms = (v) => Number.parseInt(v, 10);
+const px = (v) => Number.parseFloat(v);
+const entries = (obj, mapValue) =>
+  Object.entries(obj)
+    .filter(([key]) => !key.startsWith("$"))
+    .map(([key, value]) => `  ${camel(key)}: ${mapValue(value)},`)
+    .join("\n");
+
+const quote = (v) => `"${v}"`;
+const block = (name, body, doc) =>
+  `${doc ? `/** ${doc} */\n` : ""}export const ${name} = {\n${body}\n} as const;\n`;
+
+const t = lightTokens;
+const foundations = [
+  "/**",
+  " * Qeetrix typed token values — GENERATED by scripts/build/tokens.mjs.",
+  " *",
+  " * Do not edit by hand: edit src/tokens/** and run `bun run build:tokens`. This module is the",
+  " * `foundations` layer — token values, typed, with no React and no dependencies. Components",
+  " * reach for it through src/lib/token-values.ts, which re-exports it unchanged.",
+  " */",
+  "",
+  block(
+    "DURATION",
+    entries(t.duration, (v) => ms(v)),
+    "Motion durations, in milliseconds.",
+  ),
+  block("EASING", entries(t.easing, quote), "Motion easing curves."),
+  block(
+    "ICON_SIZE",
+    entries(t.icon.size, (v) => px(v)),
+    "Icon box sizes, in pixels.",
+  ),
+  block(
+    "ICON_STROKE",
+    entries(t.icon.stroke, (v) => Number(v)),
+    "Icon stroke widths.",
+  ),
+  block(
+    "Z_INDEX",
+    entries(t.z, (v) => Number(v)),
+    "The stacking ladder. Higher wins.",
+  ),
+  block(
+    "STATE_OPACITY",
+    entries(t.state.opacity, (v) => Number(v)),
+    "Opacity applied to interactive states.",
+  ),
+  block(
+    "COMPONENT",
+    [
+      "  sidebar: {",
+      "    width: {",
+      entries(t.component.sidebar.width, quote)
+        .split("\n")
+        .map((l) => `    ${l}`)
+        .join("\n"),
+      "    },",
+      "  },",
+      "  tour: {",
+      entries(
+        { "card-width": t.component.tour["card-width"], offset: t.component.tour.offset },
+        quote,
+      )
+        .split("\n")
+        .map((l) => `  ${l}`)
+        .join("\n"),
+      "  },",
+    ].join("\n"),
+    "Component geometry that has to be readable from JavaScript.",
+  ),
+  block(
+    "SHADOW",
+    entries(Object.fromEntries(Object.entries(t.shadow).filter(([k]) => k !== "ramp")), quote),
+    "The elevation ladder, as CSS shadow values.",
+  ),
+  block(
+    "CHART_COLOR",
+    [
+      ...Array.from({ length: 8 }, (_, i) => `  series${i + 1}: "var(--chart-${i + 1})",`),
+      ...["grid", "axis", "reference", "positive", "negative", "warning"].map(
+        (role) => `  ${role}: "var(--chart-${role})",`,
+      ),
+    ].join("\n"),
+    "Chart roles as CSS variable references, so a chart re-themes with the document.",
+  ),
+].join("\n");
+
+mkdirSync(join(PKG, "src/foundations"), { recursive: true });
+writeFileSync(join(PKG, "src/foundations/token-values.ts"), foundations);
+
+console.log(
+  "✔ Qeetrix tokens built → src/styles/{tokens.css, tokens.raw.css, tokens.json}" +
+    " + src/foundations/token-values.ts",
+);

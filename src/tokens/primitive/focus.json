@@ -1,7 +1,0 @@
-{
-  "focus": {
-    "ring-width": { "$value": "3px", "$type": "dimension" },
-    "outline-width": { "$value": "2px", "$type": "dimension" },
-    "offset": { "$value": "2px", "$type": "dimension" }
-  }
-}

@@ -1,40 +1,188 @@
 {
   "color": {
     "text": {
-      "primary": { "$value": "{color.neutral.900}", "$type": "color" },
-      "secondary": { "$value": "{color.neutral.600}", "$type": "color" },
-      "tertiary": { "$value": "{color.neutral.500}", "$type": "color" },
-      "placeholder": { "$value": "{color.neutral.500}", "$type": "color" },
-      "disabled": { "$value": "{color.neutral.400}", "$type": "color" },
-      "inverse": { "$value": "{color.neutral.0}", "$type": "color" },
-      "brand": { "$value": "{color.brand.700}", "$type": "color" },
-      "link": { "$value": "{color.brand.600}", "$type": "color" },
-      "success": { "$value": "{color.success.700}", "$type": "color" },
-      "warning": { "$value": "{color.warning.700}", "$type": "color" },
-      "danger": { "$value": "{color.danger.500}", "$type": "color" },
-      "info": { "$value": "{color.info.700}", "$type": "color" },
-      "on-brand": { "$value": "{color.neutral.900}", "$type": "color" }
+      "primary": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{color.neutral.600}",
+        "$type": "color"
+      },
+      "tertiary": {
+        "$value": "{color.neutral.500}",
+        "$type": "color"
+      },
+      "placeholder": {
+        "$value": "{color.neutral.500}",
+        "$type": "color"
+      },
+      "disabled": {
+        "$value": "{color.neutral.400}",
+        "$type": "color"
+      },
+      "inverse": {
+        "$value": "{color.neutral.0}",
+        "$type": "color"
+      },
+      "brand": {
+        "$value": "{color.brand.700}",
+        "$type": "color"
+      },
+      "link": {
+        "$value": "{color.brand.600}",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "{color.success.700}",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "{color.warning.700}",
+        "$type": "color"
+      },
+      "danger": {
+        "$value": "{color.danger.500}",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "{color.info.700}",
+        "$type": "color"
+      },
+      "on-brand": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      },
+      "on-subtle": {
+        "$value": "{color.neutral.850}",
+        "$type": "color"
+      },
+      "on-feedback": {
+        "$value": "{color.neutral.0}",
+        "$type": "color"
+      }
     },
     "surface": {
-      "canvas": { "$value": "{color.neutral.50}", "$type": "color" },
-      "default": { "$value": "{color.neutral.0}", "$type": "color" },
-      "elevated": { "$value": "{color.neutral.0}", "$type": "color" },
-      "sunken": { "$value": "{color.neutral.100}", "$type": "color" },
-      "subtle": { "$value": "{color.neutral.100}", "$type": "color" },
-      "inverse": { "$value": "{color.neutral.900}", "$type": "color" }
+      "canvas": {
+        "$value": "{color.neutral.0}",
+        "$type": "color"
+      },
+      "default": {
+        "$value": "{color.neutral.0}",
+        "$type": "color"
+      },
+      "elevated": {
+        "$value": "{color.neutral.0}",
+        "$type": "color"
+      },
+      "sunken": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "subtle": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "interactive": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "rail": {
+        "$value": "{color.neutral.50}",
+        "$type": "color"
+      },
+      "inverse": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      }
     },
     "border": {
-      "default": { "$value": "{color.neutral.200}", "$type": "color" },
-      "subtle": { "$value": "{color.neutral.100}", "$type": "color" },
-      "strong": { "$value": "{color.neutral.300}", "$type": "color" },
-      "focused": { "$value": "{color.brand.600}", "$type": "color" },
-      "hover": { "$value": "{color.neutral.400}", "$type": "color" },
-      "danger": { "$value": "{color.danger.500}", "$type": "color" }
+      "default": {
+        "$value": "{color.neutral.200}",
+        "$type": "color"
+      },
+      "subtle": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "strong": {
+        "$value": "{color.neutral.300}",
+        "$type": "color"
+      },
+      "focused": {
+        "$value": "{color.brand.600}",
+        "$type": "color"
+      },
+      "hover": {
+        "$value": "{color.neutral.400}",
+        "$type": "color"
+      },
+      "danger": {
+        "$value": "{color.danger.500}",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "{color.success.300}",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "{color.warning.300}",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "{color.info.300}",
+        "$type": "color"
+      }
     },
     "action": {
-      "primary": { "$value": "{color.brand.500}", "$type": "color" },
-      "primary-hover": { "$value": "{color.brand.600}", "$type": "color" },
-      "primary-active": { "$value": "{color.brand.700}", "$type": "color" }
+      "primary": {
+        "$value": "{color.brand.500}",
+        "$type": "color"
+      },
+      "primary-hover": {
+        "$value": "{color.brand.600}",
+        "$type": "color"
+      },
+      "primary-active": {
+        "$value": "{color.brand.700}",
+        "$type": "color"
+      }
+    },
+    "feedback": {
+      "success": {
+        "$value": "{color.success.700}",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "{color.warning.700}",
+        "$type": "color"
+      },
+      "error": {
+        "$value": "{color.danger.500}",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "{color.info.700}",
+        "$type": "color"
+      }
+    },
+    "focus": {
+      "ring": {
+        "$value": "{color.brand.600}",
+        "$type": "color"
+      }
+    },
+    "overlay": {
+      "scrim": {
+        "$value": "{color.alpha.black-40}",
+        "$type": "color"
+      }
+    },
+    "selection": {
+      "background": {
+        "$value": "color-mix(in oklab, {color.action.primary} 22%, transparent)",
+        "$type": "color"
+      }
     }
   }
 }

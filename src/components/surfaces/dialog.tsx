@@ -6,7 +6,10 @@ import type * as React from "react";
 import { Button } from "@/components/actions/button";
 import { cn } from "@/lib/utils";
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
+/** The dialog root's props, including the `open` / `defaultOpen` / `onOpenChange` triple. */
+type DialogProps = DialogPrimitive.Root.Props;
+
+function Dialog({ ...props }: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
@@ -27,7 +30,7 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/40 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 z-50 bg-[var(--qx-component-dialog-scrim)] transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
         className,
       )}
       {...props}
@@ -47,7 +50,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border bg-popover p-6 text-sm text-popover-foreground shadow-modal transition duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0",
+          "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-[var(--qx-component-dialog-corner)] border border-[var(--qx-component-dialog-border)] bg-[var(--qx-component-dialog-background)] p-6 text-sm text-[var(--qx-component-dialog-foreground)] shadow-[var(--qx-component-dialog-elevation)] transition duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0",
           className,
         )}
         {...props}
@@ -107,6 +110,7 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
   );
 }
 
+export type { DialogProps };
 export {
   Dialog,
   DialogClose,

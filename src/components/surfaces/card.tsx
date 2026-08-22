@@ -2,17 +2,18 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function Card({
-  className,
-  size = "default",
-  ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+/** The card's own props. `size` selects the padding/gap scale, not the width. */
+type CardProps = React.ComponentProps<"div"> & {
+  size?: "default" | "sm";
+};
+
+function Card({ className, size = "default", ...props }: CardProps) {
   return (
     <div
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 shadow-rest ring-foreground/10 transition-shadow hover:shadow-hover has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex flex-col gap-4 overflow-hidden rounded-[var(--qx-component-card-corner)] bg-[var(--qx-component-card-background)] py-4 text-sm text-[var(--qx-component-card-foreground)] ring-1 shadow-[var(--qx-component-card-elevation)] ring-[var(--qx-component-card-ring)] transition-shadow hover:shadow-[var(--qx-component-card-elevation-hover)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-[var(--qx-component-card-corner)] *:[img:last-child]:rounded-b-[var(--qx-component-card-corner)]",
         className,
       )}
       {...props}
@@ -25,7 +26,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-[var(--qx-component-card-corner)] px-4 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
         className,
       )}
       {...props}
@@ -89,4 +90,5 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+export type { CardProps };
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };

@@ -1,9 +1,10 @@
 {
   "$schema": "https://qeetrix.qeet.in/manifest.schema.json",
+  "schemaVersion": 2,
   "name": "@qeetrix/ui",
   "version": "1.0.3",
   "description": "Qeet Group design system — accessible, token-driven React components (Base UI + Tailwind v4).",
-  "generated": "2026-08-21",
+  "generated": "2026-08-22",
   "styles": "@qeetrix/ui/styles.css",
   "tokens": "@qeetrix/ui/tokens.json",
   "count": 145,
@@ -19,14 +20,49 @@
     "surfaces": 9,
     "utility": 18
   },
+  "statuses": {
+    "experimental": 0,
+    "beta": 0,
+    "stable": 144,
+    "deprecated": 1
+  },
   "components": [
     {
       "slug": "access-review",
       "name": "AccessReview",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/access-review",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "indeterminate"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "table"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -35,9 +71,40 @@
       "slug": "accordion",
       "name": "Accordion",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/accordion",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "accordion"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -46,9 +113,36 @@
       "slug": "action-bar",
       "name": "ActionBar",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/action-bar",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "toolbar"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -57,9 +151,44 @@
       "slug": "alert",
       "name": "Alert",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/alert",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": [
+          "default",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ],
+        "sizes": null,
+        "variantGroups": [
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "alert"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -68,9 +197,38 @@
       "slug": "alert-dialog",
       "name": "AlertDialog",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/alert-dialog",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "alertdialog"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -79,9 +237,41 @@
       "slug": "angle-slider",
       "name": "AngleSlider",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/angle-slider",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "read-only"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "slider"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -90,9 +280,36 @@
       "slug": "app-shell",
       "name": "AppShell",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/app-shell",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "landmarks"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -101,9 +318,36 @@
       "slug": "aspect-ratio",
       "name": "AspectRatio",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/aspect-ratio",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -112,9 +356,38 @@
       "slug": "audit-event",
       "name": "AuditEvent",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/audit-event",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -123,9 +396,42 @@
       "slug": "autocomplete",
       "name": "Autocomplete",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/autocomplete",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "selected",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "combobox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -134,9 +440,39 @@
       "slug": "availability-grid",
       "name": "AvailabilityGrid",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/availability-grid",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -145,9 +481,36 @@
       "slug": "avatar",
       "name": "Avatar",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/avatar",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -156,9 +519,46 @@
       "slug": "badge",
       "name": "Badge",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/badge",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": [
+          "default",
+          "secondary",
+          "outline",
+          "success",
+          "warning",
+          "destructive",
+          "muted"
+        ],
+        "sizes": null,
+        "variantGroups": [
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -167,9 +567,46 @@
       "slug": "banner",
       "name": "Banner",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/banner",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": [
+          "default",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ],
+        "sizes": null,
+        "variantGroups": [
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -178,9 +615,42 @@
       "slug": "blockquote",
       "name": "Blockquote",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/blockquote",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -189,9 +659,38 @@
       "slug": "breadcrumb",
       "name": "Breadcrumb",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/breadcrumb",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "breadcrumb"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -200,9 +699,62 @@
       "slug": "button",
       "name": "Button",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/button",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled",
+        "invalid",
+        "expanded"
+      ],
+      "api": {
+        "variants": [
+          "default",
+          "outline",
+          "secondary",
+          "ghost",
+          "destructive",
+          "link"
+        ],
+        "sizes": [
+          "default",
+          "xs",
+          "sm",
+          "lg",
+          "icon",
+          "icon-xs",
+          "icon-sm",
+          "icon-lg"
+        ],
+        "variantGroups": [
+          "size",
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "button"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -211,9 +763,36 @@
       "slug": "button-group",
       "name": "ButtonGroup",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/button-group",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -222,9 +801,41 @@
       "slug": "calendar",
       "name": "Calendar",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/calendar",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "hover",
+        "focus",
+        "disabled",
+        "selected"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "grid"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -233,9 +844,43 @@
       "slug": "callout",
       "name": "Callout",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/callout",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": [
+          "info",
+          "success",
+          "warning",
+          "error"
+        ],
+        "sizes": null,
+        "variantGroups": [
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -244,9 +889,38 @@
       "slug": "card",
       "name": "Card",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/card",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -255,9 +929,36 @@
       "slug": "carousel",
       "name": "Carousel",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/carousel",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "carousel"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -266,9 +967,36 @@
       "slug": "chart",
       "name": "Chart",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chart",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -277,9 +1005,36 @@
       "slug": "chart-presets",
       "name": "ChartPresets",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chart-presets",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -288,9 +1043,42 @@
       "slug": "checkbox",
       "name": "Checkbox",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/checkbox",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "invalid",
+        "checked",
+        "indeterminate"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "checkbox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -299,9 +1087,39 @@
       "slug": "checkbox-card",
       "name": "CheckboxCard",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/checkbox-card",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "checkbox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -310,9 +1128,49 @@
       "slug": "chip",
       "name": "Chip",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chip",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "checked",
+        "selected"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "selected",
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -321,9 +1179,36 @@
       "slug": "clipboard",
       "name": "Clipboard",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/clipboard",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "button"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -332,9 +1217,36 @@
       "slug": "close-button",
       "name": "CloseButton",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/close-button",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "button"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -343,9 +1255,39 @@
       "slug": "code-block",
       "name": "CodeBlock",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/code-block",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -354,9 +1296,38 @@
       "slug": "collapsible",
       "name": "Collapsible",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/collapsible",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "disclosure"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -365,9 +1336,41 @@
       "slug": "color-picker",
       "name": "ColorPicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/color-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "invalid"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -376,9 +1379,49 @@
       "slug": "color-swatch",
       "name": "ColorSwatch",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/color-swatch",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "xs",
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "disabled",
+          "interactive",
+          "selected",
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -387,9 +1430,43 @@
       "slug": "combobox",
       "name": "Combobox",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/combobox",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "invalid",
+        "selected",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "combobox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -398,9 +1475,40 @@
       "slug": "command-palette",
       "name": "CommandPalette",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/command-palette",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "selected",
+        "expanded"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "combobox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -409,9 +1517,36 @@
       "slug": "comment-thread",
       "name": "CommentThread",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/comment-thread",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -420,9 +1555,44 @@
       "slug": "container",
       "name": "Container",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/container",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "prose",
+          "content",
+          "wide",
+          "full"
+        ],
+        "variantGroups": [
+          "gutters",
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -431,9 +1601,40 @@
       "slug": "context-menu",
       "name": "ContextMenu",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/context-menu",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus",
+        "disabled",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "menu"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -442,9 +1643,38 @@
       "slug": "copyable-secret",
       "name": "CopyableSecret",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/copyable-secret",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -453,9 +1683,39 @@
       "slug": "country-picker",
       "name": "CountryPicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/country-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": true
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -464,9 +1724,36 @@
       "slug": "currency-input",
       "name": "CurrencyInput",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/currency-input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -475,9 +1762,38 @@
       "slug": "data-state",
       "name": "DataState",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/data-state",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "loading"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "alert"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -486,9 +1802,40 @@
       "slug": "data-table",
       "name": "DataTable",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/data-table",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "indeterminate"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "table"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -497,9 +1844,39 @@
       "slug": "date-picker",
       "name": "DatePicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/date-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "disabled",
+        "empty"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -508,9 +1885,39 @@
       "slug": "date-time-picker",
       "name": "DateTimePicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/date-time-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "disabled",
+        "empty"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -519,9 +1926,36 @@
       "slug": "description-list",
       "name": "DescriptionList",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/description-list",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -530,9 +1964,38 @@
       "slug": "dialog",
       "name": "Dialog",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/dialog",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "dialog"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -541,9 +2004,36 @@
       "slug": "diff-viewer",
       "name": "DiffViewer",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/diff-viewer",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -552,9 +2042,38 @@
       "slug": "drawer",
       "name": "Drawer",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/drawer",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "dialog"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -563,9 +2082,40 @@
       "slug": "dropdown-menu",
       "name": "DropdownMenu",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/dropdown-menu",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus",
+        "disabled",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "menu-button"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -574,9 +2124,39 @@
       "slug": "editable",
       "name": "Editable",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/editable",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -585,9 +2165,36 @@
       "slug": "empty-state",
       "name": "EmptyState",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/empty-state",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -596,9 +2203,40 @@
       "slug": "feed",
       "name": "Feed",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/feed",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "busy"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "feed"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -607,9 +2245,42 @@
       "slug": "field",
       "name": "Field",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/field",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "disabled",
+        "invalid",
+        "checked"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": [
+          "orientation"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -618,9 +2289,39 @@
       "slug": "file-card",
       "name": "FileCard",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-card",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "selected"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -629,9 +2330,36 @@
       "slug": "file-type-icon",
       "name": "FileTypeIcon",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-type-icon",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -640,9 +2368,39 @@
       "slug": "file-upload",
       "name": "FileUpload",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-upload",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -651,9 +2409,36 @@
       "slug": "filter-bar",
       "name": "FilterBar",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/filter-bar",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -662,9 +2447,40 @@
       "slug": "floating-window",
       "name": "FloatingWindow",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/floating-window",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "active"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "dialog"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -673,9 +2489,38 @@
       "slug": "focus-trap",
       "name": "FocusTrap",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/focus-trap",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "active"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -684,9 +2529,39 @@
       "slug": "form",
       "name": "Form",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/form",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "focus-visible",
+        "invalid"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -695,9 +2570,36 @@
       "slug": "highlight",
       "name": "Highlight",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/highlight",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -706,9 +2608,38 @@
       "slug": "hover-card",
       "name": "HoverCard",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/hover-card",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -717,9 +2648,36 @@
       "slug": "icon",
       "name": "Icon",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/icon",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -728,9 +2686,36 @@
       "slug": "icon-button",
       "name": "IconButton",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/icon-button",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "button"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -739,9 +2724,40 @@
       "slug": "input",
       "name": "Input",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "invalid"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -750,9 +2766,38 @@
       "slug": "input-group",
       "name": "InputGroup",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/input-group",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -761,9 +2806,39 @@
       "slug": "json-tree",
       "name": "JsonTree",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/json-tree",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "expanded"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -772,9 +2847,36 @@
       "slug": "kbd",
       "name": "Kbd",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/kbd",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -783,9 +2885,38 @@
       "slug": "label",
       "name": "Label",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/label",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -794,9 +2925,51 @@
       "slug": "link",
       "name": "Link",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/link",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible"
+      ],
+      "api": {
+        "variants": [
+          "default",
+          "muted",
+          "destructive"
+        ],
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "size",
+          "underline",
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "link"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -805,9 +2978,41 @@
       "slug": "listbox",
       "name": "Listbox",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/listbox",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "active",
+        "disabled",
+        "selected"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "listbox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -816,9 +3021,38 @@
       "slug": "logo-uploader",
       "name": "LogoUploader",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/logo-uploader",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -827,9 +3061,38 @@
       "slug": "marquee",
       "name": "Marquee",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/marquee",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -838,9 +3101,36 @@
       "slug": "mask-input",
       "name": "MaskInput",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/mask-input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -849,9 +3139,36 @@
       "slug": "master-detail",
       "name": "MasterDetail",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/master-detail",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -860,9 +3177,38 @@
       "slug": "mention-input",
       "name": "MentionInput",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/mention-input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "selected"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "combobox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -871,9 +3217,40 @@
       "slug": "menubar",
       "name": "Menubar",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/menubar",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus",
+        "disabled",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "menubar"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -882,9 +3259,38 @@
       "slug": "meter",
       "name": "Meter",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/meter",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": [
+          "intent"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "meter"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -893,9 +3299,39 @@
       "slug": "native-select",
       "name": "NativeSelect",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/native-select",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -904,9 +3340,42 @@
       "slug": "navigation-menu",
       "name": "NavigationMenu",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/navigation-menu",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "disclosure"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -915,9 +3384,47 @@
       "slug": "notification",
       "name": "Notification",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "loading"
+      ],
+      "api": {
+        "variants": [
+          "info",
+          "success",
+          "warning",
+          "error"
+        ],
+        "sizes": null,
+        "variantGroups": [
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -926,9 +3433,39 @@
       "slug": "notification-center",
       "name": "NotificationCenter",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification-center",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -937,9 +3474,36 @@
       "slug": "notification-preference-matrix",
       "name": "NotificationPreferenceMatrix",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification-preference-matrix",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "table"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -948,9 +3512,39 @@
       "slug": "number-field",
       "name": "NumberField",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/number-field",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "spinbutton"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -959,9 +3553,36 @@
       "slug": "number-formatter",
       "name": "NumberFormatter",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/number-formatter",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -970,9 +3591,40 @@
       "slug": "org-chart",
       "name": "OrgChart",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/org-chart",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "expanded"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -981,9 +3633,40 @@
       "slug": "otp-input",
       "name": "OtpInput",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/otp-input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "invalid"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -992,9 +3675,39 @@
       "slug": "overflow-list",
       "name": "OverflowList",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/overflow-list",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1003,9 +3716,36 @@
       "slug": "page-header",
       "name": "PageHeader",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/page-header",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1014,9 +3754,38 @@
       "slug": "pagination",
       "name": "Pagination",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/pagination",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "loading"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": false,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": false,
       "tested": true,
       "deprecated": false
@@ -1025,9 +3794,42 @@
       "slug": "pagination-bar",
       "name": "PaginationBar",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui/components/pagination-bar",
       "deepImport": "@qeetrix/ui/components/pagination-bar",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "deprecated",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": {
+        "since": "1.0.0",
+        "reason": "Renamed to Pagination when the pagination API was consolidated in 1.0.0.",
+        "replacement": "Pagination",
+        "migration": "Import { Pagination } from \"@qeetrix/ui\" and rename PaginationBarProps to PaginationProps.",
+        "removeIn": null
+      },
       "story": true,
       "tested": true,
       "deprecated": true
@@ -1036,9 +3838,36 @@
       "slug": "password-input",
       "name": "PasswordInput",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/password-input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1047,9 +3876,36 @@
       "slug": "password-strength-meter",
       "name": "PasswordStrengthMeter",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/password-strength-meter",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1058,9 +3914,38 @@
       "slug": "popover",
       "name": "Popover",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/popover",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1069,9 +3954,36 @@
       "slug": "portal",
       "name": "Portal",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/portal",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1080,9 +3992,43 @@
       "slug": "presence-indicator",
       "name": "PresenceIndicator",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/presence-indicator",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "size",
+          "status"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1091,9 +4037,36 @@
       "slug": "preview-card",
       "name": "PreviewCard",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/preview-card",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1102,9 +4075,38 @@
       "slug": "progress",
       "name": "Progress",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/progress",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "indeterminate"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1113,9 +4115,42 @@
       "slug": "progress-circle",
       "name": "ProgressCircle",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/progress-circle",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1124,9 +4159,36 @@
       "slug": "qr-code",
       "name": "QrCode",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/qr-code",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1135,9 +4197,39 @@
       "slug": "radio-card",
       "name": "RadioCard",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/radio-card",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "radio-group"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1146,9 +4238,41 @@
       "slug": "radio-group",
       "name": "RadioGroup",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/radio-group",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "invalid",
+        "checked"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "radio-group"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1157,9 +4281,40 @@
       "slug": "rating",
       "name": "Rating",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rating",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "read-only"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "slider"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1168,9 +4323,39 @@
       "slug": "reaction-bar",
       "name": "ReactionBar",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/reaction-bar",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1179,9 +4364,38 @@
       "slug": "resizable",
       "name": "Resizable",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/resizable",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "window-splitter"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1190,9 +4404,39 @@
       "slug": "rich-text-editor",
       "name": "RichTextEditor",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rich-text-editor",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "focus",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1201,9 +4445,36 @@
       "slug": "rolling-number",
       "name": "RollingNumber",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rolling-number",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1212,9 +4483,39 @@
       "slug": "schedule-calendar",
       "name": "ScheduleCalendar",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/schedule-calendar",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "hover",
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "table"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1223,9 +4524,38 @@
       "slug": "scroll-area",
       "name": "ScrollArea",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/scroll-area",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1234,9 +4564,36 @@
       "slug": "security-item",
       "name": "SecurityItem",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/security-item",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1245,9 +4602,48 @@
       "slug": "segmented-control",
       "name": "SegmentedControl",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/segmented-control",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "active",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "fullWidth",
+          "orientation",
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "radio-group"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1256,9 +4652,43 @@
       "slug": "select",
       "name": "Select",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/select",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus",
+        "focus-visible",
+        "disabled",
+        "invalid",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "combobox"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1267,9 +4697,36 @@
       "slug": "separator",
       "name": "Separator",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/separator",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1278,9 +4735,38 @@
       "slug": "sheet",
       "name": "Sheet",
       "category": "surfaces",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/sheet",
       "groupImport": "@qeetrix/ui/components/surfaces",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "dialog"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1289,9 +4775,53 @@
       "slug": "sidebar",
       "name": "Sidebar",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/sidebar",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled",
+        "expanded",
+        "open"
+      ],
+      "api": {
+        "variants": [
+          "default",
+          "outline"
+        ],
+        "sizes": [
+          "default",
+          "sm",
+          "lg"
+        ],
+        "variantGroups": [
+          "size",
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1300,9 +4830,36 @@
       "slug": "skeleton",
       "name": "Skeleton",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/skeleton",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1311,9 +4868,38 @@
       "slug": "skip-nav",
       "name": "SkipNav",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/skip-nav",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "focus-visible"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1322,9 +4908,41 @@
       "slug": "slider",
       "name": "Slider",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/slider",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "slider"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1333,9 +4951,43 @@
       "slug": "spinner",
       "name": "Spinner",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/spinner",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": [
+          "sm",
+          "default",
+          "lg",
+          "xl"
+        ],
+        "variantGroups": [
+          "size"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1344,9 +4996,40 @@
       "slug": "spoiler",
       "name": "Spoiler",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/spoiler",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "expanded"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "disclosure"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1355,9 +5038,38 @@
       "slug": "stat",
       "name": "Stat",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/stat",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": [
+          "trend"
+        ]
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1366,9 +5078,39 @@
       "slug": "status-pill",
       "name": "StatusPill",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/status-pill",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "active",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1377,9 +5119,36 @@
       "slug": "stepper",
       "name": "Stepper",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/stepper",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1388,9 +5157,41 @@
       "slug": "switch",
       "name": "Switch",
       "category": "selection",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/switch",
       "groupImport": "@qeetrix/ui/components/selection",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "invalid",
+        "checked"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "switch"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1399,9 +5200,38 @@
       "slug": "table",
       "name": "Table",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/table",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "table"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1410,9 +5240,38 @@
       "slug": "table-of-contents",
       "name": "TableOfContents",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/table-of-contents",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1421,9 +5280,41 @@
       "slug": "tabs",
       "name": "Tabs",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tabs",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "tabs"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1432,9 +5323,39 @@
       "slug": "tag-input",
       "name": "TagInput",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tag-input",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1443,9 +5364,40 @@
       "slug": "textarea",
       "name": "Textarea",
       "category": "inputs",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/textarea",
       "groupImport": "@qeetrix/ui/components/inputs",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled",
+        "invalid"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1454,9 +5406,38 @@
       "slug": "time-picker",
       "name": "TimePicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1465,9 +5446,36 @@
       "slug": "time-range-picker",
       "name": "TimeRangePicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-range-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1476,9 +5484,36 @@
       "slug": "time-since",
       "name": "TimeSince",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-since",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": true
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1487,9 +5522,36 @@
       "slug": "timeline",
       "name": "Timeline",
       "category": "data-display",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timeline",
       "groupImport": "@qeetrix/ui/components/data-display",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1498,9 +5560,36 @@
       "slug": "timer",
       "name": "Timer",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timer",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1509,9 +5598,39 @@
       "slug": "timezone-picker",
       "name": "TimezonePicker",
       "category": "pickers",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timezone-picker",
       "groupImport": "@qeetrix/ui/components/pickers",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": true
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1520,9 +5639,38 @@
       "slug": "toast",
       "name": "Toast",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toast",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "alert"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1531,9 +5679,51 @@
       "slug": "toggle",
       "name": "Toggle",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toggle",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "invalid"
+      ],
+      "api": {
+        "variants": [
+          "default",
+          "outline"
+        ],
+        "sizes": [
+          "default",
+          "sm",
+          "lg"
+        ],
+        "variantGroups": [
+          "size",
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "button"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1542,9 +5732,36 @@
       "slug": "toggle-tip",
       "name": "ToggleTip",
       "category": "actions",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toggle-tip",
       "groupImport": "@qeetrix/ui/components/actions",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1553,9 +5770,40 @@
       "slug": "toolbar",
       "name": "Toolbar",
       "category": "layout",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toolbar",
       "groupImport": "@qeetrix/ui/components/layout",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "supported",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "toolbar"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1564,9 +5812,38 @@
       "slug": "tooltip",
       "name": "Tooltip",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tooltip",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "tooltip"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1575,9 +5852,39 @@
       "slug": "tour",
       "name": "Tour",
       "category": "feedback",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tour",
       "groupImport": "@qeetrix/ui/components/feedback",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "dialog"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1586,9 +5893,41 @@
       "slug": "tree-view",
       "name": "TreeView",
       "category": "navigation",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tree-view",
       "groupImport": "@qeetrix/ui/components/navigation",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "client-boundary",
+        "reducedMotion": "supported"
+      },
+      "states": [
+        "hover",
+        "focus-visible",
+        "expanded",
+        "open"
+      ],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "treeview"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": true,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1597,9 +5936,51 @@
       "slug": "typography",
       "name": "Typography",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/typography",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "supported",
+        "darkMode": "supported",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": [
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "p",
+          "blockquote",
+          "lead",
+          "large",
+          "small",
+          "muted",
+          "inlineCode",
+          "list"
+        ],
+        "sizes": null,
+        "variantGroups": [
+          "variant"
+        ]
+      },
+      "accessibility": {
+        "required": false,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
@@ -1608,9 +5989,36 @@
       "slug": "visually-hidden",
       "name": "VisuallyHidden",
       "category": "utility",
+      "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/visually-hidden",
       "groupImport": "@qeetrix/ui/components/utility",
+      "status": "stable",
+      "capabilities": {
+        "rtl": "not-applicable",
+        "darkMode": "not-applicable",
+        "density": "not-applicable",
+        "ssr": "server-safe",
+        "reducedMotion": "not-applicable"
+      },
+      "states": [],
+      "api": {
+        "variants": null,
+        "sizes": null,
+        "variantGroups": null
+      },
+      "accessibility": {
+        "required": true,
+        "pattern": "none"
+      },
+      "testing": {
+        "unit": true,
+        "accessibility": true,
+        "interaction": false,
+        "visual": true,
+        "hydration": false
+      },
+      "deprecation": null,
       "story": true,
       "tested": true,
       "deprecated": false
