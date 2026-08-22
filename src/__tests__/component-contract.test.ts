@@ -33,20 +33,27 @@ import { INTERACTION_STATES } from "@/contracts/states";
 import { THEME_MODES } from "@/contracts/theme";
 import { MANIFEST_SCHEMA_VERSION } from "@/manifests/component-manifest";
 import { COMPONENT_REGISTRY, REGISTRY_DEFAULTS } from "@/manifests/component-registry";
-import manifestJson from "../../component-manifest.json";
-import { detectableStates, hasDeprecationMarker } from "../../scripts/lib/component-source.mjs";
-import { formatFinding, pascalCase, validateManifest } from "../../scripts/lib/contract.mjs";
+import manifestJson from "@root/component-manifest.json";
+import { detectableStates, hasDeprecationMarker } from "@scripts/lib/component-source.mjs";
+import { formatFinding, pascalCase, validateManifest } from "@scripts/lib/contract.mjs";
 import {
   readLiteralExports,
   readLiteralExportsFromDirectory,
   readPropAxes,
-} from "../../scripts/lib/ts-literals.mjs";
+} from "@scripts/lib/ts-literals.mjs";
 
 const root = (...parts: string[]) => resolve(process.cwd(), ...parts);
 const vocabulary = readLiteralExportsFromDirectory(root("src/contracts"));
 const categoryMap: Record<string, string[]> = JSON.parse(
-  readFileSync(root("scripts/config/category-map.json"), "utf8"),
+  readFileSync(root("scripts/config/component-map.json"), "utf8"),
 );
+/** Reverse lookup: slug → PascalCase family directory name. */
+const slugToFamily: Record<string, string> = {};
+for (const [family, slugs] of Object.entries(categoryMap)) {
+  for (const slug of slugs) {
+    slugToFamily[slug] = family;
+  }
+}
 const manifest = manifestJson as unknown as Record<string, unknown> & {
   components: Record<string, never>[];
 };
@@ -63,11 +70,11 @@ function validEntry(overrides: Record<string, unknown> = {}) {
   return {
     slug: "example-widget",
     name: "ExampleWidget",
-    category: "actions",
+    category: "Button",
     layer: "components",
     import: "@qeetrix/ui",
     deepImport: "@qeetrix/ui/components/example-widget",
-    groupImport: "@qeetrix/ui/components/actions",
+    groupImport: "@qeetrix/ui/components/Button",
     status: "stable",
     capabilities: {
       rtl: "supported",
@@ -236,7 +243,7 @@ describe("the generated manifest", () => {
       vocabulary,
       registry: COMPONENT_REGISTRY,
       registryDefaults: REGISTRY_DEFAULTS,
-      categoryMap,
+      componentMap: categoryMap,
       schemaVersion: MANIFEST_SCHEMA_VERSION,
     });
     expect(issues(result)).toBe("");
@@ -417,8 +424,8 @@ describe("manifest validation", () => {
   });
 
   it("detects a component missing from the manifest", () => {
-    const result = validate([], { categoryMap: { actions: ["button"] } });
-    expect(issues(result)).toContain("is in category-map.json but missing from the manifest");
+    const result = validate([], { componentMap: { Button: ["button"] } });
+    expect(issues(result)).toContain("is in component-map.json but missing from the manifest");
   });
 
   it("detects a declaration with no component", () => {
@@ -427,9 +434,9 @@ describe("manifest validation", () => {
   });
 
   it("detects a category the contract does not know", () => {
-    const result = validate([validEntry()], { categoryMap: { actions: [], widgets: [] } });
+    const result = validate([validEntry()], { componentMap: { Button: [], widgets: [] } });
     expect(issues(result)).toContain(
-      'category "widgets" exists in category-map.json but not in the contract',
+      'category "widgets" exists in component-map.json but not in the contract',
     );
   });
 
@@ -438,7 +445,7 @@ describe("manifest validation", () => {
       manifest: {
         schemaVersion: MANIFEST_SCHEMA_VERSION,
         count: 5,
-        categories: { actions: 9 },
+        categories: { Button: 9 },
         statuses: {},
         components: [validEntry()],
       },
@@ -446,7 +453,7 @@ describe("manifest validation", () => {
       schemaVersion: MANIFEST_SCHEMA_VERSION,
     });
     expect(issues(result)).toContain("count is 5 but there are 1 entries");
-    expect(issues(result)).toContain("categories.actions is 9 but 1 components match");
+    expect(issues(result)).toContain("categories.Button is 9 but 1 components match");
   });
 
   it("warns about a variant axis named twice, without failing", () => {
@@ -645,14 +652,14 @@ describe("derived claims are re-derived, not trusted (MAN-001)", () => {
         schemaVersion: MANIFEST_SCHEMA_VERSION,
         count: 1,
         generated: "2026-01-01",
-        categories: { actions: 1 },
+        categories: { Button: 1 },
         statuses: { stable: 1 },
         accessibilityAudit: { "not-audited": 1 },
         components: [validEntry()],
       },
       vocabulary,
       schemaVersion: MANIFEST_SCHEMA_VERSION,
-      categoryMap: { actions: ["example-widget"] },
+      componentMap: { Button: ["example-widget"] },
       schemaFields: {
         document: [
           "schemaVersion",
@@ -678,22 +685,22 @@ describe("reading axis props off the source (CVA-001)", () => {
   it("finds an axis declared inline on the component's parameter", () => {
     // The dominant shape in this library: `function Avatar({ size }: Root.Props & { size?: … })`.
     // Reading only named exported types found 1 of the 21 axes there are.
-    expect(axes("avatar", "data-display")).toEqual(["size"]);
-    expect(axes("switch", "selection")).toEqual(["size"]);
+    expect(axes("avatar", "Avatar")).toEqual(["size"]);
+    expect(axes("switch", "Switch")).toEqual(["size"]);
   });
 
   it("finds an axis declared on an exported …Props type", () => {
-    expect(axes("card", "surfaces")).toEqual(["size"]);
+    expect(axes("card", "Card")).toEqual(["size"]);
   });
 
   it("finds an axis on a sub-component, not just the root", () => {
     // ContextMenuItem is the one with the variant; the root has none.
-    expect(axes("context-menu", "navigation")).toEqual(["variant"]);
+    expect(axes("context-menu", "DropdownMenu")).toEqual(["variant"]);
   });
 
   it("reports nothing for a component with no axis-shaped prop", () => {
-    expect(axes("separator", "utility")).toEqual([]);
-    expect(axes("skeleton", "feedback")).toEqual([]);
+    expect(axes("separator", "Separator")).toEqual([]);
+    expect(axes("skeleton", "Spinner")).toEqual([]);
   });
 
   it("agrees with the manifest for every component", () => {
@@ -717,7 +724,7 @@ describe("reading axis props off the source (CVA-001)", () => {
         ...(entry.api.domainAxes ?? []),
         ...Object.keys(entry.api.axisSources ?? {}),
       ]);
-      return axes(entry.slug, entry.category).some((axis) => !recorded.has(axis));
+      return axes(entry.slug, slugToFamily[entry.slug]).some((axis: string) => !recorded.has(axis));
     });
     expect(unrecorded.map((component) => (component as unknown as { slug: string }).slug)).toEqual(
       [],
@@ -893,15 +900,15 @@ describe("density applicability is reviewed per slug (DENSITY-001)", () => {
   it("holds the inherited density claims to the source they depend on", () => {
     const read = (path: string) => readFileSync(root("src/components", path), "utf8");
 
-    const button = read("actions/button.tsx");
+    const button = read("Button/button.tsx");
     expect(button).toContain('icon: "size-[var(--qx-component-button-height)]"');
-    expect(read("actions/icon-button.tsx")).toContain('size = "icon"');
+    expect(read("Button/icon-button.tsx")).toContain('size = "icon"');
 
     // Input has no size axis: one height, and it is density-resolved.
-    expect(read("inputs/input.tsx")).toContain("h-[var(--qx-component-input-height)]");
+    expect(read("Input/input.tsx")).toContain("h-[var(--qx-component-input-height)]");
     for (const wrapper of ["currency-input", "mask-input", "password-input"]) {
-      const source = read(`inputs/${wrapper}.tsx`);
-      expect(source, wrapper).toContain('from "@/components/inputs/input"');
+      const source = read(`${slugToFamily[wrapper]}/${wrapper}.tsx`);
+      expect(source, wrapper).toContain('from "@/components/Input/input"');
       expect(source, wrapper).toMatch(/<Input\b/);
     }
 

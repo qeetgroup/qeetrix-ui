@@ -276,7 +276,7 @@ export function readComponentBindings(sourceFile) {
   for (const statement of sourceFile.statements) {
     if (!ts.isImportDeclaration(statement)) continue;
     if (!ts.isStringLiteral(statement.moduleSpecifier)) continue;
-    const match = /^@\/components\/[a-z0-9-]+\/([a-z0-9-]+)$/.exec(statement.moduleSpecifier.text);
+    const match = /^@\/components\/[A-Za-z0-9-]+\/([a-z0-9-]+)$/.exec(statement.moduleSpecifier.text);
     if (match === null) continue;
 
     const slug = match[1];

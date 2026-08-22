@@ -25,63 +25,63 @@ import {
   pressHome,
   pressTab,
 } from "@/__tests__/accessibility";
-import { Button } from "@/components/actions/button";
-import { SegmentedControl, SegmentedControlItem } from "@/components/actions/segmented-control";
+import { Button } from "@/components/Button/button";
+import { SegmentedControl, SegmentedControlItem } from "@/components/Button/segmented-control";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/data-display/carousel";
-import { ActionBar, ActionBarItem } from "@/components/layout/action-bar";
-import { Toolbar, ToolbarButton } from "@/components/layout/toolbar";
+} from "@/components/Carousel/carousel";
+import { ActionBar, ActionBarItem } from "@/components/ActionBar/action-bar";
+import { Toolbar, ToolbarButton } from "@/components/Toolbar/toolbar";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/navigation/breadcrumb";
+} from "@/components/Breadcrumb/breadcrumb";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@/components/navigation/context-menu";
+} from "@/components/DropdownMenu/context-menu";
 import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
-} from "@/components/navigation/menubar";
-import { Pagination } from "@/components/navigation/pagination";
-import { Stepper } from "@/components/navigation/stepper";
-import { TreeView } from "@/components/navigation/tree-view";
-import { Autocomplete } from "@/components/selection/autocomplete";
+} from "@/components/DropdownMenu/menubar";
+import { Pagination } from "@/components/Pagination/pagination";
+import { Stepper } from "@/components/Stepper/stepper";
+import { TreeView } from "@/components/TreeView/tree-view";
+import { Autocomplete } from "@/components/Combobox/autocomplete";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/selection/select";
+} from "@/components/Select/select";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/surfaces/drawer";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/surfaces/hover-card";
+} from "@/components/Drawer/drawer";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/Popover/hover-card";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetTitle,
   SheetTrigger,
-} from "@/components/surfaces/sheet";
+} from "@/components/Drawer/sheet";
 import { DirectionProvider } from "@/providers/direction-provider";
 
 // ═══ Overlays ════════════════════════════════════════════════════════════════════════════

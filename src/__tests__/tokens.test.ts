@@ -27,7 +27,7 @@ import {
   readThemeVariables,
   TOKEN_LAYER_RULES,
   validateTokenGraph,
-} from "../../scripts/lib/tokens.mjs";
+} from "@scripts/lib/tokens.mjs";
 
 const ROOT = process.cwd();
 const read = (p: string) => readFileSync(resolve(ROOT, p), "utf8");
@@ -618,7 +618,7 @@ describe("pilot components", () => {
   it("gives the input a theme-varying fill, so the component needs no dark: variant", () => {
     expect(resolveVar("--qx-component-input-background", "light")).toBe("transparent");
     expect(resolveVar("--qx-component-input-background", "dark")).not.toBe("transparent");
-    expect(read("src/components/inputs/input.tsx")).not.toContain("dark:bg-");
+    expect(read("src/components/Input/input.tsx")).not.toContain("dark:bg-");
   });
 
   it("keeps the focus ring on the same colour as the bridge ring", () => {
@@ -661,11 +661,11 @@ describe("pilot components", () => {
 
   it("has the pilots reference component tokens rather than the bridge directly", () => {
     const pilots = {
-      "src/components/actions/button.tsx": "button-primary-background",
-      "src/components/inputs/input.tsx": "input-background",
-      "src/components/surfaces/card.tsx": "card-background",
-      "src/components/surfaces/dialog.tsx": "dialog-background",
-      "src/components/data-display/badge.tsx": "badge-default-background",
+      "src/components/Button/button.tsx": "button-primary-background",
+      "src/components/Input/input.tsx": "input-background",
+      "src/components/Card/card.tsx": "card-background",
+      "src/components/Dialog/dialog.tsx": "dialog-background",
+      "src/components/Badge/badge.tsx": "badge-default-background",
     };
     for (const [file, token] of Object.entries(pilots)) {
       expect(read(file), file).toContain(`var(--qx-component-${token})`);

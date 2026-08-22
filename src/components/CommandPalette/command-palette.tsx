@@ -1,0 +1,290 @@
+"use client";
+
+import * as React from "react";
+
+import type { MessagesFor } from "@/lib/messages";
+import { commandPaletteMessages } from "@/lib/messages";
+import { cn } from "@/lib/utils";
+import { VisuallyHidden } from "@/internal/visually-hidden";
+import { useMessages } from "@/providers/messages-provider";
+
+export interface CommandPaletteItem {
+  /** Stable id used as React key. */
+  id: string;
+  /** Visible label. */
+  title: string;
+  /** Optional group heading (items are clustered by group in display order). */
+  group?: string;
+  /** Optional leading icon. */
+  icon?: React.ReactNode;
+  /** Extra search terms — matched in addition to title/group. */
+  keywords?: string[];
+  /** Optional payload the caller can attach (e.g. a route, a callback). */
+  payload?: unknown;
+}
+
+interface CommandPaletteProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  items: CommandPaletteItem[];
+  onSelect: (item: CommandPaletteItem) => void;
+  placeholder?: string;
+  emptyMessage?: string;
+  /** Show the footer hint with ↑↓ / ↵ / esc. Default true. */
+  showHint?: boolean;
+  /**
+   * Text announced politely when the result count changes. Replace it to
+   * translate; return `""` to opt out of the announcement.
+   *
+   * Equivalent to `messages={{ resultCount }}` and wins over it.
+   */
+  resultCountLabel?: (count: number) => string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"commandPalette">;
+  className?: string;
+}
+
+function matches(item: CommandPaletteItem, q: string): boolean {
+  if (!q) return true;
+  const ql = q.toLowerCase();
+  if (item.title.toLowerCase().includes(ql)) return true;
+  if (item.group?.toLowerCase().includes(ql)) return true;
+  if (item.keywords?.some((k) => k.toLowerCase().includes(ql))) return true;
+  return false;
+}
+
+/**
+ * CommandPalette is a Cmd-K modal: a centered search box with a filtered,
+ * grouped list of navigable items. Built on the browser's native
+ * `<dialog>` (top-layer rendering, focus trap, ESC handling, ARIA modal
+ * semantics for free).
+ *
+ * Caller owns open state, items, and onSelect. Items render in the order
+ * provided, clustered by `group` headings as they appear in the
+ * filtered list.
+ *
+ * Keyboard: ↑↓ moves highlight, ↵ selects, ESC closes. Clicking the
+ * backdrop also closes. The highlighted result is scrolled into view and the
+ * result count is announced politely, so a keyboard or screen-reader user is
+ * never operating an option that has scrolled out of the list.
+ */
+function CommandPalette({
+  open,
+  onOpenChange,
+  items,
+  onSelect,
+  placeholder,
+  emptyMessage,
+  showHint = true,
+  resultCountLabel,
+  messages: messageOverrides,
+  className,
+}: CommandPaletteProps) {
+  const messages = useMessages("commandPalette", commandPaletteMessages, messageOverrides);
+  const resolvedPlaceholder = placeholder ?? messages.placeholder;
+  const resolvedEmptyMessage = emptyMessage ?? messages.empty;
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const listboxId = React.useId();
+  const [query, setQuery] = React.useState("");
+  const [highlight, setHighlight] = React.useState(0);
+
+  const filtered = React.useMemo(() => items.filter((i) => matches(i, query)), [items, query]);
+
+  // Cluster filtered items by group, preserving original order.
+  const grouped = React.useMemo(() => {
+    const order: string[] = [];
+    const map = new Map<string, CommandPaletteItem[]>();
+    for (const item of filtered) {
+      const g = item.group ?? "";
+      if (!map.has(g)) {
+        map.set(g, []);
+        order.push(g);
+      }
+      map.get(g)?.push(item);
+    }
+    return order.map((g) => ({ group: g, items: map.get(g) ?? [] }));
+  }, [filtered]);
+
+  // Drive the native dialog open/closed from React state.
+  React.useEffect(() => {
+    const d = dialogRef.current;
+    if (!d) return;
+    if (open && !d.open) {
+      d.showModal();
+      // Defer focus to after the dialog finishes opening.
+      requestAnimationFrame(() => inputRef.current?.focus());
+    } else if (!open && d.open) {
+      d.close();
+    }
+  }, [open]);
+
+  // Reset query + highlight every time the palette opens.
+  React.useEffect(() => {
+    if (open) {
+      setQuery("");
+      setHighlight(0);
+    }
+  }, [open]);
+
+  // Clamped in render, not in an effect: an effect would leave one committed
+  // frame where `aria-activedescendant` points past the end of the list.
+  const activeIndex =
+    filtered.length === 0 ? -1 : Math.min(Math.max(highlight, 0), filtered.length - 1);
+  const activeId = activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined;
+
+  // The result list scrolls at 24rem; without this the highlight can move to a
+  // row that is not on screen.
+  React.useEffect(() => {
+    if (!open || !activeId) return;
+    const node = listRef.current?.querySelector(`[id="${activeId}"]`);
+    (node as HTMLElement | null)?.scrollIntoView?.({ block: "nearest" });
+  }, [open, activeId]);
+
+  function commit(item: CommandPaletteItem | undefined) {
+    if (!item) return;
+    onSelect(item);
+    onOpenChange(false);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (filtered.length === 0) return;
+      setHighlight((h) => Math.min(filtered.length - 1, h + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (filtered.length === 0) return;
+      setHighlight((h) => Math.max(0, h - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      commit(activeIndex >= 0 ? filtered[activeIndex] : undefined);
+    }
+    // Native <dialog> handles Esc → close → onClose handler below.
+  }
+
+  return (
+    <dialog
+      ref={dialogRef}
+      onKeyDown={handleKeyDown}
+      onClose={() => onOpenChange(false)}
+      onClick={(e) => {
+        // Clicking the backdrop (the dialog element itself, outside its
+        // child content box) closes the palette.
+        if (e.target === dialogRef.current) onOpenChange(false);
+      }}
+      aria-label={messages.label}
+      className={cn(
+        // Native <dialog>:modal centers via the UA's `margin: auto` —
+        // setting margin-top to 10vh would silently kill that. Fix by
+        // forcing fixed positioning + left:50% + -translate-x-1/2 so the
+        // palette is always horizontally centered regardless of UA.
+        "fixed left-1/2 top-[10vh] -translate-x-1/2 w-[min(32rem,calc(100%-2rem))] rounded-xl border bg-popover p-0 text-popover-foreground shadow-modal",
+        "backdrop:bg-foreground/30 backdrop:backdrop-blur-sm",
+        "open:animate-in open:fade-in-0 open:zoom-in-95",
+        className,
+      )}
+    >
+      <div className="flex flex-col">
+        <div className="border-b">
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setHighlight(0);
+            }}
+            placeholder={resolvedPlaceholder}
+            aria-label={resolvedPlaceholder}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls={listboxId}
+            aria-activedescendant={activeId}
+            aria-expanded={open}
+            className="h-12 w-full border-0 bg-transparent px-4 text-base outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+        <VisuallyHidden role="status" aria-live="polite" data-slot="command-palette-status">
+          {open ? (resultCountLabel ?? messages.resultCount)(filtered.length) : ""}
+        </VisuallyHidden>
+        <div
+          ref={listRef}
+          id={listboxId}
+          role="listbox"
+          aria-label={messages.results}
+          className="max-h-96 overflow-y-auto p-1"
+        >
+          {filtered.length === 0 ? (
+            <div className="p-6 text-center text-sm text-muted-foreground">
+              {resolvedEmptyMessage}
+            </div>
+          ) : (
+            grouped.map(({ group, items: groupItems }) => (
+              <div key={group || "_"}>
+                {group && (
+                  <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground">
+                    {group}
+                  </div>
+                )}
+                {groupItems.map((item) => {
+                  const idx = filtered.indexOf(item);
+                  const isHighlighted = idx === activeIndex;
+                  return (
+                    <button
+                      key={item.id}
+                      id={`${listboxId}-option-${idx}`}
+                      type="button"
+                      role="option"
+                      tabIndex={-1}
+                      aria-selected={isHighlighted}
+                      data-highlighted={isHighlighted || undefined}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm",
+                        "transition-colors",
+                        isHighlighted
+                          ? "bg-accent text-accent-foreground"
+                          : "text-foreground hover:bg-muted/50",
+                      )}
+                      onMouseEnter={() => setHighlight(idx)}
+                      onClick={() => commit(item)}
+                    >
+                      {item.icon && (
+                        <span className="grid size-4 place-items-center text-muted-foreground">
+                          {item.icon}
+                        </span>
+                      )}
+                      <span className="truncate">{item.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))
+          )}
+        </div>
+        {showHint && (
+          <div className="flex items-center justify-between border-t px-3 py-2 text-xs text-muted-foreground">
+            <span>
+              <kbd className="rounded border px-1 font-sans">↑↓</kbd>{" "}
+              <span className="opacity-80">navigate</span>
+              {" · "}
+              <kbd className="rounded border px-1 font-sans">↵</kbd>{" "}
+              <span className="opacity-80">select</span>
+              {" · "}
+              <kbd className="rounded border px-1 font-sans">esc</kbd>{" "}
+              <span className="opacity-80">close</span>
+            </span>
+            <span>{filtered.length === 1 ? "1 result" : `${filtered.length} results`}</span>
+          </div>
+        )}
+      </div>
+    </dialog>
+  );
+}
+
+export type { CommandPaletteProps };
+export { CommandPalette };

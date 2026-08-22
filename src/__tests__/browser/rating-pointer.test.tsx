@@ -23,7 +23,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
-import { Rating } from "@/components/inputs/rating";
+import { Rating } from "@/components/Rating/rating";
 import { DirectionProvider } from "@/providers/direction-provider";
 
 /** The star boxes in DOM order — index 0 first, whichever side of the screen that lands on. */

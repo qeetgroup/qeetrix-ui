@@ -15,14 +15,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { Button } from "@/components/actions/button";
-import { IconButton } from "@/components/actions/icon-button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/feedback/alert";
-import { Input } from "@/components/inputs/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs";
-import { Checkbox } from "@/components/selection/checkbox";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/surfaces/card";
-import { Spoiler } from "@/components/utility/spoiler";
+import { Button } from "@/components/Button/button";
+import { IconButton } from "@/components/Button/icon-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/Alert/alert";
+import { Input } from "@/components/Input/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs/tabs";
+import { Checkbox } from "@/components/Checkbox/checkbox";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/Card/card";
+import { Spoiler } from "@/components/Spoiler/spoiler";
 
 const FORWARDED = {
   id: "forwarded-id",

@@ -3,7 +3,7 @@
  *
  * Validates `component-manifest.json` — the artifact consumers read — against the contract
  * authored in src/contracts/ and the declarations in src/manifests/component-registry.ts, and
- * cross-checks both against scripts/config/category-map.json.
+ * cross-checks both against scripts/config/component-map.json.
  *
  * What it catches:
  *   - an invalid status, category, layer, ARIA pattern, capability or interaction state
@@ -38,7 +38,7 @@ const readJson = (path) => JSON.parse(readFileSync(join(ROOT, path), "utf8"));
 
 const manifest = readJson("component-manifest.json");
 const coverageBaseline = readJson("scripts/config/contract-coverage-baseline.json");
-const categoryMap = readJson("scripts/config/category-map.json");
+const componentMap = readJson("scripts/config/component-map.json");
 const densityApplicability = readJson("scripts/config/density-applicability.json");
 const vocabulary = readLiteralExportsFromDirectory(join(ROOT, "src/contracts"));
 const { COMPONENT_REGISTRY, REGISTRY_DEFAULTS } = readLiteralExports(
@@ -74,7 +74,7 @@ const globalA11ySlugs = harnessSlugs("src/__tests__/a11y.test.tsx");
 const hydrationSlugs = harnessSlugs("src/__tests__/hydration.test.tsx");
 
 const suiteSources = new Map();
-for (const category of Object.keys(categoryMap)) {
+for (const category of Object.keys(componentMap)) {
   const dir = join(ROOT, "src/components", category, "__tests__");
   if (!existsSync(dir)) continue;
   for (const file of readdirSync(dir).sort()) {
@@ -106,7 +106,7 @@ const { errors, warnings } = validateManifest({
   vocabulary,
   registry: COMPONENT_REGISTRY,
   registryDefaults: REGISTRY_DEFAULTS,
-  categoryMap,
+  componentMap,
   schemaVersion: MANIFEST_SCHEMA_VERSION,
   schemaFields: {
     document: MANIFEST_DOCUMENT_FIELDS,

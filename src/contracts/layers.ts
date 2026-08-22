@@ -7,16 +7,16 @@
  *
  * The direction of flow is:
  *
- *     tokens → foundations → runtime / primitives → components → blocks
+ *     tokens → foundations → runtime / internal → components
  *
  * with `lib`, `hooks` and `providers` as supporting layers that may never reach forward into
- * `components` or `blocks`.
+ * `components`.
  *
  * Dependencies are **deny by default**: an edge is legal only if the target layer appears in
  * the source layer's entry in `LAYER_ALLOWED_DEPENDENCIES`. That is what makes the forbidden
- * cases (`tokens → components`, `components → blocks`, `primitives → blocks`,
- * `runtime → components`, …) hold automatically, including for layers that do not exist on
- * disk yet: the rule is live the moment the first file lands there.
+ * cases (`tokens → components`, `runtime → components`, `internal → components`, …) hold
+ * automatically, including for layers that do not exist on disk yet: the rule is live the
+ * moment the first file lands there.
  *
  * @see docs/architecture/component-layers.md
  * @see docs/architecture/dependency-rules.md
@@ -32,11 +32,10 @@ export const ARCHITECTURE_LAYERS = [
   "runtime",
   "lib",
   "hooks",
-  "primitives",
+  "internal",
   "providers",
   "brand",
   "components",
-  "blocks",
   "entry",
   "tests",
 ] as const;
@@ -46,15 +45,14 @@ export type ArchitectureLayer = (typeof ARCHITECTURE_LAYERS)[number];
  * The layers that hold renderable component code. A `ComponentContract.layer` is one of
  * these — a token or a hook is not a component.
  */
-export const COMPONENT_LAYERS = ["primitives", "components", "blocks"] as const;
+export const COMPONENT_LAYERS = ["internal", "components"] as const;
 export type ComponentLayer = (typeof COMPONENT_LAYERS)[number];
 
 /**
  * Where each layer lives, as a path relative to the package root.
  *
- * `foundations`, `runtime` and `primitives` are declared but not yet populated: the target
- * architecture reserves them, and their rules are enforced from the first file onwards.
- * Nothing is moved into them in Phase 1 — see docs/architecture/overview.md § Migration.
+ * `foundations` and `runtime` are declared but not yet populated: the target architecture
+ * reserves them, and their rules are enforced from the first file onwards.
  */
 export const LAYER_DIRECTORIES = {
   tokens: "src/tokens",
@@ -65,11 +63,10 @@ export const LAYER_DIRECTORIES = {
   runtime: "src/runtime",
   lib: "src/lib",
   hooks: "src/hooks",
-  primitives: "src/primitives",
+  internal: "src/internal",
   providers: "src/providers",
   brand: "src/brand",
   components: "src/components",
-  blocks: "src/blocks",
   entry: "src/index.ts",
   tests: "src/__tests__",
 } as const satisfies Record<ArchitectureLayer, string>;
@@ -99,25 +96,12 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
   hooks: ["hooks", "lib", "runtime", "foundations", "tokens"],
 
   // Renderable code.
-  primitives: ["primitives", "hooks", "lib", "runtime", "foundations", "tokens"],
+  internal: ["internal", "hooks", "lib", "runtime", "foundations", "tokens"],
   providers: ["providers", "hooks", "lib", "runtime", "foundations", "contracts", "tokens"],
   brand: ["brand", "lib", "runtime", "foundations", "tokens"],
   components: [
     "components",
-    "primitives",
-    "providers",
-    "brand",
-    "hooks",
-    "lib",
-    "runtime",
-    "foundations",
-    "contracts",
-    "tokens",
-  ],
-  blocks: [
-    "blocks",
-    "components",
-    "primitives",
+    "internal",
     "providers",
     "brand",
     "hooks",
@@ -131,9 +115,8 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
   // src/index.ts — the published barrel. It composes the surface, so it may reach anywhere
   // except the test harness.
   entry: [
-    "blocks",
     "components",
-    "primitives",
+    "internal",
     "providers",
     "brand",
     "hooks",
@@ -192,14 +175,9 @@ export type LayeredSource = Exclude<ArchitectureLayer, (typeof LAYER_RULE_EXEMPT
  */
 export const LAYER_RULE_EXPLANATIONS = {
   "tokens->components": "tokens are data and must not reach into component code",
-  "tokens->blocks": "tokens are data and must not reach into block code",
   "foundations->components": "foundations sit below components; invert the dependency",
-  "foundations->blocks": "foundations sit below blocks; invert the dependency",
   "runtime->components": "runtime is component-agnostic; pass behaviour in instead",
-  "runtime->blocks": "runtime is block-agnostic; pass behaviour in instead",
-  "primitives->components": "a primitive must not depend on a composed component",
-  "primitives->blocks": "a primitive must not depend on a block",
-  "components->blocks": "components cannot depend on blocks — blocks compose components",
+  "internal->components": "an internal primitive must not depend on a composed component",
   "contracts->components": "contracts must stay readable by build scripts; keep them type-only",
   "hooks->components": "a hook must not render or import components",
   "providers->components": "providers wrap children; they must not import components",

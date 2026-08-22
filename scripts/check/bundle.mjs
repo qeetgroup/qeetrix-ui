@@ -65,48 +65,43 @@ const ENTRIES = [
   },
   {
     name: "deep/button",
-    entry: "src/components/actions/button.tsx",
+    entry: "src/components/Button/button.tsx",
     note: "The same component imported directly, as the control for root/button-only.",
   },
   {
     name: "feature/chart",
-    entry: "src/components/data-display/chart.tsx",
+    entry: "src/components/Chart/chart.tsx",
     note: "Recharts, and the d3 and redux-toolkit graph it pulls behind it.",
   },
   {
     name: "feature/data-table",
-    entry: "src/components/data-display/data-table.tsx",
+    entry: "src/components/DataTable/data-table.tsx",
     note: "TanStack Table + TanStack Virtual, plus the Base UI menus the toolbar uses.",
   },
   {
     name: "feature/rich-text-editor",
-    entry: "src/components/inputs/rich-text-editor.tsx",
+    entry: "src/components/RichTextEditor/rich-text-editor.tsx",
     note: "TipTap starter kit and the ProseMirror packages under it — the most expensive feature in the package.",
   },
   {
     name: "feature/calendar",
-    entry: "src/components/pickers/calendar.tsx",
+    entry: "src/components/Calendar/calendar.tsx",
     note: "react-day-picker, which brings date-fns.",
   },
   {
     name: "feature/carousel",
-    entry: "src/components/data-display/carousel.tsx",
+    entry: "src/components/Carousel/carousel.tsx",
     note: "Embla.",
   },
   {
     name: "feature/resizable",
-    entry: "src/components/layout/resizable.tsx",
+    entry: "src/components/Resizable/resizable.tsx",
     note: "react-resizable-panels.",
   },
   {
     name: "feature/qr-code",
-    entry: "src/components/data-display/qr-code.tsx",
+    entry: "src/components/QRCode/qr-code.tsx",
     note: "qrcode, which brings dijkstrajs.",
-  },
-  {
-    name: "blocks",
-    entry: "src/blocks/index.ts",
-    note: "Every block. Blocks compose components, so this is mostly the components they use.",
   },
 ];
 

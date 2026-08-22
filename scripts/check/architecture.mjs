@@ -2,13 +2,13 @@
  * architecture.mjs — structural invariants for src/.
  *
  * The category layout only stays coherent if it is enforced. This gate checks:
- *   1. category-map.json and the filesystem agree (no orphans, no phantoms)
- *   2. every component is re-exported by its category barrel, unless the file is
+ *   1. component-map.json and the filesystem agree (no orphans, no phantoms)
+ *   2. every component is re-exported by its family barrel, unless the file is
  *      marked `@barrel-exclude`
- *   3. no module inside src/ imports a barrel (`@/components`, `@/components/<cat>`)
+ *   3. no module inside src/ imports a barrel (`@/components`, `@/components/<Family>`)
  *      or the root entry — barrel imports create cycles and defeat tree-shaking
- *   4. cross-category imports go through the `@/` alias — checked against the *resolved*
- *      file, so `../inputs/input`, `../../components/inputs/input` and every deeper form are
+ *   4. cross-family imports go through the `@/` alias — checked against the *resolved*
+ *      file, so `../Input/input`, `../../components/Input/input` and every deeper form are
  *      the same finding rather than the one shape a regex happened to name
  *   5. filenames are kebab-case; every test sits in a __tests__/ folder next to a
  *      component of the same name
@@ -49,63 +49,63 @@ import { findClientDirectiveIndex, readLiteralExportsFromDirectory } from "../li
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const COMPONENTS = join(ROOT, "src/components");
-const categoryMap = JSON.parse(
-  readFileSync(join(ROOT, "scripts/config/category-map.json"), "utf8"),
+const componentMap = JSON.parse(
+  readFileSync(join(ROOT, "scripts/config/component-map.json"), "utf8"),
 );
 
 const problems = [];
 const fail = (file, message) => problems.push({ file: relative(ROOT, file), message });
 
 const isComponentFile = (f) => f.endsWith(".tsx") && !f.endsWith(".test.tsx");
-const categories = readdirSync(COMPONENTS, { withFileTypes: true })
+const families = readdirSync(COMPONENTS, { withFileTypes: true })
   .filter((e) => e.isDirectory())
   .map((e) => e.name)
   .sort();
 
 // 1. map ↔ filesystem
-for (const category of categories) {
-  if (!categoryMap[category])
-    fail(join(COMPONENTS, category), "category is missing from category-map.json");
+for (const family of families) {
+  if (!componentMap[family])
+    fail(join(COMPONENTS, family), "family is missing from component-map.json");
 }
-for (const category of Object.keys(categoryMap)) {
-  if (!categories.includes(category))
-    fail(COMPONENTS, `category-map.json lists "${category}" but the folder does not exist`);
+for (const family of Object.keys(componentMap)) {
+  if (!families.includes(family))
+    fail(COMPONENTS, `component-map.json lists "${family}" but the folder does not exist`);
 }
 
 const slugsOnDisk = new Map();
-for (const category of categories) {
-  const dir = join(COMPONENTS, category);
+for (const family of families) {
+  const dir = join(COMPONENTS, family);
   const slugs = readdirSync(dir)
     .filter(isComponentFile)
     .map((f) => f.replace(/\.tsx$/, ""));
-  slugsOnDisk.set(category, slugs);
-  const mapped = new Set(categoryMap[category] ?? []);
+  slugsOnDisk.set(family, slugs);
+  const mapped = new Set(componentMap[family] ?? []);
   for (const slug of slugs) {
     if (!mapped.has(slug))
-      fail(join(dir, `${slug}.tsx`), `not listed under "${category}" in category-map.json`);
+      fail(join(dir, `${slug}.tsx`), `not listed under "${family}" in component-map.json`);
   }
   for (const slug of mapped) {
     if (!slugs.includes(slug))
-      fail(join(dir, `${slug}.tsx`), "listed in category-map.json but the file is missing");
+      fail(join(dir, `${slug}.tsx`), "listed in component-map.json but the file is missing");
   }
 }
 
 // 2. barrel completeness
-for (const category of categories) {
-  const barrelPath = join(COMPONENTS, category, "index.ts");
+for (const family of families) {
+  const barrelPath = join(COMPONENTS, family, "index.ts");
   if (!existsSync(barrelPath)) {
-    fail(barrelPath, "category barrel is missing");
+    fail(barrelPath, "family barrel is missing");
     continue;
   }
   const barrel = readFileSync(barrelPath, "utf8");
-  for (const slug of slugsOnDisk.get(category) ?? []) {
-    const source = readFileSync(join(COMPONENTS, category, `${slug}.tsx`), "utf8");
+  for (const slug of slugsOnDisk.get(family) ?? []) {
+    const source = readFileSync(join(COMPONENTS, family, `${slug}.tsx`), "utf8");
     const excluded = source.includes("@barrel-exclude");
     const exported = new RegExp(`from "\\./${slug}"`).test(barrel);
     if (!exported && !excluded)
       fail(
-        join(COMPONENTS, category, `${slug}.tsx`),
-        `not re-exported by ${category}/index.ts (add it, or mark the file @barrel-exclude)`,
+        join(COMPONENTS, family, `${slug}.tsx`),
+        `not re-exported by ${family}/index.ts (add it, or mark the file @barrel-exclude)`,
       );
     if (exported && excluded)
       fail(barrelPath, `re-exports ${slug}, which is marked @barrel-exclude`);
@@ -113,7 +113,8 @@ for (const category of categories) {
 }
 
 // 3–6. per-file rules across src/
-const BARREL_IMPORT = /from "(@\/components|@\/components\/[a-z-]+|@\/index|@\/)"/;
+// Catches @/components and @/components/Button (family barrel) but NOT @/components/Button/button (direct)
+const BARREL_IMPORT = /from "(@\/components(?:\/[A-Z][A-Za-z0-9]*(?!\/[a-z]))?|@\/index|@\/)"/;
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 function* walk(dir) {
@@ -147,11 +148,11 @@ for (const path of walk(join(ROOT, "src"))) {
   if (/\.test\.tsx?$/.test(name) && !inTests)
     fail(path, "test file must live in a __tests__/ folder");
   if (inTests && /\.test\.tsx?$/.test(name)) {
-    const category = segments.at(-3);
+    const family = segments.at(-3);
     const slug = name.replace(/\.test\.tsx?$/, "");
     const componentDir = dirname(dirname(path));
-    if (categories.includes(category) && !existsSync(join(componentDir, `${slug}.tsx`))) {
-      fail(path, `has no matching component ${category}/${slug}.tsx`);
+    if (families.includes(family) && !existsSync(join(componentDir, `${slug}.tsx`))) {
+      fail(path, `has no matching component ${family}/${slug}.tsx`);
     }
   }
 }
@@ -257,7 +258,7 @@ const nodes = [...modules.values()];
 const shipped = nodes.filter((node) => !node.test && !node.asset).length;
 const assets = nodes.filter((node) => node.asset && !node.test).length;
 console.log(
-  `✓ architecture — ${total} components across ${categories.length} categories, barrels complete, no barrel imports.\n` +
+  `✓ architecture — ${total} components across ${families.length} families, barrels complete, no barrel imports.\n` +
     `✓ layers — ${shipped} modules across ${Object.keys(allowed).length} layers, ` +
     `${nodes.length - shipped - assets} test modules exempt; ` +
     "dependency rules acyclic, transitively closed, no violations.\n" +

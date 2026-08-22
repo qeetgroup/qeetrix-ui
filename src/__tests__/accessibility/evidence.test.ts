@@ -22,7 +22,7 @@ import {
   findUnbackedClaims,
   verifyConditionalCorpus,
   verifyGlobalEvidence,
-} from "../../../scripts/lib/a11y-evidence.mjs";
+} from "@scripts/lib/a11y-evidence.mjs";
 
 const ROOT = process.cwd();
 
@@ -36,9 +36,9 @@ const only = (source: string): Leaf => {
 };
 
 const IMPORTS = `
-import { Button } from "@/components/actions/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/surfaces/dialog";
-import { Input } from "@/components/inputs/input";
+import { Button } from "@/components/Button/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/Dialog/dialog";
+import { Input } from "@/components/Input/input";
 `;
 
 /** A component record in the shape findUnbackedClaims reads. */

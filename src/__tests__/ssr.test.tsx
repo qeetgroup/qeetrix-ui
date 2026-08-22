@@ -18,9 +18,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { Tour, type TourStepDef } from "@/components/feedback/tour";
-import { SidebarMenuSkeleton } from "@/components/navigation/sidebar";
-import { Portal } from "@/primitives/portal";
+import { Tour, type TourStepDef } from "@/components/Tour/tour";
+import { SidebarMenuSkeleton } from "@/components/Sidebar/sidebar";
+import { Portal } from "@/internal/portal";
 import { ThemeProvider, useTheme } from "@/providers/theme-provider";
 
 const steps: TourStepDef[] = [
@@ -114,7 +114,7 @@ describe("server rendering without a DOM", () => {
     const IMPORTS_CREATE_PORTAL =
       /import\s*\{[^}]*\bcreatePortal\b[^}]*\}\s*from\s*["']react-dom["']/;
 
-    expect(sourceFilesMatching(IMPORTS_CREATE_PORTAL)).toEqual(["primitives/portal.tsx"]);
+    expect(sourceFilesMatching(IMPORTS_CREATE_PORTAL)).toEqual(["internal/portal.tsx"]);
   });
 });
 
@@ -195,7 +195,7 @@ describe("markup that depends on the environment instead of the props", () => {
     const renderInZone = async (timeZone: string) => {
       process.env.TZ = timeZone;
       vi.resetModules();
-      const { TimeSince } = await import("@/components/utility/time-since");
+      const { TimeSince } = await import("@/components/TimeSince/time-since");
       return renderToString(<TimeSince value={value} />);
     };
 

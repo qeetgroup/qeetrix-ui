@@ -9,16 +9,109 @@
   "tokens": "@qeetrix/ui/tokens.json",
   "count": 145,
   "categories": {
-    "actions": 7,
-    "data-display": 27,
-    "feedback": 15,
-    "inputs": 20,
-    "layout": 11,
-    "navigation": 16,
-    "pickers": 10,
-    "selection": 12,
-    "surfaces": 9,
-    "utility": 18
+    "AccessReview": 1,
+    "Accordion": 2,
+    "ActionBar": 1,
+    "Alert": 3,
+    "AppShell": 1,
+    "AspectRatio": 1,
+    "AuditEvent": 1,
+    "AvailabilityGrid": 1,
+    "Avatar": 1,
+    "Badge": 3,
+    "Blockquote": 1,
+    "Breadcrumb": 1,
+    "Button": 7,
+    "Calendar": 2,
+    "Card": 1,
+    "Carousel": 1,
+    "Chart": 2,
+    "Checkbox": 2,
+    "Clipboard": 2,
+    "CodeBlock": 1,
+    "ColorPicker": 2,
+    "Combobox": 2,
+    "CommandPalette": 1,
+    "CommentThread": 1,
+    "Container": 1,
+    "CountryPicker": 1,
+    "CurrencyInput": 1,
+    "DataTable": 1,
+    "DatePicker": 4,
+    "DescriptionList": 1,
+    "Dialog": 2,
+    "DiffViewer": 1,
+    "Drawer": 2,
+    "DropdownMenu": 3,
+    "Editable": 1,
+    "EmptyState": 2,
+    "Feed": 2,
+    "FileCard": 2,
+    "FileUpload": 2,
+    "FilterBar": 1,
+    "FloatingWindow": 1,
+    "FocusTrap": 1,
+    "Form": 1,
+    "Highlight": 1,
+    "Icon": 1,
+    "Input": 4,
+    "JsonTree": 1,
+    "Kbd": 1,
+    "Label": 1,
+    "Link": 1,
+    "Listbox": 1,
+    "Marquee": 1,
+    "MaskInput": 1,
+    "MasterDetail": 1,
+    "MentionInput": 1,
+    "NavigationMenu": 1,
+    "Notification": 2,
+    "NotificationPreferenceMatrix": 1,
+    "NumberField": 1,
+    "NumberFormatter": 1,
+    "OTPInput": 1,
+    "OrgChart": 1,
+    "OverflowList": 1,
+    "PageHeader": 1,
+    "Pagination": 2,
+    "PasswordInput": 2,
+    "Popover": 3,
+    "Portal": 1,
+    "PresenceIndicator": 1,
+    "Progress": 3,
+    "QRCode": 1,
+    "RadioGroup": 2,
+    "Rating": 1,
+    "ReactionBar": 1,
+    "Resizable": 1,
+    "RichTextEditor": 1,
+    "RollingNumber": 1,
+    "ScrollArea": 1,
+    "SecurityItem": 1,
+    "Select": 2,
+    "Separator": 1,
+    "Sidebar": 1,
+    "SkipNav": 1,
+    "Slider": 2,
+    "Spinner": 2,
+    "Spoiler": 1,
+    "Stat": 1,
+    "Stepper": 1,
+    "Switch": 1,
+    "Table": 1,
+    "TableOfContents": 1,
+    "Tabs": 1,
+    "TagInput": 1,
+    "TimeSince": 1,
+    "Timer": 1,
+    "TimezonePicker": 1,
+    "Toast": 1,
+    "Toolbar": 1,
+    "Tooltip": 1,
+    "Tour": 1,
+    "TreeView": 1,
+    "Typography": 1,
+    "VisuallyHidden": 1
   },
   "statuses": {
     "experimental": 0,
@@ -36,11 +129,11 @@
     {
       "slug": "access-review",
       "name": "AccessReview",
-      "category": "data-display",
+      "category": "AccessReview",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/access-review",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/AccessReview",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -96,11 +189,11 @@
     {
       "slug": "accordion",
       "name": "Accordion",
-      "category": "navigation",
+      "category": "Accordion",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/accordion",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Accordion",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -172,11 +265,11 @@
     {
       "slug": "action-bar",
       "name": "ActionBar",
-      "category": "layout",
+      "category": "ActionBar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/action-bar",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/ActionBar",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -243,11 +336,11 @@
     {
       "slug": "alert",
       "name": "Alert",
-      "category": "feedback",
+      "category": "Alert",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/alert",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Alert",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -312,11 +405,11 @@
     {
       "slug": "alert-dialog",
       "name": "AlertDialog",
-      "category": "surfaces",
+      "category": "Dialog",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/alert-dialog",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Dialog",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -388,11 +481,11 @@
     {
       "slug": "angle-slider",
       "name": "AngleSlider",
-      "category": "inputs",
+      "category": "Slider",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/angle-slider",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Slider",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -456,11 +549,11 @@
     {
       "slug": "app-shell",
       "name": "AppShell",
-      "category": "layout",
+      "category": "AppShell",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/app-shell",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/AppShell",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -514,11 +607,11 @@
     {
       "slug": "aspect-ratio",
       "name": "AspectRatio",
-      "category": "layout",
+      "category": "AspectRatio",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/aspect-ratio",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/AspectRatio",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -572,11 +665,11 @@
     {
       "slug": "audit-event",
       "name": "AuditEvent",
-      "category": "data-display",
+      "category": "AuditEvent",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/audit-event",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/AuditEvent",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -637,11 +730,11 @@
     {
       "slug": "autocomplete",
       "name": "Autocomplete",
-      "category": "selection",
+      "category": "Combobox",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/autocomplete",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Combobox",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -713,11 +806,11 @@
     {
       "slug": "availability-grid",
       "name": "AvailabilityGrid",
-      "category": "selection",
+      "category": "AvailabilityGrid",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/availability-grid",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/AvailabilityGrid",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -776,11 +869,11 @@
     {
       "slug": "avatar",
       "name": "Avatar",
-      "category": "data-display",
+      "category": "Avatar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/avatar",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Avatar",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -839,11 +932,11 @@
     {
       "slug": "badge",
       "name": "Badge",
-      "category": "data-display",
+      "category": "Badge",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/badge",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Badge",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -907,11 +1000,11 @@
     {
       "slug": "banner",
       "name": "Banner",
-      "category": "feedback",
+      "category": "Alert",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/banner",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Alert",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -978,11 +1071,11 @@
     {
       "slug": "blockquote",
       "name": "Blockquote",
-      "category": "utility",
+      "category": "Blockquote",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/blockquote",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Blockquote",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1042,11 +1135,11 @@
     {
       "slug": "breadcrumb",
       "name": "Breadcrumb",
-      "category": "navigation",
+      "category": "Breadcrumb",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/breadcrumb",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Breadcrumb",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1109,11 +1202,11 @@
     {
       "slug": "button",
       "name": "Button",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/button",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1201,11 +1294,11 @@
     {
       "slug": "button-group",
       "name": "ButtonGroup",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/button-group",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -1264,11 +1357,11 @@
     {
       "slug": "calendar",
       "name": "Calendar",
-      "category": "pickers",
+      "category": "Calendar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/calendar",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/Calendar",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -1327,11 +1420,11 @@
     {
       "slug": "callout",
       "name": "Callout",
-      "category": "feedback",
+      "category": "Alert",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/callout",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Alert",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1395,11 +1488,11 @@
     {
       "slug": "card",
       "name": "Card",
-      "category": "surfaces",
+      "category": "Card",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/card",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Card",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1460,11 +1553,11 @@
     {
       "slug": "carousel",
       "name": "Carousel",
-      "category": "data-display",
+      "category": "Carousel",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/carousel",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Carousel",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1531,11 +1624,11 @@
     {
       "slug": "chart",
       "name": "Chart",
-      "category": "data-display",
+      "category": "Chart",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chart",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Chart",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -1589,11 +1682,11 @@
     {
       "slug": "chart-presets",
       "name": "ChartPresets",
-      "category": "data-display",
+      "category": "Chart",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chart-presets",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Chart",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -1647,11 +1740,11 @@
     {
       "slug": "checkbox",
       "name": "Checkbox",
-      "category": "selection",
+      "category": "Checkbox",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/checkbox",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Checkbox",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -1724,11 +1817,11 @@
     {
       "slug": "checkbox-card",
       "name": "CheckboxCard",
-      "category": "selection",
+      "category": "Checkbox",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/checkbox-card",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Checkbox",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -1792,11 +1885,11 @@
     {
       "slug": "chip",
       "name": "Chip",
-      "category": "data-display",
+      "category": "Badge",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/chip",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Badge",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -1869,11 +1962,11 @@
     {
       "slug": "clipboard",
       "name": "Clipboard",
-      "category": "utility",
+      "category": "Clipboard",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/clipboard",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Clipboard",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -1935,11 +2028,11 @@
     {
       "slug": "close-button",
       "name": "CloseButton",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/close-button",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2006,11 +2099,11 @@
     {
       "slug": "code-block",
       "name": "CodeBlock",
-      "category": "data-display",
+      "category": "CodeBlock",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/code-block",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/CodeBlock",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -2067,11 +2160,11 @@
     {
       "slug": "collapsible",
       "name": "Collapsible",
-      "category": "navigation",
+      "category": "Accordion",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/collapsible",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Accordion",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2141,11 +2234,11 @@
     {
       "slug": "color-picker",
       "name": "ColorPicker",
-      "category": "pickers",
+      "category": "ColorPicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/color-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/ColorPicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2205,11 +2298,11 @@
     {
       "slug": "color-swatch",
       "name": "ColorSwatch",
-      "category": "pickers",
+      "category": "ColorPicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/color-swatch",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/ColorPicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2276,11 +2369,11 @@
     {
       "slug": "combobox",
       "name": "Combobox",
-      "category": "selection",
+      "category": "Combobox",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/combobox",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Combobox",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -2341,11 +2434,11 @@
     {
       "slug": "command-palette",
       "name": "CommandPalette",
-      "category": "navigation",
+      "category": "CommandPalette",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/command-palette",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/CommandPalette",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2403,11 +2496,11 @@
     {
       "slug": "comment-thread",
       "name": "CommentThread",
-      "category": "data-display",
+      "category": "CommentThread",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/comment-thread",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/CommentThread",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -2461,11 +2554,11 @@
     {
       "slug": "container",
       "name": "Container",
-      "category": "layout",
+      "category": "Container",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/container",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/Container",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2529,11 +2622,11 @@
     {
       "slug": "context-menu",
       "name": "ContextMenu",
-      "category": "navigation",
+      "category": "DropdownMenu",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/context-menu",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/DropdownMenu",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -2608,11 +2701,11 @@
     {
       "slug": "copyable-secret",
       "name": "CopyableSecret",
-      "category": "utility",
+      "category": "Clipboard",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/copyable-secret",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Clipboard",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2673,11 +2766,11 @@
     {
       "slug": "country-picker",
       "name": "CountryPicker",
-      "category": "pickers",
+      "category": "CountryPicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/country-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/CountryPicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2734,11 +2827,11 @@
     {
       "slug": "currency-input",
       "name": "CurrencyInput",
-      "category": "inputs",
+      "category": "CurrencyInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/currency-input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/CurrencyInput",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -2792,11 +2885,11 @@
     {
       "slug": "data-state",
       "name": "DataState",
-      "category": "feedback",
+      "category": "EmptyState",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/data-state",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/EmptyState",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2852,11 +2945,11 @@
     {
       "slug": "data-table",
       "name": "DataTable",
-      "category": "data-display",
+      "category": "DataTable",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/data-table",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/DataTable",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -2928,11 +3021,11 @@
     {
       "slug": "date-picker",
       "name": "DatePicker",
-      "category": "pickers",
+      "category": "DatePicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/date-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/DatePicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -2990,11 +3083,11 @@
     {
       "slug": "date-time-picker",
       "name": "DateTimePicker",
-      "category": "pickers",
+      "category": "DatePicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/date-time-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/DatePicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3051,11 +3144,11 @@
     {
       "slug": "description-list",
       "name": "DescriptionList",
-      "category": "data-display",
+      "category": "DescriptionList",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/description-list",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/DescriptionList",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3109,11 +3202,11 @@
     {
       "slug": "dialog",
       "name": "Dialog",
-      "category": "surfaces",
+      "category": "Dialog",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/dialog",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Dialog",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -3185,11 +3278,11 @@
     {
       "slug": "diff-viewer",
       "name": "DiffViewer",
-      "category": "data-display",
+      "category": "DiffViewer",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/diff-viewer",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/DiffViewer",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -3243,11 +3336,11 @@
     {
       "slug": "drawer",
       "name": "Drawer",
-      "category": "surfaces",
+      "category": "Drawer",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/drawer",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Drawer",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3319,11 +3412,11 @@
     {
       "slug": "dropdown-menu",
       "name": "DropdownMenu",
-      "category": "navigation",
+      "category": "DropdownMenu",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/dropdown-menu",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/DropdownMenu",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -3404,11 +3497,11 @@
     {
       "slug": "editable",
       "name": "Editable",
-      "category": "inputs",
+      "category": "Editable",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/editable",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Editable",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -3465,11 +3558,11 @@
     {
       "slug": "empty-state",
       "name": "EmptyState",
-      "category": "feedback",
+      "category": "EmptyState",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/empty-state",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/EmptyState",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3523,11 +3616,11 @@
     {
       "slug": "feed",
       "name": "Feed",
-      "category": "data-display",
+      "category": "Feed",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/feed",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Feed",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3585,11 +3678,11 @@
     {
       "slug": "field",
       "name": "Field",
-      "category": "inputs",
+      "category": "Input",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/field",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Input",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -3654,11 +3747,11 @@
     {
       "slug": "file-card",
       "name": "FileCard",
-      "category": "data-display",
+      "category": "FileCard",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-card",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/FileCard",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3720,11 +3813,11 @@
     {
       "slug": "file-type-icon",
       "name": "FileTypeIcon",
-      "category": "data-display",
+      "category": "FileCard",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-type-icon",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/FileCard",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3778,11 +3871,11 @@
     {
       "slug": "file-upload",
       "name": "FileUpload",
-      "category": "inputs",
+      "category": "FileUpload",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/file-upload",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/FileUpload",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -3840,11 +3933,11 @@
     {
       "slug": "filter-bar",
       "name": "FilterBar",
-      "category": "layout",
+      "category": "FilterBar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/filter-bar",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/FilterBar",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3898,11 +3991,11 @@
     {
       "slug": "floating-window",
       "name": "FloatingWindow",
-      "category": "surfaces",
+      "category": "FloatingWindow",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/floating-window",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/FloatingWindow",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -3960,11 +4053,11 @@
     {
       "slug": "focus-trap",
       "name": "FocusTrap",
-      "category": "utility",
+      "category": "FocusTrap",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/focus-trap",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/FocusTrap",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4018,11 +4111,11 @@
     {
       "slug": "form",
       "name": "Form",
-      "category": "inputs",
+      "category": "Form",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/form",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Form",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -4079,11 +4172,11 @@
     {
       "slug": "highlight",
       "name": "Highlight",
-      "category": "utility",
+      "category": "Highlight",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/highlight",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Highlight",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4137,11 +4230,11 @@
     {
       "slug": "hover-card",
       "name": "HoverCard",
-      "category": "surfaces",
+      "category": "Popover",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/hover-card",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Popover",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4210,11 +4303,11 @@
     {
       "slug": "icon",
       "name": "Icon",
-      "category": "utility",
+      "category": "Icon",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/icon",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Icon",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4273,11 +4366,11 @@
     {
       "slug": "icon-button",
       "name": "IconButton",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/icon-button",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4344,11 +4437,11 @@
     {
       "slug": "input",
       "name": "Input",
-      "category": "inputs",
+      "category": "Input",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Input",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4412,11 +4505,11 @@
     {
       "slug": "input-group",
       "name": "InputGroup",
-      "category": "inputs",
+      "category": "Input",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/input-group",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Input",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -4478,11 +4571,11 @@
     {
       "slug": "json-tree",
       "name": "JsonTree",
-      "category": "data-display",
+      "category": "JsonTree",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/json-tree",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/JsonTree",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4539,11 +4632,11 @@
     {
       "slug": "kbd",
       "name": "Kbd",
-      "category": "utility",
+      "category": "Kbd",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/kbd",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Kbd",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4597,11 +4690,11 @@
     {
       "slug": "label",
       "name": "Label",
-      "category": "utility",
+      "category": "Label",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/label",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Label",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4657,11 +4750,11 @@
     {
       "slug": "link",
       "name": "Link",
-      "category": "utility",
+      "category": "Link",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/link",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Link",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4737,11 +4830,11 @@
     {
       "slug": "listbox",
       "name": "Listbox",
-      "category": "selection",
+      "category": "Listbox",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/listbox",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Listbox",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -4818,11 +4911,11 @@
     {
       "slug": "logo-uploader",
       "name": "LogoUploader",
-      "category": "inputs",
+      "category": "FileUpload",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/logo-uploader",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/FileUpload",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4879,11 +4972,11 @@
     {
       "slug": "marquee",
       "name": "Marquee",
-      "category": "data-display",
+      "category": "Marquee",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/marquee",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Marquee",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4939,11 +5032,11 @@
     {
       "slug": "mask-input",
       "name": "MaskInput",
-      "category": "inputs",
+      "category": "MaskInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/mask-input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/MaskInput",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -4997,11 +5090,11 @@
     {
       "slug": "master-detail",
       "name": "MasterDetail",
-      "category": "layout",
+      "category": "MasterDetail",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/master-detail",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/MasterDetail",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5055,11 +5148,11 @@
     {
       "slug": "mention-input",
       "name": "MentionInput",
-      "category": "inputs",
+      "category": "MentionInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/mention-input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/MentionInput",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -5115,11 +5208,11 @@
     {
       "slug": "menubar",
       "name": "Menubar",
-      "category": "navigation",
+      "category": "DropdownMenu",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/menubar",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/DropdownMenu",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -5198,11 +5291,11 @@
     {
       "slug": "meter",
       "name": "Meter",
-      "category": "feedback",
+      "category": "Progress",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/meter",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Progress",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5258,11 +5351,11 @@
     {
       "slug": "native-select",
       "name": "NativeSelect",
-      "category": "selection",
+      "category": "Select",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/native-select",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Select",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -5331,11 +5424,11 @@
     {
       "slug": "navigation-menu",
       "name": "NavigationMenu",
-      "category": "navigation",
+      "category": "NavigationMenu",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/navigation-menu",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/NavigationMenu",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5395,11 +5488,11 @@
     {
       "slug": "notification",
       "name": "Notification",
-      "category": "feedback",
+      "category": "Notification",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Notification",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -5467,11 +5560,11 @@
     {
       "slug": "notification-center",
       "name": "NotificationCenter",
-      "category": "feedback",
+      "category": "Notification",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification-center",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Notification",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5528,11 +5621,11 @@
     {
       "slug": "notification-preference-matrix",
       "name": "NotificationPreferenceMatrix",
-      "category": "selection",
+      "category": "NotificationPreferenceMatrix",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/notification-preference-matrix",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/NotificationPreferenceMatrix",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -5586,11 +5679,11 @@
     {
       "slug": "number-field",
       "name": "NumberField",
-      "category": "inputs",
+      "category": "NumberField",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/number-field",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/NumberField",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -5655,11 +5748,11 @@
     {
       "slug": "number-formatter",
       "name": "NumberFormatter",
-      "category": "utility",
+      "category": "NumberFormatter",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/number-formatter",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/NumberFormatter",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5713,11 +5806,11 @@
     {
       "slug": "org-chart",
       "name": "OrgChart",
-      "category": "data-display",
+      "category": "OrgChart",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/org-chart",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/OrgChart",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5775,11 +5868,11 @@
     {
       "slug": "otp-input",
       "name": "OtpInput",
-      "category": "inputs",
+      "category": "OTPInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/otp-input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/OTPInput",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5847,11 +5940,11 @@
     {
       "slug": "overflow-list",
       "name": "OverflowList",
-      "category": "layout",
+      "category": "OverflowList",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/overflow-list",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/OverflowList",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5908,11 +6001,11 @@
     {
       "slug": "page-header",
       "name": "PageHeader",
-      "category": "layout",
+      "category": "PageHeader",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/page-header",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/PageHeader",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -5966,11 +6059,11 @@
     {
       "slug": "pagination",
       "name": "Pagination",
-      "category": "navigation",
+      "category": "Pagination",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/pagination",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Pagination",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -6034,11 +6127,11 @@
     {
       "slug": "pagination-bar",
       "name": "PaginationBar",
-      "category": "navigation",
+      "category": "Pagination",
       "layer": "components",
       "import": "@qeetrix/ui/components/pagination-bar",
       "deepImport": "@qeetrix/ui/components/pagination-bar",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Pagination",
       "status": "deprecated",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6098,11 +6191,11 @@
     {
       "slug": "password-input",
       "name": "PasswordInput",
-      "category": "inputs",
+      "category": "PasswordInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/password-input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/PasswordInput",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -6164,11 +6257,11 @@
     {
       "slug": "password-strength-meter",
       "name": "PasswordStrengthMeter",
-      "category": "inputs",
+      "category": "PasswordInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/password-strength-meter",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/PasswordInput",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6222,11 +6315,11 @@
     {
       "slug": "popover",
       "name": "Popover",
-      "category": "surfaces",
+      "category": "Popover",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/popover",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Popover",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -6295,11 +6388,11 @@
     {
       "slug": "portal",
       "name": "Portal",
-      "category": "utility",
+      "category": "Portal",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/portal",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Portal",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6353,11 +6446,11 @@
     {
       "slug": "presence-indicator",
       "name": "PresenceIndicator",
-      "category": "data-display",
+      "category": "PresenceIndicator",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/presence-indicator",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/PresenceIndicator",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6418,11 +6511,11 @@
     {
       "slug": "preview-card",
       "name": "PreviewCard",
-      "category": "surfaces",
+      "category": "Popover",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/preview-card",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Popover",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6476,11 +6569,11 @@
     {
       "slug": "progress",
       "name": "Progress",
-      "category": "feedback",
+      "category": "Progress",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/progress",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Progress",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6536,11 +6629,11 @@
     {
       "slug": "progress-circle",
       "name": "ProgressCircle",
-      "category": "feedback",
+      "category": "Progress",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/progress-circle",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Progress",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6600,11 +6693,11 @@
     {
       "slug": "qr-code",
       "name": "QrCode",
-      "category": "data-display",
+      "category": "QRCode",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/qr-code",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/QRCode",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6663,11 +6756,11 @@
     {
       "slug": "radio-card",
       "name": "RadioCard",
-      "category": "selection",
+      "category": "RadioGroup",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/radio-card",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/RadioGroup",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6735,11 +6828,11 @@
     {
       "slug": "radio-group",
       "name": "RadioGroup",
-      "category": "selection",
+      "category": "RadioGroup",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/radio-group",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/RadioGroup",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6809,11 +6902,11 @@
     {
       "slug": "rating",
       "name": "Rating",
-      "category": "inputs",
+      "category": "Rating",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rating",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Rating",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6887,11 +6980,11 @@
     {
       "slug": "reaction-bar",
       "name": "ReactionBar",
-      "category": "data-display",
+      "category": "ReactionBar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/reaction-bar",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/ReactionBar",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -6948,11 +7041,11 @@
     {
       "slug": "resizable",
       "name": "Resizable",
-      "category": "layout",
+      "category": "Resizable",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/resizable",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/Resizable",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7008,11 +7101,11 @@
     {
       "slug": "rich-text-editor",
       "name": "RichTextEditor",
-      "category": "inputs",
+      "category": "RichTextEditor",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rich-text-editor",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/RichTextEditor",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7072,11 +7165,11 @@
     {
       "slug": "rolling-number",
       "name": "RollingNumber",
-      "category": "utility",
+      "category": "RollingNumber",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/rolling-number",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/RollingNumber",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7130,11 +7223,11 @@
     {
       "slug": "schedule-calendar",
       "name": "ScheduleCalendar",
-      "category": "pickers",
+      "category": "Calendar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/schedule-calendar",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/Calendar",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -7191,11 +7284,11 @@
     {
       "slug": "scroll-area",
       "name": "ScrollArea",
-      "category": "layout",
+      "category": "ScrollArea",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/scroll-area",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/ScrollArea",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7251,11 +7344,11 @@
     {
       "slug": "security-item",
       "name": "SecurityItem",
-      "category": "data-display",
+      "category": "SecurityItem",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/security-item",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/SecurityItem",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -7309,11 +7402,11 @@
     {
       "slug": "segmented-control",
       "name": "SegmentedControl",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/segmented-control",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -7394,11 +7487,11 @@
     {
       "slug": "select",
       "name": "Select",
-      "category": "selection",
+      "category": "Select",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/select",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Select",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -7484,11 +7577,11 @@
     {
       "slug": "separator",
       "name": "Separator",
-      "category": "utility",
+      "category": "Separator",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/separator",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Separator",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7542,11 +7635,11 @@
     {
       "slug": "sheet",
       "name": "Sheet",
-      "category": "surfaces",
+      "category": "Drawer",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/sheet",
-      "groupImport": "@qeetrix/ui/components/surfaces",
+      "groupImport": "@qeetrix/ui/components/Drawer",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -7618,11 +7711,11 @@
     {
       "slug": "sidebar",
       "name": "Sidebar",
-      "category": "navigation",
+      "category": "Sidebar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/sidebar",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Sidebar",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -7693,11 +7786,11 @@
     {
       "slug": "skeleton",
       "name": "Skeleton",
-      "category": "feedback",
+      "category": "Spinner",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/skeleton",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Spinner",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7751,11 +7844,11 @@
     {
       "slug": "skip-nav",
       "name": "SkipNav",
-      "category": "navigation",
+      "category": "SkipNav",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/skip-nav",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/SkipNav",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -7818,11 +7911,11 @@
     {
       "slug": "slider",
       "name": "Slider",
-      "category": "inputs",
+      "category": "Slider",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/slider",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Slider",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7895,11 +7988,11 @@
     {
       "slug": "spinner",
       "name": "Spinner",
-      "category": "feedback",
+      "category": "Spinner",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/spinner",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Spinner",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -7960,11 +8053,11 @@
     {
       "slug": "spoiler",
       "name": "Spoiler",
-      "category": "utility",
+      "category": "Spoiler",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/spoiler",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Spoiler",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8036,11 +8129,11 @@
     {
       "slug": "stat",
       "name": "Stat",
-      "category": "data-display",
+      "category": "Stat",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/stat",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Stat",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8096,11 +8189,11 @@
     {
       "slug": "status-pill",
       "name": "StatusPill",
-      "category": "data-display",
+      "category": "Badge",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/status-pill",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Badge",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8162,11 +8255,11 @@
     {
       "slug": "stepper",
       "name": "Stepper",
-      "category": "navigation",
+      "category": "Stepper",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/stepper",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Stepper",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8220,11 +8313,11 @@
     {
       "slug": "switch",
       "name": "Switch",
-      "category": "selection",
+      "category": "Switch",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/switch",
-      "groupImport": "@qeetrix/ui/components/selection",
+      "groupImport": "@qeetrix/ui/components/Switch",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -8295,11 +8388,11 @@
     {
       "slug": "table",
       "name": "Table",
-      "category": "data-display",
+      "category": "Table",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/table",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Table",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -8355,11 +8448,11 @@
     {
       "slug": "table-of-contents",
       "name": "TableOfContents",
-      "category": "navigation",
+      "category": "TableOfContents",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/table-of-contents",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/TableOfContents",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -8415,11 +8508,11 @@
     {
       "slug": "tabs",
       "name": "Tabs",
-      "category": "navigation",
+      "category": "Tabs",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tabs",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/Tabs",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8496,11 +8589,11 @@
     {
       "slug": "tag-input",
       "name": "TagInput",
-      "category": "inputs",
+      "category": "TagInput",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tag-input",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/TagInput",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -8557,11 +8650,11 @@
     {
       "slug": "textarea",
       "name": "Textarea",
-      "category": "inputs",
+      "category": "Input",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/textarea",
-      "groupImport": "@qeetrix/ui/components/inputs",
+      "groupImport": "@qeetrix/ui/components/Input",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8625,11 +8718,11 @@
     {
       "slug": "time-picker",
       "name": "TimePicker",
-      "category": "pickers",
+      "category": "DatePicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/DatePicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8685,11 +8778,11 @@
     {
       "slug": "time-range-picker",
       "name": "TimeRangePicker",
-      "category": "pickers",
+      "category": "DatePicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-range-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/DatePicker",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -8743,11 +8836,11 @@
     {
       "slug": "time-since",
       "name": "TimeSince",
-      "category": "utility",
+      "category": "TimeSince",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/time-since",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/TimeSince",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8801,11 +8894,11 @@
     {
       "slug": "timeline",
       "name": "Timeline",
-      "category": "data-display",
+      "category": "Feed",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timeline",
-      "groupImport": "@qeetrix/ui/components/data-display",
+      "groupImport": "@qeetrix/ui/components/Feed",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8859,11 +8952,11 @@
     {
       "slug": "timer",
       "name": "Timer",
-      "category": "utility",
+      "category": "Timer",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timer",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Timer",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8917,11 +9010,11 @@
     {
       "slug": "timezone-picker",
       "name": "TimezonePicker",
-      "category": "pickers",
+      "category": "TimezonePicker",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/timezone-picker",
-      "groupImport": "@qeetrix/ui/components/pickers",
+      "groupImport": "@qeetrix/ui/components/TimezonePicker",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -8978,11 +9071,11 @@
     {
       "slug": "toast",
       "name": "Toast",
-      "category": "feedback",
+      "category": "Toast",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toast",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Toast",
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
@@ -9038,11 +9131,11 @@
     {
       "slug": "toggle",
       "name": "Toggle",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toggle",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -9119,11 +9212,11 @@
     {
       "slug": "toggle-tip",
       "name": "ToggleTip",
-      "category": "actions",
+      "category": "Button",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toggle-tip",
-      "groupImport": "@qeetrix/ui/components/actions",
+      "groupImport": "@qeetrix/ui/components/Button",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -9177,11 +9270,11 @@
     {
       "slug": "toolbar",
       "name": "Toolbar",
-      "category": "layout",
+      "category": "Toolbar",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/toolbar",
-      "groupImport": "@qeetrix/ui/components/layout",
+      "groupImport": "@qeetrix/ui/components/Toolbar",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
@@ -9249,11 +9342,11 @@
     {
       "slug": "tooltip",
       "name": "Tooltip",
-      "category": "feedback",
+      "category": "Tooltip",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tooltip",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Tooltip",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -9316,11 +9409,11 @@
     {
       "slug": "tour",
       "name": "Tour",
-      "category": "feedback",
+      "category": "Tour",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tour",
-      "groupImport": "@qeetrix/ui/components/feedback",
+      "groupImport": "@qeetrix/ui/components/Tour",
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
@@ -9393,11 +9486,11 @@
     {
       "slug": "tree-view",
       "name": "TreeView",
-      "category": "navigation",
+      "category": "TreeView",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/tree-view",
-      "groupImport": "@qeetrix/ui/components/navigation",
+      "groupImport": "@qeetrix/ui/components/TreeView",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -9469,11 +9562,11 @@
     {
       "slug": "typography",
       "name": "Typography",
-      "category": "utility",
+      "category": "Typography",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/typography",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/Typography",
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
@@ -9544,11 +9637,11 @@
     {
       "slug": "visually-hidden",
       "name": "VisuallyHidden",
-      "category": "utility",
+      "category": "VisuallyHidden",
       "layer": "components",
       "import": "@qeetrix/ui",
       "deepImport": "@qeetrix/ui/components/visually-hidden",
-      "groupImport": "@qeetrix/ui/components/utility",
+      "groupImport": "@qeetrix/ui/components/VisuallyHidden",
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",

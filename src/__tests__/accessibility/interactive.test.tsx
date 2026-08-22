@@ -28,29 +28,29 @@ import {
   pressSpace,
   pressTab,
 } from "@/__tests__/accessibility";
-import { Button } from "@/components/actions/button";
-import { Toggle, ToggleGroup } from "@/components/actions/toggle";
-import { InputGroup, InputGroupInput } from "@/components/inputs/input-group";
-import { NumberField } from "@/components/inputs/number-field";
-import { OTPInput } from "@/components/inputs/otp-input";
-import { PasswordInput } from "@/components/inputs/password-input";
-import { Rating } from "@/components/inputs/rating";
-import { Slider } from "@/components/inputs/slider";
-import { Textarea } from "@/components/inputs/textarea";
+import { Button } from "@/components/Button/button";
+import { Toggle, ToggleGroup } from "@/components/Button/toggle";
+import { InputGroup, InputGroupInput } from "@/components/Input/input-group";
+import { NumberField } from "@/components/NumberField/number-field";
+import { OTPInput } from "@/components/OTPInput/otp-input";
+import { PasswordInput } from "@/components/PasswordInput/password-input";
+import { Rating } from "@/components/Rating/rating";
+import { Slider } from "@/components/Slider/slider";
+import { Textarea } from "@/components/Input/textarea";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/navigation/collapsible";
-import { SkipNav, SkipNavContent } from "@/components/navigation/skip-nav";
-import { CheckboxCard, CheckboxCardGroup } from "@/components/selection/checkbox-card";
-import { Listbox } from "@/components/selection/listbox";
-import { NativeSelect } from "@/components/selection/native-select";
-import { RadioCard, RadioCardGroup } from "@/components/selection/radio-card";
-import { Radio, RadioGroup } from "@/components/selection/radio-group";
-import { CopyButton } from "@/components/utility/clipboard";
-import { Link } from "@/components/utility/link";
-import { Spoiler } from "@/components/utility/spoiler";
+} from "@/components/Accordion/collapsible";
+import { SkipNav, SkipNavContent } from "@/components/SkipNav/skip-nav";
+import { CheckboxCard, CheckboxCardGroup } from "@/components/Checkbox/checkbox-card";
+import { Listbox } from "@/components/Listbox/listbox";
+import { NativeSelect } from "@/components/Select/native-select";
+import { RadioCard, RadioCardGroup } from "@/components/RadioGroup/radio-card";
+import { Radio, RadioGroup } from "@/components/RadioGroup/radio-group";
+import { CopyButton } from "@/components/Clipboard/clipboard";
+import { Link } from "@/components/Link/link";
+import { Spoiler } from "@/components/Spoiler/spoiler";
 import { DirectionProvider } from "@/providers/direction-provider";
 
 // ── native text controls ─────────────────────────────────────────────────────────────────

@@ -20,14 +20,14 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/surfaces/dialog";
+} from "@/components/Dialog/dialog";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/surfaces/sheet";
+} from "@/components/Drawer/sheet";
 
 /** 1280×1024 at 200% browser zoom. */
 const ZOOMED = { width: 640, height: 512 };

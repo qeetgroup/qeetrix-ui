@@ -91,7 +91,7 @@ const walk = (dir) => {
 };
 
 const mismatches = [];
-for (const root of ["src/components", "src/blocks"]) {
+for (const root of ["src/components"]) {
   const dir = join(ROOT, root);
   if (!existsSync(dir)) continue;
   for (const file of walk(dir)) {

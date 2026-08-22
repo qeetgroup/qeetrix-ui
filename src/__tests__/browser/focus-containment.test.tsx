@@ -9,7 +9,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
-import { FocusTrap } from "@/components/utility/focus-trap";
+import { FocusTrap } from "@/components/FocusTrap/focus-trap";
 
 function Scene({ active }: { active: boolean }) {
   return (

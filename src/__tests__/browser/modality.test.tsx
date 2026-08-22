@@ -10,7 +10,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
-import { Tour } from "@/components/feedback/tour";
+import { Tour } from "@/components/Tour/tour";
 
 const steps = [
   { target: "#step-one", title: "Welcome", content: "First step of the tour." },

@@ -10,7 +10,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { DataTable } from "@/components/data-display/data-table";
+import { DataTable } from "@/components/DataTable/data-table";
 
 type Person = { name: string; email: string };
 

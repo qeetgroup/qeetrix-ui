@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { render, renderHook, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { IconButton } from "@/components/actions/icon-button";
-import { MaskInput } from "@/components/inputs/mask-input";
+import { IconButton } from "@/components/Button/icon-button";
+import { MaskInput } from "@/components/MaskInput/mask-input";
 import {
   DEFAULT_DENSITY_MODE,
   DENSITY_ATTRIBUTE,

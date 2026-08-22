@@ -19,7 +19,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/data-display/carousel";
+} from "@/components/Carousel/carousel";
 
 const LABELS = ["one", "two", "three", "four", "five"];
 

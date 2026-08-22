@@ -8,7 +8,7 @@
  *
  * The manifest is generated from exactly three inputs, and nothing is invented:
  *
- *   1. the filesystem + scripts/config/category-map.json — identity, category, layer
+ *   1. the filesystem + scripts/config/component-map.json — identity, category, layer
  *   2. the component source — capabilities, interaction states, `cva` variants, client
  *      boundary, test coverage (scripts/lib/component-source.mjs)
  *   3. src/manifests/component-registry.ts — the declared facts that cannot be derived:
@@ -81,20 +81,20 @@ const pascal = (slug) =>
 const isComponent = (f) => /\.tsx$/.test(f) && !/\.(test|stories)\.tsx$/.test(f);
 const read = (path) => (existsSync(path) ? readFileSync(path, "utf8") : "");
 
-// One entry per src/components/<category>/<slug>.tsx, with its colocated test source so the
+// One entry per src/components/<Family>/<slug>.tsx, with its colocated test source so the
 // testing contract can be observed rather than declared.
-const categories = readdirSync(COMPONENTS, { withFileTypes: true })
+const families = readdirSync(COMPONENTS, { withFileTypes: true })
   .filter((e) => e.isDirectory())
   .map((e) => e.name)
   .sort();
 
 const entries = [];
 const testSources = new Map();
-for (const category of categories) {
-  const dir = join(COMPONENTS, category);
+for (const family of families) {
+  const dir = join(COMPONENTS, family);
   for (const file of readdirSync(dir)) {
     if (isComponent(file) && file !== "index.ts") {
-      entries.push({ slug: file.replace(/\.tsx$/, ""), category });
+      entries.push({ slug: file.replace(/\.tsx$/, ""), category: family });
     }
   }
   const testDir = join(dir, "__tests__");
@@ -141,7 +141,7 @@ if (existsSync(STORIES)) {
 // Components covered by a global harness rather than a colocated suite.
 const harnessSlugs = (harness) => {
   const found = new Set();
-  const pattern = /@\/components\/[a-z-]+\/([a-z0-9-]+)/g;
+  const pattern = /@\/components\/[A-Za-z]+\/([a-z0-9-]+)/g;
   let match = pattern.exec(harness);
   while (match !== null) {
     found.add(match[1]);
@@ -284,7 +284,7 @@ const manifest = {
   styles: "@qeetrix/ui/styles.css",
   tokens: "@qeetrix/ui/tokens.json",
   count: components.length,
-  categories: countBy(categories, (c, key) => c.category === key),
+  categories: countBy(families, (c, key) => c.category === key),
   statuses: countBy(contracts.COMPONENT_STATUSES, (c, key) => c.status === key),
   /** Component count per accessibility audit state. */
   accessibilityAudit: countBy(
@@ -346,7 +346,7 @@ const unknowns = components.reduce(
   0,
 );
 console.log(
-  `✔ component-manifest.json (schema v${MANIFEST_SCHEMA_VERSION}) — ${components.length} components across ${categories.length} categories ` +
+  `✔ component-manifest.json (schema v${MANIFEST_SCHEMA_VERSION}) — ${components.length} components across ${families.length} families ` +
     `(${components.filter((c) => c.tested).length} tested, ${components.filter((c) => c.story).length} with stories)\n` +
     `  accessibility reviewed: ${reviewed}/${components.length} · unknown capabilities: ${unknowns} · ` +
     `story index: ${storyIndexSource}`,

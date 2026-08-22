@@ -13,7 +13,7 @@
  * forced-colors remapping are ever observed — would be asserting rules that were not loaded.
  */
 import "@testing-library/jest-dom/vitest";
-import "../../styles/styles.css";
+import "@/styles/styles.css";
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 
