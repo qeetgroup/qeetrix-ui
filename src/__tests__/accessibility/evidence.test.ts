@@ -22,7 +22,7 @@ import {
   findUnbackedClaims,
   verifyConditionalCorpus,
   verifyGlobalEvidence,
-} from "../../../scripts/lib/a11y-evidence.mjs";
+} from "@scripts/lib/a11y-evidence.mjs";
 
 const ROOT = process.cwd();
 

@@ -21,7 +21,11 @@
     "useDefineForClassFields": true,
     "erasableSyntaxOnly": true,
     "noEmit": true,
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"],
+      "@scripts/*": ["./scripts/*"],
+      "@root/*": ["./*"]
+    },
     "tsBuildInfoFile": "./node_modules/.cache/qeetrix/tsconfig.tsbuildinfo"
   },
   "include": ["src"],

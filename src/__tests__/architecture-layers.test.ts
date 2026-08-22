@@ -25,8 +25,8 @@ import {
   isTestPath,
   layerOf,
   resolveSpecifier,
-} from "../../scripts/lib/layers.mjs";
-import { readLiteralExportsFromDirectory } from "../../scripts/lib/ts-literals.mjs";
+} from "@scripts/lib/layers.mjs";
+import { readLiteralExportsFromDirectory } from "@scripts/lib/ts-literals.mjs";
 
 const ROOT = process.cwd();
 const vocabulary = readLiteralExportsFromDirectory(`${ROOT}/src/contracts`);

@@ -27,7 +27,7 @@ import {
   readThemeVariables,
   TOKEN_LAYER_RULES,
   validateTokenGraph,
-} from "../../scripts/lib/tokens.mjs";
+} from "@scripts/lib/tokens.mjs";
 
 const ROOT = process.cwd();
 const read = (p: string) => readFileSync(resolve(ROOT, p), "utf8");

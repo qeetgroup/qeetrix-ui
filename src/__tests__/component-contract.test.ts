@@ -33,14 +33,14 @@ import { INTERACTION_STATES } from "@/contracts/states";
 import { THEME_MODES } from "@/contracts/theme";
 import { MANIFEST_SCHEMA_VERSION } from "@/manifests/component-manifest";
 import { COMPONENT_REGISTRY, REGISTRY_DEFAULTS } from "@/manifests/component-registry";
-import manifestJson from "../../component-manifest.json";
-import { detectableStates, hasDeprecationMarker } from "../../scripts/lib/component-source.mjs";
-import { formatFinding, pascalCase, validateManifest } from "../../scripts/lib/contract.mjs";
+import manifestJson from "@root/component-manifest.json";
+import { detectableStates, hasDeprecationMarker } from "@scripts/lib/component-source.mjs";
+import { formatFinding, pascalCase, validateManifest } from "@scripts/lib/contract.mjs";
 import {
   readLiteralExports,
   readLiteralExportsFromDirectory,
   readPropAxes,
-} from "../../scripts/lib/ts-literals.mjs";
+} from "@scripts/lib/ts-literals.mjs";
 
 const root = (...parts: string[]) => resolve(process.cwd(), ...parts);
 const vocabulary = readLiteralExportsFromDirectory(root("src/contracts"));

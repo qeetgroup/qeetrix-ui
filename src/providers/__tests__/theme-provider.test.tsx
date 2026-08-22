@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ThemeProvider, useTheme } from "../theme-provider";
+import { ThemeProvider, useTheme } from "@/providers/theme-provider";
 
 function CurrentTheme() {
   const { theme } = useTheme();
