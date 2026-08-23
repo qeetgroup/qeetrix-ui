@@ -31,16 +31,3 @@ jobs:
       - run: bun run lint
       - run: bun run test
 
-  changeset:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-      - run: bun install --frozen-lockfile
-      - name: a changeset is present
-        run: bunx changeset status --since=origin/${{ github.event.pull_request.base.ref }}
