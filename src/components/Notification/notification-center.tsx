@@ -9,11 +9,11 @@ import {
   XIcon,
 } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/Button/button";
 import { Badge } from "@/components/Badge/badge";
+import { Button } from "@/components/Button/button";
 import { Feed } from "@/components/Feed/feed";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs/tabs";
 import type { MessagesFor } from "@/lib/messages";
 import { notificationCenterMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";

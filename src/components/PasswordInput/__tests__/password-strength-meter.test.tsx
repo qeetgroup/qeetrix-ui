@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 
-import { PasswordStrengthMeter, scorePassword } from "@/components/PasswordInput/password-strength-meter";
+import {
+  PasswordStrengthMeter,
+  scorePassword,
+} from "@/components/PasswordInput/password-strength-meter";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
 

@@ -2,7 +2,10 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
-import { CommandPalette, type CommandPaletteItem } from "@/components/CommandPalette/command-palette";
+import {
+  CommandPalette,
+  type CommandPaletteItem,
+} from "@/components/CommandPalette/command-palette";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });

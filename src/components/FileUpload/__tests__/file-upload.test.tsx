@@ -2,9 +2,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
-
+import {
+  Dropzone,
+  FileList,
+  FileUploadItem,
+  formatBytes,
+} from "@/components/FileUpload/file-upload";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
-import { Dropzone, FileList, FileUploadItem, formatBytes } from "@/components/FileUpload/file-upload";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
 

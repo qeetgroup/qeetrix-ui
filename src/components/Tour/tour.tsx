@@ -5,9 +5,9 @@ import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
 import { useFocusTrap } from "@/components/FocusTrap/focus-trap";
+import { Portal } from "@/internal/portal";
 import { COMPONENT } from "@/lib/token-values";
 import { cn } from "@/lib/utils";
-import { Portal } from "@/internal/portal";
 import { useModalOverlay } from "@/runtime/overlay";
 import { type AnchorSide, resolveAnchoredPosition } from "@/runtime/overlay-position";
 

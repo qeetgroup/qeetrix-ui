@@ -1,9 +1,9 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
-import { Button } from "@/components/Button/button";
-import { Badge } from "@/components/Badge/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/Alert/alert";
+import { Badge } from "@/components/Badge/badge";
+import { Button } from "@/components/Button/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/Input/field";
 import { Input } from "@/components/Input/input";
 
