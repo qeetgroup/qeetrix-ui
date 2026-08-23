@@ -1,4 +1,0 @@
-{
-  "$comment": "Raw lengths in arbitrary Tailwind values that predate the token architecture. This list may ONLY shrink: replace the literal with a token or a scale step, then delete the entry. `node scripts/check/token-usage.mjs` fails on any literal that is not listed here.",
-  "allowed": {}
-}
