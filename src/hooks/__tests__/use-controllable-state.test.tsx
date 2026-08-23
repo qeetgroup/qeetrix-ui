@@ -26,15 +26,14 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
-
-import { AngleSlider } from "@/components/Slider/angle-slider";
+import { ColorPicker } from "@/components/ColorPicker/color-picker";
+import { DatePicker } from "@/components/DatePicker/date-picker";
+import { TimePicker } from "@/components/DatePicker/time-picker";
 import { Editable, EditableInput, EditablePreview } from "@/components/Editable/editable";
 import { MaskInput } from "@/components/MaskInput/mask-input";
 import { OTPInput } from "@/components/OTPInput/otp-input";
 import { Rating } from "@/components/Rating/rating";
-import { ColorPicker } from "@/components/ColorPicker/color-picker";
-import { DatePicker } from "@/components/DatePicker/date-picker";
-import { TimePicker } from "@/components/DatePicker/time-picker";
+import { AngleSlider } from "@/components/Slider/angle-slider";
 
 /** The uniform shape every case is rendered through, whichever prop names it really uses. */
 interface CaseProps {

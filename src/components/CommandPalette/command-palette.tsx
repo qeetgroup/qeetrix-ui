@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
-
+import { VisuallyHidden } from "@/internal/visually-hidden";
 import type { MessagesFor } from "@/lib/messages";
 import { commandPaletteMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
-import { VisuallyHidden } from "@/internal/visually-hidden";
 import { useMessages } from "@/providers/messages-provider";
 
 export interface CommandPaletteItem {

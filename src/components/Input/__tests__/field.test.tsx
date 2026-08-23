@@ -2,7 +2,9 @@ import { render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
-
+import { ColorPicker } from "@/components/ColorPicker/color-picker";
+import { DatePicker } from "@/components/DatePicker/date-picker";
+import { Dropzone } from "@/components/FileUpload/file-upload";
 import {
   Field,
   FieldContent,
@@ -16,13 +18,10 @@ import {
   FieldSet,
   FieldTitle,
 } from "@/components/Input/field";
-import { Dropzone } from "@/components/FileUpload/file-upload";
 import { Input } from "@/components/Input/input";
 import { OTPInput } from "@/components/OTPInput/otp-input";
 import { Rating } from "@/components/Rating/rating";
 import { RichTextEditor } from "@/components/RichTextEditor/rich-text-editor";
-import { ColorPicker } from "@/components/ColorPicker/color-picker";
-import { DatePicker } from "@/components/DatePicker/date-picker";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });

@@ -1,2 +1,2 @@
-export * from "./spinner";
 export * from "./skeleton";
+export * from "./spinner";

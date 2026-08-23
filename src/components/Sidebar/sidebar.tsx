@@ -6,9 +6,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
-import { Skeleton } from "@/components/Spinner/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/Tooltip/tooltip";
-import { Input } from "@/components/Input/input";
 import {
   Sheet,
   SheetContent,
@@ -16,7 +13,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/Drawer/sheet";
+import { Input } from "@/components/Input/input";
 import { Separator } from "@/components/Separator/separator";
+import { Skeleton } from "@/components/Spinner/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/Tooltip/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarMessages } from "@/lib/messages";
 import { COMPONENT } from "@/lib/token-values";

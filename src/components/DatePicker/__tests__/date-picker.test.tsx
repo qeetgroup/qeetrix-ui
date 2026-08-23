@@ -2,9 +2,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
-
-import { Field, FieldLabel } from "@/components/Input/field";
 import { DatePicker, DateRangePicker } from "@/components/DatePicker/date-picker";
+import { Field, FieldLabel } from "@/components/Input/field";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });

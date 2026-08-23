@@ -1,5 +1,20 @@
 # @qeetrix/ui
 
+## 2.0.0
+
+### Major Changes
+
+- Enterprise architecture: component-first folder structure
+
+  Components are now organized by family (`Button/`, `Input/`, `Dialog/`, …) instead of generic categories (`actions/`, `inputs/`, …).
+
+  **Breaking changes**
+
+  - `@qeetrix/ui/blocks` and all `@qeetrix/ui/blocks/*` exports removed — these were application-level compositions, not library concerns.
+  - Old category group imports (`@qeetrix/ui/components/actions`, `…/inputs`, etc.) removed. Use `@qeetrix/ui/components/<Family>` (e.g. `@qeetrix/ui/components/Button`) or the root barrel `@qeetrix/ui`.
+
+  **Everything else unchanged** — all component APIs, tokens, hooks, providers, and `@qeetrix/ui/components/<slug>` deep imports continue to work exactly as before.
+
 ## 1.0.3
 
 ### Patch Changes

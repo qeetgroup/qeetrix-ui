@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/Button/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/Avatar/avatar";
-import { type Reaction, ReactionBar } from "@/components/ReactionBar/reaction-bar";
+import { Button } from "@/components/Button/button";
 import { Textarea } from "@/components/Input/textarea";
+import { type Reaction, ReactionBar } from "@/components/ReactionBar/reaction-bar";
 import { TimeSince } from "@/components/TimeSince/time-since";
 import type { CommentThreadMessages, MessagesFor } from "@/lib/messages";
 import { commentThreadMessages } from "@/lib/messages";

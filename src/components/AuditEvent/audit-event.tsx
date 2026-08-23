@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Feed, type FeedProps } from "@/components/Feed/feed";
 import { type StatusKind, StatusPill } from "@/components/Badge/status-pill";
+import { Feed, type FeedProps } from "@/components/Feed/feed";
 import type { MessagesFor } from "@/lib/messages";
 import { auditEventMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";

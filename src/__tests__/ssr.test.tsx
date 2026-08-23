@@ -18,8 +18,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { Tour, type TourStepDef } from "@/components/Tour/tour";
 import { SidebarMenuSkeleton } from "@/components/Sidebar/sidebar";
+import { Tour, type TourStepDef } from "@/components/Tour/tour";
 import { Portal } from "@/internal/portal";
 import { ThemeProvider, useTheme } from "@/providers/theme-provider";
 

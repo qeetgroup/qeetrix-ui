@@ -15,12 +15,12 @@ import { act, type ReactElement } from "react";
 import { hydrateRoot, type Root } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { DataTable } from "@/components/DataTable/data-table";
-import { Tour } from "@/components/Tour/tour";
-import { SidebarMenuSkeleton } from "@/components/Sidebar/sidebar";
 import { CountryPicker } from "@/components/CountryPicker/country-picker";
-import { TimezonePicker } from "@/components/TimezonePicker/timezone-picker";
+import { DataTable } from "@/components/DataTable/data-table";
+import { SidebarMenuSkeleton } from "@/components/Sidebar/sidebar";
 import { TimeSince } from "@/components/TimeSince/time-since";
+import { TimezonePicker } from "@/components/TimezonePicker/timezone-picker";
+import { Tour } from "@/components/Tour/tour";
 import { ThemeProvider, useTheme } from "@/providers/theme-provider";
 
 interface HydrateOptions {

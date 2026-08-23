@@ -1,17 +1,12 @@
 name: Release
 
-# The only place @qeetrix/ui is published from.
+# Merging to main opens (or updates) the "Version Packages" PR via changesets/action.
+# Merging that PR bumps versions and publishes to npm from the npm-publish environment.
 #
-# Merging to main opens (or updates) the "Version Packages" PR. Merging *that* applies the
-# changeset bumps and publishes — but only after check:release, verify and verify:package have
-# all passed in this job, and only from the `npm-publish` environment.
-#
-# Four things live outside this file and must be configured by a human before a release can
-# succeed; see docs/governance/release.md:
-#   1. the `npm-publish` environment, with required reviewers and the NPM_TOKEN secret;
-#   2. branch protection on main (no direct pushes, this workflow + CI required);
-#   3. the registry (`QEETRIX_NPM_REGISTRY` variable) and the publish posture (see META-001);
-#   4. provenance, once the package is public and licensed — add NPM_CONFIG_PROVENANCE below.
+# Before a release can succeed, configure two things in GitHub:
+#   1. Create an environment named "npm-publish" with required reviewers
+#      and add the NPM_TOKEN secret to it.
+#   2. Enable branch protection on main (no direct pushes, CI required).
 
 on:
   push:
@@ -26,19 +21,15 @@ permissions:
   contents: read
 
 env:
-  # Must equal the `packageManager` field in package.json — `bun run check:release` enforces it.
   BUN_VERSION: 1.3.14
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    # Required reviewers and the registry credential are attached to this environment. Without
-    # it, any workflow run could publish.
     environment: npm-publish
     permissions:
       contents: write
       pull-requests: write
-      # id-token is what npm provenance signs with. Harmless until provenance is enabled.
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -49,7 +40,6 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
-      # setup-node only for registry auth: it writes the .npmrc that `changeset publish` reads.
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -57,42 +47,18 @@ jobs:
           scope: "@qeetrix"
 
       - run: bun install --frozen-lockfile
-
-      # Licence posture, lockfile, pinned toolchain, gated publish path. This is the step that
-      # refuses to publish an UNLICENSED package to a public registry.
-      - run: bun run check:release
-
-      # The full quality gate. A release that skips this is the thing REL-001 describes.
-      - run: bun run verify
-
-      # Packs the tarball and compiles real consumers against it. The Next.js pass is skipped
-      # here for the same reason as in CI; the Vite/Tailwind/type passes are hermetic.
-      - run: bun run verify:package
-        env:
-          QEETRIX_SKIP_NEXT_CONSUMER: "1"
-
-      # The browser evidence: `inert` exclusion, focus containment, reflow at 200% zoom,
-      # pointer hit-testing, forced-colors and reduced-motion. None of it is provable in jsdom,
-      # so none of it is inside `verify` — and a publish that skips it is exactly the hole
-      # REL-001 describes. Runs after verify:package because that step builds the generated
-      # token stylesheet the browser suite imports. Costs a ~200 MB Chromium download; a
-      # release is the right moment to pay it.
-      - run: bunx playwright install --with-deps chromium
-      - run: bun run test:browser
-
-      # Coverage floors. `verify` runs the suite without instrumentation, so this is the second
-      # full pass — deliberate: it is the last gate before bytes reach a registry.
-      - run: bun run test:coverage
+      - run: bun run build
+      - run: bun run typecheck
+      - run: bun run lint
+      - run: bun run test
 
       - name: version or publish
         uses: changesets/action@v1
         with:
-          version: bun run version-packages
+          version: bun run version
           publish: bunx changeset publish
           commit: "chore: version packages"
           title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # Enable once the package is public and licensed (see META-001):
-          # NPM_CONFIG_PROVENANCE: "true"

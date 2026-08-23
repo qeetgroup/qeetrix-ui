@@ -42,18 +42,9 @@ import {
   SlidersHorizontalIcon,
 } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/Button/button";
 import { Badge } from "@/components/Badge/badge";
-import {
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/Table/table";
-import { EmptyState } from "@/components/EmptyState/empty-state";
-import { Input } from "@/components/Input/input";
+import { Button } from "@/components/Button/button";
+import { Checkbox } from "@/components/Checkbox/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -63,14 +54,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/DropdownMenu/dropdown-menu";
-import { Checkbox } from "@/components/Checkbox/checkbox";
+import { EmptyState } from "@/components/EmptyState/empty-state";
+import { Input } from "@/components/Input/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
 import { Separator } from "@/components/Separator/separator";
+import {
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/Table/table";
 import { DENSITY_MODES } from "@/contracts/density";
+import { VisuallyHidden } from "@/internal/visually-hidden";
 import type { DataTableMessages, MessagesFor } from "@/lib/messages";
 import { dataTableMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
-import { VisuallyHidden } from "@/internal/visually-hidden";
 import { type Density, useDensity } from "@/providers/density-provider";
 import { useMessages } from "@/providers/messages-provider";
 import { readStoredJson, writeStoredJson } from "@/runtime/storage";

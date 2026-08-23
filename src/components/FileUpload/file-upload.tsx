@@ -12,8 +12,8 @@ import {
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";
-import { Progress } from "@/components/Progress/progress";
 import { useFieldControl } from "@/components/Input/field";
+import { Progress } from "@/components/Progress/progress";
 import type { MessagesFor } from "@/lib/messages";
 import { fileUploadMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";

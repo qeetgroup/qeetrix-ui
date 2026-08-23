@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { Textarea } from "@/components/Input/textarea";
+import { VisuallyHidden } from "@/internal/visually-hidden";
 import type { MessagesFor } from "@/lib/messages";
 import { mentionInputMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
-import { VisuallyHidden } from "@/internal/visually-hidden";
 import { useMessages } from "@/providers/messages-provider";
 
 interface MentionPerson {

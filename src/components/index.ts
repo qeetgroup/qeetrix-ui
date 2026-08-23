@@ -5,8 +5,8 @@
  * scripts/check/exports.mjs.
  */
 
-export * from "./Accordion";
 export * from "./AccessReview";
+export * from "./Accordion";
 export * from "./ActionBar";
 export * from "./Alert";
 export * from "./AppShell";
@@ -26,9 +26,9 @@ export * from "./Checkbox";
 export * from "./Clipboard";
 export * from "./CodeBlock";
 export * from "./ColorPicker";
-export * from "./CommentThread";
 export * from "./Combobox";
 export * from "./CommandPalette";
+export * from "./CommentThread";
 export * from "./Container";
 export * from "./CountryPicker";
 export * from "./CurrencyInput";
@@ -65,8 +65,8 @@ export * from "./Notification";
 export * from "./NotificationPreferenceMatrix";
 export * from "./NumberField";
 export * from "./NumberFormatter";
-export * from "./OTPInput";
 export * from "./OrgChart";
+export * from "./OTPInput";
 export * from "./OverflowList";
 export * from "./PageHeader";
 export * from "./Pagination";
@@ -96,11 +96,11 @@ export * from "./Stepper";
 export * from "./Switch";
 export * from "./Table";
 export * from "./TableOfContents";
-export * from "./TagInput";
 export * from "./Tabs";
+export * from "./TagInput";
+export * from "./Timer";
 export * from "./TimeSince";
 export * from "./TimezonePicker";
-export * from "./Timer";
 export * from "./Toast";
 export * from "./Toolbar";
 export * from "./Tooltip";

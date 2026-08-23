@@ -1,10 +1,10 @@
 import * as React from "react";
+import { type StatusKind, StatusPill } from "@/components/Badge/status-pill";
 import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
 } from "@/components/DescriptionList/description-list";
-import { type StatusKind, StatusPill } from "@/components/Badge/status-pill";
 import { cn } from "@/lib/utils";
 
 interface SecurityItemDetail {

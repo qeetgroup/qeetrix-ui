@@ -1,9 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
-
-import { Field, FieldError, FieldLabel } from "@/components/Input/field";
 import { ColorPicker } from "@/components/ColorPicker/color-picker";
+import { Field, FieldError, FieldLabel } from "@/components/Input/field";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
