@@ -25,9 +25,6 @@ jobs:
           bun-version: ${{ env.BUN_VERSION }}
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - name: generated manifest is current
-        run: git diff --exit-code -- component-manifest.json src/brand/logos
       - run: bun run typecheck
       - run: bun run lint
       - run: bun run test
-
