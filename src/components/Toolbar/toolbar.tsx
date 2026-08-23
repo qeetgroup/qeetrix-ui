@@ -23,7 +23,7 @@ function ToolbarButton({ className, ...props }: ToolbarPrimitive.Button.Props) {
     <ToolbarPrimitive.Button
       data-slot="toolbar-button"
       className={cn(
-        "inline-flex h-[var(--qx-control-height)] items-center justify-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-disabled data-[pressed]:bg-accent data-[pressed]:text-accent-foreground [&_svg:not([class*='size-'])]:size-4",
+        "inline-flex h-(--qx-control-height) items-center justify-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled data-disabled:pointer-events-none data-disabled:opacity-disabled data-pressed:bg-accent data-pressed:text-accent-foreground [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -36,7 +36,7 @@ function ToolbarLink({ className, ...props }: ToolbarPrimitive.Link.Props) {
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
       className={cn(
-        "inline-flex h-[var(--qx-control-height)] items-center px-2.5 text-sm font-medium text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50",
+        "inline-flex h-(--qx-control-height) items-center px-2.5 text-sm font-medium text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/disabled",
         className,
       )}
       {...props}

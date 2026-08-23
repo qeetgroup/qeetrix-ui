@@ -169,9 +169,9 @@ describe("NavigationMenu disclosure", () => {
     const { container } = render(<MegaMenu />);
     const chevron = container.querySelector('[data-slot="navigation-menu-trigger"] svg');
     // A state-driven class rather than a state-driven render: the rotation is expressed as
-    // `group-data-[popup-open]:rotate-180`, so what is assertable is that the group hook and
+    // `group-data-popup-open:rotate-180`, so what is assertable is that the group hook and
     // the state attribute both exist. The turn itself is CSS — a browser assertion.
-    expect(chevron?.getAttribute("class")).toContain("group-data-[popup-open]:rotate-180");
+    expect(chevron?.getAttribute("class")).toContain("group-data-popup-open:rotate-180");
     expect(container.querySelector('[data-slot="navigation-menu-trigger"]')).toHaveClass("group");
 
     fireEvent.click(trigger("Products"));

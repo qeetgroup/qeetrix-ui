@@ -212,10 +212,10 @@ function OTPInput({
           data-slot="otp-input-digit"
           className={cn(
             "h-12 w-10 rounded-lg border border-input bg-transparent text-center font-mono text-lg outline-none transition-colors",
-            "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-            "disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-disabled",
+            "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/disabled",
+            "disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/disabled disabled:opacity-disabled",
             "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
-            "dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+            "dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/disabled dark:aria-invalid:ring-destructive/40",
             "sm:w-12",
           )}
         />

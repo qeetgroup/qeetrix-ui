@@ -122,7 +122,7 @@ function SegmentedControl({
         <span
           aria-hidden
           data-slot="segmented-control-indicator"
-          className="absolute inset-y-1 start-1 rounded-md bg-background shadow-sm ring-1 ring-foreground/5 transition-[transform,width,height] duration-200 ease-out motion-reduce:transition-none dark:bg-input/40"
+          className="absolute inset-y-1 inset-s-1 rounded-md bg-background shadow-sm ring-1 ring-foreground/5 transition-[transform,width,height] duration-200 ease-out motion-reduce:transition-none dark:bg-input/40"
           style={indicator}
         />
         {children}
@@ -156,7 +156,7 @@ function SegmentedControlItem({
       data-active={active || undefined}
       data-disabled={isDisabled || undefined}
       className={cn(
-        "relative z-10 inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 font-medium whitespace-nowrap transition-colors hover:text-foreground has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 data-active:text-foreground data-disabled:pointer-events-none data-disabled:opacity-disabled",
+        "relative z-10 inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 font-medium whitespace-nowrap transition-colors hover:text-foreground has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/disabled data-active:text-foreground data-disabled:pointer-events-none data-disabled:opacity-disabled",
         className,
       )}
     >

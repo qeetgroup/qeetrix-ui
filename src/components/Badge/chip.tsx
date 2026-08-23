@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useMessages } from "@/providers/messages-provider";
 
 const chipVariants = cva(
-  "inline-flex items-center gap-1.5 rounded-full border font-medium whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled",
+  "inline-flex items-center gap-1.5 rounded-full border font-medium whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/disabled disabled:pointer-events-none disabled:opacity-disabled",
   {
     variants: {
       size: {
@@ -21,7 +21,7 @@ const chipVariants = cva(
       selected: {
         true: "border-transparent bg-primary text-primary-foreground shadow-xs",
         false:
-          "border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/disabled",
       },
     },
     defaultVariants: { size: "md", selected: false },
@@ -179,7 +179,7 @@ function Chip({
             data-slot="chip-label"
             disabled={isDisabled}
             onClick={handleClick}
-            className="-ms-0.5 inline-flex items-center gap-1.5 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="-ms-0.5 inline-flex items-center gap-1.5 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/disabled"
             {...labelRole}
             {...props}
           >
@@ -198,7 +198,7 @@ function Chip({
           aria-label={messages.remove}
           disabled={isDisabled}
           onClick={onRemove}
-          className="ms-0.5 inline-flex size-4 items-center justify-center rounded-full text-current/70 transition-colors hover:bg-foreground/10 hover:text-current focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="ms-0.5 inline-flex size-4 items-center justify-center rounded-full text-current/70 transition-colors hover:bg-foreground/10 hover:text-current focus-visible:ring-3 focus-visible:ring-ring/disabled"
         >
           <XIcon aria-hidden className="size-3" />
         </button>

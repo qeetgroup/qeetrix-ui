@@ -174,7 +174,7 @@ function CodeBlock({
           size="sm"
           onClick={handleCopy}
           aria-label={copied ? messages.copied : messages.copy}
-          className="absolute end-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+          className="absolute inset-e-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
         >
           {copied ? <CheckIcon aria-hidden className="text-success" /> : <CopyIcon aria-hidden />}
         </Button>

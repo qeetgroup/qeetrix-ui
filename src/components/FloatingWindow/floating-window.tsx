@@ -135,7 +135,7 @@ function FloatingWindow({
       <div
         data-slot="floating-window-header"
         {...dragHandleProps}
-        className="flex cursor-grab touch-none items-center justify-between gap-2 rounded-t-lg border-b border-border bg-muted/50 px-3 py-2 active:cursor-grabbing"
+        className="flex cursor-grab touch-none items-center justify-between gap-2 rounded-t-lg border-b border-border bg-muted/disabled px-3 py-2 active:cursor-grabbing"
       >
         <span id={titleId} className="truncate text-sm font-medium">
           {title}
@@ -145,7 +145,7 @@ function FloatingWindow({
             type="button"
             aria-label={messages.close}
             onClick={onClose}
-            className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled"
           >
             <XIcon aria-hidden className="size-4" />
           </button>

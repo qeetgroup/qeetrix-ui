@@ -7,7 +7,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigationMenuTriggerStyle = cva(
-  "inline-flex h-[var(--qx-control-height)] w-max items-center justify-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled data-popup-open:bg-accent data-popup-open:text-accent-foreground",
+  "inline-flex h-(--qx-control-height) w-max items-center justify-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled disabled:pointer-events-none disabled:opacity-disabled data-popup-open:bg-accent data-popup-open:text-accent-foreground",
 );
 
 /**
@@ -74,7 +74,7 @@ function NavigationMenuTrigger({
     >
       {children}
       <ChevronDownIcon
-        className="relative top-px size-3.5 transition-transform duration-200 group-data-[popup-open]:rotate-180"
+        className="relative top-px size-3.5 transition-transform duration-200 group-data-popup-open:rotate-180"
         aria-hidden
       />
     </NavigationMenuPrimitive.Trigger>
@@ -99,7 +99,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuPrimitive.Lin
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "flex select-none flex-col gap-1 rounded-md p-2 text-sm leading-snug no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground data-[active]:bg-accent/50",
+        "flex select-none flex-col gap-1 rounded-md p-2 text-sm leading-snug no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground data-active:bg-accent/disabled",
         className,
       )}
       {...props}

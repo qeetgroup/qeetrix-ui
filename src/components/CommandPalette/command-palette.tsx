@@ -183,7 +183,7 @@ function CommandPalette({
         // forcing fixed positioning + left:50% + -translate-x-1/2 so the
         // palette is always horizontally centered regardless of UA.
         "fixed left-1/2 top-[10vh] -translate-x-1/2 w-[min(32rem,calc(100%-2rem))] rounded-xl border bg-popover p-0 text-popover-foreground shadow-modal",
-        "backdrop:bg-foreground/30 backdrop:backdrop-blur-sm",
+        "backdrop:bg-foreground/30 backdrop:backdrop-blur-xs",
         "open:animate-in open:fade-in-0 open:zoom-in-95",
         className,
       )}
@@ -247,7 +247,7 @@ function CommandPalette({
                         "transition-colors",
                         isHighlighted
                           ? "bg-accent text-accent-foreground"
-                          : "text-foreground hover:bg-muted/50",
+                          : "text-foreground hover:bg-muted/disabled",
                       )}
                       onMouseEnter={() => setHighlight(idx)}
                       onClick={() => commit(item)}

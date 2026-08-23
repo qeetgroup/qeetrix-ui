@@ -144,7 +144,7 @@ function Listbox({
       data-slot="listbox"
       onKeyDown={onKeyDown}
       className={cn(
-        "max-h-64 overflow-auto rounded-lg border border-input bg-popover p-1 text-sm text-popover-foreground shadow-rest outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30",
+        "max-h-64 overflow-auto rounded-lg border border-input bg-popover p-1 text-sm text-popover-foreground shadow-rest outline-none focus-visible:ring-3 focus-visible:ring-ring/disabled dark:bg-input/30",
         className,
       )}
       {...props}

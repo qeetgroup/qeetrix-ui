@@ -99,7 +99,7 @@ function CurrencyInput({
       data-slot="currency-input"
       className={cn("relative inline-flex w-full items-center", className)}
     >
-      <span className="pointer-events-none absolute start-2.5 text-sm text-muted-foreground tabular-nums">
+      <span className="pointer-events-none absolute inset-s-2.5 text-sm text-muted-foreground tabular-nums">
         {symbol}
       </span>
       <Input

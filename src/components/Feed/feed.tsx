@@ -114,7 +114,7 @@ function Feed({
             aria-posinset={i + 1}
             aria-setsize={items.length}
             className={cn(
-              "rounded-lg border border-border bg-card p-4 text-card-foreground shadow-rest transition-shadow outline-none hover:shadow-hover focus-visible:ring-3 focus-visible:ring-ring/50",
+              "rounded-lg border border-border bg-card p-4 text-card-foreground shadow-rest transition-shadow outline-none hover:shadow-hover focus-visible:ring-3 focus-visible:ring-ring/disabled",
               itemClassName,
             )}
           >

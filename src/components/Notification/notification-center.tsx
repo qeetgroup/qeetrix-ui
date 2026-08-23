@@ -126,7 +126,7 @@ function NotificationCenter({
                   type="button"
                   aria-label={messages.dismiss}
                   onClick={() => onDismiss(item.id)}
-                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled"
                 >
                   <XIcon aria-hidden className="size-4" />
                 </button>

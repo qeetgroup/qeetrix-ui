@@ -233,7 +233,7 @@ function AvailabilityGrid({
                   toggle(key);
                 }}
                 className={cn(
-                  "h-7 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset",
+                  "h-7 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/disabled focus-visible:ring-inset",
                   isBlocked
                     ? "cursor-not-allowed bg-muted [background-image:repeating-linear-gradient(45deg,transparent,transparent_4px,var(--border)_4px,var(--border)_5px)]"
                     : isSel

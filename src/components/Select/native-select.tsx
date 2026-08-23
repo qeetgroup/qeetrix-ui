@@ -10,7 +10,7 @@ function NativeSelect({ className, children, ...props }: React.ComponentProps<"s
         data-slot="native-select"
         className={cn(
           // sizing + layout
-          "h-[var(--qx-control-height)] w-full min-w-0 appearance-none",
+          "h-(--qx-control-height) w-full min-w-0 appearance-none",
           // shape + border
           "rounded-lg border border-input",
           // background
@@ -39,7 +39,7 @@ function NativeSelect({ className, children, ...props }: React.ComponentProps<"s
       {/* Decorative chevron — hidden from AT */}
       <ChevronDownIcon
         aria-hidden={true}
-        className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
       />
     </div>
   );

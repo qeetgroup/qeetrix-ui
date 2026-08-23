@@ -21,7 +21,7 @@ const ITEM_CLASS =
   "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1.5 ps-2 pe-8 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-selected:font-medium data-disabled:pointer-events-none data-disabled:opacity-disabled";
 
 const INPUT_CLASS =
-  "h-[var(--qx-control-height)] w-full min-w-0 rounded-lg border border-input bg-transparent py-1 ps-2.5 pe-14 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30";
+  "h-(--qx-control-height) w-full min-w-0 rounded-lg border border-input bg-transparent py-1 ps-2.5 pe-14 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/disabled disabled:cursor-not-allowed disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30";
 
 /** Portal + positioned popup + filtered item list — shared by Combobox and MultiSelect. */
 function ComboboxListPopup({
@@ -46,7 +46,7 @@ function ComboboxListPopup({
                 disabled={item.disabled}
                 className={ITEM_CLASS}
               >
-                <ComboboxPrimitive.ItemIndicator className="absolute end-2 flex size-4 items-center justify-center">
+                <ComboboxPrimitive.ItemIndicator className="absolute inset-e-2 flex size-4 items-center justify-center">
                   <CheckIcon aria-hidden className="size-4" />
                 </ComboboxPrimitive.ItemIndicator>
                 <span className="flex-1 truncate">{item.label}</span>
@@ -115,7 +115,7 @@ function Combobox({
           placeholder={placeholder ?? messages.placeholder}
           className={cn(INPUT_CLASS, className)}
         />
-        <div className="absolute end-1 top-1/2 flex -translate-y-1/2 items-center">
+        <div className="absolute inset-e-1 top-1/2 flex -translate-y-1/2 items-center">
           <ComboboxPrimitive.Clear
             aria-label={messages.clearSelection}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
@@ -192,7 +192,7 @@ function MultiSelect({
       <div data-slot="multi-select" className="relative w-full">
         <ComboboxPrimitive.Chips
           className={cn(
-            "flex min-h-[var(--qx-control-height)] w-full flex-wrap items-center gap-1 rounded-lg border border-input bg-transparent p-1 ps-1.5 pe-8 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 md:text-sm dark:bg-input/30",
+            "flex min-h-(--qx-control-height) w-full flex-wrap items-center gap-1 rounded-lg border border-input bg-transparent p-1 ps-1.5 pe-8 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/disabled md:text-sm dark:bg-input/30",
             className,
           )}
         >
@@ -220,7 +220,7 @@ function MultiSelect({
             className="h-6 min-w-16 flex-1 bg-transparent px-1 outline-none placeholder:text-muted-foreground"
           />
         </ComboboxPrimitive.Chips>
-        <div className="absolute end-1 top-1.5 flex items-center">
+        <div className="absolute inset-e-1 top-1.5 flex items-center">
           <ComboboxPrimitive.Trigger
             aria-label={messages.open}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"

@@ -123,7 +123,7 @@ function OverflowList({
           <Popover>
             <PopoverTrigger
               data-slot="overflow-list-trigger"
-              className="inline-flex h-6 items-center rounded-full border border-border px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="inline-flex h-6 items-center rounded-full border border-border px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled"
               aria-label={messages.showMore(hiddenCount)}
             >
               +{hiddenCount}

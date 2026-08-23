@@ -67,7 +67,7 @@ function Spoiler({
         aria-expanded={expanded}
         aria-controls={contentId}
         onClick={() => setExpanded((e) => !e)}
-        className="mt-1 rounded text-sm font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="mt-1 rounded text-sm font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/disabled"
       >
         {expanded ? hideLabel : showLabel}
       </button>

@@ -117,7 +117,7 @@ function AngleSlider({
       onPointerMove={onPointerMove}
       onKeyDown={onKeyDown}
       className={cn(
-        "group relative rounded-full border border-border bg-muted shadow-inset-subtle outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30",
+        "group relative rounded-full border border-border bg-muted shadow-inset-subtle outline-none focus-visible:ring-3 focus-visible:ring-ring/disabled dark:bg-input/30",
         disabled && "opacity-disabled",
         !disabled && !readOnly && "cursor-pointer",
         className,

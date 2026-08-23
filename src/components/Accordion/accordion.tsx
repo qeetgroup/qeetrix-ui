@@ -27,7 +27,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex flex-1 items-center justify-between gap-4 py-4 text-start text-sm font-medium outline-none transition-all hover:underline focus-visible:rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-disabled [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "group/accordion-trigger flex flex-1 items-center justify-between gap-4 py-4 text-start text-sm font-medium outline-none transition-all hover:underline focus-visible:rounded-md focus-visible:ring-3 focus-visible:ring-ring/disabled disabled:pointer-events-none disabled:opacity-disabled [&_svg]:pointer-events-none [&_svg]:shrink-0",
           className,
         )}
         {...props}

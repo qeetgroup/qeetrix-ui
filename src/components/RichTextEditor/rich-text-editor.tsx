@@ -363,7 +363,7 @@ function RichTextEditor({
     <div
       data-slot="rich-text-editor"
       className={cn(
-        "rounded-lg border bg-transparent focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+        "rounded-lg border bg-transparent focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/disabled",
         className,
       )}
     >

@@ -32,7 +32,7 @@ function TableFooter({ className, ...props }: React.HTMLAttributes<HTMLTableSect
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
+      className={cn("border-t bg-muted/disabled font-medium [&>tr]:last:border-b-0", className)}
       {...props}
     />
   );
@@ -43,7 +43,7 @@ function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElem
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b transition-colors hover:bg-muted/disabled data-[state=selected]:bg-muted",
         className,
       )}
       {...props}
@@ -56,7 +56,7 @@ function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCell
     <th
       data-slot="table-head"
       className={cn(
-        "h-[var(--qx-control-row-height)] px-3 text-start align-middle font-medium text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pe-0",
+        "h-(--qx-control-row-height) px-3 text-start align-middle font-medium text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pe-0",
         className,
       )}
       {...props}
@@ -69,7 +69,7 @@ function TableCell({ className, ...props }: React.TdHTMLAttributes<HTMLTableCell
     <td
       data-slot="table-cell"
       className={cn(
-        "px-3 py-[var(--qx-control-cell-padding-y)] align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
+        "px-3 py-(--qx-control-cell-padding-y) align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
         className,
       )}
       {...props}

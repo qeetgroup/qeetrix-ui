@@ -65,7 +65,7 @@ function ResizableHandle({
     <Separator
       data-slot="resizable-handle"
       className={cn(
-        "relative flex shrink-0 items-center justify-center bg-border outline-none transition-colors data-[resize-handle-active]:bg-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+        "relative flex shrink-0 items-center justify-center bg-border outline-none transition-colors data-resize-handle-active:bg-ring focus-visible:ring-3 focus-visible:ring-ring/disabled",
         vertical ? "h-px w-full" : "w-px",
         className,
       )}

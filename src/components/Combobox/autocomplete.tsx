@@ -15,7 +15,7 @@ const ITEM_CLASS =
   "relative flex w-full cursor-default items-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden transition-colors select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-selected:font-medium";
 
 const INPUT_CLASS =
-  "h-[var(--qx-control-height)] w-full min-w-0 rounded-lg border border-input bg-transparent py-1 ps-2.5 pe-8 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled md:text-sm dark:bg-input/30";
+  "h-(--qx-control-height) w-full min-w-0 rounded-lg border border-input bg-transparent py-1 ps-2.5 pe-8 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/disabled disabled:cursor-not-allowed disabled:opacity-disabled md:text-sm dark:bg-input/30";
 
 interface AutocompleteProps {
   /** Advisory suggestion strings shown beneath the input. */
@@ -80,7 +80,7 @@ function Autocomplete({
           aria-labelledby={ariaLabelledby}
           className={cn(INPUT_CLASS, className)}
         />
-        <div className="absolute end-1 top-1/2 flex -translate-y-1/2 items-center">
+        <div className="absolute inset-e-1 top-1/2 flex -translate-y-1/2 items-center">
           <AutocompletePrimitive.Clear
             aria-label={messages.clear}
             className="flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"

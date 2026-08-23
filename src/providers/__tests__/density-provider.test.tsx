@@ -138,10 +138,10 @@ describe("DensityProvider", () => {
     );
 
     const button = screen.getByRole("button", { name: "Refresh" });
-    expect(button.className).toContain("size-[var(--qx-component-button-height)]");
+    expect(button.className).toContain("size-(--qx-component-button-height)");
 
     const input = screen.getByLabelText("Code");
-    expect(input.className).toContain("h-[var(--qx-component-input-height)]");
+    expect(input.className).toContain("h-(--qx-component-input-height)");
   });
 
   /**

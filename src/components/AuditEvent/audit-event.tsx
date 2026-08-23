@@ -131,7 +131,7 @@ function AuditEvent({
       </div>
       {hasDetails && (
         <details className="rounded-md border border-border bg-muted/20 px-3 py-2">
-          <summary className="cursor-pointer text-sm font-medium text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+          <summary className="cursor-pointer text-sm font-medium text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/disabled">
             {detailsLabel ?? messages.details}
           </summary>
           <div className="mt-3 space-y-3">

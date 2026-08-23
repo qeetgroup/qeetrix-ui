@@ -29,7 +29,7 @@ function SkipNav({
       href={to}
       className={cn(
         // Hidden by default; revealed on keyboard focus
-        "fixed top-4 start-4 sr-only",
+        "fixed top-4 inset-s-4 sr-only",
         "focus-visible:not-sr-only focus-visible:z-(--qx-z-skip-nav) focus-visible:rounded-md",
         "focus-visible:bg-background focus-visible:px-4 focus-visible:py-2",
         "focus-visible:text-sm focus-visible:font-medium",

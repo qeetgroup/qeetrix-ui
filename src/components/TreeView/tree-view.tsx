@@ -196,7 +196,7 @@ function TreeNodeItem({
       aria-level={level + 1}
       aria-posinset={position}
       aria-setsize={setSize}
-      className="outline-none focus-visible:[&>[data-slot=tree-item-row]]:ring-3 focus-visible:[&>[data-slot=tree-item-row]]:ring-ring/50"
+      className="outline-none focus-visible:[&>[data-slot=tree-item-row]]:ring-3 focus-visible:[&>[data-slot=tree-item-row]]:ring-ring/disabled"
       onFocus={(event) => {
         if (event.target === event.currentTarget) {
           onFocusedIdChange(node.id);

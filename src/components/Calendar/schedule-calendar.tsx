@@ -279,7 +279,7 @@ function ScheduleCalendar({
         data-slot="schedule-event"
         onClick={() => onEventClick?.(e)}
         className={cn(
-          "flex w-full items-center gap-1.5 truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-left text-xs text-foreground outline-none hover:bg-primary/20 focus-visible:ring-3 focus-visible:ring-ring/50",
+          "flex w-full items-center gap-1.5 truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-left text-xs text-foreground outline-none hover:bg-primary/20 focus-visible:ring-3 focus-visible:ring-ring/disabled",
           e.color,
         )}
       >
@@ -403,7 +403,7 @@ function ScheduleCalendar({
                             day: "numeric",
                           }).format(day.start)}
                           className={cn(
-                            "mb-1 flex size-6 items-center justify-center rounded-full text-xs outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
+                            "mb-1 flex size-6 items-center justify-center rounded-full text-xs outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/disabled",
                             today &&
                               "bg-primary font-semibold text-primary-foreground hover:bg-primary/90",
                           )}

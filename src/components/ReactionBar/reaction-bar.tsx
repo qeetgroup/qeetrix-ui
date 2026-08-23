@@ -58,7 +58,7 @@ function ReactionBar({
           aria-label={messages.reactionCount(r.emoji, r.count)}
           onClick={() => onToggle?.(r.emoji)}
           className={cn(
-            "inline-flex h-6 items-center gap-1 rounded-full border px-2 text-xs tabular-nums outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+            "inline-flex h-6 items-center gap-1 rounded-full border px-2 text-xs tabular-nums outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/disabled",
             r.reacted
               ? "border-primary/40 bg-primary/10 text-foreground"
               : "border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -75,7 +75,7 @@ function ReactionBar({
             <button
               type="button"
               aria-label={messages.addReaction}
-              className="inline-flex size-6 items-center justify-center rounded-full border border-border text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="inline-flex size-6 items-center justify-center rounded-full border border-border text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled"
             >
               <SmilePlusIcon aria-hidden className="size-3.5" />
             </button>
@@ -91,7 +91,7 @@ function ReactionBar({
                     type="button"
                     aria-label={messages.react(e)}
                     onClick={() => onToggle?.(e)}
-                    className="flex size-8 items-center justify-center rounded-md text-lg outline-none transition-colors hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50"
+                    className="flex size-8 items-center justify-center rounded-md text-lg outline-none transition-colors hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/disabled"
                   >
                     {e}
                   </button>

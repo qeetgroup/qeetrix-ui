@@ -91,7 +91,7 @@ function Notification({
       {showIcon && (
         <span
           data-slot="notification-icon"
-          className="mt-0.5 flex size-5 shrink-0 items-center justify-center text-[var(--qx-noti-accent)]"
+          className="mt-0.5 flex size-5 shrink-0 items-center justify-center text-(--qx-noti-accent)"
         >
           {icon ??
             (loading ? (
@@ -125,7 +125,7 @@ function Notification({
           data-slot="notification-close"
           aria-label={messages.dismiss}
           onClick={onClose}
-          className="-me-1 -mt-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="-me-1 -mt-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled"
         >
           <XIcon aria-hidden className="size-4" />
         </button>

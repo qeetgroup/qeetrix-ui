@@ -100,7 +100,7 @@ function ToastList() {
         <ToastPrimitive.Close
           data-slot="toast-close"
           aria-label={messages.close}
-          className="absolute end-2 top-2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="absolute inset-e-2 top-2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           <XIcon aria-hidden className="size-4" />
         </ToastPrimitive.Close>
@@ -122,7 +122,7 @@ function Toaster({
       <ToastPrimitive.Portal>
         <ToastPrimitive.Viewport
           data-slot="toaster"
-          className="fixed bottom-0 end-0 z-(--qx-z-toast) mb-4 me-4 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2 outline-none"
+          className="fixed bottom-0 inset-e-0 z-(--qx-z-toast) mb-4 me-4 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2 outline-none"
         >
           <ToastList />
         </ToastPrimitive.Viewport>

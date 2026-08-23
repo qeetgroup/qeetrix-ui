@@ -13,7 +13,7 @@ function Menubar({ className, ...props }: MenubarPrimitive.Props) {
     <MenubarPrimitive
       data-slot="menubar"
       className={cn(
-        "flex h-[var(--qx-control-height)] items-center gap-0.5 rounded-lg border border-border bg-background p-0.5",
+        "flex h-(--qx-control-height) items-center gap-0.5 rounded-lg border border-border bg-background p-0.5",
         className,
       )}
       {...props}
@@ -112,7 +112,7 @@ function MenubarCheckboxItem({
       checked={checked}
       {...props}
     >
-      <span className="pointer-events-none absolute start-2 flex items-center justify-center">
+      <span className="pointer-events-none absolute inset-s-2 flex items-center justify-center">
         <MenuPrimitive.CheckboxItemIndicator>
           <CheckIcon aria-hidden className="size-4" />
         </MenuPrimitive.CheckboxItemIndicator>
@@ -136,7 +136,7 @@ function MenubarRadioItem({ className, children, ...props }: MenuPrimitive.Radio
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute start-2 flex items-center justify-center">
+      <span className="pointer-events-none absolute inset-s-2 flex items-center justify-center">
         <MenuPrimitive.RadioItemIndicator>
           <CircleIcon aria-hidden className="size-2 fill-current" />
         </MenuPrimitive.RadioItemIndicator>

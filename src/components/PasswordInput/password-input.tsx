@@ -36,7 +36,7 @@ function PasswordInput({
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="absolute end-1 top-1/2 -translate-y-1/2"
+          className="absolute inset-e-1 top-1/2 -translate-y-1/2"
           aria-label={shown ? messages.hide : messages.show}
           aria-controls={props.id}
           tabIndex={0}

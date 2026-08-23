@@ -36,7 +36,7 @@ function NumberField({
       className={cn("inline-flex flex-col", className)}
       {...props}
     >
-      <NumberFieldPrimitive.Group className="flex h-[var(--qx-control-height)] items-stretch rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-disabled dark:bg-input/30">
+      <NumberFieldPrimitive.Group className="flex h-(--qx-control-height) items-stretch rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/disabled data-disabled:pointer-events-none data-disabled:opacity-disabled dark:bg-input/30">
         <NumberFieldPrimitive.Decrement
           aria-label={messages.decrease}
           className="flex w-8 items-center justify-center rounded-s-lg border-e border-input text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-disabled"

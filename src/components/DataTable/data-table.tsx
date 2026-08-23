@@ -441,10 +441,10 @@ function ColumnResizeHandle<TData, TValue>({
         onResize(column.id, Math.min(max, Math.max(min, next)));
       }}
       className={cn(
-        "absolute end-0 top-0 m-0 h-full w-3 cursor-col-resize touch-none border-0 bg-transparent select-none outline-none",
-        "after:absolute after:end-0 after:top-0 after:h-full after:w-px after:bg-border after:opacity-0 after:transition-opacity after:content-['']",
+        "absolute inset-e-0 top-0 m-0 h-full w-3 cursor-col-resize touch-none border-0 bg-transparent select-none outline-none",
+        "after:absolute after:inset-e-0 after:top-0 after:h-full after:w-px after:bg-border after:opacity-0 after:transition-opacity after:content-['']",
         "hover:after:opacity-100 focus-visible:after:w-0.5 focus-visible:after:bg-ring focus-visible:after:opacity-100",
-        "data-[resizing]:after:bg-primary data-[resizing]:after:opacity-100",
+        "data-resizing:after:bg-primary data-resizing:after:opacity-100",
       )}
     />
   );
@@ -950,7 +950,7 @@ function DataTable<TData, TValue>({
               <div className="relative w-full sm:max-w-xs">
                 <SearchIcon
                   aria-hidden
-                  className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                  className="pointer-events-none absolute inset-s-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
                   value={globalFilter}
