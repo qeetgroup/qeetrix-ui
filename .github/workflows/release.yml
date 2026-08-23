@@ -1,13 +1,5 @@
 name: Release
 
-# Merging to main opens (or updates) the "Version Packages" PR via changesets/action.
-# Merging that PR bumps versions and publishes to npm from the npm-publish environment.
-#
-# Before a release can succeed, configure two things in GitHub:
-#   1. Create an environment named "npm-publish" with required reviewers
-#      and add the NPM_TOKEN secret to it.
-#   2. Enable branch protection on main (no direct pushes, CI required).
-
 on:
   push:
     branches: [main]
@@ -35,23 +27,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: ${{ vars.QEETRIX_NPM_REGISTRY || 'https://registry.npmjs.org' }}
           scope: "@qeetrix"
-
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - run: bun run typecheck
-      - run: bun run lint
-      - run: bun run test
-
       - name: version or publish
         uses: changesets/action@v1
         with:
