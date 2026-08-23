@@ -1,8 +1,8 @@
 {
   "name": "@qeetrix/ui",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "private": false,
-  "description": "Qeetrix UI \u2014 the Qeet Group React component library (shadcn + Base UI, Tailwind v4).",
+  "description": "Qeetrix UI — the Qeet Group React component library (shadcn + Base UI, Tailwind v4).",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
@@ -132,7 +132,7 @@
     "build:logos": "node scripts/build/logos.mjs",
     "clean": "node scripts/build/clean.mjs",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version": "changeset version",
     "release": "bun run build && changeset publish",
     "prepack": "bun run build"
   },
