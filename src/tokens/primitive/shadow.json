@@ -1,60 +1,60 @@
 {
   "shadow": {
-    "$description": "Light-theme shadow values. Shadows are cast in warm graphite (rgb 20 16 14, graphite-950) rather than pure black, kept low and tight (no blur above 48px) so an admin screen with dozens of surfaces stays calm; the 1px hairline gives surfaces a perimeter without a heavy border.",
+    "$description": "Light-theme shadow values. Shadows are cast in a neutral near-black (rgb 12 12 12) rather than pure black, kept low and tight (no blur above 48px) so an admin screen with dozens of surfaces stays calm; the 1px hairline gives surfaces a perimeter without a heavy border.",
     "none": {
       "$value": "none",
       "$type": "shadow"
     },
     "inset-subtle": {
-      "$value": "inset 0 1px 2px rgb(20 16 14 / 0.07)",
+      "$value": "inset 0 1px 2px rgb(12 12 12 / 0.07)",
       "$type": "shadow"
     },
     "rest": {
-      "$value": "0 1px 2px -1px rgb(20 16 14 / 0.08), 0 1px 3px rgb(20 16 14 / 0.04), 0 0 0 1px rgb(20 16 14 / 0.03)",
+      "$value": "0 1px 2px -1px rgb(12 12 12 / 0.08), 0 1px 3px rgb(12 12 12 / 0.04), 0 0 0 1px rgb(12 12 12 / 0.03)",
       "$type": "shadow"
     },
     "hover": {
-      "$value": "0 2px 4px -2px rgb(20 16 14 / 0.08), 0 8px 16px -6px rgb(20 16 14 / 0.10), 0 0 0 1px rgb(20 16 14 / 0.03)",
+      "$value": "0 2px 4px -2px rgb(12 12 12 / 0.08), 0 8px 16px -6px rgb(12 12 12 / 0.10), 0 0 0 1px rgb(12 12 12 / 0.03)",
       "$type": "shadow"
     },
     "popover": {
-      "$value": "0 4px 8px -4px rgb(20 16 14 / 0.08), 0 12px 24px -8px rgb(20 16 14 / 0.12), 0 0 0 1px rgb(20 16 14 / 0.05)",
+      "$value": "0 4px 8px -4px rgb(12 12 12 / 0.08), 0 12px 24px -8px rgb(12 12 12 / 0.12), 0 0 0 1px rgb(12 12 12 / 0.05)",
       "$type": "shadow"
     },
     "modal": {
-      "$value": "0 8px 16px -8px rgb(20 16 14 / 0.12), 0 24px 48px -12px rgb(20 16 14 / 0.20), 0 0 0 1px rgb(20 16 14 / 0.05)",
+      "$value": "0 8px 16px -8px rgb(12 12 12 / 0.12), 0 24px 48px -12px rgb(12 12 12 / 0.20), 0 0 0 1px rgb(12 12 12 / 0.05)",
       "$type": "shadow"
     },
     "ramp": {
       "$description": "The Tailwind shadow ramp (shadow-2xs…shadow-xl). Authored here rather than in index.css so there is one source for these values; @theme references the generated vars.",
       "2xs": {
-        "$value": "0 1px 1px rgb(20 16 14 / 0.04)",
+        "$value": "0 1px 1px rgb(12 12 12 / 0.04)",
         "$type": "shadow"
       },
       "xs": {
-        "$value": "0 1px 2px -1px rgb(20 16 14 / 0.07)",
+        "$value": "0 1px 2px -1px rgb(12 12 12 / 0.07)",
         "$type": "shadow"
       },
       "sm": {
-        "$value": "0 1px 2px -1px rgb(20 16 14 / 0.07), 0 2px 4px -2px rgb(20 16 14 / 0.05)",
+        "$value": "0 1px 2px -1px rgb(12 12 12 / 0.07), 0 2px 4px -2px rgb(12 12 12 / 0.05)",
         "$type": "shadow"
       },
       "md": {
-        "$value": "0 2px 4px -2px rgb(20 16 14 / 0.07), 0 6px 12px -4px rgb(20 16 14 / 0.09)",
+        "$value": "0 2px 4px -2px rgb(12 12 12 / 0.07), 0 6px 12px -4px rgb(12 12 12 / 0.09)",
         "$type": "shadow"
       },
       "lg": {
-        "$value": "0 4px 8px -4px rgb(20 16 14 / 0.08), 0 12px 24px -8px rgb(20 16 14 / 0.12)",
+        "$value": "0 4px 8px -4px rgb(12 12 12 / 0.08), 0 12px 24px -8px rgb(12 12 12 / 0.12)",
         "$type": "shadow"
       },
       "xl": {
-        "$value": "0 8px 16px -8px rgb(20 16 14 / 0.10), 0 24px 48px -12px rgb(20 16 14 / 0.16)",
+        "$value": "0 8px 16px -8px rgb(12 12 12 / 0.10), 0 24px 48px -12px rgb(12 12 12 / 0.16)",
         "$type": "shadow"
       }
     }
   },
   "shadow-dark": {
-    "$description": "Dark-theme shadow values. On dark surfaces depth comes mostly from surface luminance (the elevated/overlay steps of the Graphite ramp); shadows here are deeper black for separation, plus a faint warm rim (rgb 255 248 240) as the perimeter and, on overlays, a 1px top highlight — never a glow.",
+    "$description": "Dark-theme shadow values. On dark surfaces depth comes mostly from surface luminance (the elevated/overlay steps of the Graphite ramp); shadows here are deeper black for separation, plus a faint neutral rim (white at a few percent) as the perimeter and, on overlays, a 1px top highlight — never a glow.",
     "none": {
       "$value": "none",
       "$type": "shadow"
@@ -64,19 +64,19 @@
       "$type": "shadow"
     },
     "rest": {
-      "$value": "0 1px 2px rgb(0 0 0 / 0.30), 0 0 0 1px rgb(255 248 240 / 0.04)",
+      "$value": "0 1px 2px rgb(0 0 0 / 0.30), 0 0 0 1px rgb(255 255 255 / 0.04)",
       "$type": "shadow"
     },
     "hover": {
-      "$value": "0 2px 4px -2px rgb(0 0 0 / 0.40), 0 8px 16px -6px rgb(0 0 0 / 0.40), 0 0 0 1px rgb(255 248 240 / 0.06)",
+      "$value": "0 2px 4px -2px rgb(0 0 0 / 0.40), 0 8px 16px -6px rgb(0 0 0 / 0.40), 0 0 0 1px rgb(255 255 255 / 0.06)",
       "$type": "shadow"
     },
     "popover": {
-      "$value": "0 4px 8px -4px rgb(0 0 0 / 0.45), 0 12px 24px -8px rgb(0 0 0 / 0.50), 0 0 0 1px rgb(255 248 240 / 0.07), inset 0 1px 0 rgb(255 248 240 / 0.04)",
+      "$value": "0 4px 8px -4px rgb(0 0 0 / 0.45), 0 12px 24px -8px rgb(0 0 0 / 0.50), 0 0 0 1px rgb(255 255 255 / 0.07), inset 0 1px 0 rgb(255 255 255 / 0.04)",
       "$type": "shadow"
     },
     "modal": {
-      "$value": "0 8px 16px -8px rgb(0 0 0 / 0.50), 0 24px 48px -12px rgb(0 0 0 / 0.60), 0 0 0 1px rgb(255 248 240 / 0.08), inset 0 1px 0 rgb(255 248 240 / 0.05)",
+      "$value": "0 8px 16px -8px rgb(0 0 0 / 0.50), 0 24px 48px -12px rgb(0 0 0 / 0.60), 0 0 0 1px rgb(255 255 255 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.05)",
       "$type": "shadow"
     },
     "ramp": {

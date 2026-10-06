@@ -126,7 +126,7 @@ so selection never depends on the tint alone. `border.control` is the resting bo
 control, held to 3:1 on every surface; `border.default` is a divider and is not.
 
 Elevation and the `surface-fade` gradient live in `theme/<t>/` as well, because a shadow designed
-for a white page is invisible on graphite. Dark elevation is black shadow plus a warm rim and an
+for a white page is invisible on graphite. Dark elevation is black shadow plus a faint neutral rim and an
 inset top highlight, not the light shadow at a higher opacity.
 
 Two naming notes, both deliberate:

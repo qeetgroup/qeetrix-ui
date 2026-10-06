@@ -177,7 +177,7 @@ type CalendarProps = DistributiveOmit<DayPickerProps, "locale"> & {
  * `DatePicker` / `DateRangePicker` compose it inside a Popover.
  *
  * States, by design:
- * - **selected** (and a range's two ends): the solid Qeet action fill with its dark label;
+ * - **selected** (and a range's two ends): the solid Qeet Ember action fill with its white label;
  * - **range middle**: the quiet brand tint, so a span is one selection, not a band of orange;
  * - **today**: a graphite marker — semibold plus a dot — never a second orange;
  * - **outside** days: a step quieter, still selectable;

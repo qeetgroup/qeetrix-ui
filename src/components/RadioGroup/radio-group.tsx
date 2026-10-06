@@ -21,7 +21,7 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
  * A checked radio is a filled Ember disc with a graphite centre dot, rather than an Ember dot in
  * an empty ring. The dot-in-ring form puts a ~3:1 orange glyph on whatever is behind the control
  * (2.6:1 on the brand-subtle tint of a selected `RadioCard`, on a sunken panel or a hovered row);
- * the filled form puts a 6.7:1 graphite dot on Ember and gives the edge the darker `border-brand`,
+ * the filled form puts a white dot on Qeet Ember (4.6:1) and gives the edge the darker `border-brand`,
  * which clears 3:1 on every surface in both themes.
  *
  * Base UI renders a `<span role="radio">`, so disabled is `data-disabled`, not `:disabled`.

@@ -54,8 +54,9 @@
         "$type": "color"
       },
       "on-brand": {
-        "$value": "{color.graphite.1000}",
-        "$type": "color"
+        "$value": "{color.graphite.0}",
+        "$type": "color",
+        "$description": "White on the Qeet Ember action fill (action.primary, 4.56:1 at rest, 5.1:1 hover, 5.8:1 pressed). The same label in both themes: a filled Qeet control is white-on-ember everywhere."
       },
       "on-subtle": {
         "$value": "{color.graphite.100}",
@@ -64,6 +65,16 @@
       "on-feedback": {
         "$value": "{color.graphite.1000}",
         "$type": "color"
+      },
+      "on-feedback-strong": {
+        "$value": "{color.graphite.0}",
+        "$type": "color",
+        "$description": "The label on a feedback.<status>-strong fill (error, success, info)."
+      },
+      "on-warning-strong": {
+        "$value": "{color.graphite.950}",
+        "$type": "color",
+        "$description": "The label on feedback.warning-strong: near-black on amber, the hazard convention."
       }
     },
     "surface": {
@@ -104,16 +115,16 @@
         "$type": "color"
       },
       "brand-subtle": {
-        "$value": "color-mix(in oklab, {color.qeet.500} 13%, transparent)",
+        "$value": "color-mix(in oklab, {color.graphite.0} 7%, transparent)",
         "$type": "color",
-        "$description": "Translucent in dark, unlike light: a selected row has to read as a Qeet tint on whatever it sits on — card, popover, sidebar — and dark surfaces step in lightness, so a tint mixed into one of them reads recessed on a lighter one. Over surface.default it is exactly the old opaque mix. The feedback *-subtle tints work the same way."
+        "$description": "Dark selection is a neutral lift, not an orange tint: orange at dark-mode lightness is brown. The Qeet signal on a selected item comes from its indicator (border.brand) and brand-coloured icon or check, on a clean graphite lift. Translucent, so it reads the same on card, popover and sidebar."
       },
       "brand-subtle-hover": {
-        "$value": "color-mix(in oklab, {color.qeet.500} 17%, transparent)",
+        "$value": "color-mix(in oklab, {color.graphite.0} 10%, transparent)",
         "$type": "color"
       },
       "brand-subtle-active": {
-        "$value": "color-mix(in oklab, {color.qeet.500} 22%, transparent)",
+        "$value": "color-mix(in oklab, {color.graphite.0} 13%, transparent)",
         "$type": "color"
       },
       "rail": {
@@ -177,15 +188,16 @@
     },
     "action": {
       "primary": {
-        "$value": "{color.qeet.500}",
-        "$type": "color"
+        "$value": "{color.qeet.600}",
+        "$type": "color",
+        "$description": "Qeet Ember (#D04800) — filled primary actions and checked controls, in both themes, always with white text. #F26D0E (qeet.500) stays the brand colour; it carries white at only 3.0:1, so it is not an action fill."
       },
       "primary-hover": {
-        "$value": "{color.qeet.400}",
+        "$value": "color-mix(in oklab, {color.qeet.600}, {color.qeet.700})",
         "$type": "color"
       },
       "primary-active": {
-        "$value": "{color.qeet.300}",
+        "$value": "{color.qeet.700}",
         "$type": "color"
       }
     },
@@ -207,19 +219,36 @@
         "$type": "color"
       },
       "success-subtle": {
-        "$value": "color-mix(in oklab, {color.success.500} 14%, transparent)",
+        "$value": "color-mix(in oklab, {color.success.500} 15%, transparent)",
         "$type": "color"
       },
       "warning-subtle": {
-        "$value": "color-mix(in oklab, {color.warning.500} 14%, transparent)",
+        "$value": "color-mix(in oklab, {color.warning.500} 12%, transparent)",
         "$type": "color"
       },
       "error-subtle": {
-        "$value": "color-mix(in oklab, {color.danger.500} 14%, transparent)",
+        "$value": "color-mix(in oklab, {color.danger.500} 15%, transparent)",
         "$type": "color"
       },
       "info-subtle": {
-        "$value": "color-mix(in oklab, {color.info.500} 14%, transparent)",
+        "$value": "color-mix(in oklab, {color.info.500} 15%, transparent)",
+        "$type": "color"
+      },
+      "success-strong": {
+        "$value": "{color.success.700}",
+        "$type": "color"
+      },
+      "warning-strong": {
+        "$value": "{color.warning.400}",
+        "$type": "color"
+      },
+      "error-strong": {
+        "$value": "{color.danger.700}",
+        "$type": "color",
+        "$description": "Solid status fills for messages that must not be missed — a blocking error, an account suspension. Theme-invariant: the 700 step carries a white label (text.on-feedback-strong) at ≥5:1 in both themes. Warning is the exception by convention: amber 400 with a near-black label (text.on-warning-strong), because white on amber is unreadable and a dark amber reads as brown. Use sparingly; the subtle surfaces are the default."
+      },
+      "info-strong": {
+        "$value": "{color.info.700}",
         "$type": "color"
       }
     },

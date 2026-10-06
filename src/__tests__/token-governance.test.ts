@@ -174,6 +174,11 @@ const AA_PAIRS: [string, string, number][] = [
       ["--qx-color-text-on-feedback", `--qx-color-feedback-${s}`, 4.5],
     ];
   }),
+  // the solid (strong) status fills and their labels — theme-invariant
+  ["--qx-color-text-on-feedback-strong", "--qx-color-feedback-error-strong", 4.5],
+  ["--qx-color-text-on-feedback-strong", "--qx-color-feedback-success-strong", 4.5],
+  ["--qx-color-text-on-feedback-strong", "--qx-color-feedback-info-strong", 4.5],
+  ["--qx-color-text-on-warning-strong", "--qx-color-feedback-warning-strong", 4.5],
   // the shadcn bridge, which is what most components actually paint with
   ["--foreground", "--background", 4.5],
   ["--card-foreground", "--card", 4.5],
@@ -293,11 +298,24 @@ describe("brand and ramps", () => {
     readFileSync(join(root, "src/tokens/primitive/color.json"), "utf8"),
   ).color;
 
-  it("Qeet 500 is #F26D0E exactly, and is the primary action in every theme", () => {
+  it("Qeet 500 is #F26D0E exactly; the primary action is Qeet Ember with white text in every theme", () => {
     expect(formatHex(toColor(primitives.qeet["500"].$value))).toBe("#f26d0e");
+    const ember = formatHex(toColor(primitives.qeet["600"].$value));
     for (const theme of themes) {
       const vars = byTheme.get(theme.name) as Map<string, string>;
-      expect(formatHex(toColor(resolve(vars, "var(--primary)")))).toBe("#f26d0e");
+      expect(formatHex(toColor(resolve(vars, "var(--primary)")))).toBe(ember);
+      expect(formatHex(toColor(resolve(vars, "var(--primary-foreground)")))).toBe("#ffffff");
+    }
+    // the brand orange itself cannot carry white text, which is why it is not the action fill
+    expect(wcagContrast("#f26d0e", "#ffffff")).toBeLessThan(4.5);
+  });
+
+  it("dark mode is neutral near-black, not warm charcoal", () => {
+    const vars = byTheme.get("dark") as Map<string, string>;
+    for (const surface of ["canvas", "default", "elevated", "overlay", "sunken"]) {
+      const c = oklab(toColor(resolve(vars, `var(--qx-color-surface-${surface})`))) as Color;
+      expect(Math.hypot(c.a as number, c.b as number), surface).toBeLessThan(0.004);
+      expect(c.l as number, surface).toBeLessThan(0.25);
     }
   });
 

@@ -17,14 +17,18 @@ const calloutVariants = cva(
   {
     variants: {
       variant: {
-        info: "border-s-info bg-info-subtle",
-        success: "border-s-success bg-success-subtle",
-        warning: "border-s-warning bg-warning-subtle",
+        info: "border-s-info bg-info-subtle [&_[data-slot=callout-title]]:text-info-text",
+        success:
+          "border-s-success bg-success-subtle [&_[data-slot=callout-title]]:text-success-text",
+        warning:
+          "border-s-warning bg-warning-subtle [&_[data-slot=callout-title]]:text-warning-text",
         // `destructive` is the library-wide name for this tone (Button, Badge, Link,
         // DropdownMenu). `error` predates it and keeps working — see
         // docs/standards/component-api.md § Variant vocabulary.
-        destructive: "border-s-destructive bg-destructive-subtle",
-        error: "border-s-destructive bg-destructive-subtle",
+        destructive:
+          "border-s-destructive bg-destructive-subtle [&_[data-slot=callout-title]]:text-destructive-text",
+        error:
+          "border-s-destructive bg-destructive-subtle [&_[data-slot=callout-title]]:text-destructive-text",
         /** A neutral note: no status, graphite accent. */
         muted: "border-s-muted-foreground bg-surface-subtle",
       },

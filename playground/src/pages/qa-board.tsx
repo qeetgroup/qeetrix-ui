@@ -519,6 +519,13 @@ export function QaBoard() {
               HDFC rejected NEFT batch 88213: beneficiary account closed.
             </AlertDescription>
           </Alert>
+          <Alert variant="destructive" emphasis="strong" className="lg:col-span-2">
+            <CircleAlertIcon aria-hidden />
+            <AlertTitle>Account suspended</AlertTitle>
+            <AlertDescription>
+              Payouts are paused until the KYC review is complete. Strong emphasis — blocking only.
+            </AlertDescription>
+          </Alert>
         </div>
       </Item>
 

@@ -119,10 +119,54 @@ describe("Alert", () => {
     expect(alert).toHaveAttribute("role", "alert");
   });
 
+  it("subtle statuses carry the hue as an inline-start accent and on the title", () => {
+    render(
+      <Alert variant="destructive" data-testid="alert">
+        <AlertTitle>Settlement failed</AlertTitle>
+        <AlertDescription>Beneficiary account closed.</AlertDescription>
+      </Alert>,
+    );
+    const alert = screen.getByTestId("alert");
+    expect(alert).toHaveAttribute("data-emphasis", "subtle");
+    expect(alert).toHaveClass("bg-destructive-subtle", "border-s-[3px]", "border-s-destructive");
+    expect(alert.className).toContain("[&>[data-slot=alert-title]]:text-destructive-text");
+  });
+
+  it("keeps the neutral default free of a status accent", () => {
+    render(<Alert data-testid="alert">Note</Alert>);
+    expect(screen.getByTestId("alert")).not.toHaveClass("border-s-[3px]");
+  });
+
+  it("emphasis=strong is a solid fill with the on-fill label, and no accent", () => {
+    render(
+      <>
+        <Alert variant="destructive" emphasis="strong" data-testid="error">
+          <AlertTitle>Account suspended</AlertTitle>
+        </Alert>
+        <Alert variant="warning" emphasis="strong" data-testid="warning">
+          <AlertTitle>Payouts paused</AlertTitle>
+        </Alert>
+      </>,
+    );
+    const error = screen.getByTestId("error");
+    expect(error).toHaveAttribute("data-emphasis", "strong");
+    expect(error).toHaveClass("bg-destructive-strong", "text-on-feedback-strong");
+    expect(error).not.toHaveClass("border-s-[3px]");
+    // amber takes a near-black label by convention; white on amber is unreadable
+    expect(screen.getByTestId("warning")).toHaveClass(
+      "bg-warning-strong",
+      "text-on-warning-strong",
+    );
+  });
+
   it("has no axe violations across all variants", async () => {
     const { container } = render(
       VARIANTS.map((variant) => (
-        <Alert key={variant} variant={variant}>
+        <Alert
+          key={variant}
+          variant={variant}
+          emphasis={variant === "danger" ? "strong" : undefined}
+        >
           <InfoIcon aria-hidden />
           <AlertTitle>{variant} title</AlertTitle>
           <AlertDescription>{variant} description</AlertDescription>

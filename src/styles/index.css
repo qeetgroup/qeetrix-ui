@@ -261,6 +261,12 @@
   --color-warning-subtle: var(--qx-color-feedback-warning-subtle);
   --color-info-subtle: var(--qx-color-feedback-info-subtle);
   --color-destructive-subtle: var(--qx-color-feedback-error-subtle);
+  --color-success-strong: var(--qx-color-feedback-success-strong);
+  --color-warning-strong: var(--qx-color-feedback-warning-strong);
+  --color-info-strong: var(--qx-color-feedback-info-strong);
+  --color-destructive-strong: var(--qx-color-feedback-error-strong);
+  --color-on-feedback-strong: var(--qx-color-text-on-feedback-strong);
+  --color-on-warning-strong: var(--qx-color-text-on-warning-strong);
   --color-success-text: var(--qx-color-text-success);
   --color-warning-text: var(--qx-color-text-warning);
   --color-info-text: var(--qx-color-text-info);

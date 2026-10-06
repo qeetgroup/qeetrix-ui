@@ -43,6 +43,11 @@ const alertIcons: Record<
 
 const alertControls = {
   variant: select(alertVariants, "warning"),
+  emphasis: select(
+    ["subtle", "strong"] as const,
+    "subtle",
+    "emphasis (strong: solid, for messages that must not be missed)",
+  ),
   title: text("Settlement delayed — HDFC NEFT window", "Title"),
   description: text(
     `Today’s payout of ${formatInr(482310.5)} will be credited after the 14:00 IST NEFT batch.`,
@@ -55,6 +60,7 @@ const alertControls = {
 
 function AlertPlayground({
   variant,
+  emphasis,
   title,
   description,
   icon,
@@ -62,6 +68,7 @@ function AlertPlayground({
   role,
 }: {
   variant: AlertVariant;
+  emphasis: "subtle" | "strong";
   title: string;
   description: string;
   icon: boolean;
@@ -71,7 +78,7 @@ function AlertPlayground({
   const Icon = alertIcons[variant].icon;
   return (
     <div className="w-full max-w-xl">
-      <Alert variant={variant} role={role}>
+      <Alert variant={variant} emphasis={emphasis} role={role}>
         {icon && <Icon aria-hidden />}
         {title && <AlertTitle>{title}</AlertTitle>}
         {description && <AlertDescription>{description}</AlertDescription>}

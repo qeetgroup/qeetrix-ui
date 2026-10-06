@@ -34,7 +34,7 @@
       "link": {
         "$value": "{color.qeet.700}",
         "$type": "color",
-        "$description": "Links use the AA text step of the Qeet ramp. Deliberately not color.action.primary: the primary button keeps Qeet 500 with a dark label, while link text has to reach 4.5:1 on its own."
+        "$description": "Links use the AA text step of the Qeet ramp. Deliberately not color.action.primary: the primary button is a Qeet Ember fill carrying a white label, while link text has to reach 4.5:1 on the page on its own."
       },
       "link-hover": {
         "$value": "{color.qeet.800}",
@@ -57,9 +57,9 @@
         "$type": "color"
       },
       "on-brand": {
-        "$value": "{color.graphite.1000}",
+        "$value": "{color.graphite.0}",
         "$type": "color",
-        "$description": "The label on a Qeet 500 fill. Dark, because white on #F26D0E is 3.0:1 and fails AA; graphite-1000 holds ≥4.5:1 on the rest, hover and active fills."
+        "$description": "White on the Qeet Ember action fill (action.primary, 4.56:1 at rest, 5.1:1 hover, 5.8:1 pressed). The same label in both themes: a filled Qeet control is white-on-ember everywhere."
       },
       "on-subtle": {
         "$value": "{color.graphite.950}",
@@ -68,13 +68,23 @@
       "on-feedback": {
         "$value": "{color.graphite.0}",
         "$type": "color"
+      },
+      "on-feedback-strong": {
+        "$value": "{color.graphite.0}",
+        "$type": "color",
+        "$description": "The label on a feedback.<status>-strong fill (error, success, info)."
+      },
+      "on-warning-strong": {
+        "$value": "{color.graphite.950}",
+        "$type": "color",
+        "$description": "The label on feedback.warning-strong: near-black on amber, the hazard convention."
       }
     },
     "surface": {
       "canvas": {
         "$value": "{color.graphite.25}",
         "$type": "color",
-        "$description": "The page. Light: a warm off-white, so white cards read as cards without heavy borders. Dark: deep warm graphite, never pure black."
+        "$description": "The page. Light: a warm off-white, so white cards read as cards without heavy borders. Dark: neutral near-black (#0e0d0d), one step below the #131312 cards; never warm, which reads as brown at that lightness."
       },
       "default": {
         "$value": "{color.graphite.0}",
@@ -187,16 +197,16 @@
     },
     "action": {
       "primary": {
-        "$value": "{color.qeet.500}",
+        "$value": "{color.qeet.600}",
         "$type": "color",
-        "$description": "Qeet 500, #F26D0E, in both themes: the primary action is the brand moment."
+        "$description": "Qeet Ember (#D04800) — filled primary actions and checked controls, in both themes, always with white text. #F26D0E (qeet.500) stays the brand colour; it carries white at only 3.0:1, so it is not an action fill."
       },
       "primary-hover": {
-        "$value": "{color.qeet.550}",
+        "$value": "color-mix(in oklab, {color.qeet.600}, {color.qeet.700})",
         "$type": "color"
       },
       "primary-active": {
-        "$value": "{color.qeet.600}",
+        "$value": "{color.qeet.700}",
         "$type": "color"
       }
     },
@@ -218,20 +228,37 @@
         "$type": "color"
       },
       "success-subtle": {
-        "$value": "{color.success.50}",
+        "$value": "{color.success.100}",
         "$type": "color",
         "$description": "Subtle status backgrounds (alerts, inline messages, status badges): text.<status> on them holds 4.5:1."
       },
       "warning-subtle": {
-        "$value": "{color.warning.50}",
+        "$value": "{color.warning.100}",
         "$type": "color"
       },
       "error-subtle": {
-        "$value": "{color.danger.50}",
+        "$value": "{color.danger.100}",
         "$type": "color"
       },
       "info-subtle": {
-        "$value": "{color.info.50}",
+        "$value": "{color.info.100}",
+        "$type": "color"
+      },
+      "success-strong": {
+        "$value": "{color.success.700}",
+        "$type": "color"
+      },
+      "warning-strong": {
+        "$value": "{color.warning.400}",
+        "$type": "color"
+      },
+      "error-strong": {
+        "$value": "{color.danger.700}",
+        "$type": "color",
+        "$description": "Solid status fills for messages that must not be missed — a blocking error, an account suspension. Theme-invariant: the 700 step carries a white label (text.on-feedback-strong) at ≥5:1 in both themes. Warning is the exception by convention: amber 400 with a near-black label (text.on-warning-strong), because white on amber is unreadable and a dark amber reads as brown. Use sparingly; the subtle surfaces are the default."
+      },
+      "info-strong": {
+        "$value": "{color.info.700}",
         "$type": "color"
       }
     },

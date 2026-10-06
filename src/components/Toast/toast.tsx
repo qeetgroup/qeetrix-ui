@@ -84,6 +84,22 @@ const TYPE_ICON: Record<RenderedType, React.ElementType> = {
 };
 
 /** The status hue sits on the icon only; the surface stays a neutral overlay. */
+/**
+ * Toasts that report an outcome carry their status as an inline-start accent and on the title;
+ * `info` — what a bare `toast("…")` is — stays the neutral message.
+ */
+const TYPE_ACCENT: Partial<Record<RenderedType, string>> = {
+  success: "border-s-[3px] border-s-success",
+  warning: "border-s-[3px] border-s-warning",
+  error: "border-s-[3px] border-s-destructive",
+};
+
+const TITLE_TONE: Partial<Record<RenderedType, string>> = {
+  success: "text-success-text",
+  warning: "text-warning-text",
+  error: "text-destructive-text",
+};
+
 const TYPE_TONE: Record<RenderedType, string> = {
   info: "text-info-text",
   success: "text-success-text",
@@ -126,6 +142,7 @@ function ToastList({ direction }: { direction: "ltr" | "rtl" }) {
               "data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%+1rem)]",
               "data-[swipe-direction=left]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)-100%-1rem)]",
               "data-[swipe-direction=down]:data-ending-style:translate-x-0 data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%+1rem)]",
+              TYPE_ACCENT[type],
             )}
           >
             <Icon
@@ -139,7 +156,10 @@ function ToastList({ direction }: { direction: "ltr" | "rtl" }) {
                   toast's dialog, rather than rendering as grey secondary copy with no name. */}
               <ToastPrimitive.Title
                 data-slot="toast-title"
-                className="font-heading text-sm font-medium wrap-break-word text-foreground"
+                className={cn(
+                  "font-heading text-sm font-medium wrap-break-word text-foreground",
+                  TITLE_TONE[type],
+                )}
               >
                 {item.title ?? item.description}
               </ToastPrimitive.Title>

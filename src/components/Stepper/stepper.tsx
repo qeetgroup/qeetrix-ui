@@ -37,8 +37,8 @@ interface StepperProps extends React.ComponentProps<"ol"> {
 type StepState = "complete" | "active" | "upcoming";
 
 /*
- * One strong mark per flow. The current step is the solid Qeet marker (dark numeral on the
- * fill, 6.7:1) with a quiet brand halo; completed steps step back to the brand tint with a brand
+ * One strong mark per flow. The current step is the solid Qeet marker (white numeral on the
+ * Ember fill, 4.6:1) with a quiet brand halo; completed steps step back to the brand tint with a brand
  * check, and the connector behind them is the 3:1 brand border; upcoming steps are neutral. A
  * finished flow is therefore not a row of orange discs. Errors take the destructive roles.
  */

@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
  * tell them apart:
  *
  * - **position** — the thumb travels to the inline end when on (mirrored under `rtl`);
- * - **lightness** — the thumb inverts from a light disc (off) to a graphite disc (on), 6.7:1 on
- *   the Ember track, ≥3.3:1 on the grey one, in both themes;
+ * - **lightness** — a light disc on both tracks: white on the Qeet Ember track when on (4.6:1),
+ *   and ≥3.3:1 on the grey one when off, in both themes;
  * - **forced colors** — off is an outlined track with a `CanvasText` thumb; on is a `Highlight`
  *   track with a `HighlightText` thumb.
  *

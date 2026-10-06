@@ -60,94 +60,94 @@
       "$description": "Pure achromatic gray (chroma 0), the pre-Graphite neutral. Kept published for consumers that read --qx-color-neutral-* from tokens.css; the semantic layer no longer uses it — it renders with the warm Graphite ramp."
     },
     "graphite": {
-      "$description": "Graphite — Qeet's warm-neutral foundation (OKLCH, hue 60, chroma 0.004–0.011). The dominant environment of every Qeet product: calm surfaces, readable text, low fatigue, and a quiet warmth that pairs with Qeet orange. Denser at the dark end, where dark-mode surface hierarchy needs finer luminance steps.",
+      "$description": "Graphite — the neutral foundation. Near-neutral by design: a whisper of warmth at the light end (chroma ≤ 0.003) so white surfaces are not clinical, and effectively achromatic at the dark end, where any warm chroma reads as brown. Dark mode is built from 925 (cards, #131312) and 950 (page, #0e0d0d): near-black, not charcoal-brown.",
       "0": {
         "$value": "oklch(1 0 0)",
         "$type": "color"
       },
       "25": {
-        "$value": "oklch(0.982 0.004 60)",
+        "$value": "oklch(0.985 0.002 60)",
         "$type": "color"
       },
       "50": {
-        "$value": "oklch(0.972 0.005 60)",
+        "$value": "oklch(0.974 0.0025 60)",
         "$type": "color"
       },
       "100": {
-        "$value": "oklch(0.955 0.006 60)",
+        "$value": "oklch(0.958 0.003 60)",
         "$type": "color"
       },
       "150": {
-        "$value": "oklch(0.935 0.006 60)",
+        "$value": "oklch(0.937 0.003 60)",
         "$type": "color"
       },
       "200": {
-        "$value": "oklch(0.91 0.007 60)",
+        "$value": "oklch(0.912 0.003 60)",
         "$type": "color"
       },
       "300": {
-        "$value": "oklch(0.855 0.008 60)",
+        "$value": "oklch(0.857 0.003 60)",
         "$type": "color"
       },
       "400": {
-        "$value": "oklch(0.72 0.009 60)",
+        "$value": "oklch(0.72 0.003 60)",
         "$type": "color"
       },
       "450": {
-        "$value": "oklch(0.61 0.01 60)",
+        "$value": "oklch(0.61 0.003 60)",
         "$type": "color"
       },
       "500": {
-        "$value": "oklch(0.565 0.011 60)",
+        "$value": "oklch(0.56 0.003 60)",
         "$type": "color"
       },
       "600": {
-        "$value": "oklch(0.495 0.011 60)",
+        "$value": "oklch(0.49 0.003 60)",
         "$type": "color"
       },
       "700": {
-        "$value": "oklch(0.405 0.011 60)",
+        "$value": "oklch(0.4 0.002 60)",
         "$type": "color"
       },
       "750": {
-        "$value": "oklch(0.355 0.01 60)",
+        "$value": "oklch(0.34 0.0015 60)",
         "$type": "color"
       },
       "800": {
-        "$value": "oklch(0.322 0.01 60)",
+        "$value": "oklch(0.3 0.0015 60)",
         "$type": "color"
       },
       "825": {
-        "$value": "oklch(0.295 0.009 60)",
+        "$value": "oklch(0.268 0.001 60)",
         "$type": "color"
       },
       "875": {
-        "$value": "oklch(0.258 0.009 60)",
+        "$value": "oklch(0.235 0.001 60)",
         "$type": "color"
       },
       "900": {
-        "$value": "oklch(0.232 0.009 60)",
+        "$value": "oklch(0.21 0.001 60)",
         "$type": "color"
       },
       "925": {
-        "$value": "oklch(0.205 0.008 60)",
+        "$value": "oklch(0.185 0.001 60)",
         "$type": "color"
       },
       "950": {
-        "$value": "oklch(0.178 0.008 60)",
+        "$value": "oklch(0.16 0.001 60)",
         "$type": "color"
       },
       "975": {
-        "$value": "oklch(0.152 0.007 60)",
+        "$value": "oklch(0.135 0.001 60)",
         "$type": "color"
       },
       "1000": {
-        "$value": "oklch(0.128 0.007 60)",
+        "$value": "oklch(0.11 0 0)",
         "$type": "color"
       }
     },
     "qeet": {
-      "$description": "Qeet — the brand (\"Ember\") ramp, owned by Qeet rather than borrowed from a framework palette. 500 is the official Qeet orange, #F26D0E exactly (oklch(0.686 0.1855 47.1629) round-trips to it); the other steps share the lightness ladder of the status ramps, with hue drifting warmer-yellow when light and redder when deep. 550 exists for the primary-action hover, which must stay ≥4.5:1 against the dark on-brand label. Orange has meaning: primary actions, selection, focus and key brand moments — never decoration.",
+      "$description": "Qeet — the brand ramp. 500 is #F26D0E exactly: the brand colour for identity, accents, the logo and brand text on dark. 600 is Qeet Ember (#D04800), the ACTION orange: the deepest shade that keeps the brand vivid while carrying white text at ≥4.5:1 (WCAG AA) — the brand orange itself is 3.0:1 with white. Steps past 500 shift toward red (47° → 32°) rather than only darkening, so deep oranges stay ember, not brown.",
       "50": {
         "$value": "oklch(0.976 0.015 62)",
         "$type": "color"
@@ -177,27 +177,27 @@
         "$type": "color"
       },
       "550": {
-        "$value": "oklch(0.643 0.169 50.35)",
+        "$value": "oklch(0.635 0.185 43.5)",
         "$type": "color"
       },
       "600": {
-        "$value": "oklch(0.6 0.161 48.845)",
+        "$value": "oklch(0.585 0.1835 40)",
         "$type": "color"
       },
       "700": {
-        "$value": "oklch(0.522 0.146 46.117)",
+        "$value": "oklch(0.53 0.165 38)",
         "$type": "color"
       },
       "800": {
-        "$value": "oklch(0.448 0.131 43.528)",
+        "$value": "oklch(0.47 0.145 36)",
         "$type": "color"
       },
       "900": {
-        "$value": "oklch(0.383 0.111 41.254)",
+        "$value": "oklch(0.4 0.12 34)",
         "$type": "color"
       },
       "950": {
-        "$value": "oklch(0.29 0.083 38)",
+        "$value": "oklch(0.3 0.09 32)",
         "$type": "color"
       }
     },

@@ -29,7 +29,7 @@
       "selected-foreground": {
         "$value": "var(--qx-color-text-on-brand)",
         "$type": "color",
-        "$description": "The dark label on the action fill (6.7:1). White on Qeet 500 is 3.0:1 and fails AA."
+        "$description": "The white on-brand label on the Qeet Ember action fill (4.6:1)."
       },
       "range-background": {
         "$value": "var(--qx-color-surface-brand-subtle)",

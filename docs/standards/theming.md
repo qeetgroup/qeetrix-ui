@@ -86,9 +86,17 @@ is the point of having the layers.
 
 Two properties of the ramp that a re-brand has to re-check rather than assume:
 
-- **The label on the brand fill is dark.** White on `#F26D0E` is 3.0:1, so
-  `color.text.on-brand` (and `--primary-foreground`) is `graphite.1000`: 6.7:1 at rest, 5.7:1 on
-  hover, 4.8:1 pressed. A darker brand might want white back.
+- **Two oranges: brand and action.** `#F26D0E` (`qeet.500`) is the brand colour — identity,
+  the logo, accents, brand text on dark — but it carries white at only 3.0:1. Filled actions and
+  checked controls use **Qeet Ember** (`qeet.600`, `#D04800`), the deepest shade that keeps the
+  orange vivid while carrying a white label at 4.55:1 (5.1:1 hover, 5.7:1 pressed), in both
+  themes. As a fill it also clears 3:1 against the page in both (4.4:1 light canvas, 4.3:1 dark
+  canvas), which `#F26D0E` never did on white. This is the brand-orange / accessible-orange split mature orange brands use. Steps past
+  500 shift toward red (47° → 32°) instead of only darkening, so deep oranges stay ember, not brown.
+- **Dark mode is neutral near-black.** Graphite is effectively achromatic at the dark end (page
+  `#0e0d0d`, cards `#131312`): warm chroma at that lightness reads as brown. For the same reason
+  the dark *selected* surface is a neutral lift, not an orange tint; the Qeet signal on a selected
+  item is its `border.brand` indicator and brand-coloured icon or check.
 - **`brand.500` is a fill, not a text colour.** Brand-coloured text is `color.text.brand`
   (`qeet.700` light, `qeet.400` dark); links are `color.text.link` / `link-hover`. Step 700 is the
   AA text step on light surfaces and 400 on dark — the same rule holds for every ramp.
@@ -290,8 +298,6 @@ Still below 3:1, deliberately:
 
 - `border.default` and `border.subtle` — dividers and card edges, decoration rather than a
   control boundary, so outside 1.4.11.
-- `action.primary` as a fill against the page — 3.0:1 on white, 2.9:1 on the light canvas. A
-  primary button is identified by its label (6.7:1), not by its fill edge.
 
 ---
 

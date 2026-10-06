@@ -377,6 +377,7 @@
         ],
         "sizes": null,
         "variantGroups": [
+          "emphasis",
           "variant"
         ],
         "variantAliases": {

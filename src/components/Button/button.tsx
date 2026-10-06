@@ -40,10 +40,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary: the one Qeet-orange action on a surface. Flat, a resting hairline shadow,
-        // no lift on hover — the colour is already the loudest thing on the screen.
+        // Primary: the one Qeet-orange action on a surface — Qeet Ember with a white label. Flat, a
+        // resting hairline shadow, no lift on hover — the colour is already the loudest thing on the
+        // screen. Disabled drops to the neutral interactive fill rather than a faded orange: half an
+        // ember over near-black reads as brown, and an unavailable action carries no brand emphasis.
         default:
-          "bg-(--qx-component-button-primary-background) text-(--qx-component-button-primary-foreground) shadow-xs hover:bg-(--qx-component-button-primary-background-hover) active:bg-(--qx-component-button-primary-background-active) data-popup-open:bg-(--qx-component-button-primary-background-hover)",
+          "disabled:not-data-loading:bg-surface-interactive disabled:not-data-loading:text-(--qx-color-text-disabled) disabled:not-data-loading:opacity-100 disabled:not-data-loading:shadow-none aria-disabled:not-data-loading:bg-surface-interactive aria-disabled:not-data-loading:text-(--qx-color-text-disabled) aria-disabled:not-data-loading:opacity-100 aria-disabled:not-data-loading:shadow-none bg-(--qx-component-button-primary-background) text-(--qx-component-button-primary-foreground) shadow-xs hover:bg-(--qx-component-button-primary-background-hover) active:bg-(--qx-component-button-primary-background-active) data-popup-open:bg-(--qx-component-button-primary-background-hover)",
         // Outline: the workhorse beside a primary — dialog footers, forms, table toolbars. Its
         // fill is a component token because it genuinely differs by theme (a clean surface sheet
         // on light; a quiet translucent wash on dark), so it sits on any surface without a patch.

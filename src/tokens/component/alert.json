@@ -1,7 +1,7 @@
 {
   "component": {
     "alert": {
-      "$description": "Alert, Banner and Callout: the inline status family. One status language for all three: the opaque feedback.<status>-subtle surface, a hairline derived from the status hue, the status hue on the icon only, and neutral text. Theme-varying values go through the semantic CSS variables, so one declaration serves both themes.",
+      "$description": "Alert, Banner and Callout: the inline status family. One status language for all three: the feedback.<status>-subtle surface, a hairline derived from the status hue, the status hue on the icon, the title and a 3px inline-start accent, and neutral description prose. Alert's strong emphasis swaps the surface for the solid feedback.<status>-strong fill. Theme-varying values go through the semantic CSS variables, so one declaration serves both themes.",
       "padding-block": {
         "$value": "{control.cell-padding-y}",
         "$type": "dimension",
@@ -10,7 +10,7 @@
       "description": {
         "$value": "var(--qx-color-text-secondary)",
         "$type": "color",
-        "$description": "Body copy on a status surface. Secondary text rather than the status hue: 8.4:1 (light) and 9.5:1 (dark) on every subtle status surface. Status-coloured prose measured 4.8-5.6:1 and turned the whole message into one colour."
+        "$description": "Body copy on a status surface. Secondary text rather than the status hue: 8.4:1 (light) and 9.5:1 (dark) on every subtle status surface. The title carries the status hue (text.<status>, ≥4.5:1 on its subtle surface); the description stays neutral so a long message is not one colour."
       },
       "border": {
         "$description": "The hairline around a status surface: 30% of the status hue mixed into its own subtle surface. Opaque and identical in weight for all four statuses (1.5:1 light, 1.8:1 dark against the surface). semantic border.<status> cannot be used here: border.danger is the 600 step, the invalid-field boundary, so it is three times heavier than border.success/warning/info in light mode.",

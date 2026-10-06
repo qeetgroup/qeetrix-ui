@@ -4,11 +4,22 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * One status language across Alert, Banner and Callout: the opaque `<status>-subtle` surface, a
- * hairline mixed from the status hue (`--qx-component-alert-border-*`), the status hue on the
- * icon only, and neutral text. Prose stays readable at 8:1+ instead of being painted the status
- * colour, and the four statuses carry identical visual weight.
+ * One status language across Alert, Banner and Callout. `emphasis="subtle"` (the default) is the
+ * `<status>-subtle` surface, a hairline mixed from the status hue (`--qx-component-alert-border-*`),
+ * a 3px inline-start accent and title in the status text colour, and neutral description prose —
+ * clearly coloured, still calm enough for a dense screen. `emphasis="strong"` is a solid status fill
+ * with a white label (near-black on amber) for messages that must not be missed: a blocking error,
+ * a suspended account. Use it sparingly.
  */
+/**
+ * Text, icon, title and description in the label colour of a strong fill. Spelled out in full —
+ * Tailwind only generates classes it can read literally in the source.
+ */
+const ON_FEEDBACK_STRONG =
+  "text-on-feedback-strong [&>svg]:text-on-feedback-strong [&>[data-slot=alert-title]]:text-on-feedback-strong [&>[data-slot=alert-description]]:text-on-feedback-strong";
+const ON_WARNING_STRONG =
+  "text-on-warning-strong [&>svg]:text-on-warning-strong [&>[data-slot=alert-title]]:text-on-warning-strong [&>[data-slot=alert-description]]:text-on-warning-strong";
+
 const alertVariants = cva(
   [
     "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-(--qx-component-alert-padding-block) text-sm",
@@ -35,14 +46,64 @@ const alertVariants = cva(
         danger:
           "border-(--qx-component-alert-border-danger) bg-destructive-subtle text-foreground [&>svg]:text-destructive-text",
       },
+      emphasis: {
+        subtle: "",
+        strong: "",
+      },
     },
+    compoundVariants: [
+      // Subtle: the status hue as an inline-start accent and on the title; prose stays neutral.
+      {
+        variant: "info",
+        emphasis: "subtle",
+        class: "border-s-[3px] border-s-info [&>[data-slot=alert-title]]:text-info-text",
+      },
+      {
+        variant: "success",
+        emphasis: "subtle",
+        class: "border-s-[3px] border-s-success [&>[data-slot=alert-title]]:text-success-text",
+      },
+      {
+        variant: "warning",
+        emphasis: "subtle",
+        class: "border-s-[3px] border-s-warning [&>[data-slot=alert-title]]:text-warning-text",
+      },
+      {
+        variant: ["destructive", "danger"],
+        emphasis: "subtle",
+        class:
+          "border-s-[3px] border-s-destructive [&>[data-slot=alert-title]]:text-destructive-text",
+      },
+      // Strong: a solid, theme-invariant status fill. Everything inside takes the on-fill label.
+      {
+        variant: "info",
+        emphasis: "strong",
+        class: `border-info-strong bg-info-strong ${ON_FEEDBACK_STRONG}`,
+      },
+      {
+        variant: "success",
+        emphasis: "strong",
+        class: `border-success-strong bg-success-strong ${ON_FEEDBACK_STRONG}`,
+      },
+      {
+        variant: "warning",
+        emphasis: "strong",
+        class: `border-warning-strong bg-warning-strong ${ON_WARNING_STRONG}`,
+      },
+      {
+        variant: ["destructive", "danger"],
+        emphasis: "strong",
+        class: `border-destructive-strong bg-destructive-strong ${ON_FEEDBACK_STRONG}`,
+      },
+    ],
     defaultVariants: {
       variant: "default",
+      emphasis: "subtle",
     },
   },
 );
 
-/** The alert's own props plus its `variant` surface. */
+/** The alert's own props plus its `variant` and `emphasis` surface. */
 type AlertProps = React.ComponentProps<"div"> & VariantProps<typeof alertVariants>;
 
 /**
@@ -52,12 +113,13 @@ type AlertProps = React.ComponentProps<"div"> & VariantProps<typeof alertVariant
  * `role="alert"` interrupts. For a message that is present when the page loads, or one that is
  * informational rather than urgent, pass `role="status"` (polite) or `role={undefined}`.
  */
-function Alert({ className, variant, ...props }: AlertProps) {
+function Alert({ className, variant, emphasis, ...props }: AlertProps) {
   return (
     <div
       data-slot="alert"
+      data-emphasis={emphasis ?? "subtle"}
       role="alert"
-      className={cn(alertVariants({ variant }), className)}
+      className={cn(alertVariants({ variant, emphasis }), className)}
       {...props}
     />
   );

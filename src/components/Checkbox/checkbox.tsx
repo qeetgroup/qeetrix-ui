@@ -24,8 +24,8 @@ type CheckboxProps = CheckboxPrimitive.Root.Props;
  *
  * - **rest** — the field fill and the ≥3:1 control boundary, so an empty box reads as a control on
  *   every surface (`--qx-component-input-*`, the same tokens a text field uses).
- * - **checked / indeterminate** — an Ember fill with a graphite glyph (6.7:1). The fill alone is
- *   only ~3:1 on light surfaces, so the edge takes the darker `border-brand`, which clears 3:1 on
+ * - **checked / indeterminate** — a Qeet Ember fill with a white glyph (4.6:1). The fill alone is
+ *   under 3:1 on some light surfaces, so the edge takes the darker `border-brand`, which clears 3:1 on
  *   every surface in both themes, and the glyph — not the colour — carries the state.
  * - **focus** — the foundation's outline ring, offset from the box.
  * - **disabled** — Base UI renders a `<span role="checkbox">`, so `:disabled` never matches; the

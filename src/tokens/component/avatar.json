@@ -33,7 +33,7 @@
         "foreground": {
           "$value": "var(--qx-color-text-on-brand)",
           "$type": "color",
-          "$description": "An icon inside the default badge. The dark on-brand label — white on #F26D0E fails."
+          "$description": "An icon inside the default badge: the on-brand label, white on the Qeet Ember fill."
         }
       }
     }
