@@ -169,6 +169,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* shadcn's data-selected variant matches only [data-selected="true"], unlike its data-checked,
+ * data-active and data-open siblings, which match presence. Base UI writes data-selected="" —
+ * so `data-selected:` silently never applied to a Base UI part. Same zero-specificity :where()
+ * as the siblings; [data-selected="true"] still matches.
+ *
+ * All of shadcn's `data-*` state variants (data-active, data-checked, data-open, data-selected, …)
+ * are zero-specificity, so they lose to `hover:` and `focus-visible:` on the same property — a
+ * selected item turned grey under the pointer. They are left as shadcn ships them, because a
+ * consumer's own classes compile against this file too. Qeetrix components instead spell a state
+ * that must hold against hover in the attribute form, `data-[active]:` / `data-[selected]:`,
+ * which Tailwind orders after `hover:`, and write the attribute only while the state holds
+ * (`data-active={active || undefined}`). docs/standards/theming.md § State variants. */
+@custom-variant data-selected {
+  &:where([data-selected]:not([data-selected="false"])) {
+    @slot;
+  }
+}
+
 @theme inline {
   --font-display: "Qeet Display", ui-sans-serif, system-ui, sans-serif;
   --font-heading: "Qeet Display", ui-sans-serif, system-ui, sans-serif;
@@ -205,6 +223,54 @@
   --color-syntax-string: var(--syntax-string);
   --color-syntax-number: var(--syntax-number);
   --color-syntax-literal: var(--syntax-literal);
+  --color-syntax-punctuation: var(--syntax-punctuation);
+  --color-syntax-comment: var(--syntax-comment);
+
+  /* Sidebar selection. The selected item is a quiet Qeet tint with the normal text colour; the
+   * indicator (an inline-start bar, for example) carries the brand at ≥3:1 so selection never
+   * depends on the tint alone. */
+  --color-sidebar-selected: var(--sidebar-selected);
+  --color-sidebar-selected-foreground: var(--sidebar-selected-foreground);
+  --color-sidebar-indicator: var(--sidebar-indicator);
+
+  /* Qeet foundation roles beyond the shadcn contract, as utilities (bg-canvas, bg-surface-sunken,
+   * bg-brand-subtle, border-control, text-link, bg-success-subtle, …). They resolve to the
+   * semantic --qx-color-* variables, so they re-theme with the document like every other
+   * colour. src/tokens/theme/<theme>/semantic.json is where the values live. */
+  --color-canvas: var(--qx-color-surface-canvas);
+  --color-surface: var(--qx-color-surface-default);
+  --color-surface-elevated: var(--qx-color-surface-elevated);
+  --color-surface-overlay: var(--qx-color-surface-overlay);
+  --color-surface-sunken: var(--qx-color-surface-sunken);
+  --color-surface-subtle: var(--qx-color-surface-subtle);
+  --color-surface-interactive: var(--qx-color-surface-interactive);
+  --color-surface-interactive-hover: var(--qx-color-surface-interactive-hover);
+  --color-surface-interactive-active: var(--qx-color-surface-interactive-active);
+  --color-brand-subtle: var(--qx-color-surface-brand-subtle);
+  --color-brand-subtle-hover: var(--qx-color-surface-brand-subtle-hover);
+  --color-brand-subtle-active: var(--qx-color-surface-brand-subtle-active);
+  --color-brand: var(--qx-color-text-brand);
+  --color-link: var(--qx-color-text-link);
+  --color-link-hover: var(--qx-color-text-link-hover);
+  --color-control: var(--qx-color-border-control);
+  --color-control-hover: var(--qx-color-border-control-hover);
+  --color-border-subtle: var(--qx-color-border-subtle);
+  --color-border-strong: var(--qx-color-border-strong);
+  --color-border-brand: var(--qx-color-border-brand);
+  --color-success-subtle: var(--qx-color-feedback-success-subtle);
+  --color-warning-subtle: var(--qx-color-feedback-warning-subtle);
+  --color-info-subtle: var(--qx-color-feedback-info-subtle);
+  --color-destructive-subtle: var(--qx-color-feedback-error-subtle);
+  --color-success-strong: var(--qx-color-feedback-success-strong);
+  --color-warning-strong: var(--qx-color-feedback-warning-strong);
+  --color-info-strong: var(--qx-color-feedback-info-strong);
+  --color-destructive-strong: var(--qx-color-feedback-error-strong);
+  --color-on-feedback-strong: var(--qx-color-text-on-feedback-strong);
+  --color-on-warning-strong: var(--qx-color-text-on-warning-strong);
+  --color-success-text: var(--qx-color-text-success);
+  --color-warning-text: var(--qx-color-text-warning);
+  --color-info-text: var(--qx-color-text-info);
+  --color-destructive-text: var(--qx-color-text-danger);
 
   /* Rating fill. The value is carried by how much of each icon is filled, not by the hue. */
   --color-rating-filled: var(--rating-filled);
@@ -292,12 +358,22 @@
   --text-code: var(--qx-typography-code-font-size);
   --text-code--line-height: var(--qx-typography-code-line-height);
 
-  /* Named durations, so a transition can say what it is rather than how many ms. */
+  /* Named durations, so a transition can say what it is rather than how many ms.
+   *
+   * Tailwind v4's `duration-*` utility reads the `--transition-duration-*` namespace, so that is
+   * what makes `duration-fast` and friends exist; without it they compile to nothing and the
+   * transition silently falls back to the browser default. The `--duration-*` names are kept as
+   * plain variables for anything that already reads them. */
   --duration-instant: var(--qx-motion-duration-instant);
   --duration-fast: var(--qx-motion-duration-fast);
   --duration-normal: var(--qx-motion-duration-normal);
   --duration-slow: var(--qx-motion-duration-slow);
   --duration-deliberate: var(--qx-motion-duration-deliberate);
+  --transition-duration-instant: var(--qx-motion-duration-instant);
+  --transition-duration-fast: var(--qx-motion-duration-fast);
+  --transition-duration-normal: var(--qx-motion-duration-normal);
+  --transition-duration-slow: var(--qx-motion-duration-slow);
+  --transition-duration-deliberate: var(--qx-motion-duration-deliberate);
 
   /* Marquee (components/ui/marquee.tsx) — duration/gap supplied via inline vars. */
   --animate-qx-marquee-left: qx-marquee-left var(--qx-marquee-duration, 20s) linear infinite;
@@ -313,6 +389,77 @@
     }
     to {
       transform: translateX(0);
+    }
+  }
+}
+
+/* The Qeet focus indicator, as one recipe rather than one per component.
+ *
+ * A solid --ring outline, separated from the control by --qx-focus-offset so it reads against
+ * the surrounding surface (≥3:1 on every surface in both themes) rather than against the
+ * control's own fill. Outline, not box-shadow: forced-colors strips shadows, and base.css
+ * already re-points :focus-visible outlines at Highlight there.
+ *
+ *   focus-visible:focus-ring         buttons, tabs, toggles, checkboxes, switches, links, thumbs
+ *   focus-visible:focus-ring-inset   items inside a clipping container: menu, list, table, sidebar
+ *   focus-visible:focus-ring-field   bordered text-entry controls — the border itself turns
+ *                                    --ring and thickens, so the field keeps its outline
+ *
+ * The colour is a longhand, so an invalid control can override it with outline-destructive. */
+@utility focus-ring {
+  outline-style: var(--qx-focus-ring-style);
+  outline-width: var(--qx-focus-outline-width);
+  outline-color: var(--ring);
+  outline-offset: var(--qx-focus-offset);
+}
+@utility focus-ring-inset {
+  outline-style: var(--qx-focus-ring-style);
+  outline-width: var(--qx-focus-outline-width);
+  outline-color: var(--ring);
+  outline-offset: calc(var(--qx-focus-outline-width) * -1);
+}
+@utility focus-ring-field {
+  border-color: var(--ring);
+  outline-style: var(--qx-focus-ring-style);
+  outline-width: 1px;
+  outline-color: var(--ring);
+  outline-offset: 0;
+}
+
+/* Forced colours: the one recipe for an item that is highlighted, selected, current or pressed and
+ * paints a fill behind its label — a menu item or option under the pointer or arrow keys, the
+ * active tab, the current nav item, a selected calendar day, a pressed toggle.
+ *
+ *   data-highlighted:forced-colors-selected      aria-selected:forced-colors-selected
+ *   data-[active]:forced-colors-selected         data-pressed:forced-colors-selected
+ *
+ * Inert outside `forced-colors: active`. Inside it, the item takes the system selection pair —
+ * Highlight fill and edge, HighlightText for its label and every descendant (icons, muted
+ * secondary text, a brand check) — and opts out of forced-colour adjustment. The opt-out is the
+ * point: under `auto`, Chromium paints a Canvas text backplate behind every glyph, so
+ * HighlightText on Highlight renders white on white.
+ *
+ * `!important` because this is a user accessibility mode: no authored state tint (a destructive
+ * item's danger highlight, a selected option's brand tint) may outrank it.
+ *
+ * The other two cases are not this recipe (docs/standards/theming.md § Forced colours):
+ * indicators with no text on them — a selection bar, a checkbox box, a switch track, a slider
+ * range — take `Highlight` directly, and containers with content — a selected card — take a
+ * `Highlight` edge, never a fill. Plain hover paints nothing in forced colours: the bridge maps
+ * the hover fills (accent, sidebar-accent) to Canvas. */
+@utility forced-colors-selected {
+  @media (forced-colors: active) {
+    forced-color-adjust: none !important;
+    background-color: Highlight !important;
+    border-color: Highlight !important;
+    color: HighlightText !important;
+    /* Descendants inherit the opt-out, so their authored paint would show: a count badge inside
+     * the active tab rendered as a blank Canvas box. Inside the selection they are text on
+     * Highlight — no fill of their own, edges in HighlightText. */
+    & * {
+      color: HighlightText !important;
+      background-color: transparent !important;
+      border-color: HighlightText !important;
     }
   }
 }

@@ -1,0 +1,45 @@
+{
+  "component": {
+    "availability-grid": {
+      "$description": "AvailabilityGrid. Component tokens reference SEMANTIC tokens through their CSS variables, so one declaration covers both themes. Every state has a non-colour cue: a selected slot carries a check mark on the quiet Qeet tint, an unavailable slot is hatched in a sunken well, and a free slot is the plain surface.",
+      "slot-height": {
+        "$value": "calc(var(--qx-control-height) - 0.25rem)",
+        "$type": "dimension",
+        "$description": "One time slot's height, a step under the density-resolved control height: 28px at default density (unchanged), 24px at compact — still the WCAG 2.2 minimum target — and 32px at comfortable."
+      },
+      "slot-background": {
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color",
+        "$description": "A free slot: the plain surface."
+      },
+      "slot-background-hover": {
+        "$value": "var(--qx-color-surface-interactive-hover)",
+        "$type": "color"
+      },
+      "selected-background": {
+        "$value": "var(--qx-color-surface-brand-subtle)",
+        "$type": "color",
+        "$description": "A selected slot: the quiet Qeet tint rather than a solid fill, so a week of availability does not become a wall of orange. The check mark, not the tint, is what carries the state."
+      },
+      "selected-background-hover": {
+        "$value": "var(--qx-color-surface-brand-subtle-hover)",
+        "$type": "color"
+      },
+      "selected-indicator": {
+        "$value": "var(--qx-color-text-brand)",
+        "$type": "color",
+        "$description": "The check mark in a selected slot: brand text colour, ≥4.5:1 on the tint in both themes."
+      },
+      "unavailable-background": {
+        "$value": "var(--qx-color-surface-sunken)",
+        "$type": "color",
+        "$description": "A booked or blocked slot: a sunken well under the hatch."
+      },
+      "unavailable-pattern": {
+        "$value": "var(--qx-color-border-control)",
+        "$type": "color",
+        "$description": "The hatch lines over an unavailable slot — the control boundary role, so the pattern clears 3:1 against its well in both themes: it is the state's only visual cue, so it is held to the non-text minimum. Redrawn in GrayText under forced colours."
+      }
+    }
+  }
+}

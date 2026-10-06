@@ -1,9 +1,9 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";
+import { CopyFeedbackIcon, CopyFeedbackLabel } from "@/internal/copy-feedback";
 import type { MessagesFor } from "@/lib/messages";
 import { clipboardMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
@@ -106,6 +106,13 @@ interface CopyButtonProps extends Omit<ButtonProps, "children" | "onClick"> {
   messages?: MessagesFor<"clipboard">;
 }
 
+/**
+ * Copies `value` and confirms it in place: the copy glyph cross-fades to a success check and the
+ * label to `copiedLabel` for `timeout` ms. The button is as wide as the longer label in both
+ * states, so the confirmation never nudges its neighbours. Nothing changes until the browser
+ * has confirmed the write; a refused write leaves it at rest and reports via `onCopyError`.
+ * Exposes `data-copied` while confirming.
+ */
 function CopyButton({
   value,
   timeout = 1500,
@@ -137,9 +144,9 @@ function CopyButton({
   return (
     <Button
       data-slot="copy-button"
+      data-copied={copied || undefined}
       variant={variant}
       size={size}
-      aria-label={copied ? resolvedCopiedLabel : resolvedLabel}
       className={cn(className)}
       onClick={() => {
         // `onCopy` fires only once the write is confirmed; before this it fired
@@ -150,12 +157,9 @@ function CopyButton({
       }}
       {...rest}
     >
-      {copied ? (
-        <CheckIcon aria-hidden className="size-3.5" />
-      ) : (
-        <CopyIcon aria-hidden className="size-3.5" />
-      )}
-      <span className="ms-1">{copied ? resolvedCopiedLabel : resolvedLabel}</span>
+      {/* The name comes from the label on screen, which the feedback swap keeps single. */}
+      <CopyFeedbackIcon copied={copied} />
+      <CopyFeedbackLabel copied={copied} label={resolvedLabel} copiedLabel={resolvedCopiedLabel} />
     </Button>
   );
 }

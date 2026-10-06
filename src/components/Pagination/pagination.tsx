@@ -3,6 +3,7 @@
 import { ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon } from "lucide-react";
 
 import { Button } from "@/components/Button/button";
+import { Spinner } from "@/components/Spinner/spinner";
 import type { MessagesFor } from "@/lib/messages";
 import { paginationMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
@@ -34,7 +35,10 @@ interface PaginationProps {
   pageSize?: number;
   /** Optional total count, if the API exposes one. */
   total?: number;
-  /** Disable everything while a refetch is in flight. */
+  /**
+   * A refetch is in flight: the controls disable, the bar is marked `aria-busy`, and a spinner
+   * (announced through its own status role) sits beside the label.
+   */
   loading?: boolean;
   /**
    * BCP-47 locale for the row counts. Defaults to the nearest `DirectionProvider`'s locale,
@@ -56,6 +60,10 @@ interface PaginationProps {
  * label describing the current page. The model matches the backend's
  * cursor pagination API (`limit` + `next_cursor`); add a `total` if you
  * know it for a "showing 1–50 of 1,234" header.
+ *
+ * It adapts to the width it is given, not the viewport — in a split pane or a card the "Prev"
+ * control folds away first, then the "First" label (its accessible name stays), so the row
+ * count keeps its room. The label is a polite live region: paging announces the new range.
  *
  * Render only when at least one side has navigable history — the
  * footer is noise on a single-page result set:
@@ -111,12 +119,15 @@ function Pagination({
     <nav
       data-slot="pagination"
       aria-label={messages.label}
+      aria-busy={loading || undefined}
       className={cn(
-        "flex items-center justify-between gap-3 border-t px-3 py-2 text-sm",
+        // A size container, so the controls respond to the footer's own width. `w-full` makes
+        // that width definite: a size container cannot take its width from its content.
+        "@container flex w-full items-center justify-between gap-3 border-t px-3 py-2 text-sm",
         className,
       )}
     >
-      <div data-slot="pagination-prev" className="flex items-center gap-1">
+      <div data-slot="pagination-prev" className="flex shrink-0 items-center gap-1">
         <Button
           variant="outline"
           size="sm"
@@ -124,27 +135,38 @@ function Pagination({
           onClick={onFirst}
           aria-label={messages.firstPage}
         >
-          <ChevronsLeftIcon aria-hidden className="rtl:rotate-180" /> {messages.first}
+          <ChevronsLeftIcon aria-hidden className="rtl:rotate-180" />
+          <span className="hidden @xs:inline">{messages.first}</span>
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           disabled={!hasPrev || loading}
           onClick={onPrev ?? onFirst}
           aria-label={messages.previousPage}
-          className="hidden sm:inline-flex"
+          className="hidden @md:inline-flex"
         >
           <ChevronLeftIcon aria-hidden className="rtl:rotate-180" /> {messages.previous}
         </Button>
       </div>
 
-      {derivedLabel && (
-        <span
-          data-slot="pagination-label"
-          className="truncate text-xs text-muted-foreground sm:text-sm"
+      {(derivedLabel || loading) && (
+        <div
+          data-slot="pagination-status"
+          className="flex min-w-0 items-center justify-center gap-2"
         >
-          {derivedLabel}
-        </span>
+          {loading && <Spinner size="sm" />}
+          {derivedLabel && (
+            <span
+              data-slot="pagination-label"
+              aria-live="polite"
+              aria-atomic="true"
+              className="truncate text-xs text-muted-foreground tabular-nums @sm:text-sm"
+            >
+              {derivedLabel}
+            </span>
+          )}
+        </div>
       )}
 
       <Button
@@ -154,6 +176,7 @@ function Pagination({
         disabled={!hasNext || loading}
         onClick={onNext}
         aria-label={messages.nextPage}
+        className="shrink-0"
       >
         {messages.next} <ChevronRightIcon aria-hidden className="rtl:rotate-180" />
       </Button>

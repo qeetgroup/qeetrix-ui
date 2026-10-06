@@ -16,7 +16,9 @@ import {
   FieldLegend,
   FieldSeparator,
   FieldSet,
+  FieldSuccess,
   FieldTitle,
+  FieldWarning,
 } from "@/components/Input/field";
 import { Input } from "@/components/Input/input";
 import { OTPInput } from "@/components/OTPInput/otp-input";
@@ -152,6 +154,124 @@ describe("Field", () => {
           <FieldError>
             <span id="nick-err">Nickname is required</span>
           </FieldError>
+        </Field>
+      </FieldGroup>,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("Field status", () => {
+  it("does not repaint the label when the field is invalid", () => {
+    render(
+      <Field data-testid="field">
+        <FieldLabel>Email</FieldLabel>
+        <FieldControl render={<Input />} />
+        <FieldError>Email is required.</FieldError>
+      </Field>,
+    );
+    // The boundary and the message carry the error; a red label was noise.
+    expect(screen.getByTestId("field").className).not.toMatch(/text-destructive/);
+    expect(screen.getByTestId("field")).toHaveAttribute("data-status", "invalid");
+  });
+
+  it("gives the error a non-colour cue: a decorative icon before the text", () => {
+    render(<FieldError>Too short</FieldError>);
+    const alert = screen.getByRole("alert");
+    const icon = alert.querySelector("svg");
+    expect(icon).toHaveAttribute("aria-hidden", "true");
+    expect(alert).toHaveTextContent("Too short");
+  });
+
+  it("drops the icon when asked", () => {
+    render(<FieldError icon={null}>Too short</FieldError>);
+    expect(screen.getByRole("alert").querySelector("svg")).toBeNull();
+  });
+
+  it("wires a warning into the description and sets the warning status", () => {
+    render(
+      <Field data-testid="field">
+        <FieldLabel>Email</FieldLabel>
+        <FieldControl render={<Input />} />
+        <FieldDescription>Your work address.</FieldDescription>
+        <FieldWarning>This looks like a personal address.</FieldWarning>
+      </Field>,
+    );
+    const control = screen.getByRole("textbox", { name: "Email" });
+    const warning = screen.getByRole("status");
+    expect(control.getAttribute("aria-describedby")?.split(" ")).toEqual(
+      expect.arrayContaining([warning.id, screen.getByText("Your work address.").id]),
+    );
+    expect(control).not.toHaveAttribute("aria-invalid");
+    expect(screen.getByTestId("field")).toHaveAttribute("data-status", "warning");
+    expect(warning.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("wires a success message and sets the success status", () => {
+    render(
+      <Field data-testid="field">
+        <FieldLabel>Username</FieldLabel>
+        <FieldControl render={<Input />} />
+        <FieldSuccess>Username is available.</FieldSuccess>
+      </Field>,
+    );
+    const control = screen.getByRole("textbox", { name: "Username" });
+    expect(control).toHaveAccessibleDescription("Username is available.");
+    expect(screen.getByTestId("field")).toHaveAttribute("data-status", "success");
+  });
+
+  it("lets an error win over a warning", () => {
+    render(
+      <Field data-testid="field">
+        <FieldLabel>Amount</FieldLabel>
+        <FieldControl render={<Input />} />
+        <FieldWarning>Higher than usual.</FieldWarning>
+        <FieldError>Exceeds your limit.</FieldError>
+      </Field>,
+    );
+    expect(screen.getByTestId("field")).toHaveAttribute("data-status", "invalid");
+    expect(screen.getByRole("textbox", { name: "Amount" })).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("renders nothing for an empty warning or success, and sets no status", () => {
+    const { container } = render(
+      <Field data-testid="field">
+        <FieldLabel>Name</FieldLabel>
+        <FieldControl render={<Input />} />
+        <FieldWarning />
+        <FieldSuccess />
+      </Field>,
+    );
+    expect(container.querySelector("[data-slot=field-warning]")).toBeNull();
+    expect(container.querySelector("[data-slot=field-success]")).toBeNull();
+    expect(screen.getByTestId("field")).not.toHaveAttribute("data-status");
+  });
+
+  it("marks a required field visually without changing the accessible name", () => {
+    render(
+      <Field>
+        <FieldLabel required>Email</FieldLabel>
+        <FieldControl render={<Input required />} />
+      </Field>,
+    );
+    // The asterisk is aria-hidden: the control's own `required` is what is announced.
+    const control = screen.getByRole("textbox", { name: "Email" });
+    expect(control).toBeRequired();
+    expect(screen.getByText("*")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("has no axe violations with warning and success messages", async () => {
+    const { container } = render(
+      <FieldGroup>
+        <Field>
+          <FieldLabel optional>Website</FieldLabel>
+          <FieldControl render={<Input />} />
+          <FieldWarning>Use https.</FieldWarning>
+        </Field>
+        <Field>
+          <FieldLabel required>Username</FieldLabel>
+          <FieldControl render={<Input required />} />
+          <FieldSuccess>Available.</FieldSuccess>
         </Field>
       </FieldGroup>,
     );

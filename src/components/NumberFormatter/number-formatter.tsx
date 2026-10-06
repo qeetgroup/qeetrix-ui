@@ -16,7 +16,14 @@ interface NumberFormatterProps extends Omit<React.HTMLAttributes<HTMLSpanElement
   options?: Intl.NumberFormatOptions;
 }
 
-/** Display-only, locale-aware number formatter (wraps `Intl.NumberFormat`). */
+/**
+ * Display-only, locale-aware number formatter (wraps `Intl.NumberFormat`).
+ *
+ * `tabular-nums` keeps columns of figures aligned. `dir="auto"` isolates the number from the
+ * text around it, the way `<bdi>` does: inside right-to-left copy an `en-US` "-42%" or
+ * "$1,200/mo" would otherwise have its sign and units reordered by the bidi algorithm. Pass
+ * `dir` to override.
+ */
 function NumberFormatter({
   value,
   prefix,
@@ -36,7 +43,12 @@ function NumberFormatter({
   const formatted = new Intl.NumberFormat(locale, opts).format(value);
 
   return (
-    <span data-slot="number-formatter" className={cn("tabular-nums", className)} {...props}>
+    <span
+      data-slot="number-formatter"
+      dir="auto"
+      className={cn("tabular-nums", className)}
+      {...props}
+    >
       {prefix}
       {formatted}
       {suffix}

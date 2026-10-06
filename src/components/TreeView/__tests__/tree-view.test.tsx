@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { type TreeNode, TreeView } from "@/components/TreeView/tree-view";
@@ -220,5 +220,135 @@ describe("TreeView direction", () => {
     expect(rows[1].style.paddingInlineStart).toBe("1.5rem");
     // Physical padding would not mirror; assert it is absent rather than trusting the above.
     expect(rows[1].style.paddingLeft).toBe("");
+  });
+});
+
+describe("TreeView selection", () => {
+  const nodes: TreeNode[] = [
+    {
+      id: "src",
+      label: "src",
+      defaultOpen: true,
+      children: [
+        { id: "index", label: "index.ts" },
+        { id: "app", label: "app.tsx", disabled: true },
+      ],
+    },
+    { id: "readme", label: "README.md" },
+  ];
+  const item = (name: string) =>
+    screen.getAllByRole("treeitem").find((el) => el.textContent?.startsWith(name)) as HTMLElement;
+
+  it("stays a pure disclosure tree unless selection is asked for", () => {
+    render(<TreeView data={nodes} />);
+    for (const el of screen.getAllByRole("treeitem"))
+      expect(el).not.toHaveAttribute("aria-selected");
+  });
+
+  it("selects on click and reports the node", () => {
+    const onSelectedIdChange = vi.fn();
+    render(
+      <TreeView data={nodes} defaultSelectedId={null} onSelectedIdChange={onSelectedIdChange} />,
+    );
+    fireEvent.click(screen.getByText("README.md"));
+    expect(item("README.md")).toHaveAttribute("aria-selected", "true");
+    expect(item("index.ts")).toHaveAttribute("aria-selected", "false");
+    expect(onSelectedIdChange).toHaveBeenCalledWith("readme", nodes[1]);
+  });
+
+  it("selects with Enter and Space from the keyboard", () => {
+    render(<TreeView data={nodes} defaultSelectedId="readme" />);
+    const leaf = item("index.ts");
+    leaf.focus();
+    fireEvent.keyDown(leaf, { key: "Enter" });
+    expect(leaf).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(item("README.md"), { key: " " });
+    expect(item("README.md")).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("starts the roving tab stop on the selected node", () => {
+    render(<TreeView data={nodes} defaultSelectedId="index" />);
+    expect(item("index.ts")).toHaveAttribute("tabindex", "0");
+    expect(item("src")).toHaveAttribute("tabindex", "-1");
+  });
+
+  it("keeps a disabled node focusable but unselectable", () => {
+    render(<TreeView data={nodes} defaultSelectedId={null} />);
+    const disabled = item("app.tsx");
+    expect(disabled).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(screen.getByText("app.tsx"));
+    expect(disabled).toHaveAttribute("aria-selected", "false");
+    expect(disabled).toHaveFocus();
+  });
+
+  it("stays put when selection is controlled and the parent ignores the change", () => {
+    render(<TreeView data={nodes} selectedId="index" onSelectedIdChange={() => {}} />);
+    fireEvent.click(screen.getByText("README.md"));
+    expect(item("index.ts")).toHaveAttribute("aria-selected", "true");
+    expect(item("README.md")).toHaveAttribute("aria-selected", "false");
+  });
+
+  it("has no axe violations when selectable", async () => {
+    const { container } = render(
+      <TreeView data={nodes} defaultSelectedId="index" aria-label="Files" />,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("TreeView expansion and navigation", () => {
+  const nodes: TreeNode[] = [
+    { id: "a", label: "alpha", children: [{ id: "a1", label: "a-one" }] },
+    { id: "b", label: "beta", children: [{ id: "b1", label: "b-one" }] },
+    { id: "c", label: "charlie" },
+  ];
+
+  it("reports every expanded branch, uncontrolled", () => {
+    const onExpandedIdsChange = vi.fn();
+    render(<TreeView data={nodes} onExpandedIdsChange={onExpandedIdsChange} />);
+    fireEvent.click(screen.getByText("beta"));
+    expect(onExpandedIdsChange).toHaveBeenLastCalledWith(["b"]);
+    expect(screen.getByText("b-one")).toBeInTheDocument();
+  });
+
+  it("follows controlled expandedIds", () => {
+    const { rerender } = render(<TreeView data={nodes} expandedIds={["a"]} />);
+    expect(screen.getByText("a-one")).toBeInTheDocument();
+    // The parent did not apply the toggle, so the branch stays open.
+    fireEvent.click(screen.getByText("alpha"));
+    expect(screen.getByText("a-one")).toBeInTheDocument();
+    rerender(<TreeView data={nodes} expandedIds={[]} />);
+    expect(screen.queryByText("a-one")).not.toBeInTheDocument();
+  });
+
+  it("expands every sibling with *", () => {
+    render(<TreeView data={nodes} />);
+    const first = screen.getAllByRole("treeitem")[0];
+    first.focus();
+    fireEvent.keyDown(first, { key: "*" });
+    expect(screen.getByText("a-one")).toBeInTheDocument();
+    expect(screen.getByText("b-one")).toBeInTheDocument();
+  });
+
+  it("moves to the next node whose label starts with the typed character", () => {
+    render(<TreeView data={nodes} />);
+    const first = screen.getAllByRole("treeitem")[0];
+    first.focus();
+    fireEvent.keyDown(first, { key: "c" });
+    expect(screen.getByText("charlie").closest('[role="treeitem"]')).toHaveFocus();
+  });
+
+  it("draws depth guides under open branches unless asked not to", () => {
+    const { container, rerender } = render(<TreeView data={nodes} expandedIds={["a"]} />);
+    expect(container.querySelector('[role="group"]')?.className).toContain("after:w-px");
+    rerender(<TreeView data={nodes} expandedIds={["a"]} showGuides={false} />);
+    expect(container.querySelector('[role="group"]')?.className).not.toContain("after:w-px");
+  });
+
+  it("sizes rows from the density-resolved row token", () => {
+    const { container } = render(<TreeView data={nodes} />);
+    expect(container.querySelector('[data-slot="tree-item-row"]')?.className).toContain(
+      "min-h-(--qx-component-tree-view-row-height)",
+    );
   });
 });

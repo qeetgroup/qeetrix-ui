@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["../src/*"],
+      "@qeetrix/ui": ["../src/index.ts"],
+      "@qeetrix-icons/*": ["../../qeetrix-icons/src/*", "./src/brand-fallback/*"]
+    },
+    "tsBuildInfoFile": "../node_modules/.cache/qeetrix/playground.tsbuildinfo"
+  },
+  "include": ["src", "scripts", "__tests__", "vite.config.ts", "vitest.config.ts"]
+}

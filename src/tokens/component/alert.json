@@ -1,0 +1,36 @@
+{
+  "component": {
+    "alert": {
+      "$description": "Alert, Banner and Callout: the inline status family. One status language for all three: the feedback.<status>-subtle surface, a hairline derived from the status hue, the status hue on the icon, the title and a 3px inline-start accent, and neutral description prose. Alert's strong emphasis swaps the surface for the solid feedback.<status>-strong fill. Theme-varying values go through the semantic CSS variables, so one declaration serves both themes.",
+      "padding-block": {
+        "$value": "{control.cell-padding-y}",
+        "$type": "dimension",
+        "$description": "Block padding of an Alert. The density cell metric: 12px at default and comfortable, 6px under compact, so an inline alert in a dense table view is a slim message rather than a panel."
+      },
+      "description": {
+        "$value": "var(--qx-color-text-secondary)",
+        "$type": "color",
+        "$description": "Body copy on a status surface. Secondary text rather than the status hue: 8.4:1 (light) and 9.5:1 (dark) on every subtle status surface. The title carries the status hue (text.<status>, ≥4.5:1 on its subtle surface); the description stays neutral so a long message is not one colour."
+      },
+      "border": {
+        "$description": "The hairline around a status surface: 30% of the status hue mixed into its own subtle surface. Opaque and identical in weight for all four statuses (1.5:1 light, 1.8:1 dark against the surface). semantic border.<status> cannot be used here: border.danger is the 600 step, the invalid-field boundary, so it is three times heavier than border.success/warning/info in light mode.",
+        "info": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-info) 30%, var(--qx-color-feedback-info-subtle))",
+          "$type": "color"
+        },
+        "success": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-success) 30%, var(--qx-color-feedback-success-subtle))",
+          "$type": "color"
+        },
+        "warning": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-warning) 30%, var(--qx-color-feedback-warning-subtle))",
+          "$type": "color"
+        },
+        "danger": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-error) 30%, var(--qx-color-feedback-error-subtle))",
+          "$type": "color"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "component": {
+    "access-review": {
+      "$description": "AccessReview (permission assignment and access certification). Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "cell-padding-y": {
+        "$value": "{control.cell-padding-y}",
+        "$type": "dimension",
+        "$description": "Block padding of a review row. Rows hold multi-line content (subject, evidence, decision), so they follow the density cell padding rather than a fixed row height."
+      }
+    }
+  }
+}

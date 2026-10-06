@@ -1,13 +1,24 @@
 import type * as React from "react";
-
+import { fieldSurface, fieldText } from "@/internal/field-styles";
 import { cn } from "@/lib/utils";
 
+/**
+ * Multi-line text field on the shared field recipe.
+ *
+ * Sizing: it grows with its content (`field-sizing: content`, where supported) from a
+ * density-aware minimum of two control heights up to a 24rem cap, then scrolls — so a long note
+ * never pushes the rest of a form off screen. The user can still resize it vertically; horizontal
+ * resizing is off because it breaks the layout a textarea sits in. Override any of the three with
+ * `className` (`min-h-*`, `max-h-[none]` — tailwind-merge does not recognise `max-h-none` — and `resize-none`).
+ */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       data-slot="textarea"
       className={cn(
-        "flex field-sizing-content min-h-16 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        fieldSurface,
+        fieldText,
+        "flex field-sizing-content min-h-[calc(var(--qx-component-input-height)*2)] max-h-96 resize-y px-2.5 py-2 leading-normal",
         className,
       )}
       {...props}

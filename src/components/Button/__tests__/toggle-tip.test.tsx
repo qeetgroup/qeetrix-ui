@@ -61,3 +61,24 @@ describe("ToggleTip", () => {
     expect(await a11y(document.body)).toHaveNoViolations();
   });
 });
+
+describe("ToggleTipTrigger", () => {
+  it("sits inline at the 24px target minimum, quieter than an action", () => {
+    render(
+      <ToggleTip>
+        <ToggleTipTrigger className="ms-1" />
+        <ToggleTipContent>Help</ToggleTipContent>
+      </ToggleTip>,
+    );
+    const trigger = screen.getByRole("button", { name: "More information" });
+    expect(trigger.className).toContain("size-6");
+    expect(trigger).toHaveClass("text-muted-foreground", "ms-1");
+  });
+
+  it("holds its hover tone while the tip is open", () => {
+    render(<ToggleTipExample open />);
+    const trigger = screen.getByRole("button", { name: "More information" });
+    expect(trigger).toHaveAttribute("data-popup-open");
+    expect(trigger.className).toContain("data-popup-open:bg-surface-interactive-hover");
+  });
+});

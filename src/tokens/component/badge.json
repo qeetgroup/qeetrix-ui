@@ -15,6 +15,29 @@
           "$value": "var(--qx-color-text-on-brand)",
           "$type": "color"
         }
+      },
+      "border": {
+        "$description": "The hairline that gives a tinted badge (brand, info, success, warning, destructive) its shape: 30% of the tone's text hue mixed into its own subtle surface. The subtle surfaces are 1.07:1 against a white card, so without the edge a status badge read as coloured text. Same recipe and weight as the Alert family's status border (1.5:1 light, 1.8:1 dark), and drawn as a border so forced-colors mode keeps the outline.",
+        "brand": {
+          "$value": "color-mix(in oklab, var(--qx-color-text-brand) 30%, var(--qx-color-surface-brand-subtle))",
+          "$type": "color"
+        },
+        "info": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-info) 30%, var(--qx-color-feedback-info-subtle))",
+          "$type": "color"
+        },
+        "success": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-success) 30%, var(--qx-color-feedback-success-subtle))",
+          "$type": "color"
+        },
+        "warning": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-warning) 30%, var(--qx-color-feedback-warning-subtle))",
+          "$type": "color"
+        },
+        "danger": {
+          "$value": "color-mix(in oklab, var(--qx-color-feedback-error) 30%, var(--qx-color-feedback-error-subtle))",
+          "$type": "color"
+        }
       }
     }
   }

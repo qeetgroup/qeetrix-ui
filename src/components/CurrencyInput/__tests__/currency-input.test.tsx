@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { CurrencyInput } from "@/components/CurrencyInput/currency-input";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
 import { DirectionProvider } from "@/providers/direction-provider";
 
 const a11y = (c: Element) =>
@@ -132,9 +133,97 @@ describe("CurrencyInput uncontrolled", () => {
       <CurrencyInput currency="USD" value={10} onValueChange={() => {}} />,
     );
     const input = screen.getByRole("textbox");
-    expect(input).toHaveValue("10");
+    // At rest the amount is written the way the locale prints money.
+    expect(input).toHaveValue("10.00");
 
     rerender(<CurrencyInput currency="USD" value={20} onValueChange={() => {}} />);
-    expect(input).toHaveValue("20");
+    expect(input).toHaveValue("20.00");
+  });
+
+  it("shows a controlled value verbatim when formatting is off", () => {
+    render(
+      <CurrencyInput currency="USD" value={10} onValueChange={() => {}} formatOnBlur={false} />,
+    );
+    expect(screen.getByRole("textbox")).toHaveValue("10");
+  });
+});
+
+describe("CurrencyInput formatting", () => {
+  it("formats on blur with grouping and the currency's minor units", () => {
+    const onValueChange = vi.fn();
+    render(<CurrencyInput aria-label="Amount" locale="en-US" onValueChange={onValueChange} />);
+    const input = screen.getByLabelText("Amount");
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "1500" } });
+    expect(input).toHaveValue("1500");
+    fireEvent.blur(input);
+    expect(input).toHaveValue("1,500.00");
+    // The emitted number is the amount, not the formatting.
+    expect(onValueChange).toHaveBeenLastCalledWith(1500);
+  });
+
+  it("formats in the locale's own notation, including lakh grouping", () => {
+    render(<CurrencyInput aria-label="Amount" currency="INR" locale="en-IN" />);
+    const input = screen.getByLabelText("Amount");
+    fireEvent.change(input, { target: { value: "1234567" } });
+    fireEvent.blur(input);
+    expect(input).toHaveValue("12,34,567.00");
+  });
+
+  it("uses the currency's minor units — none for JPY", () => {
+    render(<CurrencyInput aria-label="Amount" currency="JPY" locale="ja-JP" />);
+    const input = screen.getByLabelText("Amount");
+    fireEvent.change(input, { target: { value: "1500" } });
+    fireEvent.blur(input);
+    expect(input).toHaveValue("1,500");
+  });
+
+  it("never rounds away digits the user typed", () => {
+    render(<CurrencyInput aria-label="Amount" locale="en-US" />);
+    const input = screen.getByLabelText("Amount");
+    fireEvent.change(input, { target: { value: "10.555" } });
+    fireEvent.blur(input);
+    expect(input).toHaveValue("10.555");
+  });
+
+  it("keeps accepting edits to its own formatted text", () => {
+    const onValueChange = vi.fn();
+    render(<CurrencyInput aria-label="Amount" locale="en-US" onValueChange={onValueChange} />);
+    const input = screen.getByLabelText("Amount");
+    fireEvent.change(input, { target: { value: "1500" } });
+    fireEvent.blur(input);
+    fireEvent.change(input, { target: { value: "1,500.50" } });
+    expect(onValueChange).toHaveBeenLastCalledWith(1500.5);
+  });
+
+  it("leaves an unparseable draft alone on blur", () => {
+    render(<CurrencyInput aria-label="Amount" locale="de-DE" currency="EUR" />);
+    const input = screen.getByLabelText("Amount");
+    fireEvent.change(input, { target: { value: "1.5" } });
+    fireEvent.blur(input);
+    expect(input).toHaveValue("1.5");
+  });
+});
+
+describe("CurrencyInput accessibility", () => {
+  it("hides the symbol and describes the input with the currency's name", () => {
+    render(<CurrencyInput aria-label="Amount" currency="INR" locale="en-IN" />);
+    const input = screen.getByRole("textbox", { name: "Amount" });
+    expect(screen.getByText("₹")).toHaveAttribute("aria-hidden", "true");
+    expect(input).toHaveAccessibleDescription(/Indian rupee/i);
+  });
+
+  it("takes its label, description and error from a Field", () => {
+    render(
+      <Field>
+        <FieldLabel>Invoice total</FieldLabel>
+        <CurrencyInput currency="EUR" locale="de-DE" />
+        <FieldDescription>Including VAT.</FieldDescription>
+        <FieldError>Enter an amount.</FieldError>
+      </Field>,
+    );
+    const input = screen.getByRole("textbox", { name: "Invoice total" });
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAccessibleDescription(/Including VAT\..*Enter an amount\..*Euro/);
   });
 });

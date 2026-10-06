@@ -2,137 +2,221 @@
 
 import * as QRCodeLib from "qrcode";
 import * as React from "react";
-import { Skeleton } from "@/components/Spinner/skeleton";
+import { qrCodeMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
-export interface QRCodeProps {
+export interface QRCodeProps
+  extends Omit<React.ComponentProps<"div">, "children" | "onError" | "role"> {
   /** The data to encode — URL, TOTP URI, plain text, etc. */
   value: string;
-  /** Width and height of the rendered QR code in pixels. @default 200 */
+  /**
+   * Edge length of the tile in pixels, quiet zone included. @default 200
+   *
+   * The tile shrinks to its container (`max-width: 100%`) in a narrow panel, so this is the size
+   * it renders at when there is room, not a width it forces. For reliable scanning keep each
+   * module at roughly 3px or more on screen: a dense payload (a long URL at level `H`) needs a
+   * larger `size`, not a smaller quiet zone.
+   */
   size?: number;
   /** Reed–Solomon error correction level. Higher levels allow more of the
    *  code to be recovered when obscured. @default "M" */
   level?: "L" | "M" | "Q" | "H";
-  /** Background colour as an RGBA hex string (e.g. "#ffffffff").
-   *  "transparent" is mapped to "#00000000". @default "transparent" */
+  /**
+   * Width of the quiet zone — the light margin around the modules — in modules. @default 4
+   *
+   * Four modules is what ISO/IEC 18004 specifies and what every decoder is tuned for; below two,
+   * phone cameras start missing codes that sit next to other content. Lower it only when the
+   * code is already surrounded by a wide light area of the same colour.
+   */
+  quietZone?: number;
+  /**
+   * The quiet-zone (tile) colour, as any CSS colour. Defaults to the theme-invariant
+   * `--qx-component-qr-code-background` (white), so the code stays dark-on-light in the dark
+   * theme too. `"transparent"` is honoured for a code placed on a surface you control, but it
+   * makes the code unscannable on a dark one — prefer the default.
+   */
   bgColor?: string;
-  /** Foreground (module) colour as an RGBA hex string (e.g. "#000000ff").
-   *  "currentColor" is mapped to "#000000". @default "currentColor" */
+  /**
+   * The module colour, as any CSS colour. Defaults to the theme-invariant
+   * `--qx-component-qr-code-foreground` (black). `"currentColor"` — the previous default — also
+   * resolves to that token rather than to the inherited text colour: in the dark theme the
+   * text colour is light, and light modules on the light tile do not scan.
+   */
   fgColor?: string;
-  /** Accessible description read by screen readers. @default "QR code" */
+  /**
+   * Accessible name. @default "QR code"
+   *
+   * Say what scanning does ("Scan to pay ₹2,926.40 to Acme India"), not what the code contains —
+   * a TOTP URI carries a secret, and a screen reader would read it aloud. To name the code from
+   * visible text instead, pass `aria-labelledby`; to tie a caption or a manual-entry fallback to
+   * it, pass `aria-describedby`.
+   */
   "aria-label"?: string;
   /**
    * Called when encoding fails (e.g. `value` exceeds the capacity of the chosen
-   * error-correction level). The component renders `errorFallback` instead of
-   * staying in its loading state forever.
+   * error-correction level). The component renders `errorFallback` instead of a code.
    */
   onError?: (error: unknown) => void;
   /**
    * Rendered in place of the code when encoding fails. Defaults to nothing —
-   * an empty box of the same size, so layout does not shift.
+   * an empty tile of the same size, so layout does not shift.
    */
   errorFallback?: React.ReactNode;
-  className?: string;
+}
+
+type Encoded = { ok: true; size: number; data: Uint8Array } | { ok: false; error: unknown };
+
+function encode(value: string, level: QRCodeProps["level"]): Encoded {
+  try {
+    const { modules } = QRCodeLib.create(value, { errorCorrectionLevel: level });
+    return { ok: true, size: modules.size, data: modules.data };
+  } catch (error) {
+    return { ok: false, error };
+  }
 }
 
 /**
- * QRCode renders a QR-code as an inline SVG produced by the `qrcode` library.
- * While the SVG is being generated asynchronously, a `Skeleton` placeholder
- * of identical dimensions is displayed so the layout does not shift.
+ * The dark modules as one path, a horizontal run per rect.
  *
- * Colour props accept RGBA hex strings understood by `qrcode`. The CSS
- * convenience values `"currentColor"` and `"transparent"` are mapped to
- * `"#000000"` and `"#00000000"` respectively before being forwarded to the
- * library.
+ * Built as a fill path rather than the library's stroked one so the colour can be a CSS
+ * variable on `fill` and so a run of modules is one rectangle — no hairline seams between
+ * adjacent modules at fractional scales.
+ */
+function modulePath(data: Uint8Array, size: number, offset: number): string {
+  let path = "";
+  for (let row = 0; row < size; row++) {
+    let col = 0;
+    while (col < size) {
+      if (!data[row * size + col]) {
+        col++;
+        continue;
+      }
+      const start = col;
+      while (col < size && data[row * size + col]) col++;
+      path += `M${start + offset} ${row + offset}h${col - start}v1h${start - col}z`;
+    }
+  }
+  return path;
+}
+
+/** The legacy CSS keywords keep their previous meaning: they never inherit the text colour. */
+function moduleColour(fgColor: string | undefined) {
+  return !fgColor || fgColor === "currentColor"
+    ? "var(--qx-component-qr-code-foreground)"
+    : fgColor;
+}
+
+/**
+ * QRCode renders a QR code as an inline SVG, encoded synchronously from `value` with the
+ * `qrcode` library's matrix encoder.
  *
- * Encoding is asynchronous and sequenced: only the most recently started
- * encode can commit its result, so rapid `value` changes cannot leave an
- * earlier code on screen. A rejected encode ends the loading state and is
- * reported through `onError` rather than left unhandled.
+ * **Scan reliability first.** The code is always dark modules on a light tile with a
+ * four-module quiet zone — in the dark theme too, where the tile stays light rather than the
+ * modules inverting, because many decoders never try inverted polarity. The tile opts out of
+ * forced-colours remapping for the same reason: a high-contrast theme must not turn the quiet
+ * zone black. Modules are drawn at a whole number of pixels where the size allows, with any
+ * remainder added to the quiet zone, so edges stay crisp. Nothing decorates the modules.
+ *
+ * **Labels and actions belong beside it, not on it.** Name the code for what scanning does
+ * (`aria-label`, or `aria-labelledby` pointing at a visible heading), and give every code a
+ * non-camera fallback next to it — a `CopyableSecret` with the TOTP key, the payment link as
+ * text, a "Copy link" button — tied in with `aria-describedby`.
+ *
+ * Encoding is synchronous and memoised on `value` and `level`, so the code renders on the
+ * server and in the first client paint with no loading placeholder. A value too long for the
+ * chosen level renders `errorFallback` and is reported through `onError`.
  */
 function QRCode({
   value,
   size = 200,
   level = "M",
-  bgColor = "transparent",
-  fgColor = "currentColor",
-  "aria-label": ariaLabel = "QR code",
+  quietZone = 4,
+  bgColor,
+  fgColor,
+  "aria-label": ariaLabel,
   onError,
   errorFallback = null,
   className,
+  style,
+  ...props
 }: QRCodeProps) {
-  const [state, setState] = React.useState<
-    { status: "pending" } | { status: "ready"; svg: string } | { status: "error" }
-  >({ status: "pending" });
+  const messages = useMessages("qrCode", qrCodeMessages);
+  const encoded = React.useMemo(() => encode(value, level), [value, level]);
   const onErrorRef = React.useRef(onError);
   onErrorRef.current = onError;
 
   React.useEffect(() => {
-    const dark = fgColor === "currentColor" ? "#000000" : fgColor;
-    const light = bgColor === "transparent" ? "#00000000" : bgColor;
+    if (!encoded.ok) onErrorRef.current?.(encoded.error);
+  }, [encoded]);
 
-    // `cancelled` is the sequencing guard: an encode started for an older set of
-    // inputs must not commit after a newer one, and must not set state after
-    // unmount. Without it, two overlapping encodes can resolve out of order.
-    let cancelled = false;
-    setState((current) => (current.status === "pending" ? current : { status: "pending" }));
+  // Width only: the height follows from `aspect-square`, so the tile stays square when
+  // `max-w-full` shrinks it inside a narrow panel.
+  const box = { width: size, ...style };
 
-    QRCodeLib.toString(value, {
-      type: "svg",
-      errorCorrectionLevel: level,
-      color: { dark, light },
-      width: size,
-      margin: 1,
-    }).then(
-      (svg) => {
-        if (cancelled) return;
-        setState({ status: "ready", svg });
-      },
-      (error: unknown) => {
-        if (cancelled) return;
-        setState({ status: "error" });
-        onErrorRef.current?.(error);
-      },
-    );
-
-    return () => {
-      cancelled = true;
-    };
-  }, [value, level, fgColor, bgColor, size]);
-
-  if (state.status === "pending") {
-    return (
-      <Skeleton
-        data-slot="qr-code"
-        style={{ width: size, height: size }}
-        className={cn("shrink-0", className)}
-      />
-    );
-  }
-
-  if (state.status === "error") {
+  if (!encoded.ok) {
     return (
       <div
         data-slot="qr-code"
         data-state="error"
-        style={{ width: size, height: size }}
-        className={cn("inline-flex shrink-0 items-center justify-center", className)}
+        style={box}
+        className={cn(
+          "inline-flex aspect-square max-w-full shrink-0 items-center justify-center overflow-hidden rounded-(--qx-component-qr-code-corner) border border-dashed border-border bg-surface-sunken text-muted-foreground",
+          className,
+        )}
+        {...props}
       >
         {errorFallback}
       </div>
     );
   }
 
+  const margin = Math.max(0, Math.floor(quietZone));
+  const span = encoded.size + margin * 2;
+  // Whole-pixel modules where there is room: the spare pixels widen the quiet zone instead of
+  // smearing across module edges. Below 1px per module there is nothing to snap to.
+  const modulePx = size / span >= 1 ? Math.floor(size / span) : size / span;
+  const viewBoxSize = size / modulePx;
+  const inset = (viewBoxSize - encoded.size) / 2;
+  // The corner and the hairline both live in the quiet zone; with too thin a zone they would
+  // clip or overdraw a finder pattern, so the tile goes square and unframed instead.
+  const framed = margin >= 2;
+
   return (
     <div
       data-slot="qr-code"
+      data-state="ready"
+      data-framed={framed || undefined}
       role="img"
-      aria-label={ariaLabel}
-      style={{ width: size, height: size }}
-      className={cn("inline-flex items-center justify-center", className)}
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: SVG markup is generated locally by the `qrcode` library from `value` — there is no way to render an SVG string as React children otherwise.
-      dangerouslySetInnerHTML={{ __html: state.svg }}
-    />
+      aria-label={ariaLabel ?? messages.label}
+      style={box}
+      className={cn(
+        "relative inline-flex aspect-square max-w-full shrink-0 overflow-hidden forced-color-adjust-none",
+        // The hairline is an overlay rather than a border so it costs the code no pixels.
+        "data-framed:rounded-(--qx-component-qr-code-corner) data-framed:after:pointer-events-none data-framed:after:absolute data-framed:after:inset-0 data-framed:after:rounded-[inherit] data-framed:after:border data-framed:after:border-(--qx-component-qr-code-border)",
+        className,
+      )}
+      {...props}
+    >
+      <svg
+        data-slot="qr-code-svg"
+        aria-hidden="true"
+        focusable="false"
+        viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+        shapeRendering="crispEdges"
+        className="block size-full"
+      >
+        <rect
+          width={viewBoxSize}
+          height={viewBoxSize}
+          style={{ fill: bgColor ?? "var(--qx-component-qr-code-background)" }}
+        />
+        <path
+          d={modulePath(encoded.data, encoded.size, inset)}
+          style={{ fill: moduleColour(fgColor) }}
+        />
+      </svg>
+    </div>
   );
 }
 

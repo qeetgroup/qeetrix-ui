@@ -1,12 +1,17 @@
 "use client";
 
-import { ClockIcon } from "lucide-react";
+import { CheckIcon, ClockIcon } from "lucide-react";
 import * as React from "react";
-import type { DateRange } from "react-day-picker";
+import type { DateRange, Matcher } from "react-day-picker";
 import { Button } from "@/components/Button/button";
 import { Calendar } from "@/components/Calendar/calendar";
+import { datePickerTriggerVariants } from "@/components/DatePicker/date-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { timeRangePickerMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/providers/direction-provider";
+import { useMessages } from "@/providers/messages-provider";
 
 type TimeRangePreset = "1h" | "24h" | "7d" | "30d" | "90d" | "custom";
 
@@ -16,12 +21,13 @@ interface TimeRangeValue {
   to: Date;
 }
 
-const PRESETS: { value: Exclude<TimeRangePreset, "custom">; label: string; ms: number }[] = [
-  { value: "1h", label: "Last hour", ms: 36e5 },
-  { value: "24h", label: "Last 24 hours", ms: 864e5 },
-  { value: "7d", label: "Last 7 days", ms: 7 * 864e5 },
-  { value: "30d", label: "Last 30 days", ms: 30 * 864e5 },
-  { value: "90d", label: "Last 90 days", ms: 90 * 864e5 },
+/** The presets' values and spans. Their names are the catalogue's `timeRangePicker.preset`. */
+const PRESETS: { value: Exclude<TimeRangePreset, "custom">; ms: number }[] = [
+  { value: "1h", ms: 36e5 },
+  { value: "24h", ms: 864e5 },
+  { value: "7d", ms: 7 * 864e5 },
+  { value: "30d", ms: 30 * 864e5 },
+  { value: "90d", ms: 90 * 864e5 },
 ];
 
 /* ── Formatting environment ────────────────────────────────────────────────────────────────
@@ -33,7 +39,8 @@ const PRESETS: { value: Exclude<TimeRangePreset, "custom">; label: string; ms: n
  *
  * So the first render — the server's, and the hydration render that has to match it — formats in
  * `en-US` unless told otherwise, and only switches to the browser's own locale after mount.
- * Passing `locale` removes the switch altogether, which is what an SSR application should do.
+ * Passing `locale` (or declaring one on a `DirectionProvider`) removes the switch altogether,
+ * which is what an SSR application should do.
  *
  * The time *zone* is deliberately not part of this, for the reason `date-picker.tsx` records:
  * the ends of a custom range arrive from the Calendar as *local* calendar days, so a display
@@ -70,7 +77,8 @@ function formatDate(date: Date, locale: string | undefined): string {
  * and only a *custom* range puts dates on screen, which requires either a `defaultValue` or a
  * selection. So the clock is not needed until the user commits, and a commit happens inside an
  * event handler, where reading it is correct. The initial internal value is therefore `null` and
- * the default preset is a constant.
+ * the default preset is a constant. The one render-time read left is the calendar's opening
+ * month, and that happens only while the popover is open — never on the server.
  */
 
 /** The preset a picker shows before anything is selected. Must be one of `PRESETS`. */
@@ -82,24 +90,49 @@ function presetRange(ms: number): { from: Date; to: Date } {
   return { from: new Date(to.getTime() - ms), to };
 }
 
+/** The last instant of `date`'s local calendar day. */
+function endOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+}
+
+/** The first of the month before `date`'s. */
+function previousMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth() - 1, 1);
+}
+
 interface TimeRangePickerProps {
   value?: TimeRangeValue;
   defaultValue?: TimeRangeValue;
   onValueChange?: (value: TimeRangeValue) => void;
   align?: "start" | "center" | "end";
   /**
-   * BCP 47 locale for a custom range's date text. Omitted, the browser's own locale is used
-   * once the component has mounted, and `en-US` before that — the server cannot know the
-   * browser's, so the first render has to be a value both can produce. Pass it and both renders
-   * agree.
+   * BCP 47 locale for a custom range's date text and the calendar. Omitted, the locale of the
+   * nearest `DirectionProvider` is used; failing that, the browser's own locale once the
+   * component has mounted, and `en-US` before that — the server cannot know the browser's, so the
+   * first render has to be a value both can produce. Pass it and both renders agree.
    */
   locale?: string;
+  /** Earliest day a custom range may start on (inclusive). */
+  min?: Date;
+  /** Latest day a custom range may end on (inclusive) — typically today, for log windows. */
+  max?: Date;
+  /** First column of the calendar, `0` = Sunday. Defaults to Sunday. */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  disabled?: boolean;
+  id?: string;
+  /** Prefixes the trigger's name, e.g. "Log window" → "Log window, Last 24 hours". */
+  "aria-label"?: string;
   className?: string;
 }
 
 /**
  * Preset + custom time-range selector (log windows, analytics, billing periods).
  * Emits `{ preset, from, to }`; presets close on click, the calendar sets a custom range.
+ *
+ * A custom range covers whole days: `from` is the first day's local midnight and `to` the *last
+ * instant* of the last day, so "Aug 1 – Aug 3" includes Aug 3. The calendar opens on the custom
+ * range, or — with none — on last month and this one, since a window is usually in the past. The
+ * selected preset is marked with a check as well as the Qeet tint, and reported as pressed.
  *
  * Server-render safe: the default preset needs no clock, so the instants of its window are
  * computed when the user commits rather than during render — the server and the browser cannot
@@ -113,8 +146,15 @@ function TimeRangePicker({
   onValueChange,
   align = "start",
   locale,
+  min,
+  max,
+  weekStartsOn,
+  disabled,
+  id,
+  "aria-label": ariaLabel,
   className,
 }: TimeRangePickerProps) {
+  const messages = useMessages("timeRangePicker", timeRangePickerMessages);
   const [open, setOpen] = React.useState(false);
   const isControlled = value !== undefined;
   // `null` until a `defaultValue` is given or the user picks: a preset needs no instants to
@@ -126,7 +166,10 @@ function TimeRangePicker({
   // `false` for the first render — the server's, and the hydration render that must match it.
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
-  const activeLocale = locale ?? (mounted ? undefined : FIRST_RENDER_LOCALE);
+  const providerLocale = useLocale();
+  const activeLocale = locale ?? providerLocale ?? (mounted ? undefined : FIRST_RENDER_LOCALE);
+  // Two months stacked under the presets are taller than a phone: below `md`, one.
+  const narrow = useIsMobile();
 
   const commit = (next: TimeRangeValue) => {
     if (!isControlled) setInternal(next);
@@ -138,49 +181,82 @@ function TimeRangePicker({
     setOpen(false);
   };
   const selectCustom = (range: DateRange | undefined) => {
-    if (range?.from) commit({ preset: "custom", from: range.from, to: range.to ?? range.from });
+    if (!range?.from) return;
+    // Whole days: the last day is included, so a one-day pick is a 24-hour window, not an
+    // empty one.
+    commit({ preset: "custom", from: range.from, to: endOfDay(range.to ?? range.from) });
   };
 
   const label = custom
     ? `${formatDate(custom.from, activeLocale)} – ${formatDate(custom.to, activeLocale)}`
-    : (PRESETS.find((p) => p.value === preset)?.label ?? "Select range");
+    : preset && preset !== "custom" && PRESETS.some((p) => p.value === preset)
+      ? messages.preset(preset)
+      : messages.selectRange;
+
+  const dayBounds: Matcher[] = [];
+  if (min) dayBounds.push({ before: min });
+  if (max) dayBounds.push({ after: max });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        render={
-          <Button
-            variant="outline"
-            data-slot="time-range-picker"
-            className={cn("justify-start gap-2 font-normal", className)}
-          >
-            <ClockIcon aria-hidden className="size-4" />
-            {label}
-          </Button>
-        }
-      />
-      <PopoverContent align={align} className="flex w-auto gap-0 p-0">
-        <div className="flex flex-col gap-0.5 border-e border-border p-1.5">
-          {PRESETS.map((p) => (
-            <Button
-              key={p.value}
-              variant={preset === p.value ? "secondary" : "ghost"}
-              size="sm"
-              className="justify-start"
-              onClick={() => selectPreset(p)}
-            >
-              {p.label}
-            </Button>
-          ))}
-          <span className="px-2 pt-1.5 text-xs font-medium text-muted-foreground">
-            Custom range
+        data-slot="time-range-picker"
+        id={id}
+        disabled={disabled}
+        aria-label={ariaLabel ? messages.triggerLabel(ariaLabel, label) : undefined}
+        className={cn(datePickerTriggerVariants(), "w-auto", className)}
+      >
+        <ClockIcon aria-hidden />
+        <span data-slot="time-range-picker-value" className="min-w-0 truncate">
+          {label}
+        </span>
+      </PopoverTrigger>
+      <PopoverContent
+        align={align}
+        aria-label={messages.dialog}
+        className="flex max-h-(--available-height) w-auto max-w-[calc(100vw-1rem)] flex-col gap-0 overflow-y-auto p-0 sm:flex-row"
+      >
+        <div
+          data-slot="time-range-picker-presets"
+          className="flex flex-row flex-wrap gap-0.5 border-b border-border p-1.5 sm:flex-col sm:flex-nowrap sm:border-e sm:border-b-0"
+        >
+          {PRESETS.map((p) => {
+            const active = preset === p.value;
+            return (
+              <Button
+                key={p.value}
+                variant="ghost"
+                size="sm"
+                aria-pressed={active}
+                className="justify-start aria-pressed:bg-brand-subtle aria-pressed:font-medium aria-pressed:text-foreground aria-pressed:hover:bg-brand-subtle-hover"
+                onClick={() => selectPreset(p)}
+              >
+                {messages.preset(p.value)}
+                {active && (
+                  <CheckIcon aria-hidden data-icon="inline-end" className="ms-auto text-brand" />
+                )}
+              </Button>
+            );
+          })}
+          <span className="w-full px-2 pt-1.5 text-xs font-medium text-muted-foreground sm:w-auto">
+            {messages.customRange}
           </span>
         </div>
         <Calendar
           mode="range"
           selected={custom ? { from: custom.from, to: custom.to } : undefined}
           onSelect={selectCustom}
-          numberOfMonths={2}
+          numberOfMonths={narrow ? 1 : 2}
+          // Read only while open — after mount, inside the browser — never on the server.
+          defaultMonth={
+            custom?.from ?? (open ? (narrow ? new Date() : previousMonth(new Date())) : undefined)
+          }
+          startMonth={min}
+          endMonth={max}
+          disabled={dayBounds}
+          weekStartsOn={weekStartsOn}
+          locale={activeLocale ?? new Intl.DateTimeFormat().resolvedOptions().locale}
+          fixedWeeks
           autoFocus
         />
       </PopoverContent>

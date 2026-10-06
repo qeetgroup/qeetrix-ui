@@ -1,7 +1,7 @@
 {
   "component": {
     "button": {
-      "$description": "Button. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "$description": "Button. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
       "corner": {
         "$value": "{corner.control}",
         "$type": "dimension"
@@ -30,16 +30,23 @@
           "$type": "color"
         },
         "background-hover": {
-          "$value": "color-mix(in oklab, var(--qx-color-action-primary) 90%, transparent)",
+          "$value": "var(--qx-color-action-primary-hover)",
           "$type": "color"
         },
         "background-active": {
-          "$value": "color-mix(in oklab, var(--qx-color-action-primary) 80%, transparent)",
+          "$value": "var(--qx-color-action-primary-active)",
           "$type": "color",
-          "$description": "The pressed tone. Also used for an anchor-styled button's hover, which is deliberately stronger than a plain button's \u2014 same tone, one decision."
+          "$description": "The pressed tone. A button rendered as an anchor uses the same hover and press as a native button — one interaction language, whatever the element."
         },
         "foreground": {
           "$value": "var(--qx-color-text-on-brand)",
+          "$type": "color"
+        }
+      },
+      "outline": {
+        "$description": "The outline variant — the neutral partner to a primary in dialog footers, forms and toolbars. Its fill differs by theme (transparent on light, the quiet control wash on dark, matching every dark field), so `background` lives in the theme overlays; the edge is the same decorative strong border in both themes.",
+        "border": {
+          "$value": "var(--qx-color-border-strong)",
           "$type": "color"
         }
       }

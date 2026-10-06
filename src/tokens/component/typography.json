@@ -11,6 +11,20 @@
         "$value": "0.2rem",
         "$type": "dimension",
         "$description": "See code-padding-inline."
+      },
+      "code-font-size": {
+        "$value": "0.875em",
+        "$type": "dimension",
+        "$description": "Inline code is sized relative to the text around it, not fixed on the ramp: Fira Code sets larger than Qeet Text at the same size, and a fixed size would make code in a heading tiny and code in a caption loud."
+      },
+      "code-background": {
+        "$value": "var(--qx-color-surface-sunken)",
+        "$type": "color",
+        "$description": "Code is a well — the sunken surface role — in both themes, for inline code and for preformatted blocks in Prose alike."
+      },
+      "code-corner": {
+        "$value": "{corner.sm}",
+        "$type": "dimension"
       }
     }
   }

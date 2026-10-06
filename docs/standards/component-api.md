@@ -81,9 +81,13 @@ an interaction state fails `check:contract`.
 One tone, one name, across the whole library:
 
 ```text
-default · primary · secondary · tertiary · outline · ghost · link
+default · primary · brand · secondary · tertiary · outline · ghost · link
 destructive · muted · info · success · warning
 ```
+
+`primary` is the solid Qeet action fill; `brand` is the quiet Qeet tint (brand-subtle surface,
+brand text, brand edge) — Badge, Timeline and the selected Chip use it. They are different tones,
+not synonyms.
 
 `destructive` is the name for the dangerous/error tone. The library previously had three names
 for it — `destructive` (Button, Badge, Link, DropdownMenu), `danger` (Alert, Banner) and `error`
@@ -97,7 +101,8 @@ two **still work** on the four components that had them, declared as aliases:
 alert: { api: { variantAliases: { danger: "destructive" } } },
 ```
 
-New code should use `destructive`. Nothing was removed.
+New code should use `destructive`. Nothing was removed. `TimelineTone` follows the same rule:
+`destructive`, with `danger` accepted as a deprecated alias.
 
 A component whose variants are domain concepts rather than tones — `Typography`'s are element
 names, `Container`'s sizes are content widths — declares that instead:
@@ -122,8 +127,9 @@ override density.
 - **`default`** — the size is *density-resolved*. `Button`, `Input`, `Select`, `Sidebar` and
   `Toggle` read their height from `--qx-control-height`, so `default` means "whatever density
   says". See [density.md](./density.md).
-- **`md`** — a fixed middle step. `Chip`, `Blockquote`, `ProgressCircle`, `SegmentedControl` and
-  friends do not participate in density, so their scale is plainly `sm | md | lg`.
+- **`md`** — a fixed middle step. `Chip`, `Blockquote`, `Progress`, `Meter`, `ProgressCircle`,
+  `SegmentedControl` and friends do not participate in density, so their scale is plainly
+  `sm | md | lg`.
 
 A component may not declare **both**; `check:contract` rejects it, because a consumer would have
 to guess. (`Spinner` is the one component using `default` without density — it predates the
@@ -315,7 +321,8 @@ convention, which fails silently when the child does not forward what it was giv
 worse.
 
 Components that do not wrap a Base UI part and genuinely need to change element expose a narrow,
-explicit prop instead — `Typography`'s `variant` selects the element, `Link` renders an `<a>`.
+explicit prop instead — `Typography`'s `variant` selects the element. (`Link` renders an `<a>`
+by default and takes `render` to compose a router link, like the Base UI parts.)
 Do not add a general-purpose escape hatch to a component that does not need one.
 
 ---
@@ -461,9 +468,22 @@ See [tokens.md](./tokens.md) § Component tokens.
 
 ## Copy and localization
 
-Component-internal copy is plain English. Localization belongs to the consuming product —
-expose a prop, never a translation key. A component that needs five strings takes five props (or
-one `labels` object); it does not take an `i18n` instance.
+Every string a component puts in front of a user lives in the message catalogue,
+[`src/lib/messages.ts`](../../src/lib/messages.ts), under the component's group, with a JSDoc line
+and an English default. A component resolves its group with `useMessages(group, defaults,
+messages)` and takes a `messages?: MessagesFor<"group">` prop, so a string can be replaced per
+instance, or for the whole application through `MessagesProvider`; a dedicated prop that already
+names a string (`placeholder`, `emptyMessage`, `toolbarLabel`, `detailTitle`) keeps winning over
+both. Interpolation is a function of its parts, never a template string. The library never takes
+an `i18n` instance.
+
+A **server-safe** component (no `"use client"`) cannot read the provider without becoming a
+client boundary. It resolves its catalogue group against its own `messages` prop with the
+framework-free `resolveMessages`, so its defaults still live in the catalogue and an `undefined`
+override still falls back, but `MessagesProvider` does not reach it.
+
+No module keeps a local `*Messages` object of its own: a string that is not in the catalogue
+cannot be enumerated for a translator.
 
 ---
 

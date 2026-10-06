@@ -1,0 +1,24 @@
+{
+  "component": {
+    "color-picker": {
+      "$description": "ColorPicker and ColorSwatch. The swatch paints a user-chosen colour, not a theme surface, so two decisions are owned here: the checkerboard that means 'no colour set' (theme-varying through semantic variables, so one declaration serves both themes), and the selection check drawn on top of an arbitrary colour, whose tone is picked per swatch by luminance.",
+      "checker": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color"
+      },
+      "checker-alt": {
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color"
+      },
+      "glyph-on-light": {
+        "$value": "var(--qx-color-text-on-brand)",
+        "$type": "color"
+      },
+      "glyph-on-dark": {
+        "$value": "#ffffff",
+        "$type": "color",
+        "$description": "The selection check on a dark swatch. It sits on the swatch's own colour rather than on a theme surface, so it is a fixed white in both themes; no semantic token is light in both."
+      }
+    }
+  }
+}

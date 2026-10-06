@@ -288,3 +288,77 @@ describe("Chart presets and reduced motion", () => {
     }
   });
 });
+
+describe("Chart preset defaults", () => {
+  const twoSeries = {
+    data: [
+      { month: "Jan", a: 1, b: 2 },
+      { month: "Feb", a: 3, b: 1 },
+    ],
+    config: { a: { label: "Alpha" }, b: { label: "Beta" } } satisfies ChartConfig,
+    categoryKey: "month",
+  };
+
+  it("shows a legend for two or more series, so identity is not colour alone", async () => {
+    const { container, findByText } = render(<LineChart {...twoSeries} dataKeys={["a", "b"]} />);
+    await waitFor(() => expect(surface(container)).toBeInTheDocument());
+    expect(await findByText("Alpha")).toBeInTheDocument();
+    expect(await findByText("Beta")).toBeInTheDocument();
+  });
+
+  it("shows no legend box for a single series", async () => {
+    const { container } = render(<BarChart {...twoSeries} dataKeys={["a"]} />);
+    await waitFor(() => expect(surface(container)).toBeInTheDocument());
+    expect(container.querySelector('[data-slot="chart-legend"]')).toBeNull();
+  });
+
+  it("keeps an explicit showLegend={false}", async () => {
+    const { container } = render(
+      <AreaChart {...twoSeries} dataKeys={["a", "b"]} showLegend={false} />,
+    );
+    await waitFor(() => expect(surface(container)).toBeInTheDocument());
+    expect(container.querySelector('[data-slot="chart-legend"]')).toBeNull();
+  });
+
+  it("caps bar thickness and rounds only the data end", async () => {
+    setPrefersReducedMotion(true);
+    const { container } = render(<BarChart {...twoSeries} dataKeys={["a"]} />);
+    await waitFor(() => expect(surface(container)).toBeInTheDocument());
+    const bar = container.querySelector(".recharts-bar path.recharts-rectangle");
+    expect(Number(bar?.getAttribute("width"))).toBeLessThanOrEqual(24);
+  });
+});
+
+describe("Sparkline", () => {
+  it("defaults to categorical series 1, not the brand primary", () => {
+    const { container } = render(<Sparkline data={[1, 2, 3]} />);
+    const spark = container.querySelector('[data-slot="sparkline"]');
+    expect(spark).toHaveClass("text-chart-1");
+    expect(spark).not.toHaveClass("text-primary");
+  });
+
+  it.each([
+    ["positive", "text-chart-positive"],
+    ["negative", "text-chart-negative"],
+    ["neutral", "text-muted-foreground"],
+  ] as const)("maps tone %s onto %s", (tone, className) => {
+    const { container } = render(<Sparkline data={[1, 2, 3]} tone={tone} />);
+    expect(container.querySelector('[data-slot="sparkline"]')).toHaveClass(className);
+  });
+
+  it("is decorative without a label and an image with one", () => {
+    const { container, rerender } = render(<Sparkline data={[1, 2, 3]} />);
+    const spark = () => container.querySelector('[data-slot="sparkline"]');
+    expect(spark()).toHaveAttribute("aria-hidden", "true");
+    rerender(<Sparkline data={[1, 2, 3]} label="Revenue, last 12 weeks, rising" />);
+    expect(spark()).toHaveAttribute("role", "img");
+    expect(spark()).toHaveAccessibleName("Revenue, last 12 weeks, rising");
+  });
+
+  it("adds no tab stop to the tile it sits in", async () => {
+    const { container } = render(<Sparkline data={[1, 4, 2]} />);
+    await waitFor(() => expect(surface(container)).toBeInTheDocument());
+    // Recharts' z-index layers carry tabindex="-1", which is focusable by script only.
+    expect(container.querySelector('[tabindex]:not([tabindex="-1"])')).toBeNull();
+  });
+});

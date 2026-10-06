@@ -93,10 +93,30 @@ Every focusable element has a visible focus indicator, from the Phase 2 focus to
 
 ```text
 --qx-focus-ring-width     3px
---qx-focus-outline-width  2px   (forced-colors fallback)
+--qx-focus-outline-width  2px
 --qx-focus-offset         2px
---qx-color-focus-ring     theme-varying, held to 3:1 by check:contrast
+--qx-color-focus-ring     theme-varying (qeet.600 light, qeet.400 dark) — ≥3:1 on every surface,
+                          held by src/__tests__/token-governance.test.ts
 ```
+
+The indicator is **one recipe, three utilities**, defined once in `src/styles/index.css` so no
+component carries its own ring:
+
+| Utility | For | What it draws |
+|:--|:--|:--|
+| `focus-visible:focus-ring` | buttons, tabs, toggles, checkboxes, radios, switches, links, slider thumbs, interactive cards | a solid `--ring` outline, `--qx-focus-offset` away from the control |
+| `focus-visible:focus-ring-inset` | items inside a clipping container — menu items, list options, table rows and cells, sidebar and tree items | the same outline, drawn inside the element |
+| `focus-visible:focus-ring-field` | bordered text-entry controls | the border turns `--ring` and a 1px outline thickens it to 2px |
+
+Outline, not `box-shadow`: forced-colors mode strips shadows, while `base.css` re-points
+`:focus-visible` outlines at `Highlight`, so the same rule survives both. The offset puts the ring
+against the *surrounding* surface rather than the control's own fill, which is why one colour
+reaches 3:1 on a primary button and on a ghost button alike. The colour is a longhand, so an
+invalid control overrides it with `aria-invalid:focus-visible:outline-destructive`.
+
+The shadcn halo it replaces — `focus-visible:ring-3 focus-visible:ring-ring/disabled` — is about
+1.9:1 against the page, borrows the *disabled* opacity token for an unrelated purpose, and
+disappears entirely in forced-colors mode.
 
 Rules:
 

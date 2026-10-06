@@ -24,3 +24,22 @@ describe("IconButton", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("IconButton states", () => {
+  it("accepts the dense icon-xs size", () => {
+    render(<IconButton icon={BellIcon} size="icon-xs" aria-label="Notifications" />);
+    expect(screen.getByRole("button", { name: "Notifications" })).toHaveAttribute(
+      "data-size",
+      "icon-xs",
+    );
+  });
+
+  it("keeps its required label while loading, with the spinner in the icon's square", () => {
+    const { container } = render(<IconButton icon={BellIcon} aria-label="Refresh" loading />);
+    const btn = screen.getByRole("button", { name: "Refresh" });
+    expect(btn).toHaveAttribute("aria-busy", "true");
+    expect(container.querySelector('[data-slot="button-spinner"]')).not.toBeNull();
+    // The size class hides the icon itself while loading.
+    expect(btn.className).toContain("data-loading:[&>svg:not([data-slot=button-spinner])]:hidden");
+  });
+});

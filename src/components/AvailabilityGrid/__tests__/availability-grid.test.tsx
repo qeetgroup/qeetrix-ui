@@ -313,3 +313,52 @@ describe("AvailabilityGrid direction", () => {
     expect(cell("Mon 09:30")).toHaveFocus();
   });
 });
+
+describe("AvailabilityGrid states beyond colour", () => {
+  it("draws a check in selected slots only, and exposes every state", () => {
+    render(
+      <AvailabilityGrid
+        days={DAYS}
+        times={TIMES}
+        value={["0:0", "1:1"]}
+        unavailable={["1:1", "0:1"]}
+        onValueChange={() => {}}
+      />,
+    );
+    const selected = cell("Mon 09:00");
+    expect(selected).toHaveAttribute("data-state", "selected");
+    expect(selected.querySelector("svg")).not.toBeNull();
+
+    // Unavailable wins over a stale selection: it is hatched, not checked, and not selectable.
+    const blocked = cell("Tue 09:30");
+    expect(blocked).toHaveAttribute("data-state", "unavailable");
+    expect(blocked.querySelector("svg")).toBeNull();
+
+    const free = cell("Tue 09:00");
+    expect(free).toHaveAttribute("data-state", "available");
+    expect(free.querySelector("svg")).toBeNull();
+  });
+
+  it("keeps the check out of the accessible name — aria-selected carries the state", () => {
+    render(<AvailabilityGrid days={DAYS} times={TIMES} value={["0:0"]} onValueChange={() => {}} />);
+    const selected = cell("Mon 09:00");
+    expect(selected).toHaveAccessibleName("Mon 09:00");
+    expect(selected.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("renders and toggles columns that share a label", () => {
+    const onValueChange = vi.fn();
+    render(
+      <AvailabilityGrid
+        days={["Mon", "Mon"]}
+        times={["09:00", "09:00"]}
+        value={[]}
+        onValueChange={onValueChange}
+      />,
+    );
+    // Keys are positional, so repeated labels neither collide nor drop a column.
+    expect(cells()).toHaveLength(4);
+    fireEvent.click(cells()[3]);
+    expect(onValueChange).toHaveBeenCalledWith(["1:1"]);
+  });
+});

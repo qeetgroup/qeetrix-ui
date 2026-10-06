@@ -26,18 +26,19 @@
  *   5. **`capabilities.density: "not-applicable"` is a declaration.** Source inspection can
  *      prove that a component reads a density metric; it cannot decide that density is
  *      irrelevant to one. So `not-applicable` and `unsupported` are declared here and nowhere
- *      else. All 145 families have now been reviewed one at a time: 78 are `unsupported`
+ *      else. After the modernisation pass the manifest reports 52 `supported` (derived from the
+ *      source, or declared below where a wrapper gets density by composition), 50 `unsupported`
  *      (they hardcode a control height, a repeated-row rhythm, a cell padding or a field gap),
- *      39 are `not-applicable` (they own none of those four metrics), 24 are `supported`, and 4
- *      are left `unknown` and deliberately **not** declared — a declaration wins over derivation,
- *      so writing `unknown` down here would mask the day one of them starts reading a metric.
- *      The reason behind every value is recorded per slug in
- *      `scripts/config/density-applicability.json`, and `check:contract` fails on a value with
- *      no reason behind it.
- *   6. **A dimension is `pass` only if a test asserts it.** `check:a11y` reads the suites in
- *      `src/__tests__/accessibility/` and fails on any `pass` or `partial` nothing proves, so
- *      every claim below is cashable. `not-audited` is where a claim goes when its proof does
- *      not exist yet; it is the backlog, not a verdict.
+ *      39 `not-applicable` (they own none of those metrics), and 4 left `unknown` and
+ *      deliberately **not** declared — a declaration wins over derivation, so writing `unknown`
+ *      down here would mask the day one of them starts reading a metric. The same is true of a
+ *      stale `unsupported`: when a component starts reading a density metric, delete its
+ *      declaration and let the derivation report it (the integration pass removed 24).
+ *   6. **A dimension is `pass` only if a test asserts it** — in the component's colocated suite.
+ *      `not-audited` is where a claim goes when its proof does not exist yet; it is the
+ *      backlog, not a verdict. (`check:a11y`, `check:contract` and the
+ *      `density-applicability.json` reasons they read were removed from this checkout in
+ *      01dce7a; until they return, this rule is enforced by review.)
  *
  * TypeScript is the first gate: an invalid status, category or pattern is a compile error.
  * scripts/check/component-contract.mjs is the second: it checks the keys against
@@ -145,7 +146,6 @@ export const COMPONENT_REGISTRY = {
   // ── APG patterns: Base UI primitive or explicit role ────────────────────────────────
   accordion: {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "accordion",
@@ -182,8 +182,9 @@ export const COMPONENT_REGISTRY = {
         forcedColors: "pass",
         contrast: "pass",
       },
-      keyboard: ["tab", "enter", "space"],
-      focus: { model: "sequential", contained: false, restored: false },
+      // A real toolbar: one tab stop, the arrow keys move between actions and wrap.
+      keyboard: ["tab", "enter", "space", "arrow-left", "arrow-right"],
+      focus: { model: "roving", contained: false, restored: false },
     },
     api: {
       axisSources: {
@@ -191,12 +192,15 @@ export const COMPONENT_REGISTRY = {
           source: "forwarded",
           note: "ActionBarItem.variant is passed straight to Button's variant, so Button's cva is the definition: default | destructive | outline | ghost.",
         },
+        size: {
+          source: "forwarded",
+          note: "ActionBarItem.size is passed straight to Button's size.",
+        },
       },
     },
   },
   alert: {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "alert",
@@ -282,7 +286,7 @@ export const COMPONENT_REGISTRY = {
         semantic: "pass",
         name: "pass",
         keyboard: "not-audited",
-        focus: "not-audited",
+        focus: "pass",
         screenReader: "pass",
         rtl: "not-applicable",
         reducedMotion: "pass",
@@ -323,14 +327,19 @@ export const COMPONENT_REGISTRY = {
         semantic: "pass",
         name: "pass",
         keyboard: "pass",
-        focus: "not-audited",
+        // Focus stays with the current indicator under the arrow keys and is rescued when the
+        // focused slide leaves the view; carousel.test.tsx.
+        focus: "pass",
         screenReader: "pass",
         // RTL-001: the arrow keys and Embla's own axis mirror, and five colocated tests drive
         // them from a provider, a `dir` attribute and an explicit option.
         rtl: "pass",
-        reducedMotion: "not-applicable",
-        forcedColors: "not-applicable",
-        contrast: "not-applicable",
+        // Embla's scroll duration collapses to zero under reduced motion (asserted).
+        reducedMotion: "pass",
+        // The controls and indicators now paint (and carry forced-colours rules), so these
+        // apply; neither is asserted yet.
+        forcedColors: "not-audited",
+        contrast: "not-audited",
       },
       keyboard: ["tab", "enter", "space"],
       focus: { model: "sequential", contained: false, restored: false },
@@ -412,7 +421,7 @@ export const COMPONENT_REGISTRY = {
       axisSources: {
         size: {
           source: "forwarded",
-          note: "Passed straight to Button's size, restricted to the icon sizes: icon-sm | icon.",
+          note: "Passed straight to Button's size, restricted to the icon sizes: icon-xs | icon-sm | icon.",
         },
       },
     },
@@ -430,7 +439,8 @@ export const COMPONENT_REGISTRY = {
         focus: "not-audited",
         screenReader: "pass",
         rtl: "not-applicable",
-        reducedMotion: "not-applicable",
+        // Collapsible now animates its panel (CSS), collapsed by the base reduced-motion rule.
+        reducedMotion: "pass",
         forcedColors: "not-applicable",
         contrast: "not-applicable",
       },
@@ -447,11 +457,10 @@ export const COMPONENT_REGISTRY = {
     // Its requestAnimationFrame call moves focus, not pixels, so the scripted-motion signal is
     // a false positive; the dialog and list transitions it renders are CSS and are collapsed by
     // the base reduced-motion rule.
-    capabilities: { reducedMotion: "supported", density: "unsupported" },
+    capabilities: { reducedMotion: "supported" },
   },
   "context-menu": {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "menu",
@@ -518,7 +527,9 @@ export const COMPONENT_REGISTRY = {
         focus: "not-audited",
         screenReader: "not-audited",
         rtl: "not-applicable",
-        reducedMotion: "not-applicable",
+        // Rebuilt on Base UI Drawer: its slide is a CSS transition, collapsed by the base
+        // reduced-motion rule; the swipe follows the pointer and is not animation.
+        reducedMotion: "pass",
         forcedColors: "pass",
         contrast: "pass",
       },
@@ -534,7 +545,6 @@ export const COMPONENT_REGISTRY = {
   },
   "dropdown-menu": {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "menu-button",
@@ -564,13 +574,28 @@ export const COMPONENT_REGISTRY = {
   },
   feed: {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "feed" },
+    api: {
+      axisSources: {
+        variant: {
+          source: "data-attribute",
+          note: "Written to data-variant: card | list. AuditLog forwards the same prop.",
+        },
+      },
+    },
   },
   "floating-window": {
     status: "beta",
     capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "dialog" },
+    accessibility: {
+      required: true,
+      pattern: "dialog",
+      // WCAG 2.1.1: the title bar's move handle takes the arrow keys (Shift for larger steps), so
+      // the panel moves without a pointer. Asserted in floating-window.test.tsx.
+      dimensions: { name: "pass", keyboard: "pass" },
+      keyboard: ["tab", "escape", "arrow-up", "arrow-down", "arrow-left", "arrow-right"],
+      focus: { model: "sequential", contained: false, restored: false },
+    },
   },
   "icon-button": {
     status: "stable",
@@ -596,14 +621,13 @@ export const COMPONENT_REGISTRY = {
       axisSources: {
         size: {
           source: "forwarded",
-          note: "Passed straight to Button's size, restricted to the icon sizes: icon-sm | icon | icon-lg.",
+          note: "Passed straight to Button's size, restricted to the icon sizes: icon-xs | icon-sm | icon | icon-lg.",
         },
       },
     },
   },
   listbox: {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "listbox",
@@ -701,6 +725,10 @@ export const COMPONENT_REGISTRY = {
         contrast: "pass",
       },
       keyboard: ["tab", "arrow-up", "arrow-down"],
+      exceptions: {
+        semantic:
+          'Base UI renders a text input with aria-roledescription ("Number field") rather than role=spinbutton; the spinbutton keyboard contract (ArrowUp/ArrowDown step) holds. The role description comes from the catalogue (numberField.roleDescription).',
+      },
       focus: { model: "sequential", contained: false, restored: false },
     },
   },
@@ -893,7 +921,8 @@ export const COMPONENT_REGISTRY = {
         keyboard: "not-audited",
         focus: "not-audited",
         screenReader: "not-audited",
-        rtl: "not-applicable",
+        // Logical sides (inline-start / inline-end) mirror under :dir(rtl); sheet.test.tsx.
+        rtl: "pass",
         reducedMotion: "pass",
         forcedColors: "pass",
         contrast: "pass",
@@ -1005,6 +1034,10 @@ export const COMPONENT_REGISTRY = {
   },
   toolbar: {
     status: "stable",
+    // Density by composition: items are buttonVariants, whose default size is the density-
+    // resolved button height. Focus and disabled states come from the same recipe.
+    capabilities: { density: "supported" },
+    states: ["hover", "active", "focus-visible", "disabled"],
     accessibility: {
       required: true,
       pattern: "toolbar",
@@ -1021,6 +1054,18 @@ export const COMPONENT_REGISTRY = {
       },
       keyboard: ["tab", "arrow-left", "arrow-right", "home", "end"],
       focus: { model: "roving", contained: false, restored: false },
+    },
+    api: {
+      axisSources: {
+        variant: {
+          source: "forwarded",
+          note: "Toolbar.variant (default | ghost) is a container data-attribute; ToolbarButton.variant and ToolbarLink are forwarded to Button's buttonVariants.",
+        },
+        size: {
+          source: "forwarded",
+          note: "ToolbarButton/ToolbarLink size is passed straight to buttonVariants: default | sm | icon | icon-sm and the rest of Button's scale.",
+        },
+      },
     },
   },
   tooltip: {
@@ -1064,7 +1109,6 @@ export const COMPONENT_REGISTRY = {
   },
   "tree-view": {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "treeview",
@@ -1089,6 +1133,8 @@ export const COMPONENT_REGISTRY = {
         "arrow-right",
         "home",
         "end",
+        "asterisk",
+        "type-ahead",
       ],
       focus: { model: "roving", contained: false, restored: false },
     },
@@ -1137,7 +1183,6 @@ export const COMPONENT_REGISTRY = {
   },
   textarea: {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "none",
@@ -1244,10 +1289,11 @@ export const COMPONENT_REGISTRY = {
       pattern: "none",
       dimensions: {
         semantic: "pass",
-        name: "not-audited",
+        name: "pass",
         keyboard: "not-applicable",
         focus: "not-applicable",
-        screenReader: "not-audited",
+        // The fallback is announced as the name, not as spelled-out initials; avatar.test.tsx.
+        screenReader: "pass",
         rtl: "not-applicable",
         reducedMotion: "not-applicable",
         forcedColors: "pass",
@@ -1258,7 +1304,7 @@ export const COMPONENT_REGISTRY = {
       axisSources: {
         size: {
           source: "data-attribute",
-          note: "Written to data-size and styled with data-[size=sm|lg] utilities: default | sm | lg.",
+          note: "Written to data-size and styled with data-[size=…] utilities: xs | sm | default | lg | xl.",
         },
       },
     },
@@ -1428,18 +1474,18 @@ export const COMPONENT_REGISTRY = {
   // Evidenced by the component's rendered role or the library it is built on.
   "access-review": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "table" },
+    // Row selection (with an indeterminate select-all), pending decisions and locked rows.
+    states: ["selected", "checked", "indeterminate", "loading", "disabled"],
   },
   "app-shell": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "landmarks" },
   },
   calendar: {
     status: "beta",
-    capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "grid" },
+    // RTL-001: the inline arrow keys mirror under dir="rtl"; calendar.test.tsx.
+    accessibility: { required: true, pattern: "grid", dimensions: { rtl: "pass" } },
   },
   clipboard: {
     status: "stable",
@@ -1503,7 +1549,7 @@ export const COMPONENT_REGISTRY = {
         semantic: "pass",
         name: "pass",
         keyboard: "pass",
-        focus: "not-audited",
+        focus: "pass",
         screenReader: "not-audited",
         rtl: "not-applicable",
         reducedMotion: "pass",
@@ -1517,12 +1563,17 @@ export const COMPONENT_REGISTRY = {
   "mention-input": {
     status: "beta",
     capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "combobox" },
+    accessibility: {
+      required: true,
+      // Not the APG combobox: a multiline textbox (role=combobox would drop aria-multiline, and
+      // ARIA forbids aria-expanded on a textbox) with aria-autocomplete=list, a role=listbox
+      // popup and a polite status region for the suggestion count.
+      pattern: "none",
+    },
   },
   "navigation-menu": { status: "beta", accessibility: { required: true, pattern: "disclosure" } },
   "notification-preference-matrix": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "table" },
   },
   resizable: {
@@ -1544,8 +1595,8 @@ export const COMPONENT_REGISTRY = {
       dimensions: {
         semantic: "pass",
         name: "pass",
-        keyboard: "not-audited",
-        focus: "not-audited",
+        keyboard: "pass",
+        focus: "pass",
         screenReader: "pass",
         rtl: "not-applicable",
         reducedMotion: "not-applicable",
@@ -1597,7 +1648,6 @@ export const COMPONENT_REGISTRY = {
   // tab stop. The pattern is a description of what the component is, not an audit claim.
   "availability-grid": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "grid",
@@ -1672,7 +1722,6 @@ export const COMPONENT_REGISTRY = {
   },
   "copyable-secret": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "none" },
     api: {
       axisSources: {
@@ -1683,7 +1732,13 @@ export const COMPONENT_REGISTRY = {
       },
     },
   },
-  "country-picker": { status: "beta", accessibility: { required: true, pattern: "none" } },
+  "country-picker": {
+    status: "beta",
+    // Density by composition: it renders NativeSelect by default and Combobox when searchable.
+    capabilities: { density: "supported" },
+    accessibility: { required: true, pattern: "none" },
+    api: { controlled: [{ value: "value", default: "defaultValue", change: "onChange" }] },
+  },
   "currency-input": {
     status: "beta",
     capabilities: { density: "supported" },
@@ -1691,18 +1746,19 @@ export const COMPONENT_REGISTRY = {
   },
   "date-picker": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "none",
-      // Only these two: nothing in the suite presses a key inside the popover or asserts that
-      // focus returns to the trigger, so `keyboard` and `focus` are not claimed.
-      dimensions: { semantic: "pass", name: "pass" },
+      // The keyboard suite opens from the keyboard, moves by day, picks with Enter, closes on
+      // Escape and asserts focus returns to the trigger.
+      dimensions: { semantic: "pass", name: "pass", keyboard: "pass", focus: "pass" },
     },
   },
   "date-time-picker": {
     status: "beta",
-    capabilities: { density: "unsupported" },
+    // Density by composition: its day grid is Calendar (cell = control height) and its time
+    // columns are TimePicker, both density-resolved.
+    capabilities: { density: "supported" },
     accessibility: { required: true, pattern: "none" },
   },
   "diff-viewer": {
@@ -1712,8 +1768,12 @@ export const COMPONENT_REGISTRY = {
   },
   editable: {
     status: "beta",
-    capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "none" },
+    accessibility: {
+      required: true,
+      pattern: "none",
+      // Committing or cancelling returns focus to the preview it was opened from.
+      focus: { model: "sequential", contained: false, restored: true },
+    },
   },
   field: {
     status: "stable",
@@ -1744,11 +1804,12 @@ export const COMPONENT_REGISTRY = {
   },
   "file-upload": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "none",
-      dimensions: { name: "pass" },
+      // The dropzone is a native-button-activated target (Enter/Space) and each row announces its
+      // progress politely, named after the file; file-upload.test.tsx.
+      dimensions: { name: "pass", keyboard: "pass", focus: "pass", screenReader: "pass" },
     },
   },
   "focus-trap": {
@@ -1758,7 +1819,6 @@ export const COMPONENT_REGISTRY = {
   },
   form: {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "none" },
   },
   icon: {
@@ -1793,15 +1853,32 @@ export const COMPONENT_REGISTRY = {
       keyboard: ["tab"],
       focus: { model: "sequential", contained: false, restored: false },
     },
+    api: {
+      axisSources: {
+        variant: {
+          source: "data-attribute",
+          note: "InputGroupAddon writes data-variant: inline (on the field surface) | segment (a divided, tinted cell).",
+        },
+      },
+    },
   },
   "json-tree": {
     status: "beta",
     capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "none" },
+    accessibility: {
+      required: true,
+      // One role=tree with a single tab stop and arrow-key navigation; json-tree.test.tsx.
+      pattern: "treeview",
+      dimensions: { semantic: "pass", keyboard: "pass" },
+      keyboard: ["tab", "arrow-up", "arrow-down", "arrow-left", "arrow-right", "home", "end"],
+      focus: { model: "roving", contained: false, restored: false },
+    },
   },
   "logo-uploader": {
     status: "beta",
-    capabilities: { density: "unsupported" },
+    // Density by composition: the drop target is FileUpload's Dropzone and the actions are
+    // default-size Buttons, both density-resolved.
+    capabilities: { density: "supported" },
     accessibility: { required: true, pattern: "none" },
   },
   "mask-input": {
@@ -1827,7 +1904,6 @@ export const COMPONENT_REGISTRY = {
   },
   "otp-input": {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
       pattern: "none",
@@ -1837,14 +1913,15 @@ export const COMPONENT_REGISTRY = {
         keyboard: "pass",
         focus: "pass",
         screenReader: "not-audited",
-        // RTL-001: the boxes sit on the inline axis, so box navigation mirrors even though the
-        // digits themselves keep their order.
+        // RTL-001 (revised): a code is a number, so under dir="rtl" the boxes keep left-to-right
+        // digit order (the row is reversed, not given dir="ltr") and ArrowRight is always the next
+        // digit — the keys follow what is on screen.
         rtl: "pass",
         reducedMotion: "pass",
         forcedColors: "pass",
         contrast: "pass",
       },
-      keyboard: ["tab", "backspace", "arrow-left", "arrow-right"],
+      keyboard: ["tab", "backspace", "arrow-left", "arrow-right", "home", "end"],
       focus: { model: "sequential", contained: false, restored: false },
     },
   },
@@ -1880,8 +1957,9 @@ export const COMPONENT_REGISTRY = {
       dimensions: {
         semantic: "pass",
         name: "pass",
-        keyboard: "not-audited",
-        focus: "not-audited",
+        // The reveal toggle keeps focus and is operable from the keyboard; asserted.
+        keyboard: "pass",
+        focus: "pass",
         screenReader: "not-audited",
         rtl: "not-applicable",
         reducedMotion: "not-applicable",
@@ -1895,7 +1973,7 @@ export const COMPONENT_REGISTRY = {
   "password-strength-meter": {
     status: "beta",
     capabilities: { density: "not-applicable" },
-    accessibility: { required: true, pattern: "none" },
+    accessibility: { required: true, pattern: "none", liveRegion: "polite" },
   },
   "presence-indicator": {
     status: "stable",
@@ -1958,7 +2036,8 @@ export const COMPONENT_REGISTRY = {
   "qr-code": {
     status: "beta",
     capabilities: { density: "not-applicable" },
-    accessibility: { required: true, pattern: "none" },
+    // The tile opts out of forced-colour remapping, so the code stays scannable; asserted.
+    accessibility: { required: true, pattern: "none", dimensions: { forcedColors: "pass" } },
     api: {
       axisSources: {
         size: {
@@ -1982,23 +2061,34 @@ export const COMPONENT_REGISTRY = {
       required: true,
       pattern: "toolbar",
       // API-003/A11Y: a named role="toolbar" with one tab stop, arrow/Home/End navigation, a
-      // multiline textbox, and Field label/description/error association — all asserted in the
-      // colocated suite. `rtl` stays unaudited: the toolbar's arrow keys are not yet mirrored.
+      // multiline textbox, Field label/description/error association, and arrow keys that mirror
+      // under RTL — all asserted in the colocated suite.
       dimensions: {
         semantic: "pass",
         name: "pass",
         keyboard: "pass",
         focus: "pass",
         screenReader: "pass",
+        rtl: "pass",
       },
     },
+    states: ["disabled", "read-only", "invalid"],
   },
   "scroll-area": {
     status: "beta",
     capabilities: { density: "not-applicable" },
-    accessibility: { required: true, pattern: "none" },
+    accessibility: { required: true, pattern: "none", dimensions: { forcedColors: "pass" } },
   },
-  sidebar: { status: "beta", accessibility: { required: true, pattern: "none" } },
+  sidebar: {
+    status: "beta",
+    accessibility: {
+      required: true,
+      pattern: "none",
+      // Direction (rail offset, mobile sheet side, portalled sheet dir) and the focus ring are
+      // asserted in sidebar.test.tsx.
+      dimensions: { rtl: "pass", focus: "pass" },
+    },
+  },
   spinner: {
     status: "stable",
     capabilities: { density: "not-applicable" },
@@ -2036,6 +2126,14 @@ export const COMPONENT_REGISTRY = {
         contrast: "pass",
       },
     },
+    api: {
+      axisSources: {
+        orientation: {
+          source: "layout",
+          note: "Structural: horizontal | vertical, written to data-orientation. Not an appearance axis.",
+        },
+      },
+    },
   },
   "table-of-contents": {
     status: "beta",
@@ -2044,12 +2142,31 @@ export const COMPONENT_REGISTRY = {
   },
   "tag-input": {
     status: "beta",
-    capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "none" },
+    accessibility: {
+      required: true,
+      pattern: "none",
+      // Tags are a roving row: arrows move between them, Backspace/Delete remove one and move
+      // focus to its neighbour, Home/End/Escape return to the draft, Enter adds. Additions and
+      // removals are announced politely.
+      keyboard: [
+        "tab",
+        "enter",
+        "backspace",
+        "delete",
+        "arrow-left",
+        "arrow-right",
+        "home",
+        "end",
+        "escape",
+      ],
+      liveRegion: "polite",
+    },
   },
   "time-picker": {
     status: "beta",
-    capabilities: { density: "unsupported" },
+    // Density by composition: the default column height is the density-resolved field height
+    // (`size="default"`); `sm` is the explicit 28px opt-out.
+    capabilities: { density: "supported" },
     accessibility: {
       required: true,
       pattern: "none",
@@ -2058,15 +2175,23 @@ export const COMPONENT_REGISTRY = {
   },
   "time-range-picker": {
     status: "beta",
-    capabilities: { density: "unsupported" },
+    // Density by composition: the range grid is Calendar, whose cell is the control height.
+    capabilities: { density: "supported" },
     accessibility: { required: true, pattern: "none" },
   },
   timer: {
     status: "beta",
     capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "none" },
+    // Pause/resume/complete are announced politely; role=timer stays out of the live region.
+    accessibility: { required: true, pattern: "none", liveRegion: "polite" },
   },
-  "timezone-picker": { status: "beta", accessibility: { required: true, pattern: "none" } },
+  "timezone-picker": {
+    status: "beta",
+    // Density by composition: it renders NativeSelect by default and Combobox when searchable.
+    capabilities: { density: "supported" },
+    accessibility: { required: true, pattern: "none" },
+    api: { controlled: [{ value: "value", default: "defaultValue", change: "onChange" }] },
+  },
   "toggle-tip": {
     status: "beta",
     capabilities: { density: "unsupported" },
@@ -2105,15 +2230,24 @@ export const COMPONENT_REGISTRY = {
     status: "beta",
     capabilities: { density: "not-applicable" },
     accessibility: { required: false, pattern: "none" },
+    api: {
+      axisSources: {
+        tone: {
+          source: "class-map",
+          note: "Sparkline.tone selects a stroke colour from a map: default | positive | negative | neutral.",
+        },
+      },
+    },
   },
   "comment-thread": {
     status: "beta",
-    capabilities: { density: "unsupported" },
+    // Its requestAnimationFrame calls move focus (to the composer, back to the thread), not
+    // pixels, so the scripted-motion signal is a false positive — as for CommandPalette.
+    capabilities: { density: "unsupported", reducedMotion: "supported" },
     accessibility: { required: false, pattern: "none" },
   },
   "description-list": {
     status: "stable",
-    capabilities: { density: "unsupported" },
     accessibility: {
       required: false,
       pattern: "none",
@@ -2148,6 +2282,8 @@ export const COMPONENT_REGISTRY = {
         contrast: "pass",
       },
     },
+    // `variant` names a scenario (first-use, no-results, no-permission, error), not a look.
+    api: { domainAxes: ["variant"] },
   },
   "file-card": {
     status: "stable",
@@ -2158,8 +2294,10 @@ export const COMPONENT_REGISTRY = {
       dimensions: {
         semantic: "pass",
         name: "not-audited",
-        keyboard: "not-applicable",
-        focus: "not-applicable",
+        // Applicable once the name opens the file (href → link, onOpen → button); both render
+        // native, focusable elements, asserted in file-card.test.tsx.
+        keyboard: "pass",
+        focus: "pass",
         screenReader: "not-audited",
         rtl: "not-applicable",
         reducedMotion: "pass",
@@ -2197,13 +2335,12 @@ export const COMPONENT_REGISTRY = {
   },
   "filter-bar": {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: false, pattern: "none" },
   },
   marquee: {
     status: "beta",
     capabilities: { density: "not-applicable" },
-    accessibility: { required: false, pattern: "none" },
+    accessibility: { required: false, pattern: "none", dimensions: { reducedMotion: "pass" } },
   },
   "master-detail": {
     status: "beta",
@@ -2213,6 +2350,11 @@ export const COMPONENT_REGISTRY = {
       // RTL-001: the mobile detail sheet opens from the inline-end edge, which mirrors.
       pattern: "none",
       dimensions: { rtl: "pass" },
+    },
+    api: {
+      controlled: [
+        { value: "detailOpen", default: "defaultDetailOpen", change: "onDetailOpenChange" },
+      ],
     },
   },
   "number-formatter": {
@@ -2271,7 +2413,7 @@ export const COMPONENT_REGISTRY = {
   "rolling-number": {
     status: "beta",
     capabilities: { density: "not-applicable" },
-    accessibility: { required: false, pattern: "none" },
+    accessibility: { required: false, pattern: "none", dimensions: { reducedMotion: "pass" } },
   },
   "security-item": {
     status: "stable",
@@ -2345,8 +2487,15 @@ export const COMPONENT_REGISTRY = {
   },
   timeline: {
     status: "beta",
-    capabilities: { density: "unsupported" },
     accessibility: { required: false, pattern: "none" },
+    api: {
+      axisSources: {
+        tone: {
+          source: "data-attribute",
+          note: "TimelineIndicator writes data-tone: neutral | brand | info | success | warning | destructive (danger is a legacy alias).",
+        },
+      },
+    },
   },
   // ── deprecated ──────────────────────────────────────────────────────────────────────
   "pagination-bar": {

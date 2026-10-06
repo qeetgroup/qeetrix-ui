@@ -286,3 +286,114 @@ describe("CommandPalette active-result model", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("CommandPalette enterprise behaviour", () => {
+  const combobox = () => screen.getByRole("combobox");
+
+  it("labels each group so a screen reader hears where a result lives", () => {
+    render(<Palette />);
+    const file = screen.getByRole("group", { name: "File" });
+    expect(
+      within(file)
+        .getAllByRole("option")
+        .map((o) => o.textContent),
+    ).toEqual(["New file", "Open file"]);
+    expect(screen.getByRole("group", { name: "General" })).toBeInTheDocument();
+  });
+
+  it("shows a shortcut on the row and exposes it as the option's description", () => {
+    render(
+      <CommandPalette
+        open
+        onOpenChange={vi.fn()}
+        onSelect={vi.fn()}
+        items={[{ id: "new", title: "New file", shortcut: ["⌘", "N"] }]}
+      />,
+    );
+    const option = screen.getByRole("option", { name: "New file" });
+    expect(option).toHaveAccessibleDescription("⌘N");
+    expect(option.querySelectorAll('[data-slot="kbd"]')).toHaveLength(2);
+  });
+
+  it("marks the active result with the Qeet tint and a ≥3:1 indicator bar", () => {
+    render(<Palette />);
+    const [active, idle] = screen.getAllByRole("option");
+    expect(active).toHaveAttribute("data-highlighted");
+    expect(idle).not.toHaveAttribute("data-highlighted");
+    expect(active.className).toContain(
+      "data-highlighted:bg-(--qx-component-command-palette-item-selected-background)",
+    );
+    expect(active.className).toContain("before:bg-border-brand");
+    expect(active.className).toContain("data-highlighted:before:opacity-100");
+  });
+
+  it("moves the highlight on real pointer movement only", () => {
+    render(<Palette />);
+    const options = screen.getAllByRole("option");
+    // mouseenter also fires when the list scrolls under a resting pointer; it must not steal
+    // the highlight from the arrow keys.
+    fireEvent.mouseEnter(options[2]);
+    expect(options[0]).toHaveAttribute("aria-selected", "true");
+    fireEvent.pointerMove(options[2]);
+    expect(options[2]).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("leaves Enter to the input method while a composition is in progress", () => {
+    const onSelect = vi.fn();
+    render(<Palette onSelect={onSelect} />);
+    fireEvent.keyDown(combobox(), { key: "Enter", isComposing: true });
+    expect(onSelect).not.toHaveBeenCalled();
+    fireEvent.keyDown(combobox(), { key: "Enter" });
+    expect(onSelect).toHaveBeenCalledWith(ITEMS[0]);
+  });
+
+  it("keeps focus in the search field when the result list is pressed", () => {
+    render(<Palette />);
+    const notCancelled = fireEvent.mouseDown(screen.getByRole("listbox"));
+    expect(notCancelled).toBe(false);
+  });
+
+  it("localises the visible count with the announced one", () => {
+    render(
+      <CommandPalette
+        open
+        onOpenChange={vi.fn()}
+        items={ITEMS}
+        onSelect={vi.fn()}
+        resultCountLabel={(n) => `${n} résultats`}
+      />,
+    );
+    const footer = document.querySelector('[data-slot="command-palette-footer"]');
+    expect(footer).toHaveTextContent("3 résultats");
+  });
+
+  it("still shows a count when the announcement is silenced", () => {
+    render(
+      <CommandPalette
+        open
+        onOpenChange={vi.fn()}
+        items={ITEMS}
+        onSelect={vi.fn()}
+        resultCountLabel={() => ""}
+      />,
+    );
+    const footer = document.querySelector('[data-slot="command-palette-footer"]');
+    expect(footer).toHaveTextContent("3 results");
+  });
+
+  it("dims the page with the overlay scrim token and centres without the UA's margins", () => {
+    render(<Palette />);
+    const dialog = screen.getByRole("dialog", { name: "Command palette" });
+    expect(dialog.className).toContain("backdrop:bg-(--qx-color-overlay-scrim)");
+    expect(dialog.className).not.toMatch(/backdrop:bg-foreground/);
+    expect(dialog.className).toContain("inset-x-0");
+    expect(dialog.className).toContain("mx-auto");
+  });
+
+  it("sizes results from the density-resolved item height", () => {
+    render(<Palette />);
+    for (const option of screen.getAllByRole("option")) {
+      expect(option.className).toContain("min-h-(--qx-component-command-palette-item-height)");
+    }
+  });
+});

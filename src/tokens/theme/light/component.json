@@ -1,13 +1,30 @@
 {
-  "$description": "Theme overrides for component tokens \u2014 only for decisions that genuinely differ between light and dark. Anything identical in both themes belongs in src/tokens/component/.",
+  "$description": "Theme overrides for component tokens — only for decisions that genuinely differ between light and dark. Anything identical in both themes belongs in src/tokens/component/.",
   "component": {
+    "button": {
+      "outline": {
+        "background": {
+          "$value": "var(--qx-color-surface-default)",
+          "$type": "color",
+          "$description": "The light outline fill: a clean surface-default sheet, so the button still reads as a button on the canvas, a sunken panel, a sidebar or a toolbar — not only on a white card."
+        }
+      }
+    },
+    "switch": {
+      "thumb": {
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color",
+        "$description": "The off thumb: a light disc on the control-grey track (≥3.6:1). It inverts to the graphite thumb-checked when on, so the state reads by lightness and position, not by hue."
+      }
+    },
     "input": {
       "background": {
-        "$value": "transparent",
-        "$type": "color"
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color",
+        "$description": "The light writing surface: a clean surface-default sheet, so a field still reads as a field on the canvas, a sunken panel, a sidebar or a toolbar — not only on a white card."
       },
       "background-disabled": {
-        "$value": "color-mix(in oklab, var(--qx-color-border-default) 50%, transparent)",
+        "$value": "var(--qx-color-surface-sunken)",
         "$type": "color"
       }
     }

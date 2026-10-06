@@ -38,3 +38,31 @@ describe("ButtonGroup", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("ButtonGroup layout", () => {
+  it("overlaps borders on the inline-start side, so the seam mirrors under RTL", () => {
+    render(
+      <ButtonGroup aria-label="Split">
+        <ButtonGroupItem>Save</ButtonGroupItem>
+        <ButtonGroupItem>More</ButtonGroupItem>
+      </ButtonGroup>,
+    );
+    const group = screen.getByRole("group", { name: "Split" });
+    expect(group.className).toContain("[&>*:not(:first-child)]:-ms-px");
+    expect(group.className).not.toContain("-ml-px");
+  });
+
+  it("splits filled items with a hairline and lifts a focused item above its neighbours", () => {
+    render(
+      <ButtonGroup aria-label="Split">
+        <ButtonGroupItem>Save</ButtonGroupItem>
+        <ButtonGroupItem>More</ButtonGroupItem>
+      </ButtonGroup>,
+    );
+    const group = screen.getByRole("group", { name: "Split" });
+    expect(group.className).toContain("border-s-current/20");
+    expect(group.className).toContain("*:focus-visible:z-10");
+    // The divider keys off the item's variant.
+    expect(screen.getByRole("button", { name: "Save" })).toHaveAttribute("data-variant", "default");
+  });
+});

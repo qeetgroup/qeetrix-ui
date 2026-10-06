@@ -5,7 +5,10 @@ import * as React from "react";
 
 import { Button } from "@/components/Button/button";
 import { SegmentedControl, SegmentedControlItem } from "@/components/Button/segmented-control";
+import type { MessagesFor } from "@/lib/messages";
+import { scheduleCalendarMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 export type CalendarView = "day" | "week" | "month";
 
@@ -50,6 +53,11 @@ export interface ScheduleCalendarProps extends Omit<React.ComponentProps<"div">,
   onEventClick?: (event: ScheduleEvent) => void;
   /** Receives the `timezone`-local day as `[midnight, next midnight − 1ms]`. */
   onRangeSelect?: (range: { start: Date; end: Date }) => void;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"scheduleCalendar">;
 }
 
 /* ── One calendar, one time zone ───────────────────────────────────────────────────────────
@@ -203,6 +211,11 @@ interface DayCell {
  * formatting — happens in the single zone named by `timezone`, defaulting to the
  * host zone. `locale` and `weekStartsOn` are likewise explicit rather than
  * inherited from wherever the component happens to render.
+ *
+ * Today is a neutral graphite marker carrying `aria-current="date"`; default event chips are
+ * graphite with a Qeet bar at their inline start (`ScheduleEvent.color` overrides them), so a busy
+ * month stays calm. The period title is a polite live region, so Previous/Next/Today announce the
+ * period they land on.
  */
 function ScheduleCalendar({
   events,
@@ -217,9 +230,13 @@ function ScheduleCalendar({
   onDateChange,
   onEventClick,
   onRangeSelect,
+  messages: messageOverrides,
   className,
   ...props
 }: ScheduleCalendarProps) {
+  const messages = useMessages("scheduleCalendar", scheduleCalendarMessages, messageOverrides);
+  // Per instance: two calendars on one page (a month and an agenda) used to share agenda ids.
+  const agendaId = React.useId();
   const [view, setView] = useControllable(viewProp, defaultView, onViewChange);
   const [date, setDate] = useControllable(dateProp, defaultDate ?? new Date(), onDateChange);
 
@@ -270,24 +287,30 @@ function ScheduleCalendar({
   const agendaDays = gridDays.filter((day) => day.events.length > 0);
 
   const timeLabel = (e: ScheduleEvent) =>
-    e.allDay ? "All day" : fmt({ hour: "numeric", minute: "2-digit" }).format(e.start);
+    e.allDay ? messages.allDay : fmt({ hour: "numeric", minute: "2-digit" }).format(e.start);
 
+  // A graphite chip with a Qeet bar at its inline start: a busy month stays calm, and the bar is
+  // the cue that survives without the fill. `e.color` (a semantic class) overrides either.
   const eventButton = (e: ScheduleEvent) => (
-    <li key={e.id}>
+    <li key={e.id} className="min-w-0">
       <button
         type="button"
         data-slot="schedule-event"
         onClick={() => onEventClick?.(e)}
         className={cn(
-          "flex w-full items-center gap-1.5 truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-left text-xs text-foreground outline-none hover:bg-primary/20 focus-visible:ring-3 focus-visible:ring-ring/50",
+          "flex w-full min-w-0 items-center gap-1.5 truncate rounded-sm border-s-2 border-(--qx-component-calendar-event-indicator) bg-(--qx-component-calendar-event-background) px-1.5 py-0.5 text-start text-xs text-foreground transition-colors duration-fast ease-standard outline-none hover:bg-(--qx-component-calendar-event-background-hover) focus-visible:focus-ring-inset",
           e.color,
         )}
       >
-        <span className="tabular-nums text-muted-foreground">{timeLabel(e)}</span>
+        <span className="shrink-0 tabular-nums text-muted-foreground">{timeLabel(e)}</span>
         <span className="truncate font-medium">{e.title}</span>
       </button>
     </li>
   );
+
+  /** A graphite dot before today's label in the week and agenda views. */
+  const todayDot =
+    "before:me-1.5 before:inline-block before:size-1.5 before:rounded-full before:border-[3px] before:border-current before:align-middle";
 
   // period navigation ---------------------------------------------------------
   const go = (dir: -1 | 0 | 1) => {
@@ -311,17 +334,23 @@ function ScheduleCalendar({
   return (
     <div data-slot="schedule-calendar" className={cn("flex flex-col gap-3", className)} {...props}>
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-1">
-          <Button variant="outline" size="sm" onClick={() => go(-1)} aria-label="Previous">
-            <ChevronLeftIcon aria-hidden />
+        <div className="flex min-w-0 items-center gap-1">
+          <Button variant="outline" size="sm" onClick={() => go(-1)} aria-label={messages.previous}>
+            <ChevronLeftIcon aria-hidden className="rtl:rotate-180" />
           </Button>
           <Button variant="outline" size="sm" onClick={() => go(0)}>
-            Today
+            {messages.today}
           </Button>
-          <Button variant="outline" size="sm" onClick={() => go(1)} aria-label="Next">
-            <ChevronRightIcon aria-hidden />
+          <Button variant="outline" size="sm" onClick={() => go(1)} aria-label={messages.next}>
+            <ChevronRightIcon aria-hidden className="rtl:rotate-180" />
           </Button>
-          <h2 data-slot="schedule-title" className="ms-2 font-heading text-base font-semibold">
+          {/* Polite and atomic, so stepping a period announces where it landed. */}
+          <h2
+            data-slot="schedule-title"
+            aria-live="polite"
+            aria-atomic="true"
+            className="ms-2 truncate font-heading text-base font-semibold"
+          >
             {title}
           </h2>
         </div>
@@ -329,19 +358,29 @@ function ScheduleCalendar({
           size="sm"
           value={view}
           onValueChange={(v) => setView(v as CalendarView)}
-          aria-label="Calendar view"
+          aria-label={messages.view}
         >
-          <SegmentedControlItem value="day">Day</SegmentedControlItem>
-          <SegmentedControlItem value="week">Week</SegmentedControlItem>
-          <SegmentedControlItem value="month">Month</SegmentedControlItem>
+          <SegmentedControlItem value="day">{messages.day}</SegmentedControlItem>
+          <SegmentedControlItem value="week">{messages.week}</SegmentedControlItem>
+          <SegmentedControlItem value="month">{messages.month}</SegmentedControlItem>
         </SegmentedControl>
       </header>
 
       <section data-slot="schedule-agenda" className="space-y-3 md:hidden" aria-label={title}>
         {agendaDays.length > 0 ? (
           agendaDays.map((day) => (
-            <section key={day.key} aria-labelledby={`agenda-${day.key}`}>
-              <h3 id={`agenda-${day.key}`} className="mb-1.5 text-sm font-semibold text-foreground">
+            <section
+              key={day.key}
+              aria-labelledby={`${agendaId}-${day.key}`}
+              aria-current={civilSame(day.civil, todayCivil) ? "date" : undefined}
+            >
+              <h3
+                id={`${agendaId}-${day.key}`}
+                className={cn(
+                  "mb-1.5 text-sm font-semibold text-foreground",
+                  civilSame(day.civil, todayCivil) && todayDot,
+                )}
+              >
                 {fmt({ weekday: "long", month: "short", day: "numeric" }).format(day.start)}
               </h3>
               <ul className="space-y-1.5">{day.events.map(eventButton)}</ul>
@@ -349,7 +388,7 @@ function ScheduleCalendar({
           ))
         ) : (
           <p className="rounded-md border border-border py-8 text-center text-sm text-muted-foreground">
-            No events in this period.
+            {messages.emptyPeriod}
           </p>
         )}
       </section>
@@ -358,7 +397,7 @@ function ScheduleCalendar({
         <table
           data-slot="schedule-month"
           className="hidden w-full table-fixed border-separate border-spacing-1 md:table"
-          aria-label={`Month of ${title}`}
+          aria-label={messages.monthGrid(title)}
         >
           <thead>
             <tr>
@@ -385,8 +424,8 @@ function ScheduleCalendar({
                       <td
                         key={day.key}
                         className={cn(
-                          "h-24 align-top rounded-md border border-border p-1",
-                          outside && "bg-muted/30 text-muted-foreground",
+                          "h-24 rounded-md border border-border p-1 align-top",
+                          outside && "bg-surface-subtle text-muted-foreground",
                         )}
                       >
                         <button
@@ -402,10 +441,14 @@ function ScheduleCalendar({
                             month: "long",
                             day: "numeric",
                           }).format(day.start)}
+                          // Today is a neutral graphite disc — the grid's one marker that is not
+                          // a selection — announced as the current date.
+                          aria-current={today ? "date" : undefined}
+                          data-today={today || undefined}
                           className={cn(
-                            "mb-1 flex size-6 items-center justify-center rounded-full text-xs outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
+                            "mb-1 flex size-6 items-center justify-center rounded-full text-xs tabular-nums transition-colors duration-fast ease-standard outline-none hover:bg-surface-interactive-hover focus-visible:focus-ring",
                             today &&
-                              "bg-primary font-semibold text-primary-foreground hover:bg-primary/90",
+                              "bg-(--qx-component-calendar-today-background) font-semibold text-(--qx-component-calendar-today-foreground) hover:bg-(--qx-component-calendar-today-background) forced-colors:border forced-colors:border-[CanvasText]",
                           )}
                         >
                           {day.civil.d}
@@ -425,21 +468,36 @@ function ScheduleCalendar({
 
       {view === "week" && (
         <div data-slot="schedule-week" className="hidden grid-cols-7 gap-1 md:grid">
-          {gridDays.map((day) => (
-            <section
-              key={day.key}
-              className="flex min-h-40 flex-col rounded-md border border-border p-1.5"
-            >
-              <h3 className="mb-1.5 text-xs font-medium text-muted-foreground">
-                {fmt({ weekday: "short", day: "numeric" }).format(day.start)}
-              </h3>
-              {day.events.length ? (
-                <ul className="flex flex-col gap-1">{day.events.map(eventButton)}</ul>
-              ) : (
-                <p className="text-xs text-muted-foreground/60">—</p>
-              )}
-            </section>
-          ))}
+          {gridDays.map((day) => {
+            const today = civilSame(day.civil, todayCivil);
+            return (
+              <section
+                key={day.key}
+                aria-current={today ? "date" : undefined}
+                className={cn(
+                  "flex min-h-40 min-w-0 flex-col rounded-md border border-border p-1.5",
+                  today && "border-border-strong",
+                )}
+              >
+                <h3
+                  className={cn(
+                    "mb-1.5 text-xs font-medium text-muted-foreground",
+                    today && cn("font-semibold text-foreground", todayDot),
+                  )}
+                >
+                  {fmt({ weekday: "short", day: "numeric" }).format(day.start)}
+                </h3>
+                {day.events.length ? (
+                  <ul className="flex flex-col gap-1">{day.events.map(eventButton)}</ul>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    <span aria-hidden>—</span>
+                    <span className="sr-only">{messages.noEvents}</span>
+                  </p>
+                )}
+              </section>
+            );
+          })}
         </div>
       )}
 
@@ -451,7 +509,7 @@ function ScheduleCalendar({
           {gridDays[0].events.length ? (
             <ul className="flex flex-col gap-1.5">{gridDays[0].events.map(eventButton)}</ul>
           ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">No events.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{messages.emptyDay}</p>
           )}
         </section>
       )}

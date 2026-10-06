@@ -1,3 +1,4 @@
+import { passwordStrengthMeterMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,40 +15,42 @@ interface PasswordStrengthMeterProps {
    * default is intentionally dependency-free.
    */
   score?: PasswordStrengthScore;
-  /** Hide the textual strength label (just show the bar). */
+  /**
+   * Hide the textual strength label visually (just show the bar). It is still announced to
+   * assistive technology — the bar alone carries no text.
+   */
   hideLabel?: boolean;
   /** Optional feedback lines rendered below the bar. */
   feedback?: string[];
   /** Localised labels for scores 0..4. */
   labels?: [string, string, string, string, string];
+  /**
+   * Announced before the label — "Password strength: Fair" — so the live update says what it is
+   * about. Not shown on screen. Pass a translation, or `""` to announce the label alone.
+   */
+  statusPrefix?: string;
   className?: string;
 }
 
-const DEFAULT_LABELS: [string, string, string, string, string] = [
-  "",
-  "Weak",
-  "Fair",
-  "Good",
-  "Strong",
-];
-
-// Tailwind classes per segment-when-active. Lower scores look red,
-// higher scores walk through amber → blue → emerald so they're
-// visually distinct even when the user only glances at the bar.
+// Strength is carried three ways, so no one of them is load-bearing: how many of the four
+// segments are filled, the text label, and the colour. The colours are the status roles —
+// danger, warning, then success for both "good" and "strong" (the fourth segment is what
+// separates them) — each ≥3:1 on the surface, and the empty track is a visible step rather than
+// a near-invisible tint, so "two of four" can be counted.
 const SEGMENT_COLORS: Record<PasswordStrengthScore, string> = {
-  0: "bg-muted",
+  0: "bg-border-strong",
   1: "bg-destructive",
   2: "bg-warning",
-  3: "bg-info",
+  3: "bg-success",
   4: "bg-success",
 };
 
 const LABEL_COLORS: Record<PasswordStrengthScore, string> = {
   0: "text-muted-foreground",
-  1: "text-destructive",
-  2: "text-warning",
-  3: "text-info",
-  4: "text-success",
+  1: "text-destructive-text",
+  2: "text-warning-text",
+  3: "text-success-text",
+  4: "text-success-text",
 };
 
 /**
@@ -73,47 +76,58 @@ export function scorePassword(value: string): PasswordStrengthScore {
 }
 
 /**
- * PasswordStrengthMeter renders a 4-segment bar that fills left-to-right
- * with the password's score, plus an optional textual label and
- * caller-supplied feedback strings. Pass `score` to override the
- * built-in heuristic (e.g. plug in zxcvbn).
+ * PasswordStrengthMeter renders a 4-segment bar that fills from the inline start with the
+ * password's score, plus a textual label and optional caller-supplied feedback strings. Pass
+ * `score` to override the built-in heuristic (e.g. plug in zxcvbn).
+ *
+ * The whole meter is a polite live region: as the score changes, "Password strength: Fair" (and
+ * any feedback) is announced. The segments themselves are decorative. Place it directly after
+ * the password field and reference its `id` from the field's `aria-describedby` if the strength
+ * should also be read when the field is focused.
  */
 function PasswordStrengthMeter({
   value,
   score,
   hideLabel,
   feedback,
-  labels = DEFAULT_LABELS,
+  labels = passwordStrengthMeterMessages.labels,
+  statusPrefix = passwordStrengthMeterMessages.statusPrefix,
   className,
 }: PasswordStrengthMeterProps) {
   const finalScore: PasswordStrengthScore = score ?? scorePassword(value);
   const label = labels[finalScore];
-  const ariaLabel = `Password strength: ${label || "empty"}`;
 
   return (
     <div
       data-slot="password-strength-meter"
+      data-score={finalScore}
       className={cn("flex flex-col gap-1.5", className)}
-      aria-label={ariaLabel}
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center gap-1">
+      <div aria-hidden="true" className="flex items-center gap-1">
         {[1, 2, 3, 4].map((seg) => (
           <div
             key={seg}
+            data-slot="password-strength-meter-segment"
+            data-filled={finalScore >= seg || undefined}
             className={cn(
-              "h-1 flex-1 rounded-full transition-colors",
-              finalScore >= seg ? SEGMENT_COLORS[finalScore] : "bg-muted",
+              "h-1 flex-1 rounded-full transition-colors duration-normal ease-standard",
+              finalScore >= seg ? SEGMENT_COLORS[finalScore] : SEGMENT_COLORS[0],
             )}
           />
         ))}
       </div>
-      {!hideLabel && label && (
-        <span className={cn("text-xs font-medium", LABEL_COLORS[finalScore])}>{label}</span>
+      {label && (
+        <p className={cn("text-caption font-medium", hideLabel && "sr-only")}>
+          {statusPrefix && <span className="sr-only">{`${statusPrefix} `}</span>}
+          <span data-slot="password-strength-meter-label" className={LABEL_COLORS[finalScore]}>
+            {label}
+          </span>
+        </p>
       )}
       {feedback && feedback.length > 0 && (
-        <ul className="space-y-0.5 text-xs text-muted-foreground">
+        <ul className="space-y-0.5 text-caption text-muted-foreground">
           {feedback.map((f) => (
             <li key={f}>{f}</li>
           ))}

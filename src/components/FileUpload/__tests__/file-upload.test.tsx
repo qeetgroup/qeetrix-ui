@@ -9,6 +9,8 @@ import {
   formatBytes,
 } from "@/components/FileUpload/file-upload";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
+import type { MessageCatalogue } from "@/lib/messages";
+import { MessagesProvider } from "@/providers/messages-provider";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
 
@@ -363,5 +365,274 @@ describe("Dropzone form participation", () => {
   it("serialises nothing without a name", () => {
     const { container } = render(<Dropzone />);
     expect(container.querySelector('input[type="file"]')).not.toHaveAttribute("name");
+  });
+});
+
+describe("Dropzone drag state", () => {
+  const zone = () => screen.getByRole("button");
+
+  it("marks itself while files are over it, and clears on leave and on drop", () => {
+    render(<Dropzone />);
+    fireEvent.dragEnter(zone());
+    expect(zone()).toHaveAttribute("data-drag-over");
+    fireEvent.dragLeave(zone());
+    expect(zone()).not.toHaveAttribute("data-drag-over");
+
+    fireEvent.dragEnter(zone());
+    fireEvent.dragOver(zone());
+    expect(zone()).toHaveAttribute("data-drag-over");
+    dropFiles(zone(), [png("a.png")]);
+    expect(zone()).not.toHaveAttribute("data-drag-over");
+  });
+
+  it("does not flicker off while the pointer crosses its own children", () => {
+    render(<Dropzone />);
+    const child = zone().querySelector("[data-slot=dropzone-icon]") as Element;
+    // Pointer enters the zone, then its icon: enter fires on the child (and bubbles) before the
+    // zone's own leave.
+    fireEvent.dragEnter(zone());
+    fireEvent.dragEnter(child);
+    fireEvent.dragLeave(zone());
+    expect(zone()).toHaveAttribute("data-drag-over");
+    fireEvent.dragLeave(child);
+    expect(zone()).not.toHaveAttribute("data-drag-over");
+  });
+
+  it("never shows the active state while disabled", () => {
+    render(<Dropzone disabled />);
+    fireEvent.dragEnter(zone());
+    fireEvent.dragOver(zone());
+    expect(zone()).not.toHaveAttribute("data-drag-over");
+  });
+
+  it("passes the live drag state to a render-function child", () => {
+    render(<Dropzone>{({ dragOver }) => (dragOver ? "Release to upload" : "Drop here")}</Dropzone>);
+    expect(zone()).toHaveTextContent("Drop here");
+    fireEvent.dragEnter(zone());
+    expect(zone()).toHaveTextContent("Release to upload");
+  });
+
+  it("still runs a consumer's drag and click handlers", () => {
+    const onDragEnter = vi.fn();
+    const onClick = vi.fn((event: React.MouseEvent) => event.preventDefault());
+    const clickSpy = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => {});
+    clickSpy.mockClear();
+    render(<Dropzone onDragEnter={onDragEnter} onClick={onClick} />);
+    fireEvent.dragEnter(zone());
+    expect(onDragEnter).toHaveBeenCalledTimes(1);
+    expect(zone()).toHaveAttribute("data-drag-over");
+    // A prevented click is the consumer's way to keep the dialog closed.
+    fireEvent.click(zone());
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(clickSpy).not.toHaveBeenCalled();
+    clickSpy.mockRestore();
+  });
+});
+
+describe("Dropzone copy", () => {
+  it("states the accept policy and the size limit in reader terms", () => {
+    render(<Dropzone accept=".pdf,.png,image/*" maxSize={10 * 1024 * 1024} />);
+    expect(screen.getByRole("button")).toHaveTextContent("PDF, PNG, image/* · up to 10 MB");
+  });
+
+  it("reads exact MIME types by their subtype", () => {
+    render(<Dropzone accept="application/pdf" />);
+    expect(screen.getByRole("button")).toHaveTextContent("PDF");
+  });
+
+  it("lets the consumer replace the constraint line", () => {
+    render(<Dropzone accept=".pdf" hint="Signed PDF, one per employee" />);
+    expect(screen.getByRole("button")).toHaveTextContent("Signed PDF, one per employee");
+    expect(screen.getByRole("button")).not.toHaveTextContent("PDF ·");
+  });
+
+  it("says the single-file instruction when multiple is off", () => {
+    render(<Dropzone multiple={false} />);
+    expect(screen.getByRole("button")).toHaveTextContent("Drop a file here, or click to browse");
+  });
+
+  it("keeps the file input out of the tab order and the accessibility tree", () => {
+    const { container } = render(<Dropzone />);
+    const input = container.querySelector('input[type="file"]');
+    expect(input).toHaveAttribute("tabindex", "-1");
+    expect(input).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("removes itself from the tab order when disabled", () => {
+    render(<Dropzone disabled />);
+    expect(screen.getByRole("button")).toHaveAttribute("tabindex", "-1");
+  });
+});
+
+describe("FileUploadItem actions and states", () => {
+  const file = { name: "report.pdf", size: 2048, type: "application/pdf" };
+
+  it("offers a named retry on a failed row", () => {
+    const onRetry = vi.fn();
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="error" error="Network lost" onRetry={onRetry} />
+      </FileList>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Retry report.pdf" }));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not offer retry on a row that has not failed", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="success" onRetry={() => {}} />
+      </FileList>,
+    );
+    expect(screen.queryByRole("button", { name: /Retry/ })).toBeNull();
+  });
+
+  it("offers cancel instead of remove while an upload is in flight", () => {
+    const onCancel = vi.fn();
+    const onRemove = vi.fn();
+    const { rerender } = render(
+      <FileList>
+        <FileUploadItem
+          file={file}
+          status="uploading"
+          progress={30}
+          onCancel={onCancel}
+          onRemove={onRemove}
+        />
+      </FileList>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Cancel upload of report.pdf" }));
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("button", { name: "Remove report.pdf" })).toBeNull();
+
+    rerender(
+      <FileList>
+        <FileUploadItem file={file} status="success" onCancel={onCancel} onRemove={onRemove} />
+      </FileList>,
+    );
+    expect(screen.queryByRole("button", { name: /Cancel/ })).toBeNull();
+    expect(screen.getByRole("button", { name: "Remove report.pdf" })).toBeInTheDocument();
+  });
+
+  it("keeps remove available while uploading when there is no cancel", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="uploading" progress={30} onRemove={() => {}} />
+      </FileList>,
+    );
+    expect(screen.getByRole("button", { name: "Remove report.pdf" })).toBeInTheDocument();
+  });
+
+  it("shows the percentage while uploading and an indeterminate bar without progress", () => {
+    const { rerender } = render(
+      <FileList>
+        <FileUploadItem file={file} status="uploading" progress={42.4} />
+      </FileList>,
+    );
+    expect(screen.getByText("42%")).toBeInTheDocument();
+    rerender(
+      <FileList>
+        <FileUploadItem file={file} status="uploading" />
+      </FileList>,
+    );
+    const bar = screen.getByRole("progressbar", { name: "Uploading report.pdf" });
+    expect(bar).not.toHaveAttribute("aria-valuenow");
+  });
+
+  it("says a finished row is uploaded, in text as well as with the icon", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="success" />
+      </FileList>,
+    );
+    expect(screen.getByText("Uploaded")).toBeInTheDocument();
+    expect(document.querySelector("[data-slot=file-upload-item]")).toHaveAttribute(
+      "data-status",
+      "success",
+    );
+  });
+
+  it("announces a generic failure when no error text is given", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={file} status="error" />
+      </FileList>,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Upload failed.");
+  });
+
+  it("translates the new action names through the messages prop", () => {
+    render(
+      <FileList>
+        <FileUploadItem
+          file={file}
+          status="error"
+          onRetry={() => {}}
+          messages={{ retry: (name) => `Réessayer ${name}`, failed: "Échec de l’envoi." }}
+        />
+      </FileList>,
+    );
+    expect(screen.getByRole("button", { name: "Réessayer report.pdf" })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Échec de l’envoi.");
+  });
+
+  it("shows the file-type icon for the MIME type", () => {
+    render(
+      <FileList>
+        <FileUploadItem file={{ name: "q3.xlsx", size: 10, type: "" }} />
+      </FileList>,
+    );
+    expect(document.querySelector("[data-slot=file-type-icon]")).toHaveAttribute(
+      "data-file-type",
+      "spreadsheet",
+    );
+  });
+
+  it("truncates a long name and keeps it whole in a tooltip", () => {
+    const name = "Acme-India-Pvt-Ltd-GST-registration-certificate-REG-06.pdf";
+    render(
+      <FileList>
+        <FileUploadItem file={{ name, size: 10 }} />
+      </FileList>,
+    );
+    const nameNode = screen.getByText(name).closest("[title]");
+    expect(nameNode).toHaveAttribute("title", name);
+    expect(nameNode).toHaveClass("truncate");
+  });
+
+  it("has no axe violations with every action present", async () => {
+    const { container } = render(
+      <FileList aria-label="Attachments">
+        <FileUploadItem file={file} status="uploading" progress={30} onCancel={() => {}} />
+        <FileUploadItem
+          file={{ ...file, name: "b.pdf" }}
+          status="error"
+          error="Too large"
+          onRetry={() => {}}
+          onRemove={() => {}}
+        />
+        <FileUploadItem file={{ ...file, name: "c.pdf" }} status="success" onRemove={() => {}} />
+      </FileList>,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("FileUploadItem translation through a provider", () => {
+  it("resolves the row's new strings from a MessagesProvider at runtime", () => {
+    // The keys are not in the catalogue's type yet (see the component), hence the cast.
+    const catalogue = {
+      fileUpload: { retry: (name: string) => `Erneut ${name}`, uploaded: "Hochgeladen" },
+    } as unknown as MessageCatalogue;
+    render(
+      <MessagesProvider messages={catalogue}>
+        <FileList>
+          <FileUploadItem file={{ name: "a.pdf", size: 1 }} status="error" onRetry={() => {}} />
+          <FileUploadItem file={{ name: "b.pdf", size: 1 }} status="success" />
+        </FileList>
+      </MessagesProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Erneut a.pdf" })).toBeInTheDocument();
+    expect(screen.getByText("Hochgeladen")).toBeInTheDocument();
   });
 });

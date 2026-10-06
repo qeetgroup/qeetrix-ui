@@ -1,6 +1,8 @@
 import type * as React from "react";
 
+import { EmptyState } from "@/components/EmptyState/empty-state";
 import { Skeleton } from "@/components/Spinner/skeleton";
+import { dataStateMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
 
 interface DataStateProps {
@@ -15,9 +17,9 @@ interface DataStateProps {
 
   /** Override the loading slot. Defaults to N skeleton rows. */
   loading?: React.ReactNode;
-  /** Override the error slot. Defaults to a destructive-coloured message. */
+  /** Override the error slot. Defaults to an `EmptyState variant="error"` carrying the message. */
   errorFallback?: React.ReactNode;
-  /** Override the empty slot. Defaults to centred icon + title + optional description. */
+  /** Override the empty slot. Defaults to an `EmptyState` built from the `empty*` props. */
   empty?: React.ReactNode;
 
   /** Convenience: icon for the default empty slot. */
@@ -39,7 +41,7 @@ interface DataStateProps {
 function defaultErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
   if (typeof err === "string") return err;
-  return "Something went wrong while loading this data.";
+  return dataStateMessages.error;
 }
 
 /**
@@ -47,10 +49,13 @@ function defaultErrorMessage(err: unknown): string {
  * surface — loading / error / empty / data — into one component.
  *
  * Pass the three boolean states from a TanStack Query (or any source)
- * and either let the defaults handle the chrome (skeleton rows,
- * destructive-coloured error, muted empty pane) or pass slot overrides
+ * and either let the defaults handle the chrome (skeleton rows, an
+ * error EmptyState, a neutral EmptyState) or pass slot overrides
  * for a custom look. Children only render once all three booleans are
  * falsy — i.e. the data is ready.
+ *
+ * The loading branch is marked `aria-busy`; the error branch is a `role="alert"` region, so a
+ * failed load is announced when it replaces the content.
  *
  * Why a single component instead of helpers: it's *much* harder to
  * accidentally forget the error or empty case when the parent has to
@@ -64,7 +69,7 @@ function DataState({
   loading,
   errorFallback,
   empty,
-  emptyIcon: EmptyIcon,
+  emptyIcon,
   emptyTitle,
   emptyDescription,
   skeletonRows = 6,
@@ -74,7 +79,12 @@ function DataState({
 }: DataStateProps) {
   if (isLoading) {
     return (
-      <div data-slot="data-state" data-state="loading" className={cn("space-y-3 p-4", className)}>
+      <div
+        data-slot="data-state"
+        data-state="loading"
+        aria-busy="true"
+        className={cn("space-y-3 p-4", className)}
+      >
         {loading ??
           Array.from({ length: skeletonRows }, (_, i) => `skeleton-${i}`).map((skeletonKey) => (
             <Skeleton key={skeletonKey} className={cn(skeletonHeight, "w-full")} />
@@ -89,28 +99,21 @@ function DataState({
         data-slot="data-state"
         data-state="error"
         role="alert"
-        className={cn("p-6 text-sm text-destructive", className)}
+        // A custom fallback still inherits the destructive text colour it always had.
+        className={cn("text-sm text-destructive-text", className)}
       >
-        {errorFallback ?? defaultErrorMessage(error)}
+        {errorFallback ?? (
+          <EmptyState variant="error" size="sm" description={defaultErrorMessage(error)} />
+        )}
       </div>
     );
   }
 
   if (isEmpty) {
     return (
-      <div
-        data-slot="data-state"
-        data-state="empty"
-        className={cn("flex flex-col items-center gap-2 p-10 text-center", className)}
-      >
+      <div data-slot="data-state" data-state="empty" className={className}>
         {empty ?? (
-          <>
-            {EmptyIcon && <EmptyIcon aria-hidden className="size-8 text-muted-foreground" />}
-            {emptyTitle && <p className="text-sm font-medium text-foreground">{emptyTitle}</p>}
-            {emptyDescription && (
-              <p className="text-xs text-muted-foreground">{emptyDescription}</p>
-            )}
-          </>
+          <EmptyState icon={emptyIcon ?? null} title={emptyTitle} description={emptyDescription} />
         )}
       </div>
     );

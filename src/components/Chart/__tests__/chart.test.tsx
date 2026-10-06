@@ -11,7 +11,9 @@ import {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  chartSeriesColor,
 } from "@/components/Chart/chart";
+import { DirectionProvider } from "@/providers/direction-provider";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
@@ -296,5 +298,78 @@ describe("Chart generated-CSS safety", () => {
     expect(html).not.toContain("<img");
     expect(html).not.toContain("onerror");
     expect(html).toBe("");
+  });
+});
+
+describe("Chart categorical palette", () => {
+  function Plain({ config }: { config: ChartConfig }) {
+    return (
+      <ChartContainer config={config}>
+        <Recharts.BarChart data={data}>
+          <Recharts.Bar dataKey="desktop" isAnimationActive={false} />
+        </Recharts.BarChart>
+      </ChartContainer>
+    );
+  }
+  const vars = (container: HTMLElement) =>
+    (container.querySelector('[data-slot="chart"]') as HTMLElement).style;
+
+  it("gives a series without a colour the categorical slot for its position", () => {
+    const { container } = render(
+      <Plain config={{ a: { label: "A" }, b: { label: "B" }, c: { label: "C" } }} />,
+    );
+    // Series 1 is blue, not Qeet orange: orange is the third slot.
+    expect(vars(container).getPropertyValue("--color-a")).toBe("var(--chart-1)");
+    expect(vars(container).getPropertyValue("--color-b")).toBe("var(--chart-2)");
+    expect(vars(container).getPropertyValue("--color-c")).toBe("var(--chart-3)");
+  });
+
+  it("does not shift other series when one names its own colour", () => {
+    const { container } = render(
+      <Plain config={{ a: { label: "A", color: "#123456" }, b: { label: "B" } }} />,
+    );
+    expect(vars(container).getPropertyValue("--color-a")).toBe("#123456");
+    expect(vars(container).getPropertyValue("--color-b")).toBe("var(--chart-2)");
+  });
+
+  it("drops an unsafe colour rather than substituting a palette slot", () => {
+    const { container } = render(<Plain config={{ a: { label: "A", color: "red;x:y" } }} />);
+    expect(vars(container).getPropertyValue("--color-a")).toBe("");
+  });
+
+  it("never cycles: series past the eighth are graphite", () => {
+    expect(chartSeriesColor(0)).toBe("var(--chart-1)");
+    expect(chartSeriesColor(7)).toBe("var(--chart-8)");
+    expect(chartSeriesColor(11)).toBe("var(--chart-8)");
+  });
+});
+
+describe("ChartDataTable", () => {
+  it("right-aligns numeric columns and formats them for the locale", () => {
+    render(
+      <DirectionProvider locale="en-IN">
+        <ChartDataTable
+          caption="Revenue"
+          data={[{ month: "Jan", revenue: 1234567, note: "launch" }]}
+          columns={[
+            { key: "month", header: "Month" },
+            { key: "revenue", header: "Revenue" },
+            { key: "note", header: "Note" },
+          ]}
+        />
+      </DirectionProvider>,
+    );
+    const revenue = screen.getByRole("cell", { name: "12,34,567" });
+    expect(revenue).toHaveClass("text-end");
+    expect(screen.getByRole("columnheader", { name: "Revenue" })).toHaveClass("text-end");
+    expect(screen.getByRole("cell", { name: "launch" })).toHaveClass("text-start");
+  });
+});
+
+describe("ChartContainer focus", () => {
+  it("shows a focus ring on the keyboard-focusable plot instead of suppressing it", () => {
+    const { container } = render(<Bars />);
+    const className = container.querySelector('[data-slot="chart"]')?.className ?? "";
+    expect(className).toContain("[&_.recharts-surface:focus-visible]:focus-ring-inset");
   });
 });

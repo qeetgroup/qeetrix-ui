@@ -1,7 +1,7 @@
 {
   "component": {
     "input": {
-      "$description": "Input. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group. The fill is theme-varying (transparent on light, a subtle wash on dark), so those two tokens live in the theme overlays.",
+      "$description": "The Qeet field. One set of tokens for every bordered text-entry surface — Input, Textarea, InputGroup, NumberField, CurrencyInput, MaskInput, PasswordInput, OTPInput, TagInput, Editable — and the recipe pickers (Select, Combobox, DatePicker triggers) align to. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group. The writing surface is theme-varying — a clean surface-default sheet on light, a recessed well on dark rather than a lifted grey slab — so `background` and `background-disabled` live in the theme overlays.",
       "corner": {
         "$value": "{corner.field}",
         "$type": "dimension"
@@ -11,12 +11,46 @@
         "$type": "dimension"
       },
       "border": {
-        "$value": "var(--qx-color-border-default)",
+        "$value": "var(--qx-color-border-control)",
         "$type": "color"
       },
       "border-focus": {
         "$value": "var(--qx-color-focus-ring)",
         "$type": "color"
+      },
+      "border-hover": {
+        "$value": "var(--qx-color-border-control-hover)",
+        "$type": "color"
+      },
+      "border-invalid": {
+        "$value": "var(--qx-color-feedback-error)",
+        "$type": "color",
+        "$description": "Boundary of a field whose value is invalid (aria-invalid). The feedback role rather than border.danger so the boundary, the focus outline and the message text are one red; ≥3:1 on every surface in both themes."
+      },
+      "border-warning": {
+        "$value": "var(--qx-color-feedback-warning)",
+        "$type": "color",
+        "$description": "Boundary of a field inside a Field that carries a FieldWarning. border.warning is a decorative tint (1.6:1 on light) and cannot identify a control, so the feedback role is used; ≥3:1 in both themes."
+      },
+      "border-success": {
+        "$value": "var(--qx-color-feedback-success)",
+        "$type": "color",
+        "$description": "Boundary of a field inside a Field that carries a FieldSuccess. Same reasoning as border-warning: the feedback role, not the decorative border tint."
+      },
+      "background-readonly": {
+        "$value": "transparent",
+        "$type": "color",
+        "$description": "A read-only field drops the writing surface: the value stays at full contrast and selectable, the boundary turns dashed, and nothing suggests it can be typed into."
+      },
+      "foreground": {
+        "$value": "var(--qx-color-text-primary)",
+        "$type": "color",
+        "$description": "The value text. Set explicitly so a field never inherits a status colour from its container."
+      },
+      "placeholder": {
+        "$value": "var(--qx-color-text-placeholder)",
+        "$type": "color",
+        "$description": "Placeholder text. The semantic placeholder role (≥4.5:1 on the field surface in both themes), not a lowered-opacity value colour."
       }
     }
   }

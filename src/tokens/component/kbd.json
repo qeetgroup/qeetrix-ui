@@ -6,6 +6,31 @@
         "$value": "min(var(--radius-md), 6px)",
         "$type": "dimension",
         "$description": "The ramp, capped so a 20px key cap stays legibly square."
+      },
+      "font-size": {
+        "$value": "{typography.micro.font-size}",
+        "$type": "dimension",
+        "$description": "Key labels are interface micro-copy: the micro role, set in Qeet UI. Small enough to sit inside a menu row or a button without crowding the label beside it."
+      },
+      "foreground": {
+        "$value": "var(--qx-color-text-secondary)",
+        "$type": "color",
+        "$description": "Secondary rather than tertiary text: a key label is 11px, so it takes the stronger of the two quiet text roles (7:1 or better on every surface in both themes) and stays restrained through size and the cap, not through low contrast."
+      },
+      "background": {
+        "$value": "color-mix(in oklab, currentColor 7%, transparent)",
+        "$type": "color",
+        "$description": "A translucent tint of the cap's own text colour, not a fixed surface. Key hints sit on canvases, cards, menus, command palettes and buttons; a tint lifts the cap off whichever of them it is on, in both themes, and follows a consumer who recolours the text (an inverse tooltip) without a second override."
+      },
+      "border": {
+        "$value": "color-mix(in oklab, currentColor 22%, transparent)",
+        "$type": "color",
+        "$description": "The cap outline, derived from the text colour for the same reason as the background. Decorative: the label carries the information, so it does not need 3:1."
+      },
+      "elevation": {
+        "$value": "inset 0 -1px 0 color-mix(in oklab, currentColor 22%, transparent)",
+        "$type": "shadow",
+        "$description": "A one-pixel lower lip that doubles the bottom edge, so the cap reads as a key rather than a chip. Same tint as the border, restated rather than referenced so the shadow does not alias a colour token. Inset, so it never changes the cap's box; forced-colours mode strips it and the border remains."
       }
     }
   }

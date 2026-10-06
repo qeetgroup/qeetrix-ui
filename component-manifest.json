@@ -4,7 +4,7 @@
   "name": "@qeetrix/ui",
   "version": "2.0.0",
   "description": "Qeet Group design system — accessible, token-driven React components (Base UI + Tailwind v4).",
-  "generated": "2026-08-23",
+  "generated": "2026-10-06",
   "styles": "@qeetrix/ui/styles.css",
   "tokens": "@qeetrix/ui/tokens.json",
   "count": 145,
@@ -120,9 +120,9 @@
     "deprecated": 1
   },
   "accessibilityAudit": {
-    "not-audited": 127,
+    "not-audited": 125,
     "partial": 1,
-    "audited": 17,
+    "audited": 19,
     "exception": 0
   },
   "components": [
@@ -138,12 +138,20 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
-        "indeterminate"
+        "hover",
+        "active",
+        "disabled",
+        "loading",
+        "checked",
+        "indeterminate",
+        "selected",
+        "busy",
+        "empty"
       ],
       "api": {
         "variants": null,
@@ -198,12 +206,11 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
-        "hover",
         "focus-visible",
         "disabled"
       ],
@@ -272,13 +279,16 @@
       "groupImport": "@qeetrix/ui/components/ActionBar",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "open"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -289,6 +299,10 @@
           "variant": {
             "source": "forwarded",
             "note": "ActionBarItem.variant is passed straight to Button's variant, so Button's cva is the definition: default | destructive | outline | ghost."
+          },
+          "size": {
+            "source": "forwarded",
+            "note": "ActionBarItem.size is passed straight to Button's size."
           }
         },
         "controlled": null
@@ -311,10 +325,12 @@
         "keyboard": [
           "tab",
           "enter",
-          "space"
+          "space",
+          "arrow-left",
+          "arrow-right"
         ],
         "focus": {
-          "model": "sequential",
+          "model": "roving",
           "contained": false,
           "restored": false
         },
@@ -345,7 +361,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -361,6 +377,7 @@
         ],
         "sizes": null,
         "variantGroups": [
+          "emphasis",
           "variant"
         ],
         "variantAliases": {
@@ -495,7 +512,6 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover",
         "focus-visible",
         "disabled",
         "read-only"
@@ -558,7 +574,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -672,13 +688,14 @@
       "groupImport": "@qeetrix/ui/components/AuditEvent",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible"
       ],
       "api": {
@@ -747,8 +764,12 @@
         "hover",
         "focus-visible",
         "disabled",
-        "selected",
-        "open"
+        "read-only",
+        "loading",
+        "invalid",
+        "required",
+        "open",
+        "busy"
       ],
       "api": {
         "variants": null,
@@ -794,7 +815,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -815,7 +836,7 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -880,7 +901,7 @@
         "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [],
       "api": {
@@ -892,7 +913,7 @@
         "axisSources": {
           "size": {
             "source": "data-attribute",
-            "note": "Written to data-size and styled with data-[size=sm|lg] utilities: default | sm | lg."
+            "note": "Written to data-size and styled with data-[size=…] utilities: xs | sm | default | lg | xl."
           }
         },
         "controlled": null
@@ -900,13 +921,13 @@
       "accessibility": {
         "required": false,
         "pattern": "none",
-        "audit": "not-audited",
+        "audit": "audited",
         "dimensions": {
           "semantic": "pass",
-          "name": "not-audited",
+          "name": "pass",
           "keyboard": "not-applicable",
           "focus": "not-applicable",
-          "screenReader": "not-audited",
+          "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
           "forcedColors": "pass",
@@ -951,6 +972,8 @@
           "default",
           "secondary",
           "outline",
+          "brand",
+          "info",
           "success",
           "warning",
           "destructive",
@@ -1014,7 +1037,8 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover"
+        "hover",
+        "focus-visible"
       ],
       "api": {
         "variants": [
@@ -1149,7 +1173,8 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover"
+        "hover",
+        "focus-visible"
       ],
       "api": {
         "variants": null,
@@ -1168,7 +1193,7 @@
           "semantic": "pass",
           "name": "pass",
           "keyboard": "not-audited",
-          "focus": "not-audited",
+          "focus": "pass",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -1220,8 +1245,9 @@
         "focus-visible",
         "active",
         "disabled",
+        "loading",
         "invalid",
-        "expanded"
+        "busy"
       ],
       "api": {
         "variants": [
@@ -1302,12 +1328,14 @@
       "status": "beta",
       "capabilities": {
         "rtl": "supported",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
-      "states": [],
+      "states": [
+        "focus-visible"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -1366,13 +1394,13 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "hover",
-        "focus",
+        "focus-visible",
         "disabled",
         "selected"
       ],
@@ -1395,7 +1423,7 @@
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
-          "rtl": "not-audited",
+          "rtl": "pass",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
@@ -1440,7 +1468,8 @@
           "success",
           "warning",
           "destructive",
-          "error"
+          "error",
+          "muted"
         ],
         "sizes": null,
         "variantGroups": [
@@ -1502,12 +1531,23 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover"
+        "hover",
+        "focus-visible",
+        "active",
+        "disabled",
+        "selected"
       ],
       "api": {
-        "variants": null,
+        "variants": [
+          "default",
+          "outline",
+          "elevated"
+        ],
         "sizes": null,
-        "variantGroups": null,
+        "variantGroups": [
+          "interactive",
+          "variant"
+        ],
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": {
@@ -1541,7 +1581,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -1561,12 +1601,15 @@
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "focus-visible",
+        "disabled"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -1589,12 +1632,12 @@
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "not-audited",
+          "focus": "pass",
           "screenReader": "pass",
           "rtl": "pass",
-          "reducedMotion": "not-applicable",
-          "forcedColors": "not-applicable",
-          "contrast": "not-applicable"
+          "reducedMotion": "pass",
+          "forcedColors": "not-audited",
+          "contrast": "not-audited"
         },
         "keyboard": [
           "tab",
@@ -1702,7 +1745,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
-        "axisSources": null,
+        "axisSources": {
+          "tone": {
+            "source": "class-map",
+            "note": "Sparkline.tone selects a stroke colour from a map: default | positive | negative | neutral."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -1754,8 +1802,10 @@
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
         "checked",
         "indeterminate"
@@ -1824,7 +1874,7 @@
       "groupImport": "@qeetrix/ui/components/Checkbox",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -1832,7 +1882,11 @@
       },
       "states": [
         "hover",
-        "disabled"
+        "disabled",
+        "read-only",
+        "invalid",
+        "required",
+        "checked"
       ],
       "api": {
         "variants": null,
@@ -1901,6 +1955,7 @@
       "states": [
         "hover",
         "focus-visible",
+        "active",
         "disabled",
         "checked",
         "selected"
@@ -1970,10 +2025,10 @@
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [],
       "api": {
@@ -2036,12 +2091,16 @@
       "status": "stable",
       "capabilities": {
         "rtl": "not-applicable",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "unsupported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "focus-visible",
+        "active"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -2051,7 +2110,7 @@
         "axisSources": {
           "size": {
             "source": "forwarded",
-            "note": "Passed straight to Button's size, restricted to the icon sizes: icon-sm | icon."
+            "note": "Passed straight to Button's size, restricted to the icon sizes: icon-xs | icon-sm | icon."
           }
         },
         "controlled": null
@@ -2114,7 +2173,7 @@
       },
       "states": [
         "hover",
-        "focus"
+        "focus-visible"
       ],
       "api": {
         "variants": null,
@@ -2171,7 +2230,7 @@
         "darkMode": "not-applicable",
         "density": "not-applicable",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "open"
@@ -2202,7 +2261,7 @@
           "focus": "not-audited",
           "screenReader": "pass",
           "rtl": "not-applicable",
-          "reducedMotion": "not-applicable",
+          "reducedMotion": "pass",
           "forcedColors": "not-applicable",
           "contrast": "not-applicable"
         },
@@ -2251,8 +2310,10 @@
         "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
-        "required"
+        "required",
+        "empty"
       ],
       "api": {
         "variants": null,
@@ -2312,8 +2373,10 @@
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
-        "disabled"
+        "disabled",
+        "selected"
       ],
       "api": {
         "variants": null,
@@ -2386,9 +2449,13 @@
         "hover",
         "focus-visible",
         "disabled",
+        "read-only",
+        "loading",
         "invalid",
+        "required",
         "selected",
-        "open"
+        "open",
+        "busy"
       ],
       "api": {
         "variants": null,
@@ -2441,14 +2508,13 @@
       "groupImport": "@qeetrix/ui/components/CommandPalette",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
-        "hover",
         "selected",
         "expanded"
       ],
@@ -2507,9 +2573,14 @@
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "focus-visible",
+        "read-only",
+        "expanded"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -2631,13 +2702,14 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
-        "focus",
+        "focus-visible",
         "disabled",
+        "checked",
         "open"
       ],
       "api": {
@@ -2708,13 +2780,14 @@
       "groupImport": "@qeetrix/ui/components/Clipboard",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
+        "focus-visible",
         "disabled"
       ],
       "api": {
@@ -2777,11 +2850,12 @@
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "supported"
+        "reducedMotion": "not-applicable"
       },
       "states": [
-        "focus-visible",
-        "disabled"
+        "disabled",
+        "invalid",
+        "required"
       ],
       "api": {
         "variants": null,
@@ -2790,7 +2864,13 @@
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
-        "controlled": null
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
@@ -2838,9 +2918,15 @@
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "read-only",
+        "invalid"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -2899,7 +2985,8 @@
         "reducedMotion": "not-applicable"
       },
       "states": [
-        "loading"
+        "loading",
+        "busy"
       ],
       "api": {
         "variants": null,
@@ -2961,6 +3048,7 @@
       "states": [
         "hover",
         "focus-visible",
+        "loading",
         "indeterminate",
         "expanded",
         "busy"
@@ -3028,14 +3116,17 @@
       "groupImport": "@qeetrix/ui/components/DatePicker",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
+        "hover",
+        "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
         "empty"
       ],
@@ -3055,8 +3146,8 @@
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
+          "keyboard": "pass",
+          "focus": "pass",
           "screenReader": "not-audited",
           "rtl": "not-audited",
           "reducedMotion": "not-audited",
@@ -3092,12 +3183,13 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
       "states": [
         "disabled",
+        "invalid",
         "empty"
       ],
       "api": {
@@ -3153,15 +3245,18 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
-        "ssr": "server-safe",
+        "density": "supported",
+        "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
       "states": [],
       "api": {
         "variants": null,
         "sizes": null,
-        "variantGroups": null,
+        "variantGroups": [
+          "divided",
+          "layout"
+        ],
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
@@ -3220,8 +3315,16 @@
       ],
       "api": {
         "variants": null,
-        "sizes": null,
-        "variantGroups": null,
+        "sizes": [
+          "sm",
+          "default",
+          "lg",
+          "xl",
+          "full"
+        ],
+        "variantGroups": [
+          "size"
+        ],
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
@@ -3343,11 +3446,11 @@
       "groupImport": "@qeetrix/ui/components/Drawer",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "open"
@@ -3378,7 +3481,7 @@
           "focus": "not-audited",
           "screenReader": "not-audited",
           "rtl": "not-applicable",
-          "reducedMotion": "not-applicable",
+          "reducedMotion": "pass",
           "forcedColors": "pass",
           "contrast": "pass"
         },
@@ -3421,13 +3524,14 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
-        "focus",
+        "focus-visible",
         "disabled",
+        "checked",
         "open"
       ],
       "api": {
@@ -3506,12 +3610,13 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "hover",
+        "focus-visible",
         "disabled"
       ],
       "api": {
@@ -3539,7 +3644,11 @@
           "contrast": "not-audited"
         },
         "keyboard": null,
-        "focus": null,
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": true
+        },
         "liveRegion": null,
         "exceptions": null
       },
@@ -3573,11 +3682,26 @@
       },
       "states": [],
       "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
+        "variants": [
+          "default",
+          "first-use",
+          "no-results",
+          "no-permission",
+          "error"
+        ],
+        "sizes": [
+          "sm",
+          "default",
+          "lg"
+        ],
+        "variantGroups": [
+          "size",
+          "variant"
+        ],
         "variantAliases": null,
-        "domainAxes": null,
+        "domainAxes": [
+          "variant"
+        ],
         "axisSources": null,
         "controlled": null
       },
@@ -3625,7 +3749,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
@@ -3640,7 +3764,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
-        "axisSources": null,
+        "axisSources": {
+          "variant": {
+            "source": "data-attribute",
+            "note": "Written to data-variant: card | list. AuditLog forwards the same prop."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -3689,9 +3818,10 @@
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "disabled",
         "invalid",
         "checked"
@@ -3700,7 +3830,8 @@
         "variants": null,
         "sizes": null,
         "variantGroups": [
-          "orientation"
+          "orientation",
+          "tone"
         ],
         "variantAliases": null,
         "domainAxes": null,
@@ -3754,10 +3885,10 @@
       "groupImport": "@qeetrix/ui/components/FileCard",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
-        "ssr": "server-safe",
+        "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
@@ -3785,8 +3916,8 @@
         "dimensions": {
           "semantic": "pass",
           "name": "not-audited",
-          "keyboard": "not-applicable",
-          "focus": "not-applicable",
+          "keyboard": "pass",
+          "focus": "pass",
           "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -3801,7 +3932,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -3878,13 +4009,14 @@
       "groupImport": "@qeetrix/ui/components/FileUpload",
       "status": "beta",
       "capabilities": {
-        "rtl": "supported",
+        "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
         "invalid"
@@ -3905,9 +4037,9 @@
         "dimensions": {
           "semantic": "not-audited",
           "name": "pass",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
+          "keyboard": "pass",
+          "focus": "pass",
+          "screenReader": "pass",
           "rtl": "not-audited",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
@@ -3940,13 +4072,18 @@
       "groupImport": "@qeetrix/ui/components/FilterBar",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "expanded"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -3998,7 +4135,7 @@
       "groupImport": "@qeetrix/ui/components/FloatingWindow",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -4006,7 +4143,6 @@
       },
       "states": [
         "hover",
-        "focus-visible",
         "active"
       ],
       "api": {
@@ -4024,8 +4160,8 @@
         "audit": "not-audited",
         "dimensions": {
           "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
+          "name": "pass",
+          "keyboard": "pass",
           "focus": "not-audited",
           "screenReader": "not-audited",
           "rtl": "not-audited",
@@ -4033,8 +4169,19 @@
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
-        "keyboard": null,
-        "focus": null,
+        "keyboard": [
+          "tab",
+          "escape",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right"
+        ],
+        "focus": {
+          "model": "sequential",
+          "contained": false,
+          "restored": false
+        },
         "liveRegion": null,
         "exceptions": null
       },
@@ -4120,11 +4267,12 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
       "states": [
+        "hover",
         "focus-visible",
         "invalid"
       ],
@@ -4237,7 +4385,7 @@
       "groupImport": "@qeetrix/ui/components/Popover",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -4389,7 +4537,7 @@
         "axisSources": {
           "size": {
             "source": "forwarded",
-            "note": "Passed straight to Button's size, restricted to the icon sizes: icon-sm | icon | icon-lg."
+            "note": "Passed straight to Button's size, restricted to the icon sizes: icon-xs | icon-sm | icon | icon-lg."
           }
         },
         "controlled": null
@@ -4444,15 +4592,17 @@
       "groupImport": "@qeetrix/ui/components/Input",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid"
       ],
       "api": {
@@ -4519,7 +4669,11 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "disabled"
+        "hover",
+        "focus-visible",
+        "disabled",
+        "read-only",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -4527,7 +4681,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
-        "axisSources": null,
+        "axisSources": {
+          "variant": {
+            "source": "data-attribute",
+            "note": "InputGroupAddon writes data-variant: inline (on the field surface) | segment (a divided, tinted cell)."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -4570,7 +4729,7 @@
     },
     {
       "slug": "json-tree",
-      "name": "JsonTree",
+      "name": "JSONTree",
       "category": "JsonTree",
       "layer": "components",
       "import": "@qeetrix/ui",
@@ -4578,7 +4737,7 @@
       "groupImport": "@qeetrix/ui/components/JsonTree",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -4586,6 +4745,7 @@
       },
       "states": [
         "hover",
+        "focus-visible",
         "expanded"
       ],
       "api": {
@@ -4599,12 +4759,12 @@
       },
       "accessibility": {
         "required": true,
-        "pattern": "none",
+        "pattern": "treeview",
         "audit": "not-audited",
         "dimensions": {
-          "semantic": "not-audited",
+          "semantic": "pass",
           "name": "not-audited",
-          "keyboard": "not-audited",
+          "keyboard": "pass",
           "focus": "not-audited",
           "screenReader": "not-audited",
           "rtl": "not-audited",
@@ -4612,15 +4772,27 @@
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
-        "keyboard": null,
-        "focus": null,
+        "keyboard": [
+          "tab",
+          "arrow-up",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end"
+        ],
+        "focus": {
+          "model": "roving",
+          "contained": false,
+          "restored": false
+        },
         "liveRegion": null,
         "exceptions": null
       },
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -4697,14 +4869,15 @@
       "groupImport": "@qeetrix/ui/components/Label",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
-        "darkMode": "not-applicable",
+        "rtl": "supported",
+        "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
       "states": [
-        "disabled"
+        "disabled",
+        "required"
       ],
       "api": {
         "variants": null,
@@ -4757,15 +4930,17 @@
       "groupImport": "@qeetrix/ui/components/Link",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "not-applicable",
-        "ssr": "server-safe",
+        "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "hover",
-        "focus-visible"
+        "focus-visible",
+        "active",
+        "disabled"
       ],
       "api": {
         "variants": [
@@ -4779,6 +4954,7 @@
           "lg"
         ],
         "variantGroups": [
+          "inline",
           "size",
           "underline",
           "variant"
@@ -4796,7 +4972,7 @@
           "semantic": "pass",
           "name": "pass",
           "keyboard": "pass",
-          "focus": "not-audited",
+          "focus": "pass",
           "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "pass",
@@ -4818,7 +4994,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -4839,14 +5015,17 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "active",
         "disabled",
+        "read-only",
+        "invalid",
         "selected"
       ],
       "api": {
@@ -4920,9 +5099,9 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "disabled",
@@ -4979,7 +5158,7 @@
       "groupImport": "@qeetrix/ui/components/Marquee",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "not-applicable",
         "density": "not-applicable",
         "ssr": "client-boundary",
@@ -5008,7 +5187,7 @@
           "focus": "not-audited",
           "screenReader": "not-audited",
           "rtl": "not-audited",
-          "reducedMotion": "not-audited",
+          "reducedMotion": "pass",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
@@ -5039,7 +5218,7 @@
       "groupImport": "@qeetrix/ui/components/MaskInput",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "not-applicable",
         "density": "supported",
         "ssr": "client-boundary",
@@ -5111,7 +5290,13 @@
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
-        "controlled": null
+        "controlled": [
+          {
+            "value": "detailOpen",
+            "default": "defaultDetailOpen",
+            "change": "onDetailOpenChange"
+          }
+        ]
       },
       "accessibility": {
         "required": false,
@@ -5136,7 +5321,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -5162,6 +5347,7 @@
         "reducedMotion": "not-applicable"
       },
       "states": [
+        "hover",
         "selected"
       ],
       "api": {
@@ -5175,7 +5361,7 @@
       },
       "accessibility": {
         "required": true,
-        "pattern": "combobox",
+        "pattern": "none",
         "audit": "not-audited",
         "dimensions": {
           "semantic": "not-audited",
@@ -5222,8 +5408,10 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "focus",
+        "hover",
+        "focus-visible",
         "disabled",
+        "checked",
         "open"
       ],
       "api": {
@@ -5365,8 +5553,11 @@
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
-        "disabled"
+        "disabled",
+        "read-only",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -5504,7 +5695,8 @@
       "states": [
         "hover",
         "focus-visible",
-        "loading"
+        "loading",
+        "busy"
       ],
       "api": {
         "variants": [
@@ -5514,8 +5706,12 @@
           "destructive",
           "error"
         ],
-        "sizes": null,
+        "sizes": [
+          "default",
+          "sm"
+        ],
         "variantGroups": [
+          "size",
           "variant"
         ],
         "variantAliases": {
@@ -5567,7 +5763,7 @@
       "groupImport": "@qeetrix/ui/components/Notification",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -5630,11 +5826,13 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
-      "states": [],
+      "states": [
+        "disabled"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -5694,7 +5892,11 @@
       },
       "states": [
         "hover",
-        "disabled"
+        "focus-visible",
+        "active",
+        "disabled",
+        "read-only",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -5731,12 +5933,14 @@
           "restored": false
         },
         "liveRegion": null,
-        "exceptions": null
+        "exceptions": {
+          "semantic": "Base UI renders a text input with aria-roledescription (\"Number field\") rather than role=spinbutton; the spinbutton keyboard contract (ArrowUp/ArrowDown step) holds. The role description comes from the catalogue (numberField.roleDescription)."
+        }
       },
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -5813,7 +6017,7 @@
       "groupImport": "@qeetrix/ui/components/OrgChart",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -5867,7 +6071,7 @@
     },
     {
       "slug": "otp-input",
-      "name": "OtpInput",
+      "name": "OTPInput",
       "category": "OTPInput",
       "layer": "components",
       "import": "@qeetrix/ui",
@@ -5877,13 +6081,15 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
         "required"
       ],
@@ -5915,7 +6121,9 @@
           "tab",
           "backspace",
           "arrow-left",
-          "arrow-right"
+          "arrow-right",
+          "home",
+          "end"
         ],
         "focus": {
           "model": "sequential",
@@ -6073,7 +6281,8 @@
         "reducedMotion": "not-applicable"
       },
       "states": [
-        "loading"
+        "loading",
+        "busy"
       ],
       "api": {
         "variants": null,
@@ -6199,12 +6408,18 @@
       "status": "stable",
       "capabilities": {
         "rtl": "supported",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "focus-visible",
+        "disabled",
+        "read-only",
+        "invalid"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -6221,8 +6436,8 @@
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
+          "keyboard": "pass",
+          "focus": "pass",
           "screenReader": "not-audited",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
@@ -6297,7 +6512,7 @@
         },
         "keyboard": null,
         "focus": null,
-        "liveRegion": null,
+        "liveRegion": "polite",
         "exceptions": null
       },
       "testing": {
@@ -6576,7 +6791,7 @@
       "groupImport": "@qeetrix/ui/components/Progress",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "client-boundary",
@@ -6587,8 +6802,14 @@
       ],
       "api": {
         "variants": null,
-        "sizes": null,
-        "variantGroups": null,
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "variantGroups": [
+          "size"
+        ],
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
@@ -6692,7 +6913,7 @@
     },
     {
       "slug": "qr-code",
-      "name": "QrCode",
+      "name": "QRCode",
       "category": "QRCode",
       "layer": "components",
       "import": "@qeetrix/ui",
@@ -6701,7 +6922,7 @@
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
@@ -6733,7 +6954,7 @@
           "screenReader": "not-audited",
           "rtl": "not-audited",
           "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
+          "forcedColors": "pass",
           "contrast": "not-audited"
         },
         "keyboard": null,
@@ -6763,7 +6984,7 @@
       "groupImport": "@qeetrix/ui/components/RadioGroup",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -6771,7 +6992,10 @@
       },
       "states": [
         "hover",
-        "disabled"
+        "disabled",
+        "invalid",
+        "required",
+        "checked"
       ],
       "api": {
         "variants": null,
@@ -6842,8 +7066,10 @@
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
         "checked"
       ],
@@ -6909,7 +7135,7 @@
       "groupImport": "@qeetrix/ui/components/Rating",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unknown",
         "ssr": "client-boundary",
@@ -6995,7 +7221,11 @@
       },
       "states": [
         "hover",
-        "focus-visible"
+        "focus-visible",
+        "active",
+        "disabled",
+        "read-only",
+        "expanded"
       ],
       "api": {
         "variants": null,
@@ -7108,18 +7338,20 @@
       "groupImport": "@qeetrix/ui/components/RichTextEditor",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
-        "focus",
+        "hover",
+        "active",
         "disabled",
         "read-only",
         "invalid",
-        "required"
+        "required",
+        "expanded"
       ],
       "api": {
         "variants": null,
@@ -7140,7 +7372,7 @@
           "keyboard": "pass",
           "focus": "pass",
           "screenReader": "pass",
-          "rtl": "not-audited",
+          "rtl": "pass",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
@@ -7199,7 +7431,7 @@
           "focus": "not-audited",
           "screenReader": "not-audited",
           "rtl": "not-audited",
-          "reducedMotion": "not-audited",
+          "reducedMotion": "pass",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
@@ -7234,7 +7466,7 @@
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "hover",
@@ -7298,7 +7530,9 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "focus-visible"
+        "hover",
+        "focus-visible",
+        "active"
       ],
       "api": {
         "variants": null,
@@ -7321,7 +7555,7 @@
           "screenReader": "not-audited",
           "rtl": "not-audited",
           "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
+          "forcedColors": "pass",
           "contrast": "not-audited"
         },
         "keyboard": null,
@@ -7351,7 +7585,7 @@
       "groupImport": "@qeetrix/ui/components/SecurityItem",
       "status": "stable",
       "capabilities": {
-        "rtl": "supported",
+        "rtl": "not-applicable",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "server-safe",
@@ -7409,7 +7643,7 @@
       "groupImport": "@qeetrix/ui/components/Button",
       "status": "stable",
       "capabilities": {
-        "rtl": "supported",
+        "rtl": "not-applicable",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -7502,10 +7736,11 @@
       },
       "states": [
         "hover",
-        "focus",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
+        "selected",
         "open"
       ],
       "api": {
@@ -7592,9 +7827,14 @@
       },
       "states": [],
       "api": {
-        "variants": null,
+        "variants": [
+          "default",
+          "muted"
+        ],
         "sizes": null,
-        "variantGroups": null,
+        "variantGroups": [
+          "variant"
+        ],
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
@@ -7676,7 +7916,7 @@
           "keyboard": "not-audited",
           "focus": "not-audited",
           "screenReader": "not-audited",
-          "rtl": "not-applicable",
+          "rtl": "pass",
           "reducedMotion": "pass",
           "forcedColors": "pass",
           "contrast": "pass"
@@ -7759,9 +7999,9 @@
           "semantic": "not-audited",
           "name": "not-audited",
           "keyboard": "not-audited",
-          "focus": "not-audited",
+          "focus": "pass",
           "screenReader": "not-audited",
-          "rtl": "not-audited",
+          "rtl": "pass",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
@@ -7851,13 +8091,14 @@
       "groupImport": "@qeetrix/ui/components/SkipNav",
       "status": "stable",
       "capabilities": {
-        "rtl": "supported",
+        "rtl": "not-applicable",
         "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "server-safe",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
+        "focus",
         "focus-visible"
       ],
       "api": {
@@ -7927,8 +8168,8 @@
       "states": [
         "hover",
         "focus-visible",
-        "active",
-        "disabled"
+        "disabled",
+        "dragging"
       ],
       "api": {
         "variants": null,
@@ -8064,7 +8305,7 @@
         "darkMode": "supported",
         "density": "not-applicable",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
       "states": [
         "hover",
@@ -8089,12 +8330,12 @@
       "accessibility": {
         "required": true,
         "pattern": "disclosure",
-        "audit": "not-audited",
+        "audit": "audited",
         "dimensions": {
           "semantic": "pass",
           "name": "pass",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
+          "keyboard": "pass",
+          "focus": "pass",
           "screenReader": "pass",
           "rtl": "not-applicable",
           "reducedMotion": "not-applicable",
@@ -8142,11 +8383,20 @@
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
-      "states": [],
+      "states": [
+        "loading",
+        "busy"
+      ],
       "api": {
         "variants": null,
-        "sizes": null,
+        "sizes": [
+          "sm",
+          "default",
+          "lg"
+        ],
         "variantGroups": [
+          "size",
+          "tone",
           "trend"
         ],
         "variantAliases": null,
@@ -8262,20 +8512,28 @@
       "groupImport": "@qeetrix/ui/components/Stepper",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "server-safe",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "active",
+        "invalid"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
-        "axisSources": null,
+        "axisSources": {
+          "orientation": {
+            "source": "layout",
+            "note": "Structural: horizontal | vertical, written to data-orientation. Not an appearance axis."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -8327,8 +8585,10 @@
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid",
         "checked"
       ],
@@ -8402,7 +8662,8 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover"
+        "hover",
+        "focus-visible"
       ],
       "api": {
         "variants": null,
@@ -8462,7 +8723,9 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover"
+        "hover",
+        "focus-visible",
+        "active"
       ],
       "api": {
         "variants": null,
@@ -8515,7 +8778,7 @@
       "groupImport": "@qeetrix/ui/components/Tabs",
       "status": "stable",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
@@ -8528,9 +8791,14 @@
         "disabled"
       ],
       "api": {
-        "variants": null,
+        "variants": [
+          "default",
+          "line"
+        ],
         "sizes": null,
-        "variantGroups": null,
+        "variantGroups": [
+          "variant"
+        ],
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
@@ -8598,13 +8866,16 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "hover",
-        "disabled"
+        "focus-visible",
+        "disabled",
+        "read-only",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -8630,9 +8901,19 @@
           "forcedColors": "not-audited",
           "contrast": "not-audited"
         },
-        "keyboard": null,
+        "keyboard": [
+          "tab",
+          "enter",
+          "backspace",
+          "delete",
+          "arrow-left",
+          "arrow-right",
+          "home",
+          "end",
+          "escape"
+        ],
         "focus": null,
-        "liveRegion": null,
+        "liveRegion": "polite",
         "exceptions": null
       },
       "testing": {
@@ -8659,13 +8940,15 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "supported"
       },
       "states": [
+        "hover",
         "focus-visible",
         "disabled",
+        "read-only",
         "invalid"
       ],
       "api": {
@@ -8727,12 +9010,13 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
       "states": [
-        "disabled"
+        "disabled",
+        "invalid"
       ],
       "api": {
         "variants": null,
@@ -8787,11 +9071,14 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
-      "states": [],
+      "states": [
+        "hover",
+        "disabled"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -8903,7 +9190,7 @@
       "capabilities": {
         "rtl": "not-applicable",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "server-safe",
         "reducedMotion": "not-applicable"
       },
@@ -8914,7 +9201,12 @@
         "variantGroups": null,
         "variantAliases": null,
         "domainAxes": null,
-        "axisSources": null,
+        "axisSources": {
+          "tone": {
+            "source": "data-attribute",
+            "note": "TimelineIndicator writes data-tone: neutral | brand | info | success | warning | destructive (danger is a legacy alias)."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -8960,12 +9252,14 @@
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
+        "reducedMotion": "supported"
       },
-      "states": [],
+      "states": [
+        "disabled"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -8992,7 +9286,7 @@
         },
         "keyboard": null,
         "focus": null,
-        "liveRegion": null,
+        "liveRegion": "polite",
         "exceptions": null
       },
       "testing": {
@@ -9021,11 +9315,12 @@
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "supported"
+        "reducedMotion": "not-applicable"
       },
       "states": [
-        "focus-visible",
-        "disabled"
+        "disabled",
+        "invalid",
+        "required"
       ],
       "api": {
         "variants": null,
@@ -9034,7 +9329,13 @@
         "variantAliases": null,
         "domainAxes": null,
         "axisSources": null,
-        "controlled": null
+        "controlled": [
+          {
+            "value": "value",
+            "default": "defaultValue",
+            "change": "onChange"
+          }
+        ]
       },
       "accessibility": {
         "required": true,
@@ -9085,7 +9386,8 @@
         "reducedMotion": "supported"
       },
       "states": [
-        "hover"
+        "hover",
+        "focus-visible"
       ],
       "api": {
         "variants": null,
@@ -9147,6 +9449,7 @@
       "states": [
         "hover",
         "focus-visible",
+        "active",
         "disabled",
         "invalid"
       ],
@@ -9220,12 +9523,14 @@
       "status": "beta",
       "capabilities": {
         "rtl": "not-applicable",
-        "darkMode": "not-applicable",
+        "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
         "reducedMotion": "not-applicable"
       },
-      "states": [],
+      "states": [
+        "hover"
+      ],
       "api": {
         "variants": null,
         "sizes": null,
@@ -9281,20 +9586,35 @@
         "darkMode": "supported",
         "density": "supported",
         "ssr": "client-boundary",
-        "reducedMotion": "supported"
+        "reducedMotion": "not-applicable"
       },
       "states": [
         "hover",
         "focus-visible",
+        "active",
         "disabled"
       ],
       "api": {
-        "variants": null,
+        "variants": [
+          "default",
+          "ghost"
+        ],
         "sizes": null,
-        "variantGroups": null,
+        "variantGroups": [
+          "variant"
+        ],
         "variantAliases": null,
         "domainAxes": null,
-        "axisSources": null,
+        "axisSources": {
+          "variant": {
+            "source": "forwarded",
+            "note": "Toolbar.variant (default | ghost) is a container data-attribute; ToolbarButton.variant and ToolbarLink are forwarded to Button's buttonVariants."
+          },
+          "size": {
+            "source": "forwarded",
+            "note": "ToolbarButton/ToolbarLink size is passed straight to buttonVariants: default | sm | icon | icon-sm and the rest of Button's scale."
+          }
+        },
         "controlled": null
       },
       "accessibility": {
@@ -9397,7 +9717,7 @@
       "testing": {
         "unit": true,
         "accessibility": true,
-        "interaction": false,
+        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -9416,7 +9736,7 @@
       "groupImport": "@qeetrix/ui/components/Tour",
       "status": "beta",
       "capabilities": {
-        "rtl": "not-applicable",
+        "rtl": "supported",
         "darkMode": "supported",
         "density": "unsupported",
         "ssr": "client-boundary",
@@ -9495,13 +9815,15 @@
       "capabilities": {
         "rtl": "supported",
         "darkMode": "supported",
-        "density": "unsupported",
+        "density": "supported",
         "ssr": "client-boundary",
         "reducedMotion": "supported"
       },
       "states": [
         "hover",
         "focus-visible",
+        "disabled",
+        "selected",
         "expanded",
         "open"
       ],
@@ -9537,7 +9859,9 @@
           "arrow-left",
           "arrow-right",
           "home",
-          "end"
+          "end",
+          "asterisk",
+          "type-ahead"
         ],
         "focus": {
           "model": "roving",
@@ -9591,8 +9915,12 @@
           "inlineCode",
           "list"
         ],
-        "sizes": null,
+        "sizes": [
+          "md",
+          "sm"
+        ],
         "variantGroups": [
+          "size",
           "variant"
         ],
         "variantAliases": null,

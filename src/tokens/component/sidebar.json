@@ -15,6 +15,13 @@
           "$value": "3rem",
           "$type": "dimension"
         }
+      },
+      "indicator": {
+        "width": {
+          "$value": "3px",
+          "$type": "dimension",
+          "$description": "Thickness of the selected-item indicator bar at the inline start of an active menu item — the part of the Qeet navigation signature that carries selection at 3:1 when the tint alone would not. Owned here because it is a sidebar decision with no semantic counterpart; it stays fixed across densities so the bar reads the same at every row height."
+        }
       }
     }
   }

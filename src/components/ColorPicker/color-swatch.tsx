@@ -1,12 +1,26 @@
 "use client";
 
 import { cva } from "class-variance-authority";
+import { CheckIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
+import { swatchTone } from "@/internal/swatch-tone";
+import { colorPickerMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
+/**
+ * A colour sample. Selection is never carried by colour alone: a selected swatch shows a check
+ * glyph — dark on light colours, white on dark ones, picked by luminance — and a 2px graphite
+ * outline offset from the edge. Graphite rather than Ember, because the ring sits next to an
+ * arbitrary colour (an orange swatch would swallow an orange ring) and so that it never reads as
+ * the Ember focus ring, which replaces it while the swatch is focused.
+ *
+ * The swatch keeps its own colour under forced colors (`forced-color-adjust: none`) — the colour
+ * is the information — and the check and outline still mark the selection.
+ */
 const colorSwatchVariants = cva(
-  "inline-block rounded-sm border border-border/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+  "relative inline-flex shrink-0 items-center justify-center rounded-sm border border-foreground/15 outline-none forced-color-adjust-none",
   {
     variants: {
       size: {
@@ -16,15 +30,15 @@ const colorSwatchVariants = cva(
         lg: "size-8",
       },
       selected: {
-        true: "ring-2 ring-primary ring-offset-2",
+        true: "outline-2 outline-offset-2 outline-solid outline-foreground",
         false: "",
       },
       disabled: {
-        true: "opacity-disabled cursor-not-allowed pointer-events-none",
+        true: "cursor-not-allowed opacity-disabled",
         false: "",
       },
       interactive: {
-        true: "cursor-pointer",
+        true: "cursor-pointer transition-[scale] duration-fast ease-standard not-disabled:hover:scale-110 focus-visible:focus-ring",
         false: "cursor-default",
       },
     },
@@ -44,8 +58,30 @@ type ColorSwatchProps = {
   selected?: boolean;
   disabled?: boolean;
   onClick?: () => void;
+  /** Native tooltip text — the hex value, for example, on a swatch whose label is a name. */
+  title?: string;
   className?: string;
 };
+
+function SwatchCheck({ color }: { color: string }) {
+  const tone = swatchTone(color);
+  return (
+    <CheckIcon
+      aria-hidden
+      strokeWidth={3}
+      data-slot="color-swatch-check"
+      className={cn(
+        "pointer-events-none size-3/5",
+        tone === "dark"
+          ? "text-(--qx-component-color-picker-glyph-on-dark)"
+          : "text-(--qx-component-color-picker-glyph-on-light)",
+        // A colour that cannot be measured gets a halo, so the check reads on anything.
+        tone === "unknown" &&
+          "drop-shadow-[0_0_1px_var(--qx-component-color-picker-glyph-on-dark)]",
+      )}
+    />
+  );
+}
 
 function ColorSwatch({
   color,
@@ -54,6 +90,7 @@ function ColorSwatch({
   selected,
   disabled,
   onClick,
+  title,
   className,
 }: ColorSwatchProps) {
   const classes = cn(
@@ -71,13 +108,17 @@ function ColorSwatch({
       <button
         type="button"
         data-slot="color-swatch"
+        data-selected={selected || undefined}
         aria-label={label ?? color}
         aria-pressed={selected}
         disabled={disabled}
+        title={title}
         style={{ backgroundColor: color }}
         className={classes}
         onClick={onClick}
-      />
+      >
+        {selected ? <SwatchCheck color={color} /> : null}
+      </button>
     );
   }
 
@@ -85,19 +126,24 @@ function ColorSwatch({
     <span
       role="img"
       data-slot="color-swatch"
+      data-selected={selected || undefined}
       aria-label={label ?? color}
+      title={title}
       style={{ backgroundColor: color }}
       className={classes}
-    />
+    >
+      {selected ? <SwatchCheck color={color} /> : null}
+    </span>
   );
 }
 
 function ColorSwatchGroup({ className, ...props }: ComponentProps<"fieldset">) {
+  const messages = useMessages("colorPicker", colorPickerMessages);
   return (
     <fieldset
       data-slot="color-swatch-group"
-      aria-label="Color swatches"
-      className={cn("flex flex-wrap gap-1.5 border-0 p-0 m-0", className)}
+      aria-label={messages.swatches}
+      className={cn("m-0 flex flex-wrap gap-1.5 border-0 p-0", className)}
       {...props}
     />
   );

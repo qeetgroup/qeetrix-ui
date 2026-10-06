@@ -1,0 +1,77 @@
+{
+  "component": {
+    "file-upload": {
+      "$description": "Dropzone, FileUploadItem and LogoUploader. Component tokens reference SEMANTIC tokens through their CSS variables, so one declaration covers both themes. The drop target is a calm graphite well at rest; Qeet appears only while something is being dragged over it (the active state), and the danger roles only when it is invalid.",
+      "corner": {
+        "$value": "{corner.surface}",
+        "$type": "dimension",
+        "$description": "A drop target is a surface, not a control: the surface corner, one step above fields."
+      },
+      "padding": {
+        "$value": "calc(var(--qx-control-field-gap) * 1.5)",
+        "$type": "dimension",
+        "$description": "Drop-target padding, derived from the density-resolved field gap: 24px at default and comfortable density, 12px at compact."
+      },
+      "border": {
+        "$value": "var(--qx-color-border-control)",
+        "$type": "color",
+        "$description": "The dashed boundary at rest. The control boundary (≥3:1), because the drop target is an input, not decoration."
+      },
+      "border-hover": {
+        "$value": "var(--qx-color-border-control-hover)",
+        "$type": "color"
+      },
+      "border-active": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color",
+        "$description": "While files are dragged over the target: the Qeet indicator role (≥3:1), so the active state never depends on the tint alone."
+      },
+      "border-invalid": {
+        "$value": "var(--qx-color-border-danger)",
+        "$type": "color"
+      },
+      "background": {
+        "$value": "var(--qx-color-surface-subtle)",
+        "$type": "color",
+        "$description": "The drop well at rest: the subtle surface, one quiet step off the card it sits on."
+      },
+      "background-hover": {
+        "$value": "var(--qx-color-surface-interactive)",
+        "$type": "color"
+      },
+      "background-active": {
+        "$value": "var(--qx-color-surface-brand-subtle)",
+        "$type": "color",
+        "$description": "While files are dragged over the target: the Qeet selected tint."
+      },
+      "background-invalid": {
+        "$value": "var(--qx-color-feedback-error-subtle)",
+        "$type": "color"
+      },
+      "item": {
+        "padding": {
+          "$value": "calc(var(--qx-control-field-gap) / 2)",
+          "$type": "dimension",
+          "$description": "File-row padding, from the density-resolved field gap: 8px at default and comfortable density, 4px at compact."
+        },
+        "background": {
+          "$value": "var(--qx-color-surface-default)",
+          "$type": "color"
+        },
+        "border": {
+          "$value": "var(--qx-color-border-default)",
+          "$type": "color"
+        },
+        "background-error": {
+          "$value": "var(--qx-color-feedback-error-subtle)",
+          "$type": "color",
+          "$description": "A failed row is the one that needs attention, so it alone is tinted; uploading and finished rows stay neutral."
+        },
+        "border-error": {
+          "$value": "var(--qx-color-border-danger)",
+          "$type": "color"
+        }
+      }
+    }
+  }
+}

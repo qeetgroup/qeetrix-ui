@@ -1,0 +1,50 @@
+{
+  "component": {
+    "file-card": {
+      "$description": "FileCard. Component tokens reference SEMANTIC tokens through their CSS variables, so one declaration covers both themes. Graphite at rest; selection is the Qeet selected vocabulary (brand-subtle tint plus the brand indicator outline), failure is the danger border.",
+      "corner": {
+        "$value": "{corner.surface}",
+        "$type": "dimension"
+      },
+      "background": {
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color"
+      },
+      "border-hover": {
+        "$value": "var(--qx-color-border-strong)",
+        "$type": "color",
+        "$description": "Hover on a card that opens: a visible decorative edge, paired with the hover elevation."
+      },
+      "preview-background": {
+        "$value": "var(--qx-color-surface-sunken)",
+        "$type": "color",
+        "$description": "The preview well behind the file-type icon or thumbnail: sunken, so a white document thumbnail still reads as a page."
+      },
+      "background-selected": {
+        "$value": "var(--qx-color-surface-brand-subtle)",
+        "$type": "color"
+      },
+      "border-selected": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color",
+        "$description": "The selected outline: the Qeet indicator role (≥3:1), so selection never rests on the tint alone."
+      },
+      "border-error": {
+        "$value": "var(--qx-color-border-danger)",
+        "$type": "color"
+      },
+      "elevation": {
+        "$value": "var(--qx-elevation-raised)",
+        "$type": "shadow"
+      },
+      "elevation-hover": {
+        "$value": "var(--qx-elevation-hover)",
+        "$type": "shadow"
+      }
+    }
+  }
+}

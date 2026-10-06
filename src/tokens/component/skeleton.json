@@ -1,0 +1,12 @@
+{
+  "component": {
+    "skeleton": {
+      "$description": "Skeleton placeholder (Spinner family). The shimmer sweep itself lives in src/styles/base.css; this is the resting block it sweeps over.",
+      "background": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 10%, transparent)",
+        "$type": "color",
+        "$description": "A translucent foreground tint rather than an opaque fill, so a placeholder reads the same on canvas, card, popover and sunken surfaces: 1.23:1 in light and 1.27-1.33:1 in dark. The muted fill it replaces measured 1.03:1 on the light canvas and 1.07:1 on a dark card, so dark placeholders all but disappeared."
+      }
+    }
+  }
+}

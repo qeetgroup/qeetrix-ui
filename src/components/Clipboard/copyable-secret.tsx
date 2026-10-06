@@ -1,9 +1,9 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";
+import { CopyFeedbackIcon, CopyFeedbackLabel } from "@/internal/copy-feedback";
 import type { MessagesFor } from "@/lib/messages";
 import { copyableSecretMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
@@ -133,15 +133,25 @@ function CopyableSecret({
     timerRef.current = setTimeout(() => setCopied(false), copiedDurationMs);
   };
 
+  // A recessed code well. Its minimum height is the button's, so a one-line value and the
+  // button share a baseline row; a wrapped value grows downward and the button stays at the
+  // top. `select-all` makes one click select the whole value — the manual fallback when the
+  // clipboard is blocked.
   const codeClasses = cn(
-    "flex-1 rounded-md border bg-muted font-mono",
-    size === "sm" ? "px-2 py-1 text-xs" : "px-3 py-2 text-sm",
-    oneLine ? "overflow-x-auto whitespace-nowrap" : "break-all",
+    "flex min-w-0 flex-1 items-center rounded-(--qx-corner-field) border border-border bg-surface-sunken font-mono text-foreground select-all",
+    size === "sm" ? "min-h-7 px-2 py-0.5 text-xs" : "min-h-(--qx-control-height) px-3 py-1 text-sm",
+    oneLine
+      ? "overflow-x-auto whitespace-nowrap focus-visible:focus-ring scrollbar-thin"
+      : "break-all",
   );
 
   return (
-    <div data-slot="copyable-secret" className={cn("flex items-center gap-2", className)}>
-      <code className={codeClasses}>
+    <div data-slot="copyable-secret" className={cn("flex items-start gap-2", className)}>
+      <code
+        className={codeClasses}
+        // A one-line value scrolls; a scroll container has to be reachable from the keyboard.
+        tabIndex={oneLine ? 0 : undefined}
+      >
         {label}
         {value}
       </code>
@@ -151,23 +161,21 @@ function CopyableSecret({
         size={size === "sm" ? "sm" : "default"}
         onClick={handleCopy}
         disabled={disabled}
+        data-copied={copied || undefined}
         aria-label={
           copied
             ? resolvedCopiedLabel
             : `${resolvedCopyLabel} ${label?.trim() ?? messages.secret}`.trim()
         }
       >
-        {copied ? (
-          <>
-            <CheckIcon aria-hidden className="text-success" />
-            <span className="hidden sm:inline">{resolvedCopiedLabel}</span>
-          </>
-        ) : (
-          <>
-            <CopyIcon aria-hidden />
-            <span className="hidden sm:inline">{resolvedCopyLabel}</span>
-          </>
-        )}
+        <CopyFeedbackIcon copied={copied} />
+        <CopyFeedbackLabel
+          copied={copied}
+          label={resolvedCopyLabel}
+          copiedLabel={resolvedCopiedLabel}
+          // Icon-only on a phone; the aria-label carries the name either way.
+          className="hidden sm:inline-grid"
+        />
       </Button>
     </div>
   );

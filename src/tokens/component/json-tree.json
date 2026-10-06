@@ -1,0 +1,15 @@
+{
+  "component": {
+    "json-tree": {
+      "$description": "JSONTree rows. The tree sits on the sunken code surface, where the neutral interactive surfaces are the same step as the well itself. The row hover therefore lifts the row toward the default surface instead of darkening it: a darker wash pulled the light-theme syntax colours below 4.5:1, a lighter one keeps every role ≥4.5:1 in both themes and still reads as a hover.",
+      "row-background-hover": {
+        "$value": "color-mix(in oklab, var(--qx-color-surface-default) 70%, transparent)",
+        "$type": "color"
+      },
+      "guide": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color"
+      }
+    }
+  }
+}

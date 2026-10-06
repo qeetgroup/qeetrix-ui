@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { FieldHiddenInput, useFieldControl } from "@/components/Input/field";
 import {
   Select,
   SelectContent,
@@ -8,7 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/Select/select";
+import { timePickerMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 function pad(n: number): string {
   return String(n).padStart(2, "0");
@@ -83,15 +86,29 @@ interface TimeParts {
   s: number;
 }
 
-/** Parse a canonical `"HH:mm"` / `"HH:mm:ss"` (24h) string. */
+/**
+ * `H:mm`, `HH:mm` or `HH:mm:ss`, with an optional fraction (a native `<input type="time">` with a
+ * sub-second `step` submits one), which is ignored.
+ */
+const TIME_PATTERN = /^(\d{1,2}):(\d{2})(?::(\d{2})(?:\.\d{1,3})?)?$/;
+
+/**
+ * Parse a canonical 24h time string: `"HH:mm"` or `"HH:mm:ss"`.
+ *
+ * Strict on purpose. `parseInt` used to accept `"25:99"`, `"9:5x"` and `"1e1:30"`, and a picker
+ * holding an hour or minute it has no option for renders an empty column while believing it has
+ * a value. Anything that is not a real wall-clock time is `null` — no value — so the picker shows
+ * its placeholders and the next pick emits a valid time.
+ */
 function parseTime(value?: string): TimeParts | null {
   if (!value) return null;
-  const parts = value.split(":");
-  const h = Number.parseInt(parts[0], 10);
-  const m = Number.parseInt(parts[1], 10);
-  const s = Number.parseInt(parts[2], 10);
-  if (Number.isNaN(h) || Number.isNaN(m)) return null;
-  return { h, m, s: Number.isNaN(s) ? 0 : s };
+  const match = TIME_PATTERN.exec(value.trim());
+  if (!match) return null;
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  const s = match[3] === undefined ? 0 : Number(match[3]);
+  if (h > 23 || m > 59 || s > 59) return null;
+  return { h, m, s };
 }
 
 interface TimePickerProps {
@@ -110,10 +127,30 @@ interface TimePickerProps {
    * falls between two steps. Defaults to `1`.
    */
   minuteStep?: number;
+  /**
+   * Height of the columns. `"default"` is the density-resolved field height, so a TimePicker
+   * lines up with the Inputs and Selects in the same form row; `"sm"` is the compact 28px
+   * column. Defaults to `"default"`.
+   */
+  size?: "sm" | "default";
   disabled?: boolean;
+  /** Goes on the hours column, the group's first stop, so a `<label htmlFor>` reaches it. */
   id?: string;
   className?: string;
+  /**
+   * Submits the time as `HH:mm` (`HH:mm:ss` with `withSeconds`) under this name — the same
+   * canonical 24h string `onValueChange` emits. Empty while there is no valid time.
+   */
+  name?: string;
+  /** Associate the submitted value with a form it is not nested inside, by form `id`. */
+  form?: string;
+  /** Names the group. Defaults to "Time" when neither this nor a labelling Field is present. */
   "aria-label"?: string;
+  /** Names the group from visible text, e.g. a heading. Wins over a surrounding Field label. */
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+  /** Marks every column invalid (and draws the destructive boundary). */
+  "aria-invalid"?: React.AriaAttributes["aria-invalid"];
 }
 
 /**
@@ -123,6 +160,11 @@ interface TimePickerProps {
  *
  * `minuteStep` is normalised before it reaches the option loop — see
  * {@link TimePickerProps.minuteStep} for the exact rule.
+ *
+ * Forms: the columns are a named group. Inside a `Field` the Field label names the group, the
+ * hours column takes the Field's control id (so the label focuses it), the description describes
+ * the group, and `aria-invalid` marks every column. `name` submits the canonical string. There is
+ * no `required`: a hidden value is exempt from constraint validation.
  */
 function TimePicker({
   value,
@@ -131,11 +173,27 @@ function TimePicker({
   hourCycle = 24,
   withSeconds = false,
   minuteStep = 1,
+  size = "default",
   disabled,
   id,
   className,
+  name,
+  form,
   "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
 }: TimePickerProps) {
+  const messages = useMessages("timePicker", timePickerMessages);
+  // The default "Time" name is *not* passed here: it would suppress a surrounding Field's label.
+  const field = useFieldControl({
+    id,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+  });
+  const groupLabelledBy = field["aria-labelledby"];
   const [internal, setInternal] = React.useState<string | undefined>(defaultValue);
   const current = value !== undefined ? value : internal;
   const parsed = parseTime(current);
@@ -185,19 +243,39 @@ function TimePicker({
   const minuteValue = parsed ? pad(base.m) : null;
   const secondValue = parsed ? pad(base.s) : null;
 
+  const submitted = parsed
+    ? withSeconds
+      ? `${pad(base.h)}:${pad(base.m)}:${pad(base.s)}`
+      : `${pad(base.h)}:${pad(base.m)}`
+    : "";
+  /** What every column shares: its height and the invalid state. */
+  const column = {
+    size,
+    "aria-invalid": field["aria-invalid"],
+    "aria-errormessage": field["aria-errormessage"],
+  } as const;
+  // The colons are typography, not content: hidden from assistive technology, and dimmed with
+  // the columns when disabled. The columns fade themselves, so the group does not fade again —
+  // stacking the two made a disabled picker a quarter of its contrast.
+  const separator = (
+    <span aria-hidden className={cn("text-muted-foreground", disabled && "opacity-disabled")}>
+      :
+    </span>
+  );
+
   return (
     <fieldset
       data-slot="time-picker"
-      aria-label={ariaLabel ?? "Time"}
-      className={cn(
-        "flex min-w-0 items-center gap-1 border-0 p-0",
-        disabled && "opacity-disabled",
-        className,
-      )}
+      aria-labelledby={groupLabelledBy}
+      aria-label={groupLabelledBy ? undefined : (ariaLabel ?? messages.label)}
+      aria-describedby={field["aria-describedby"]}
+      data-disabled={disabled || undefined}
+      className={cn("flex min-w-0 items-center gap-1 border-0 p-0", className)}
     >
+      <FieldHiddenInput name={name} value={submitted} form={form} disabled={disabled} />
       <Select value={hourValue} onValueChange={setHour} disabled={disabled}>
-        <SelectTrigger id={id} size="sm" aria-label="Hours" className="w-16">
-          <SelectValue placeholder="HH" />
+        <SelectTrigger id={field.id} aria-label={messages.hours} className="w-18" {...column}>
+          <SelectValue placeholder={messages.hoursPlaceholder} />
         </SelectTrigger>
         <SelectContent>
           {hourOptions.map((h) => (
@@ -208,11 +286,11 @@ function TimePicker({
         </SelectContent>
       </Select>
 
-      <span className="text-muted-foreground">:</span>
+      {separator}
 
       <Select value={minuteValue} onValueChange={setMinute} disabled={disabled}>
-        <SelectTrigger size="sm" aria-label="Minutes" className="w-16">
-          <SelectValue placeholder="MM" />
+        <SelectTrigger aria-label={messages.minutes} className="w-18" {...column}>
+          <SelectValue placeholder={messages.minutesPlaceholder} />
         </SelectTrigger>
         <SelectContent>
           {minuteOptions.map((m) => (
@@ -225,10 +303,10 @@ function TimePicker({
 
       {withSeconds && (
         <>
-          <span className="text-muted-foreground">:</span>
+          {separator}
           <Select value={secondValue} onValueChange={setSecond} disabled={disabled}>
-            <SelectTrigger size="sm" aria-label="Seconds" className="w-16">
-              <SelectValue placeholder="SS" />
+            <SelectTrigger aria-label={messages.seconds} className="w-18" {...column}>
+              <SelectValue placeholder={messages.secondsPlaceholder} />
             </SelectTrigger>
             <SelectContent>
               {secondOptions.map((s) => (
@@ -242,13 +320,13 @@ function TimePicker({
       )}
 
       {is12 && (
-        <Select value={parsed ? period : undefined} onValueChange={setPeriod} disabled={disabled}>
-          <SelectTrigger size="sm" aria-label="AM or PM" className="w-18">
+        <Select value={parsed ? period : null} onValueChange={setPeriod} disabled={disabled}>
+          <SelectTrigger aria-label={messages.period} className="w-20" {...column}>
             <SelectValue placeholder="--" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="AM">AM</SelectItem>
-            <SelectItem value="PM">PM</SelectItem>
+            <SelectItem value="AM">{messages.am}</SelectItem>
+            <SelectItem value="PM">{messages.pm}</SelectItem>
           </SelectContent>
         </Select>
       )}

@@ -1,11 +1,31 @@
 {
   "color": {
     "syntax": {
-      "$description": "Code syntax roles. A highlighter is the one place where hue carries meaning that cannot be expressed as a surface/text pair, so — like the categorical chart series — these are their own semantic vocabulary rather than reuses of text.* roles. Values match the palette steps the in-house highlighters used as Tailwind utilities before they were tokenised, so tokenising was non-visual.",
-      "key": { "$value": "{color.sky.700}", "$type": "color" },
-      "string": { "$value": "{color.emerald.700}", "$type": "color" },
-      "number": { "$value": "{color.amber.700}", "$type": "color" },
-      "literal": { "$value": "{color.violet.700}", "$type": "color" }
+      "$description": "Code syntax roles. A highlighter is the one place where hue carries meaning that cannot be expressed as a surface/text pair, so — like the categorical chart series — these are their own semantic vocabulary rather than reuses of text.* roles. Calm, professional hues for code inside enterprise applications — not an IDE neon theme. Every role, punctuation and comments included, is ≥4.5:1 on the code surface.",
+      "key": {
+        "$value": "{color.info.700}",
+        "$type": "color"
+      },
+      "string": {
+        "$value": "{color.success.700}",
+        "$type": "color"
+      },
+      "number": {
+        "$value": "{color.qeet.700}",
+        "$type": "color"
+      },
+      "literal": {
+        "$value": "{color.violet.700}",
+        "$type": "color"
+      },
+      "punctuation": {
+        "$value": "{color.graphite.600}",
+        "$type": "color"
+      },
+      "comment": {
+        "$value": "{color.graphite.600}",
+        "$type": "color"
+      }
     }
   }
 }

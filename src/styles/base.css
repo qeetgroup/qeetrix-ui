@@ -17,6 +17,15 @@
  */
 
 @layer base {
+  /* Native colour scheme, so browser-drawn UI (form controls, scrollbars, autofill, the date
+   * picker popup) matches the theme. Host-global by nature, which is why it lives here and not in
+   * index.css. The values mirror `colorScheme` in scripts/config/themes.json. */
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -85,9 +94,17 @@
    *
    * The user asked for less movement, so transitions and animations collapse to the
    * reduced-motion duration token rather than each component carrying its own media query —
-   * which is how a library ends up with half of it honouring the preference. The duration is
-   * near-zero rather than zero so `transitionend` still fires: Base UI waits for it before
-   * unmounting an overlay, and a transition that never ends would leave the overlay mounted.
+   * which is how a library ends up with half of it honouring the preference. A transition's
+   * duration is near-zero rather than zero so `transitionend` still fires: Base UI waits for it
+   * before unmounting an overlay, and a transition that never ends would leave the overlay
+   * mounted.
+   *
+   * An animation's duration is the token itself (0ms), with no floor: Base UI waits for
+   * animations through `getAnimations().finished`, which a zero-length animation satisfies at
+   * once. A floor here also broke Base UI's own suppression: it sets an inline
+   * `animation-duration: 0s` on a Collapsible/Accordion panel that opens on mount, this
+   * `!important` rule overrode it, and the panel then reported both a transition and an
+   * animation ("CSS transitions and CSS animations both detected").
    *
    * A component only needs its own handling when it drives motion from JavaScript, where CSS
    * cannot reach it — see `usePrefersReducedMotion`. */
@@ -95,12 +112,36 @@
     *,
     *::before,
     *::after {
-      animation-duration: max(var(--qx-motion-reduced-duration), 0.01ms) !important;
+      animation-duration: var(--qx-motion-reduced-duration) !important;
       animation-delay: var(--qx-motion-reduced-duration) !important;
       animation-iteration-count: 1 !important;
       transition-duration: max(var(--qx-motion-reduced-duration), 0.01ms) !important;
       transition-delay: var(--qx-motion-reduced-duration) !important;
       scroll-behavior: auto !important;
+    }
+  }
+
+  /* Native controls take part in forced colours even inside a subtree that opted out (a chart,
+   * a rating): `forced-color-adjust` is inherited, so this re-asserts the default on them.
+   *
+   * Layered, as a default — not unlayered, as it used to be. Unlayered, it outranked every
+   * component utility, so a component that deliberately opts a control out (a colour swatch
+   * whose fill is the information, a selected item painting the system selection) needed `!`,
+   * and the ones written without it were silently dead. A component's own
+   * `forced-colors:forced-color-adjust-none` now wins, which is the reviewed decision; the
+   * selection recipe is `forced-colors-selected` in index.css. */
+  @media (forced-colors: active) {
+    button,
+    [role="button"],
+    input,
+    select,
+    textarea,
+    [role="checkbox"],
+    [role="radio"],
+    [role="switch"],
+    [role="tab"],
+    [role="option"] {
+      forced-color-adjust: auto;
     }
   }
 }
@@ -120,8 +161,13 @@
     --secondary-foreground: ButtonText;
     --muted: Canvas;
     --muted-foreground: CanvasText;
-    --accent: Highlight;
-    --accent-foreground: HighlightText;
+    /* Hover fills carry no meaning, so they paint nothing here. They used to map to
+     * Highlight / HighlightText, which Chromium renders white on white: under
+     * `forced-color-adjust: auto` it draws a Canvas backplate behind every glyph. A state that
+     * means something — highlighted, selected, current, pressed — paints the system selection
+     * itself with `forced-colors-selected` (index.css), which opts out of the backplate. */
+    --accent: Canvas;
+    --accent-foreground: CanvasText;
     --destructive: Mark;
     --destructive-foreground: MarkText;
     --destructive-border: Mark;
@@ -141,10 +187,16 @@
     --sidebar-foreground: CanvasText;
     --sidebar-primary: ButtonFace;
     --sidebar-primary-foreground: ButtonText;
-    --sidebar-accent: Highlight;
-    --sidebar-accent-foreground: HighlightText;
+    /* As --accent: the sidebar's hover and selected tints are fills behind text, so they resolve
+     * to Canvas and the selected item paints itself (forced-colors-selected). The indicator bar
+     * carries no text, so it keeps Highlight. */
+    --sidebar-accent: Canvas;
+    --sidebar-accent-foreground: CanvasText;
     --sidebar-border: CanvasText;
     --sidebar-ring: Highlight;
+    --sidebar-selected: Canvas;
+    --sidebar-selected-foreground: CanvasText;
+    --sidebar-indicator: Highlight;
 
     /* Chart chrome becomes system-coloured so axes, gridlines and reference lines stay legible
      * against whatever background the user chose. */
@@ -160,6 +212,8 @@
     --syntax-string: CanvasText;
     --syntax-number: CanvasText;
     --syntax-literal: CanvasText;
+    --syntax-punctuation: CanvasText;
+    --syntax-comment: CanvasText;
   }
 
   /* The categorical series are the one place authored colour is deliberately preserved.
@@ -187,22 +241,11 @@
     text-shadow: none !important;
   }
 
+  /* Colour and width are forced; the offset is not. A component's own offset is part of its
+   * recipe — focus-ring-inset draws inside a clipping container (menus, lists, tabs, the sidebar)
+   * precisely so the ring is not cut off, and forcing the outset value here would undo that. */
   :focus-visible {
     outline: var(--qx-focus-outline-width) solid Highlight !important;
-    outline-offset: var(--qx-focus-offset) !important;
-  }
-
-  button,
-  [role="button"],
-  input,
-  select,
-  textarea,
-  [role="checkbox"],
-  [role="radio"],
-  [role="switch"],
-  [role="tab"],
-  [role="option"] {
-    forced-color-adjust: auto;
   }
 
   [data-slot="dialog-overlay"],

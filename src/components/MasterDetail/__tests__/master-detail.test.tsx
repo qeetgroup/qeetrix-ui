@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
@@ -9,11 +9,17 @@ const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
 
 /**
- * `useIsMobile` reads a media query, and jsdom's `matchMedia` always reports no match, so the
- * desktop branch is the default and the mobile branch has to be forced.
+ * The narrow layout is chosen by a media query, and jsdom's `matchMedia` always reports no
+ * match, so the desktop branch is the default and the narrow branch has to be forced. The mock
+ * also records which query was asked, so `collapseBelow` is assertable.
  */
-const mobile = vi.hoisted(() => ({ value: false }));
-vi.mock("@/hooks/use-mobile", () => ({ useIsMobile: () => mobile.value }));
+const mobile = vi.hoisted(() => ({ value: false, queries: [] as string[] }));
+vi.mock("@/hooks/use-media-query", () => ({
+  useMediaQuery: (query: string) => {
+    mobile.queries.push(query);
+    return mobile.value;
+  },
+}));
 
 /*
  * Panel sizes are the one thing about the desktop split that jsdom cannot show: the library
@@ -36,6 +42,7 @@ vi.mock("react-resizable-panels", async (importOriginal) => {
 
 afterEach(() => {
   mobile.value = false;
+  mobile.queries.length = 0;
   panelProps.length = 0;
 });
 
@@ -124,5 +131,73 @@ describe("MasterDetail", () => {
     mobile.value = true;
     render(<MasterDetail list={<div>List content</div>} detail={<div>Detail</div>} detailOpen />);
     expect(screen.getByText("List content")).toBeInTheDocument();
+  });
+});
+
+describe("MasterDetail enterprise layout", () => {
+  it("collapses below md by default and below the chosen breakpoint when asked", () => {
+    render(<MasterDetail list={<div>List</div>} detail={<div>Detail</div>} />);
+    expect(mobile.queries).toContain("(max-width: 767px)");
+
+    mobile.queries.length = 0;
+    render(<MasterDetail list={<div>List</div>} detail={<div>Detail</div>} collapseBelow="lg" />);
+    expect(mobile.queries).toContain("(max-width: 1023px)");
+  });
+
+  it("passes unit-bearing sizes through, so a list column can have a fixed floor", () => {
+    render(
+      <MasterDetail
+        list={<div>List</div>}
+        detail={<div>Detail</div>}
+        defaultListSize="20rem"
+        minListSize="16rem"
+        maxListSize={50}
+      />,
+    );
+    expect(panelProps[0]).toMatchObject({ defaultSize: "20rem", minSize: "16rem", maxSize: "50%" });
+  });
+
+  it("leaves the list uncapped unless a maximum is given", () => {
+    render(<MasterDetail list={<div>List</div>} detail={<div>Detail</div>} />);
+    expect(panelProps[0].maxSize).toBeUndefined();
+  });
+
+  it("opens the narrow-layout sheet from defaultDetailOpen when uncontrolled", () => {
+    mobile.value = true;
+    const { baseElement } = render(
+      <MasterDetail list={<div>List</div>} detail={<div>Detail body</div>} defaultDetailOpen />,
+    );
+    expect(baseElement.querySelector('[data-slot="sheet-content"]')).not.toBeNull();
+    expect(screen.getByText("Detail body")).toBeInTheDocument();
+  });
+
+  it("keeps the narrow-layout sheet closed by default", () => {
+    mobile.value = true;
+    const { baseElement } = render(
+      <MasterDetail list={<div>List</div>} detail={<div>Detail body</div>} />,
+    );
+    expect(baseElement.querySelector('[data-slot="sheet-content"]')).toBeNull();
+  });
+
+  it("reports the sheet closing to a controlled owner", async () => {
+    mobile.value = true;
+    const onDetailOpenChange = vi.fn();
+    render(
+      <MasterDetail
+        list={<div>List</div>}
+        detail={<div>Detail body</div>}
+        detailOpen
+        onDetailOpenChange={onDetailOpenChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+    await waitFor(() => expect(onDetailOpenChange).toHaveBeenCalledWith(false));
+  });
+
+  it("clips both panes to the frame's corners", () => {
+    const { container } = render(
+      <MasterDetail list={<div>List</div>} detail={<div>Detail</div>} />,
+    );
+    expect(container.querySelector('[data-slot="master-detail"]')).toHaveClass("overflow-hidden");
   });
 });

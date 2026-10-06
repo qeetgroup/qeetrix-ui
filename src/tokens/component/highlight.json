@@ -6,6 +6,21 @@
         "$value": "0.2em",
         "$type": "dimension",
         "$description": "Corner is em-relative on purpose: a highlight sits inline and must scale with the text it marks, which a rem or px corner would not."
+      },
+      "background": {
+        "$value": "color-mix(in oklab, var(--qx-color-action-primary) 24%, transparent)",
+        "$type": "color",
+        "$description": "A Qeet tint, not highlighter yellow: a match is the brand's emphasis role, quieter than a selection. Translucent on purpose, so it composes over whatever row it sits in — a hovered list item, a selected (brand-subtle) result — and stays visible on each, in both themes, from one value. Deliberately not the ::selection colour, so a match never reads as selected text."
+      },
+      "foreground": {
+        "$value": "var(--qx-color-text-primary)",
+        "$type": "color",
+        "$description": "Matched text is lifted to primary text even inside muted copy (a result's subtitle), so the match is carried by contrast and weight as well as by the tint — colour is never the only signal."
+      },
+      "padding-inline": {
+        "$value": "0.15em",
+        "$type": "dimension",
+        "$description": "Breathing room for the tint, em-relative like the corner. Cancelled by an equal negative margin, so marking text never moves it: results do not jitter sideways as a query is typed."
       }
     }
   }

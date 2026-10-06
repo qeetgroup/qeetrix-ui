@@ -1,0 +1,43 @@
+{
+  "component": {
+    "menu": {
+      "$description": "DropdownMenu, ContextMenu and Menubar — one menu anatomy shared by the three. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "corner": {
+        "$value": "{corner.overlay}",
+        "$type": "dimension"
+      },
+      "background": {
+        "$value": "var(--qx-color-surface-overlay)",
+        "$type": "color"
+      },
+      "foreground": {
+        "$value": "var(--qx-color-text-primary)",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color",
+        "$description": "A real border, not a box-shadow ring: forced-colors mode strips every shadow, and a menu with no edge is Canvas on Canvas there."
+      },
+      "elevation": {
+        "$value": "var(--qx-elevation-overlay)",
+        "$type": "shadow"
+      },
+      "item-height": {
+        "$value": "calc({control.height} - 0.25rem)",
+        "$type": "dimension",
+        "$description": "Minimum item height, one step under the control height so a menu stays denser than the form it sits over: 28px at default density (unchanged from the fixed padding it replaces), 32px comfortable, 24px compact — still the WCAG 2.5.8 minimum target."
+      },
+      "item-corner": {
+        "$value": "{corner.chip}",
+        "$type": "dimension",
+        "$description": "Concentric with the popup: the overlay corner minus the popup's 4px inset."
+      },
+      "item-danger-highlight": {
+        "$value": "color-mix(in oklab, var(--qx-color-feedback-error) 12%, transparent)",
+        "$type": "color",
+        "$description": "Highlight behind a destructive item. Derived over the menu surface rather than borrowed from feedback.error-subtle, which is built for surface.default and nearly vanishes on the overlay surface (1.07:1 in light). text.danger holds ≥4.9:1 on it in both themes."
+      }
+    }
+  }
+}

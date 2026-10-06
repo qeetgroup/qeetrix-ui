@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
@@ -155,5 +157,127 @@ describe("MaskInput", () => {
   it("has no axe violations", async () => {
     const { container } = render(<MaskInput mask="##/##/####" aria-label="Date of birth" />);
     expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+// ── Editing behaviour ────────────────────────────────────────────────────────
+
+describe("MaskInput editing", () => {
+  it("types one key at a time into a mask whose literal is a digit", async () => {
+    // The greedy extractor used to read the `1` of `+1 (` as the first digit on every keystroke
+    // after the first, so typing 555 produced "+1 (155".
+    const user = userEvent.setup();
+    render(<MaskInput mask="+1 (###) ###-####" aria-label="Phone" />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    await user.type(input, "5551234567");
+    expect(input.value).toBe("+1 (555) 123-4567");
+  });
+
+  it("keeps the caret where the user is typing when the value is reformatted", async () => {
+    const user = userEvent.setup();
+    render(<MaskInput mask="####-####" defaultValue="1234-5678" aria-label="Code" />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    input.focus();
+    input.setSelectionRange(2, 2);
+    await user.keyboard("9");
+    // The 9 lands after "12"; everything shifts right and the overflow drops off the end.
+    expect(input.value).toBe("1293-4567");
+    expect(input.selectionStart).toBe(3);
+  });
+
+  it("Backspace after a literal deletes the character before it", () => {
+    const onValueChange = vi.fn();
+    render(
+      <MaskInput mask="##-##" defaultValue="12-34" onValueChange={onValueChange} aria-label="C" />,
+    );
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    input.focus();
+    input.setSelectionRange(3, 3); // just after the "-"
+    fireEvent.keyDown(input, { key: "Backspace" });
+    expect(input.value).toBe("13-4");
+    expect(onValueChange).toHaveBeenLastCalledWith("134", "13-4");
+  });
+
+  it("Delete before a literal deletes the character after it", () => {
+    render(<MaskInput mask="##-##" defaultValue="12-34" aria-label="C" />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    input.focus();
+    input.setSelectionRange(2, 2); // just before the "-"
+    fireEvent.keyDown(input, { key: "Delete" });
+    expect(input.value).toBe("12-4");
+  });
+
+  it("accepts a paste in a foreign format", () => {
+    render(<MaskInput mask="(###) ###-####" aria-label="Phone" />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "555.123.4567" } });
+    expect(input.value).toBe("(555) 123-4567");
+  });
+
+  it("formats a controlled raw value", () => {
+    render(<MaskInput mask="##/##/####" value="25122025" aria-label="Date" />);
+    expect(screen.getByRole("textbox")).toHaveValue("25/12/2025");
+  });
+
+  it("does not report a change when the mask rejected the keystroke", () => {
+    const onValueChange = vi.fn();
+    render(
+      <MaskInput mask="##-##" defaultValue="12" onValueChange={onValueChange} aria-label="C" />,
+    );
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "12a" } });
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("forwards a consumer ref to the input", () => {
+    const ref = React.createRef<HTMLInputElement>();
+    render(<MaskInput mask="##" ref={ref} aria-label="C" />);
+    expect(ref.current).toBe(screen.getByRole("textbox"));
+  });
+
+  it("turns off autofill and spellcheck by default, but lets them be opted into", () => {
+    const { rerender } = render(<MaskInput mask="##" aria-label="C" />);
+    expect(screen.getByRole("textbox")).toHaveAttribute("autocomplete", "off");
+    expect(screen.getByRole("textbox")).toHaveAttribute("spellcheck", "false");
+    rerender(<MaskInput mask="##" aria-label="C" autoComplete="tel" />);
+    expect(screen.getByRole("textbox")).toHaveAttribute("autocomplete", "tel");
+  });
+});
+
+describe("MaskInput typed literals (integration pass)", () => {
+  it("keeps a typed literal, so the next equal character fills a slot (IFSC)", async () => {
+    // `0` is a literal in AAAA0******. Typed key by key, the literal used to vanish from the
+    // display and the code's own leading zeros were then read as the literal again.
+    const user = userEvent.setup();
+    render(<MaskInput mask="AAAA0******" aria-label="IFSC" />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    await user.type(input, "HDFC0001234");
+    expect(input.value).toBe("HDFC0001234");
+  });
+
+  it("matches a literal regardless of case", async () => {
+    const user = userEvent.setup();
+    render(<MaskInput mask="INV-####" aria-label="Invoice" />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    await user.type(input, "inv-2024");
+    expect(input.value).toBe("INV-2024");
+  });
+
+  it("round-trips a typed literal through a controlled value", async () => {
+    const user = userEvent.setup();
+    function Controlled() {
+      const [value, setValue] = React.useState("");
+      return (
+        <MaskInput
+          mask="AAAA0******"
+          aria-label="IFSC"
+          value={value}
+          onValueChange={(_raw, formatted) => setValue(formatted)}
+        />
+      );
+    }
+    render(<Controlled />);
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    await user.type(input, "SBIN0004321");
+    expect(input.value).toBe("SBIN0004321");
   });
 });

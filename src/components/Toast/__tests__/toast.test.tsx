@@ -6,7 +6,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { Toaster, toast } from "@/components/Toast/toast";
@@ -22,6 +22,7 @@ afterEach(() => {
   act(() => {
     toast.dismiss();
   });
+  vi.useRealTimers();
 });
 
 function ToastHarness({
@@ -42,6 +43,9 @@ function ToastHarness({
     </>
   );
 }
+
+/** Matches the visible title only — Base UI mirrors high-priority toasts into a hidden alert. */
+const TITLE = { selector: '[data-slot="toast-title"]' };
 
 /** The toast root element that contains the given title text. */
 function toastFor(title: HTMLElement): HTMLElement {
@@ -66,12 +70,79 @@ describe("Toast", () => {
   });
 
   it("exposes each toast as a focusable dialog carrying its intent", async () => {
-    render(<ToastHarness title="Deleted" type="error" />);
+    render(<ToastHarness title="Heads up" type="warning" />);
     fireEvent.click(screen.getByRole("button", { name: "Notify" }));
-    const root = toastFor(await screen.findByText("Deleted"));
+    const root = toastFor(await screen.findByText("Heads up"));
     expect(root).toHaveAttribute("role", "dialog");
     expect(root).toHaveAttribute("tabindex", "0");
+    expect(root).toHaveAttribute("data-type", "warning");
+    expect(root).toHaveClass("focus-visible:focus-ring");
+  });
+
+  it("announces an error assertively (high priority) and keeps it overridable", async () => {
+    render(<ToastHarness title="Payment failed" type="error" />);
+    fireEvent.click(screen.getByRole("button", { name: "Notify" }));
+    const root = toastFor(await screen.findByText("Payment failed", TITLE));
+    expect(root).toHaveAttribute("role", "alertdialog");
     expect(root).toHaveAttribute("data-type", "error");
+    // Base UI mirrors high-priority toasts into a role="alert" node while they are unfocused.
+    expect(screen.getByRole("alert")).toHaveTextContent("Payment failed");
+
+    act(() => {
+      toast.error("Quiet failure", { priority: "low" });
+    });
+    const quiet = toastFor(await screen.findByText("Quiet failure"));
+    expect(quiet).toHaveAttribute("role", "dialog");
+  });
+
+  it("keeps errors and actionable toasts up longer than a confirmation", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    render(<Toaster />);
+    act(() => {
+      toast.success("Short lived");
+      toast.error("Long lived");
+      toast("With undo", { actionProps: { children: "Undo" } });
+    });
+    await screen.findByText("Long lived", TITLE);
+    act(() => {
+      vi.advanceTimersByTime(6_000);
+    });
+    const gone = (text: string) => {
+      const node = screen.queryByText(text, TITLE);
+      return node === null || toastFor(node).hasAttribute("data-ending-style");
+    };
+    expect(gone("Short lived")).toBe(true);
+    expect(gone("Long lived")).toBe(false);
+    expect(gone("With undo")).toBe(false);
+  });
+
+  it("promotes a title-less toast's text to its title, so the dialog is named", async () => {
+    render(<Toaster />);
+    act(() => {
+      void toast.promise(new Promise(() => {}), {
+        loading: "Uploading audit.csv",
+        success: "Uploaded",
+        error: "Upload failed",
+      });
+    });
+    const text = await screen.findByText("Uploading audit.csv");
+    expect(text).toHaveAttribute("data-slot", "toast-title");
+    const root = toastFor(text);
+    expect(root).toHaveAttribute("data-type", "loading");
+    expect(root.querySelector('[data-slot="toast-description"]')).toBeNull();
+    expect(screen.getByRole("dialog", { name: "Uploading audit.csv" })).toBe(root);
+  });
+
+  it("hides toasts that Base UI marks as over the limit", async () => {
+    render(<Toaster limit={1} />);
+    act(() => {
+      toast("First toast");
+      toast("Second toast");
+    });
+    await screen.findByText("Second toast");
+    const first = toastFor(screen.getByText("First toast"));
+    expect(first).toHaveAttribute("data-limited");
+    expect(first).toHaveClass("data-limited:hidden");
   });
 
   it("renders a labelled close control", async () => {
@@ -86,6 +157,7 @@ describe("Toast", () => {
     if (!close) throw new Error('expected a [data-slot="toast-close"] element');
     expect(close.tagName).toBe("BUTTON");
     expect(close).toHaveAttribute("aria-label", "Close");
+    expect(close).toHaveClass("focus-visible:focus-ring");
   });
 
   it("dismisses a toast programmatically", async () => {
@@ -97,6 +169,13 @@ describe("Toast", () => {
     });
     await waitForElementToBeRemoved(() => screen.queryByText("Temporary"));
     expect(screen.queryByText("Temporary")).not.toBeInTheDocument();
+  });
+
+  it("has no axe violations with an error toast visible", async () => {
+    render(<ToastHarness title="Failed toast" description="Card declined" type="error" />);
+    fireEvent.click(screen.getByRole("button", { name: "Notify" }));
+    await screen.findByText("Failed toast", TITLE);
+    expect(await a11y(document.body)).toHaveNoViolations();
   });
 
   it("has no axe violations with a toast visible", async () => {

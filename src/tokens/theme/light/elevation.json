@@ -1,6 +1,6 @@
 {
   "elevation": {
-    "$description": "Elevation is the *role* a surface plays; shadow is the raw value it renders with. Components pick a role (surface.raised, overlay, modal) and never a shadow number, so the ladder can be retuned in one place.",
+    "$description": "Elevation is the *role* a surface plays; shadow is the raw value it renders with. Components pick a role (surface.raised, overlay, modal) and never a shadow number, so the ladder can be retuned in one place. Theme-aware: light renders with soft warm-graphite shadows; dark (theme/dark/elevation.json) with deeper shadows, a warm rim, and the surface-luminance ladder.",
     "flat": {
       "$value": "{shadow.none}",
       "$type": "shadow"
@@ -34,7 +34,7 @@
       "$type": "shadow"
     },
     "ramp": {
-      "$description": "The Tailwind shadow scale (shadow-2xs\u2026shadow-xl), exposed as semantic aliases so src/styles/index.css can map the utilities without restating the values or reaching into the primitive layer.",
+      "$description": "The Tailwind shadow scale (shadow-2xs…shadow-xl), exposed as semantic aliases so src/styles/index.css can map the utilities without restating the values or reaching into the primitive layer.",
       "2xs": {
         "$value": "{shadow.ramp.2xs}",
         "$type": "shadow"

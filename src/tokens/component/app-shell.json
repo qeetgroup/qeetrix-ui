@@ -1,0 +1,12 @@
+{
+  "component": {
+    "app-shell": {
+      "$description": "AppShell. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "header-height": {
+        "$value": "calc(var(--qx-control-height) + 1.5rem)",
+        "$type": "dimension",
+        "$description": "Height of the sticky application header: one density-resolved control row plus 0.75rem above and below it, so the bar compacts with the controls it holds (52px compact, 56px default, 60px comfortable). Published so page-level sticky regions can sit directly beneath it with `top-(--qx-component-app-shell-header-height)`."
+      }
+    }
+  }
+}

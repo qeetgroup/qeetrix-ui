@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import * as React from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { Badge } from "@/components/Badge/badge";
@@ -63,5 +63,80 @@ describe("OverflowList", () => {
       <OverflowList items={[<span key="1">A</span>, <span key="2">B</span>]} />,
     );
     expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+/*
+ * jsdom performs no layout, so every width is zero and nothing ever collapses. These tests give
+ * the row a fixed geometry — each item 50px, the container 120px — which is enough to make the
+ * component render its overflow trigger.
+ */
+describe("OverflowList collapse", () => {
+  const restore: (() => void)[] = [];
+  const stub = (proto: object, key: string, value: number) => {
+    const original = Object.getOwnPropertyDescriptor(proto, key);
+    Object.defineProperty(proto, key, { configurable: true, get: () => value });
+    restore.push(() => {
+      if (original) Object.defineProperty(proto, key, original);
+    });
+  };
+  afterEach(() => {
+    for (const undo of restore.splice(0)) undo();
+  });
+
+  const tags = ["Admin", "Billing", "Developer", "Auditor"].map((tag) => (
+    <span key={tag}>{tag}</span>
+  ));
+
+  it("collapses what does not fit into a named +N trigger", () => {
+    stub(HTMLElement.prototype, "offsetWidth", 50);
+    stub(HTMLElement.prototype, "clientWidth", 120);
+    render(<OverflowList items={tags} />);
+    const trigger = screen.getByRole("button", { name: "Show 3 more" });
+    expect(trigger).toHaveTextContent("+3");
+    expect(trigger.getAttribute("class")).toContain("focus-visible:focus-ring");
+    expect(trigger.getAttribute("class")).not.toContain("ring-ring/disabled");
+    // The chip vocabulary, so "+N" reads as one more item in the row.
+    expect(trigger.getAttribute("class")).toContain("rounded-(--qx-corner-chip)");
+  });
+
+  it("keeps the last items in breadcrumb mode", () => {
+    stub(HTMLElement.prototype, "offsetWidth", 50);
+    stub(HTMLElement.prototype, "clientWidth", 120);
+    render(<OverflowList items={tags} collapseFrom="start" />);
+    expect(screen.getByText("Auditor")).toBeInTheDocument();
+    expect(screen.queryByText("Admin")).toBeNull();
+  });
+
+  it("leaves room for focus rings inside its clipping row", () => {
+    const { container } = render(<OverflowList items={tags} />);
+    expect(container.querySelector('[data-slot="overflow-list-row"]')).toHaveClass(
+      "overflow-hidden",
+      "p-1",
+      "-m-1",
+    );
+  });
+
+  it("re-measures once web fonts settle, without remounting items", async () => {
+    let settle: () => void = () => {};
+    const ready = new Promise<void>((resolve) => {
+      settle = resolve;
+    });
+    Object.defineProperty(document, "fonts", { configurable: true, value: { ready } });
+    restore.push(() => {
+      Reflect.deleteProperty(document, "fonts");
+    });
+    const onMount = vi.fn();
+    function Probe() {
+      React.useEffect(() => onMount(), []);
+      return <span>probe</span>;
+    }
+    render(<OverflowList items={[<Probe key="probe" />]} />);
+    await React.act(async () => {
+      settle();
+      await ready;
+    });
+    expect(onMount).toHaveBeenCalledTimes(1);
+    expect(screen.getAllByText("probe")).toHaveLength(1);
   });
 });

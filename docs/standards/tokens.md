@@ -100,17 +100,34 @@ built, which is why `check:tokens` runs before the build and why:
 Nine categories, all present in both themes:
 
 ```text
-text        primary · secondary · tertiary · placeholder · disabled · inverse · brand · link
-            success · warning · danger · info · on-brand · on-subtle · on-feedback
-surface     canvas · default · elevated · sunken · subtle · interactive · rail · inverse
-border      default · subtle · strong · focused · hover · danger · success · warning · info
+text        primary · secondary · tertiary · placeholder · disabled · inverse · brand
+            link · link-hover · success · warning · danger · info
+            on-brand · on-subtle · on-feedback
+surface     canvas · default · elevated · overlay · sunken · subtle · rail · inverse
+            interactive · interactive-hover · interactive-active
+            brand-subtle · brand-subtle-hover · brand-subtle-active
+border      default · subtle · strong · control · control-hover · focused · hover · brand
+            danger · success · warning · info
 action      primary · primary-hover · primary-active
-feedback    success · warning · error · info
+feedback    success · warning · error · info · *-subtle
 focus       ring
 overlay     scrim
 selection   background
 disabled    color.text.disabled + state.opacity.disabled
 ```
+
+The surfaces are a hierarchy, not synonyms, and in light mode they really are different colours.
+The page (`canvas`, a warm off-white) sits below `default` (white cards and panels). `elevated`
+and `overlay` rise above that, `sunken` and `subtle` recess below it, and `interactive`
+(with -hover and -active) is the neutral fill of things you can press. `brand-subtle` is the
+**selected** surface: a quiet Qeet tint for the chosen row, nav item or segment, with ordinary
+`text.primary` on top (`text.on-subtle`). `border.brand` is the ≥3:1 indicator that goes with it,
+so selection never depends on the tint alone. `border.control` is the resting boundary of a form
+control, held to 3:1 on every surface; `border.default` is a divider and is not.
+
+Elevation and the `surface-fade` gradient live in `theme/<t>/` as well, because a shadow designed
+for a white page is invisible on graphite. Dark elevation is black shadow plus a faint neutral rim and an
+inset top highlight, not the light shadow at a higher opacity.
 
 Two naming notes, both deliberate:
 
@@ -187,8 +204,9 @@ corners, a height and one font size — not twenty. Prefer a semantic token wher
 token count is a cost, not an achievement.
 
 **A component token must never reference another component's tokens.** `dialog.background →
-card.background` couples two components that should merely agree; both point at
-`color.surface.elevated` instead. `check:tokens` rejects the coupling.
+card.background` couples two components that should merely agree; each points at its own
+semantic surface instead (`color.surface.overlay` for the dialog, `color.surface.default` for the
+card). `check:tokens` rejects the coupling.
 
 ### Referencing a theme-varying semantic token
 

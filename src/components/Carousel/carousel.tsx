@@ -1,7 +1,7 @@
 "use client";
 
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
@@ -46,6 +46,12 @@ interface CarouselContextValue extends CarouselProps {
   api: CarouselApi;
   scrollPrev: () => void;
   scrollNext: () => void;
+  /** Move to a scroll snap (a page — one slide unless several share the view). */
+  scrollTo: (index: number) => void;
+  /** The selected scroll snap, `0` before initialisation. */
+  selectedIndex: number;
+  /** How many scroll snaps there are — what an indicator counts. `0` before initialisation. */
+  snapCount: number;
   canScrollPrev: boolean;
   canScrollNext: boolean;
   /** Resolved reading direction of the carousel subtree. */
@@ -131,24 +137,76 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
   const [slideCount, setSlideCount] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [snapCount, setSnapCount] = React.useState(0);
   const [slidesInView, setSlidesInView] = React.useState<readonly number[]>([]);
+  // What the polite status region says. Only a move the user asked for (a control, an indicator,
+  // an arrow key) is announced — never a drag settling or an autoplay tick, which would talk
+  // over whatever the user is actually doing.
+  const [status, setStatus] = React.useState("");
+  const announceNextSelect = React.useRef(false);
+  // A slide about to be inerted while it holds focus would drop focus to <body>. The index of
+  // the slide that should receive it instead, applied once the inert state has committed.
+  const pendingFocus = React.useRef<number | null>(null);
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) return;
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
-    setSlideCount(api.slideNodes().length);
-    setSlidesInView((current) => {
+  const onSelect = React.useCallback(
+    (api: CarouselApi, event?: string) => {
+      if (!api) return;
+      setCanScrollPrev(api.canScrollPrev());
+      setCanScrollNext(api.canScrollNext());
+      setSlideCount(api.slideNodes().length);
+      const selected = api.selectedScrollSnap();
+      const snaps = api.scrollSnapList().length;
+      setSelectedIndex(selected);
+      setSnapCount(snaps);
+      if (event === "select" && announceNextSelect.current) {
+        announceNextSelect.current = false;
+        setStatus(resolvedMessages.slidePosition(selected + 1, snaps));
+      }
       const next = api.slidesInView();
-      // Reference-stable when unchanged: this value feeds every slide's context.
-      return next.length === current.length && next.every((v, i) => v === current[i])
-        ? current
-        : next;
-    });
-  }, []);
+      if (next.length > 0) {
+        const active = rootRef.current?.ownerDocument.activeElement;
+        const holder = active ? api.slideNodes().findIndex((node) => node.contains(active)) : -1;
+        if (holder >= 0 && !next.includes(holder)) pendingFocus.current = next[0] ?? null;
+      }
+      setSlidesInView((current) =>
+        // Reference-stable when unchanged: this value feeds every slide's context.
+        next.length === current.length && next.every((v, i) => v === current[i]) ? current : next,
+      );
+    },
+    [resolvedMessages],
+  );
 
-  const scrollPrev = React.useCallback(() => api?.scrollPrev(), [api]);
-  const scrollNext = React.useCallback(() => api?.scrollNext(), [api]);
+  // Each arms the announcement only when it will actually move, so a press at either end cannot
+  // leave it armed for the next drag or autoplay tick.
+  const scrollPrev = React.useCallback(() => {
+    announceNextSelect.current = Boolean(api?.canScrollPrev());
+    api?.scrollPrev();
+  }, [api]);
+  const scrollNext = React.useCallback(() => {
+    announceNextSelect.current = Boolean(api?.canScrollNext());
+    api?.scrollNext();
+  }, [api]);
+  const scrollTo = React.useCallback(
+    (index: number) => {
+      announceNextSelect.current = Boolean(api) && index !== api?.selectedScrollSnap();
+      api?.scrollTo(index);
+    },
+    [api],
+  );
+
+  // Focus rescue: runs after the commit that inerted the old slide, so the target is reachable.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `slidesInView` is the trigger — the commit that applied the new inert state — not a value the effect reads.
+  React.useLayoutEffect(() => {
+    const index = pendingFocus.current;
+    if (index === null || !api) return;
+    pendingFocus.current = null;
+    const node = api.slideNodes()[index];
+    if (!node) return;
+    // Programmatically focusable only; never a tab stop.
+    if (!node.hasAttribute("tabindex")) node.setAttribute("tabindex", "-1");
+    node.focus({ preventScroll: true });
+  }, [api, slidesInView]);
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
@@ -229,6 +287,9 @@ function Carousel({
         orientation,
         scrollPrev,
         scrollNext,
+        scrollTo,
+        selectedIndex,
+        snapCount,
         canScrollPrev,
         canScrollNext,
         direction,
@@ -245,7 +306,7 @@ function Carousel({
         data-direction={direction}
         onKeyDown={handleKeyDown}
         className={cn("relative", className)}
-        aria-roledescription="carousel"
+        aria-roledescription={resolvedMessages.roleDescription}
         // An unnamed <section> is not exposed as a landmark at all, which is why this previously
         // needed an explicit role="region" and still announced as anonymous. Naming it makes the
         // section a real region natively, so the explicit role is redundant.
@@ -253,6 +314,9 @@ function Carousel({
         {...props}
       >
         {children}
+        <span data-slot="carousel-status" aria-live="polite" aria-atomic="true" className="sr-only">
+          {status}
+        </span>
       </section>
     </CarouselContext.Provider>
   );
@@ -263,7 +327,13 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div ref={carouselRef} data-slot="carousel-content" className="overflow-hidden">
       <div
-        className={cn("flex", orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col", className)}
+        className={cn(
+          // Embla drags along one axis; the browser keeps the other axis's scroll and pinch-zoom,
+          // so a touch user can still scroll the page past a horizontal carousel.
+          "flex touch-pinch-zoom",
+          orientation === "horizontal" ? "-ms-4 touch-pan-y" : "-mt-4 flex-col touch-pan-x",
+          className,
+        )}
         {...props}
       />
     </div>
@@ -278,6 +348,9 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
  * from hit-testing) plus `aria-hidden`. `inert` is a browser behaviour — jsdom
  * only stores the attribute, so the *effect* of inerting needs a real browser to
  * verify; the attribute contract is what the tests pin.
+ *
+ * If focus is inside a slide when it leaves the view (an arrow key pressed on a link in the
+ * slide), focus moves to the slide that replaced it rather than falling to `<body>`.
  */
 function CarouselItem({
   className,
@@ -323,12 +396,13 @@ function CarouselItem({
       data-slot="carousel-item"
       data-index={index >= 0 ? index : undefined}
       data-in-view={offscreen ? undefined : ""}
-      aria-roledescription="slide"
+      aria-roledescription={resolvedMessages.slideRoleDescription}
       aria-label={positionLabel}
       aria-hidden={offscreen || undefined}
       inert={offscreen || undefined}
       className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full border-0 p-0",
+        // A slide only takes focus when focus is rescued into it; the inset ring marks where.
+        "min-w-0 shrink-0 grow-0 basis-full border-0 p-0 outline-none focus-visible:focus-ring-inset",
         orientation === "horizontal" ? "ps-4" : "pt-4",
         className,
       )}
@@ -337,6 +411,54 @@ function CarouselItem({
   );
 }
 
+/** Lets Previous/Next know they sit in a `CarouselControls` row rather than over the slides. */
+const CarouselControlsContext = React.createContext(false);
+
+/**
+ * A row for the carousel's controls, below the slides: Previous, the indicators, Next.
+ *
+ * The overlay placement — round arrows floating outside the slides' edges — is the default for
+ * Previous/Next on their own, and it assumes the page has room for them on either side. Inside
+ * this row they render in flow, so the carousel fits a narrow panel, a card or a drawer.
+ */
+function CarouselControls({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <CarouselControlsContext.Provider value={true}>
+      <div
+        data-slot="carousel-controls"
+        className={cn("mt-3 flex items-center justify-center gap-2", className)}
+        {...props}
+      />
+    </CarouselControlsContext.Provider>
+  );
+}
+
+/** Shared by Previous/Next: where the button sits, and how it looks when it cannot move. */
+function navigationClassName(
+  inControls: boolean,
+  orientation: "horizontal" | "vertical",
+  edge: "start" | "end",
+) {
+  return cn(
+    // Disabled stays focusable (see below), so the dimmed look is keyed off aria-disabled too.
+    "aria-disabled:pointer-events-none aria-disabled:opacity-disabled",
+    !inControls && [
+      // Centred with `inset-* + margin: auto` rather than a translate, so Button's own 1px
+      // press nudge does not fight a -50% centring transform (the old arrows jumped on press).
+      "absolute rounded-full",
+      orientation === "horizontal"
+        ? ["inset-y-0 my-auto", edge === "start" ? "-start-12" : "-end-12"]
+        : ["inset-x-0 mx-auto", edge === "start" ? "-top-12" : "-bottom-12"],
+    ],
+    orientation === "vertical" && "rotate-90",
+  );
+}
+
+/*
+ * Previous/Next stay focusable when there is nowhere to go (`focusableWhenDisabled`): pressing
+ * Next onto the last slide would otherwise disable the very button that has focus, and focus
+ * would fall to <body>. They announce `aria-disabled` instead and ignore activation.
+ */
 function CarouselPrevious({
   className,
   variant = "outline",
@@ -344,26 +466,28 @@ function CarouselPrevious({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollPrev, canScrollPrev, resolvedMessages } = useCarousel();
+  const inControls = React.useContext(CarouselControlsContext);
   return (
     <Button
       data-slot="carousel-previous"
       variant={variant}
       size={size}
       className={cn(
-        "absolute rounded-full",
-        orientation === "horizontal"
-          ? "-start-12 top-1/2 -translate-y-1/2"
-          : "-top-12 start-1/2 -translate-x-1/2 rotate-90",
+        navigationClassName(inControls, orientation ?? "horizontal", "start"),
         className,
       )}
       disabled={!canScrollPrev}
+      focusableWhenDisabled
       onClick={scrollPrev}
       aria-label={resolvedMessages.previousSlide}
       {...props}
     >
       {/* The button position flips via logical `-start`/`-end`; the glyph needs
           an explicit flip so it still points *away* from the current slide. */}
-      <ArrowLeftIcon aria-hidden className={orientation === "horizontal" ? "rtl:rotate-180" : ""} />
+      <ChevronLeftIcon
+        aria-hidden
+        className={orientation === "horizontal" ? "rtl:rotate-180" : ""}
+      />
     </Button>
   );
 }
@@ -375,24 +499,20 @@ function CarouselNext({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollNext, canScrollNext, resolvedMessages } = useCarousel();
+  const inControls = React.useContext(CarouselControlsContext);
   return (
     <Button
       data-slot="carousel-next"
       variant={variant}
       size={size}
-      className={cn(
-        "absolute rounded-full",
-        orientation === "horizontal"
-          ? "-end-12 top-1/2 -translate-y-1/2"
-          : "-bottom-12 start-1/2 -translate-x-1/2 rotate-90",
-        className,
-      )}
+      className={cn(navigationClassName(inControls, orientation ?? "horizontal", "end"), className)}
       disabled={!canScrollNext}
+      focusableWhenDisabled
       onClick={scrollNext}
       aria-label={resolvedMessages.nextSlide}
       {...props}
     >
-      <ArrowRightIcon
+      <ChevronRightIcon
         aria-hidden
         className={orientation === "horizontal" ? "rtl:rotate-180" : ""}
       />
@@ -400,5 +520,76 @@ function CarouselNext({
   );
 }
 
+/**
+ * One button per scroll snap, the current one marked `aria-current` and drawn as a wider brand
+ * pill — shape, not hue alone, carries "current". Each is named with its position from the
+ * message catalogue ("2 of 5"). Renders nothing until there are two snaps to choose between.
+ *
+ * One tab stop: only the current indicator is in the tab order, and while focus is on the
+ * indicators the carousel's arrow keys move both the slide and the focus — the APG picker
+ * model, without a wall of tab stops on a long carousel. Each indicator keeps a 24px target
+ * (WCAG 2.5.8) however small the visible mark.
+ */
+function CarouselIndicators({ className, ...props }: React.ComponentProps<"div">) {
+  const { snapCount, selectedIndex, scrollTo, resolvedMessages } = useCarousel();
+  const groupRef = React.useRef<HTMLDivElement>(null);
+
+  // Keep focus with the current indicator when the selection moves under it.
+  React.useEffect(() => {
+    const group = groupRef.current;
+    if (!group?.contains(group.ownerDocument.activeElement)) return;
+    group.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`)?.focus();
+  }, [selectedIndex]);
+
+  if (snapCount < 2) return null;
+  return (
+    // biome-ignore lint/a11y/useSemanticElements: a group of slide pickers; <fieldset> would add form semantics.
+    <div
+      ref={groupRef}
+      role="group"
+      data-slot="carousel-indicators"
+      className={cn("flex items-center", className)}
+      {...props}
+    >
+      {Array.from({ length: snapCount }, (_, index) => {
+        const current = index === selectedIndex;
+        return (
+          <button
+            // biome-ignore lint/suspicious/noArrayIndexKey: a snap *is* its index.
+            key={index}
+            type="button"
+            data-slot="carousel-indicator"
+            data-index={index}
+            aria-label={resolvedMessages.slidePosition(index + 1, snapCount)}
+            aria-current={current ? "true" : undefined}
+            tabIndex={current ? 0 : -1}
+            onClick={() => scrollTo(index)}
+            className="group/indicator inline-flex size-6 items-center justify-center rounded-full outline-none focus-visible:focus-ring"
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "h-1.5 rounded-full transition-[width,background-color] duration-(--qx-motion-duration-fast) ease-standard",
+                current
+                  ? "w-4 bg-border-brand forced-colors:bg-[Highlight]"
+                  : "w-1.5 bg-control group-hover/indicator:bg-control-hover forced-colors:bg-[CanvasText]",
+              )}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export type { CarouselApi };
-export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, useCarousel };
+export {
+  Carousel,
+  CarouselContent,
+  CarouselControls,
+  CarouselIndicators,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  useCarousel,
+};

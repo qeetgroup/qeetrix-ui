@@ -39,7 +39,9 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
-      className={cn("inline-flex items-center gap-1", className)}
+      // `min-w-0` lets an item shrink, so a single-line trail (`BreadcrumbList
+      // className="flex-nowrap"`) truncates its labels instead of overflowing.
+      className={cn("inline-flex min-w-0 max-w-full items-center gap-1", className)}
       {...props}
     />
   );
@@ -50,7 +52,10 @@ function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProp
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
-        className: cn("transition-colors hover:text-foreground", className),
+        className: cn(
+          "min-w-0 truncate rounded-sm underline-offset-4 transition-colors duration-fast ease-standard hover:text-foreground hover:underline focus-visible:focus-ring",
+          className,
+        ),
       },
       props,
     ),
@@ -66,7 +71,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
     <span
       data-slot="breadcrumb-page"
       aria-current="page"
-      className={cn("font-normal text-foreground", className)}
+      className={cn("min-w-0 truncate font-medium text-foreground", className)}
       {...props}
     />
   );
@@ -78,7 +83,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      className={cn("shrink-0 [&>svg]:size-3.5", className)}
       {...props}
     >
       {children ?? <ChevronRightIcon aria-hidden className="rtl:rotate-180" />}
@@ -86,14 +91,17 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
   );
 }
 
+/**
+ * Stands in for collapsed middle crumbs. Its text alternative ("More") is real, not hidden: the
+ * span used to be `aria-hidden`, which also hid that text — so a menu trigger wrapped around the
+ * ellipsis, the usual way to reveal the collapsed crumbs, had no accessible name at all.
+ */
 function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span">) {
   const messages = useMessages("breadcrumb", breadcrumbMessages);
   return (
     <span
       data-slot="breadcrumb-ellipsis"
-      role="presentation"
-      aria-hidden="true"
-      className={cn("flex size-5 items-center justify-center [&>svg]:size-4", className)}
+      className={cn("flex size-5 shrink-0 items-center justify-center [&>svg]:size-4", className)}
       {...props}
     >
       <MoreHorizontalIcon aria-hidden />

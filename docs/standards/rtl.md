@@ -26,6 +26,20 @@ Icons that indicate direction (a chevron in a breadcrumb, a "next" arrow) mirror
 `rtl:rotate-180` or by swapping the icon — a physical transform is correct there, because the
 glyph itself has a direction.
 
+**`rtl:` versus `[&:dir(rtl)]:`.** Tailwind's `rtl:` variant matches `[dir="rtl"] *` as well as
+`:dir(rtl)`, so an element inside an LTR island (`<code dir="ltr">` in an Arabic page) still
+matches it and mirrors when it should not. `[&:dir(rtl)]:` reads the element's *resolved*
+direction and gets the island right; prefer it in new component code (Sheet and Sidebar use it).
+The existing `rtl:` usages — about thirty, nearly all icon flips — are correct for whole-document
+RTL and are left as they are; converting them is a mechanical follow-up.
+
+**Portalled overlays** render into `document.body`, outside any `DirectionProvider` wrapper, so in
+an application that declares RTL only through the provider (no `dir` on `<html>`) a popup's
+layout reads LTR. Set `dir` on `<html>` for whole-application RTL — the recommended setup — or
+pass `dir` to the overlay's content part where it accepts one (`SheetContent`). The logical
+`side` values (`inline-start` / `inline-end`) on Popover, HoverCard and Tooltip resolve from the
+provider or the document either way.
+
 ---
 
 ## Physical properties are not banned
@@ -184,13 +198,18 @@ week start should take that as a prop and use this only as the initial value.
 
 ---
 
-## Embedded English is a separate, open gap
+## Localised strings
 
-The direction contract is complete; the message contract is not. The package still hardcodes
-user-facing English in roughly 33 component files (55 `aria-label` defaults plus visible strings).
-Some components take an override — `Carousel` has `slidePositionLabel`, every icon button accepts
-`aria-label` — but there is no injectable catalogue, and a host application localising Qeetrix
-today patches strings per call site. Tracked under `RTL-001`.
+The direction contract has a message counterpart: every user-facing string lives in the
+catalogue, [`src/lib/messages.ts`](../../src/lib/messages.ts), and an application translates it
+once with `<MessagesProvider messages={…}>` (or per instance with a component's `messages` prop).
+`QEETRIX_MESSAGES` enumerates the English source for a translator. Interpolated strings are
+functions of their parts, so a translation can reorder them. See
+[component-api.md § Copy and localization](./component-api.md#copy-and-localization).
+
+Known gaps: a few strings are hard-coded inside `@base-ui/react` with no prop to reach them (the
+Combobox internal dismiss button's "Dismiss"), and server-safe components resolve their group
+from their own `messages` prop only — the provider does not reach them.
 
 ---
 

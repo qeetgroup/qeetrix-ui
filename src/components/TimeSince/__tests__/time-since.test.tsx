@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { TimeSince } from "@/components/TimeSince/time-since";
@@ -58,5 +58,67 @@ describe("TimeSince locale and time zone", () => {
     );
 
     expect(container.querySelector("time")?.textContent).toBe("vor 5 Minuten");
+  });
+});
+
+/* A pinned clock (Date only): every label below is a fixed distance from a fixed "now". */
+describe("TimeSince relative-time semantics", () => {
+  const NOW = new Date("2026-03-15T12:00:00.000Z").getTime();
+  beforeEach(() => vi.useFakeTimers({ toFake: ["Date"], now: NOW }));
+  afterEach(() => vi.useRealTimers());
+
+  const label = (offsetMs: number, locale = "en-US") => {
+    const { container, unmount } = render(
+      <TimeSince value={NOW + offsetMs} locale={locale} timeZone="UTC" refreshIntervalMs={0} />,
+    );
+    const text = container.querySelector("time")?.textContent;
+    unmount();
+    return text;
+  };
+
+  it.each([
+    [-4_000, "now"],
+    [4_000, "now"],
+    [-45_000, "45 seconds ago"],
+    // The rounded amount decides the unit: never "60 seconds ago" or "24 hours ago".
+    [-59_600, "1 minute ago"],
+    [-89 * 60_000, "1 hour ago"],
+    [-23.6 * 3_600_000, "1 day ago"],
+    [-5 * 60_000, "5 minutes ago"],
+    [5 * 60_000, "in 5 minutes"],
+    [-3 * 86_400_000, "3 days ago"],
+  ])("labels %d ms as %s", (offset, expected) => {
+    expect(label(offset)).toBe(expected);
+  });
+
+  it("measures elapsed time rather than naming calendar days", () => {
+    // Hours stay hours below a day, and a day stays "1 day ago": `numeric: "auto"` would say
+    // "yesterday", a calendar claim that is wrong whenever the elapsed day spans one midnight
+    // less than it seems.
+    expect(label(-22 * 3_600_000)).toBe("22 hours ago");
+    expect(label(-26 * 3_600_000)).not.toMatch(/yesterday/i);
+  });
+
+  it("localises 'now' too", () => {
+    expect(label(-2_000, "de-DE")).toBe("jetzt");
+  });
+
+  it("switches to the absolute date past absoluteAfterDays", () => {
+    const { container } = render(
+      <TimeSince
+        value={NOW - 40 * 86_400_000}
+        locale="en-US"
+        timeZone="UTC"
+        refreshIntervalMs={0}
+      />,
+    );
+    expect(container.querySelector("time")?.textContent).toBe("Feb 3, 2026");
+  });
+
+  it("omits datetime for an unparseable value instead of writing an invalid one", () => {
+    const { container } = render(<TimeSince value="not a date" refreshIntervalMs={0} />);
+    const time = container.querySelector("time");
+    expect(time).toHaveTextContent("not a date");
+    expect(time).not.toHaveAttribute("datetime");
   });
 });

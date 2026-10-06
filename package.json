@@ -122,7 +122,7 @@
   "scripts": {
     "dev": "node scripts/build/tokens.mjs && tsc -p tsconfig.build.json --watch --noEmit",
     "build": "bun run clean && node scripts/build/tokens.mjs && node scripts/build/manifest.mjs && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/build/subpath-shims.mjs && node scripts/build/postbuild.mjs",
-    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p playground/tsconfig.json --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
@@ -134,7 +134,9 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "bun run build && changeset publish",
-    "prepack": "bun run build"
+    "prepack": "bun run build",
+    "playground": "vite --config playground/vite.config.ts",
+    "playground:build": "vite build --config playground/vite.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -163,27 +165,28 @@
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
     "@changesets/cli": "^2.31.0",
-    "culori": "^4.0.1",
-    "style-dictionary": "^5.4.1",
     "@tailwindcss/vite": "^4.3.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.19.19",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/browser-playwright": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.9",
     "axe-core": "^4.12.1",
+    "culori": "^4.0.1",
     "jsdom": "^29.1.1",
+    "playwright": "^1.57.0",
+    "style-dictionary": "^5.4.1",
     "tailwindcss": "^4.3.0",
     "tsc-alias": "^1.8.17",
     "typescript": "^6.0.3",
+    "vite": "^8.2.2",
     "vitest": "^4.1.9",
-    "vitest-axe": "^0.1.0",
-    "@types/qrcode": "^1.5.5",
-    "@vitest/browser-playwright": "^4.1.9",
-    "@vitest/coverage-v8": "^4.1.9",
-    "playwright": "^1.57.0"
+    "vitest-axe": "^0.1.0"
   },
   "publishConfig": {
     "access": "public"

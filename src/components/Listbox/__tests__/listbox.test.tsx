@@ -200,3 +200,137 @@ describe("Listbox active-descendant model", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("Listbox keyboard: type-ahead, paging, multi-select", () => {
+  const COUNTRIES = [
+    { label: "Argentina", value: "ar" },
+    { label: "Brazil", value: "br" },
+    { label: "Belgium", value: "be" },
+    { label: "Bhutan", value: "bt", disabled: true },
+    { label: "Canada", value: "ca" },
+    { label: "Chile", value: "cl" },
+    { label: "Denmark", value: "dk" },
+    { label: "Egypt", value: "eg" },
+    { label: "Finland", value: "fi" },
+    { label: "Germany", value: "de" },
+    { label: "Hungary", value: "hu" },
+    { label: "India", value: "in" },
+    { label: "Japan", value: "jp" },
+  ];
+  const activeName = () => {
+    const id = screen.getByRole("listbox").getAttribute("aria-activedescendant");
+    return id ? document.getElementById(id)?.textContent : null;
+  };
+  const key = (k: string, init: Partial<KeyboardEventInit> = {}) =>
+    fireEvent.keyDown(screen.getByRole("listbox"), { key: k, ...init });
+
+  it("jumps to the next option starting with a typed letter, and cycles on repeats", () => {
+    render(<Listbox options={COUNTRIES} aria-label="Country" />);
+    key("b");
+    expect(activeName()).toBe("Brazil");
+    key("b");
+    // Bhutan is disabled, so a repeated "b" skips it.
+    expect(activeName()).toBe("Belgium");
+    key("b");
+    expect(activeName()).toBe("Brazil");
+  });
+
+  it("matches a multi-letter query typed quickly", () => {
+    render(<Listbox options={COUNTRIES} aria-label="Country" />);
+    key("c");
+    key("h");
+    expect(activeName()).toBe("Chile");
+  });
+
+  it("moves ten options with Page Down / Page Up, clamped at the ends", () => {
+    render(<Listbox options={COUNTRIES} aria-label="Country" />);
+    key("PageDown");
+    // Ten enabled options on from Argentina (Bhutan is skipped).
+    expect(activeName()).toBe("India");
+    key("PageDown");
+    expect(activeName()).toBe("Japan");
+    key("PageUp");
+    expect(activeName()).toBe("Brazil");
+  });
+
+  it("toggles while moving with Shift+Arrow in a multi-select list", () => {
+    const onValueChange = vi.fn();
+    render(
+      <Listbox options={COUNTRIES} aria-label="Countries" multiple onValueChange={onValueChange} />,
+    );
+    key("ArrowDown", { shiftKey: true });
+    expect(onValueChange).toHaveBeenLastCalledWith(["br"]);
+    key("ArrowDown", { shiftKey: true });
+    expect(onValueChange).toHaveBeenLastCalledWith(["br", "be"]);
+  });
+
+  it("selects every enabled option with Ctrl/Cmd+A, and clears them on a second press", () => {
+    const onValueChange = vi.fn();
+    render(
+      <Listbox
+        options={OPTIONS.concat({ label: "Grey", value: "x", disabled: true })}
+        aria-label="Colours"
+        multiple
+        onValueChange={onValueChange}
+      />,
+    );
+    key("a", { ctrlKey: true });
+    expect(onValueChange).toHaveBeenLastCalledWith(["r", "g", "b"]);
+    key("a", { metaKey: true });
+    expect(onValueChange).toHaveBeenLastCalledWith([]);
+  });
+
+  it("does not select-all in a single-select list", () => {
+    const onValueChange = vi.fn();
+    render(<Listbox options={OPTIONS} aria-label="Colour" onValueChange={onValueChange} />);
+    key("a", { ctrlKey: true });
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("Listbox semantics and disabled state", () => {
+  it("renders options as plain role=option elements, never as nested buttons", () => {
+    const { container } = render(<Listbox options={OPTIONS} aria-label="Colour" />);
+    expect(container.querySelectorAll("button")).toHaveLength(0);
+    for (const option of screen.getAllByRole("option")) {
+      expect(option).toHaveAttribute("data-slot", "listbox-option");
+      expect(option).not.toHaveAttribute("tabindex");
+    }
+  });
+
+  it("ignores input and leaves the tab order when disabled", () => {
+    const onValueChange = vi.fn();
+    render(
+      <Listbox options={OPTIONS} aria-label="Colour" disabled onValueChange={onValueChange} />,
+    );
+    const lb = screen.getByRole("listbox");
+    expect(lb).toHaveAttribute("aria-disabled", "true");
+    expect(lb).toHaveAttribute("tabindex", "-1");
+    expect(lb).not.toHaveAttribute("aria-activedescendant");
+    fireEvent.keyDown(lb, { key: "Enter" });
+    fireEvent.click(screen.getByRole("option", { name: "Green" }));
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("highlights the active option only while the list has focus", () => {
+    render(<Listbox options={OPTIONS} aria-label="Colour" />);
+    const active = screen.getByRole("option", { name: "Red" });
+    expect(active).toHaveAttribute("data-active");
+    // No unconditional highlight class: the active fill is scoped to the focused list.
+    expect(active.className).toContain("group-focus/listbox:data-[active]:bg-accent");
+    expect(active.className.split(/\s+/)).not.toContain("bg-accent");
+  });
+
+  it("marks selection with a check, not only a tint", () => {
+    render(<Listbox options={OPTIONS} aria-label="Colour" defaultValue="g" />);
+    const green = screen.getByRole("option", { name: "Green" });
+    expect(green).toHaveAttribute("aria-selected", "true");
+    expect(green.querySelector(".lucide-check")).not.toBeNull();
+    expect(screen.getByRole("option", { name: "Red" }).querySelector(".lucide-check")).toBeNull();
+  });
+
+  it("forwards aria-invalid", () => {
+    render(<Listbox options={OPTIONS} aria-label="Colour" aria-invalid />);
+    expect(screen.getByRole("listbox")).toHaveAttribute("aria-invalid", "true");
+  });
+});

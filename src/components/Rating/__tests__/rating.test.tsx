@@ -55,7 +55,8 @@ describe("Rating", () => {
 
   // The filled star was `fill-amber-400 text-amber-400`: a named palette utility with no dark
   // counterpart, so it was neither themeable nor visible to check:token-usage. The fill is now a
-  // semantic role, and index.css can therefore give it a forced-colors value.
+  // semantic role, and index.css can therefore give it a forced-colors value. Its edge is the
+  // rating component token derived from that role: the bare fill is ~1.7:1 on a light surface.
   it("fills stars from the rating role, never the Tailwind palette", () => {
     const { container } = render(<Rating value={3} readOnly />);
     const classes = [...container.querySelectorAll("[class]")]
@@ -63,8 +64,35 @@ describe("Rating", () => {
       .join(" ");
 
     expect(classes).toContain("fill-rating-filled");
-    expect(classes).toContain("text-rating-filled");
+    expect(classes).toContain("text-(--qx-component-rating-filled-edge)");
     expect(classes).not.toMatch(PALETTE_UTILITY);
+  });
+
+  it("draws empty icons at the ≥3:1 control boundary, not a 40% muted wash", () => {
+    const { container } = render(<Rating value={1} readOnly />);
+    const empty = container.querySelector('[data-rating-index="4"] > svg');
+    expect(empty).toHaveClass("text-input");
+    expect(empty?.getAttribute("class")).not.toContain("/40");
+  });
+
+  it("states each icon's fill as data, so the value does not live in colour alone", () => {
+    const { container } = render(<Rating value={2.5} readOnly allowHalf />);
+    const fills = [...container.querySelectorAll("[data-rating-index]")].map((el) =>
+      el.getAttribute("data-fill"),
+    );
+    expect(fills).toEqual(["full", "full", "partial", "empty", "empty"]);
+  });
+
+  it("uses the foundation focus ring when interactive", () => {
+    render(<Rating defaultValue={2} />);
+    const cls = screen.getByRole("slider").className;
+    expect(cls).toContain("focus-visible:focus-ring");
+    expect(cls).not.toContain("ring-offset-2");
+  });
+
+  it("pads interactive icons to the 24px target size", () => {
+    const { container } = render(<Rating defaultValue={2} size="sm" />);
+    expect(container.querySelector('[data-rating-index="0"]')).toHaveClass("px-1.25");
   });
 });
 
@@ -175,5 +203,45 @@ describe("Rating direction", () => {
     expect(slider).toHaveAttribute("data-direction", "ltr");
     fireEvent.keyDown(slider, { key: "ArrowRight" });
     expect(onChange).toHaveBeenLastCalledWith(4);
+  });
+});
+
+describe("Rating showValue", () => {
+  it("shows the number beside the icons without changing the accessible name", () => {
+    const { container } = render(<Rating value={3.5} readOnly allowHalf showValue />);
+    const label = container.querySelector('[data-slot="rating-value"]');
+    expect(label).toHaveTextContent("3.5");
+    expect(label).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("img")).toHaveAccessibleName("Rating: 3.5 of 5");
+  });
+
+  it("keeps one decimal when halves are possible, so a column lines up", () => {
+    const { container } = render(<Rating value={4} readOnly allowHalf showValue />);
+    expect(container.querySelector('[data-slot="rating-value"]')).toHaveTextContent("4.0");
+  });
+
+  it("formats for the provider's locale", () => {
+    const { container } = render(
+      <DirectionProvider locale="de-DE">
+        <Rating value={3.5} readOnly allowHalf showValue />
+      </DirectionProvider>,
+    );
+    expect(container.querySelector('[data-slot="rating-value"]')).toHaveTextContent("3,5");
+  });
+
+  it("is off by default", () => {
+    const { container } = render(<Rating value={3} readOnly />);
+    expect(container.querySelector('[data-slot="rating-value"]')).toBeNull();
+  });
+
+  it("keeps the slider's value text intact inside a Field", () => {
+    render(
+      <Field>
+        <FieldLabel>Overall</FieldLabel>
+        <Rating defaultValue={4} showValue />
+      </Field>,
+    );
+    const slider = screen.getByRole("slider", { name: "Overall" });
+    expect(slider).toHaveAttribute("aria-valuetext", "4 of 5");
   });
 });

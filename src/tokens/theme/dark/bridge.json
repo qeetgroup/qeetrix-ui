@@ -1,5 +1,5 @@
 {
-  "$description": "The component-token layer for the shadcn / Base-UI contract. These are the only tokens components render, published UNPREFIXED (--primary, --card, --input, --ring, --sidebar-*) and mapped into Tailwind's utility namespaces by src/styles/index.css. Every entry references a SEMANTIC token \u2014 never a primitive \u2014 so the contrast gate governs what is actually on screen.",
+  "$description": "The component-token layer for the shadcn / Base-UI contract. These are the only tokens components render, published UNPREFIXED (--primary, --card, --input, --ring, --sidebar-*) and mapped into Tailwind's utility namespaces by src/styles/index.css. Every entry references a SEMANTIC token — never a primitive — so the contrast gate governs what is actually on screen.",
   "background": {
     "$value": "{color.surface.canvas}",
     "$type": "color"
@@ -17,7 +17,7 @@
     "$type": "color"
   },
   "popover": {
-    "$value": "{color.surface.elevated}",
+    "$value": "{color.surface.overlay}",
     "$type": "color"
   },
   "popover-foreground": {
@@ -109,7 +109,7 @@
     "$type": "color"
   },
   "input": {
-    "$value": "{color.border.default}",
+    "$value": "{color.border.control}",
     "$type": "color"
   },
   "ring": {
@@ -188,6 +188,14 @@
     "$value": "{color.syntax.literal}",
     "$type": "color"
   },
+  "syntax-punctuation": {
+    "$value": "{color.syntax.punctuation}",
+    "$type": "color"
+  },
+  "syntax-comment": {
+    "$value": "{color.syntax.comment}",
+    "$type": "color"
+  },
   "rating-filled": {
     "$value": "{color.rating.filled}",
     "$type": "color"
@@ -214,6 +222,18 @@
   },
   "sidebar-accent-foreground": {
     "$value": "{color.text.on-subtle}",
+    "$type": "color"
+  },
+  "sidebar-selected": {
+    "$value": "{color.surface.brand-subtle}",
+    "$type": "color"
+  },
+  "sidebar-selected-foreground": {
+    "$value": "{color.text.primary}",
+    "$type": "color"
+  },
+  "sidebar-indicator": {
+    "$value": "{color.border.brand}",
     "$type": "color"
   },
   "sidebar-border": {

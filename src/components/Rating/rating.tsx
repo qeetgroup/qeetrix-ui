@@ -5,8 +5,10 @@ import * as React from "react";
 import { FieldHiddenInput, useFieldControl } from "@/components/Input/field";
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { inlineAxisSign, logicalDirectionForKey } from "@/lib/direction";
+import { ratingMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
-import { useResolvedDirection } from "@/providers/direction-provider";
+import { useLocale, useResolvedDirection } from "@/providers/direction-provider";
+import { useMessages } from "@/providers/messages-provider";
 
 interface RatingProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   /** Current rating. Supports halves (e.g. `3.5`) when `allowHalf`. */
@@ -28,6 +30,12 @@ interface RatingProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   name?: string;
   /** Associate the submitted value with a form it is not nested inside, by form `id`. */
   form?: string;
+  /**
+   * Show the number beside the icons — "4.5" — so the value reads as text, not only as a
+   * proportion of filled shapes. Follows the hover preview while pointing. Presentational: the
+   * accessible name already states the value.
+   */
+  showValue?: boolean;
 }
 
 const sizeClasses = {
@@ -35,6 +43,34 @@ const sizeClasses = {
   default: "size-5",
   lg: "size-7",
 } as const;
+
+/**
+ * Inline padding per icon while interactive, so each icon's pitch is at least the 24px WCAG 2.2
+ * AA target size: 14 + 2×5, 20 + 2×2; the 28px icon already clears it.
+ */
+const hitClasses = {
+  sm: "px-1.25",
+  default: "px-0.5",
+  lg: "",
+} as const;
+
+const valueClasses = {
+  sm: "text-xs",
+  default: "text-sm",
+  lg: "text-base",
+} as const;
+
+/**
+ * "4.5", and "4.0" rather than "4" when halves are possible, so a column of ratings lines up.
+ * The locale comes from the nearest `DirectionProvider`; without one it is English, so the
+ * server and the client agree.
+ */
+function formatRatingValue(value: number, allowHalf: boolean, locale: string | undefined) {
+  return new Intl.NumberFormat(locale ?? "en", {
+    minimumFractionDigits: allowHalf ? 1 : 0,
+    maximumFractionDigits: 1,
+  }).format(value);
+}
 
 /**
  * Star (or custom icon) rating. Interactive when `onChange` is supplied:
@@ -64,6 +100,7 @@ function Rating({
   icon: Icon = StarIcon,
   name,
   form,
+  showValue = false,
   className,
   "aria-label": ariaLabel,
   "aria-describedby": ariaDescribedBy,
@@ -71,6 +108,7 @@ function Rating({
   id,
   ...props
 }: RatingProps) {
+  const messages = useMessages("rating", ratingMessages);
   const [value, setValue] = useControllableState<number>({
     value: valueProp,
     defaultValue,
@@ -78,6 +116,7 @@ function Rating({
   });
   const rootRef = React.useRef<HTMLDivElement>(null);
   const direction = useResolvedDirection(rootRef);
+  const locale = useLocale();
   // Interactive when the consumer can receive changes, or when the component owns the value.
   // Before uncontrolled support existed this was `!!onChange`, which would have left a
   // `defaultValue`-only Rating inert.
@@ -159,21 +198,50 @@ function Rating({
   // Stars are inert; the interactive container (role="slider") owns pointer +
   // keyboard interaction. data-rating-index lets the container map a click/hover
   // back to a star without nesting interactive controls.
+  //
+  // The value never rests on hue. An empty icon is an *outline* in the control-boundary colour
+  // (≥3:1 on every surface; it was the muted text at 40%, ~1.6:1); a filled one is a *solid*
+  // shape whose edge is the rating fill deepened toward the text colour (≥3.4:1 — the gold fill
+  // alone is ~1.7:1 on a light surface). Filled-versus-outline is a shape difference, so the
+  // value survives greyscale, colour-vision deficiency and forced colours.
   const stars = starKeys.map((starKey, i) => {
     const fill = Math.max(0, Math.min(1, display - i));
     return (
       <span
         key={starKey}
         data-rating-index={i}
-        className={cn("relative inline-flex", interactive && "cursor-pointer")}
+        data-fill={fill === 1 ? "full" : fill === 0 ? "empty" : "partial"}
+        className={cn("relative inline-flex", interactive && ["cursor-pointer", hitClasses[size]])}
       >
-        <Icon className={cn(iconSize, "text-muted-foreground/40")} />
-        <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-          <Icon className={cn(iconSize, "fill-rating-filled text-rating-filled")} />
+        <Icon className={cn(iconSize, "text-input")} />
+        {/* The fill grows from the inline-start edge and carries the same hit padding as its
+            star, so a half fill is exactly half of the icon, in either direction. */}
+        <span
+          className="absolute inset-y-0 inset-s-0 flex items-center overflow-hidden"
+          style={{ width: `${fill * 100}%` }}
+        >
+          <span className={cn("flex shrink-0", interactive && hitClasses[size])}>
+            <Icon
+              className={cn(
+                iconSize,
+                "fill-rating-filled text-(--qx-component-rating-filled-edge) forced-colors:text-[Highlight]",
+              )}
+            />
+          </span>
         </span>
       </span>
     );
   });
+
+  const valueLabel = showValue ? (
+    <span
+      aria-hidden
+      data-slot="rating-value"
+      className={cn("ms-1.5 font-medium tabular-nums text-muted-foreground", valueClasses[size])}
+    >
+      {formatRatingValue(display, allowHalf, locale)}
+    </span>
+  ) : null;
 
   const field = useFieldControl({
     id,
@@ -183,8 +251,8 @@ function Rating({
   });
   // A Field label wins over the built-in fallback; the value it displaces is carried by
   // aria-valuetext, which a slider exposes alongside its name rather than instead of it.
-  const valueText = `${value} of ${max}`;
-  const selfLabel = ariaLabel ?? `Rating: ${valueText}`;
+  const valueText = messages.valueText(value, max);
+  const selfLabel = ariaLabel ?? messages.label(valueText);
   const hidden = <FieldHiddenInput name={name} value={value} form={form} disabled={disabled} />;
 
   if (interactive) {
@@ -216,14 +284,15 @@ function Rating({
         }}
         onMouseLeave={() => setHover(null)}
         className={cn(
-          "inline-flex items-center gap-0.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          disabled && "opacity-disabled",
+          // The per-icon hit padding is the spacing here, so there is no gap.
+          "inline-flex items-center rounded-md focus-visible:focus-ring aria-invalid:focus-visible:outline-destructive",
           className,
         )}
         {...props}
       >
         {hidden}
         {stars}
+        {valueLabel}
       </div>
     );
   }
@@ -240,15 +309,12 @@ function Rating({
       aria-label={selfLabel}
       aria-describedby={field["aria-describedby"]}
       aria-invalid={field["aria-invalid"]}
-      className={cn(
-        "inline-flex items-center gap-0.5 outline-none",
-        disabled && "opacity-disabled",
-        className,
-      )}
+      className={cn("inline-flex items-center gap-0.5", disabled && "opacity-disabled", className)}
       {...props}
     >
       {hidden}
       {stars}
+      {valueLabel}
     </div>
   );
 }

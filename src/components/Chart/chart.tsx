@@ -4,9 +4,34 @@ import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/providers/direction-provider";
 
 const THEMES = { light: "", dark: ".dark" } as const;
 
+/** The foundation's categorical series, in their designed order. */
+const CHART_SERIES_COUNT = 8;
+
+/**
+ * The colour of categorical series `index` (0-based): `var(--chart-1)` … `var(--chart-8)`, the
+ * foundation's CVD-checked order — blue, teal, Qeet, violet, pink, lime, sky, graphite. Qeet orange
+ * is the third series on purpose: a single-series chart is blue, and orange stays the colour of
+ * action and selection rather than of every line.
+ *
+ * Past the eighth series the palette does not cycle — a repeated hue would claim two series are
+ * the same thing. Everything from the ninth on is graphite, the "other" colour; fold such tails
+ * into an "Other" series or split the chart instead.
+ */
+function chartSeriesColor(index: number): string {
+  const slot = Math.min(Math.max(Math.trunc(index), 0), CHART_SERIES_COUNT - 1) + 1;
+  return `var(--chart-${slot})`;
+}
+
+/**
+ * One entry per series (or, for pie/radial charts, per category), keyed by the data key. An entry
+ * with neither `color` nor `theme` takes the categorical colour for its position in the config —
+ * the first entry series 1, the second series 2 — so a config only names colours it means to
+ * override, and a series keeps its colour when another is filtered out of the data.
+ */
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode;
@@ -156,7 +181,15 @@ function ChartContainer({
           data-chart={chartId}
           data-chart-scope={chartScopeId}
           className={cn(
-            "relative flex aspect-video min-h-0 w-full min-w-0 justify-center overflow-hidden text-xs [&_.recharts-cartesian-axis-tick_text]:fill-chart-axis [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-chart-grid [&_.recharts-curve.recharts-tooltip-cursor]:stroke-chart-reference [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-chart-grid [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-chart-reference [&_.recharts-sector]:outline-none [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-none",
+            "relative flex aspect-video min-h-0 w-full min-w-0 justify-center overflow-hidden text-xs",
+            // Chrome: recessive hairline grid and axes, axis text in the axis role.
+            "[&_.recharts-cartesian-axis-tick_text]:fill-chart-axis [&_.recharts-cartesian-axis-tick_text]:tabular-nums [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-chart-grid [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-chart-grid [&_.recharts-reference-line_[stroke='#ccc']]:stroke-chart-reference",
+            // Hover: a reference-coloured crosshair on line/area, a muted band on bars.
+            "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-chart-reference [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-sector]:outline-none [&_.recharts-sector[stroke='#fff']]:stroke-transparent",
+            // Recharts' accessibility layer makes the plot (and a pie) a tab stop that moves the
+            // tooltip with the arrow keys. It must show where focus is: no outline for a
+            // pointer, the inset Qeet ring for the keyboard.
+            "[&_.recharts-pie]:outline-none [&_.recharts-surface]:outline-none [&_.recharts-pie:focus-visible]:focus-ring [&_.recharts-surface:focus-visible]:focus-ring-inset",
             className,
           )}
           style={{ ...seriesVariables, ...style } as React.CSSProperties}
@@ -194,17 +227,49 @@ function ChartDataTable<TData extends Record<string, unknown>>({
   className,
   ...props
 }: ChartDataTableProps<TData>) {
+  const locale = useLocale();
+  const numberFormat = React.useMemo(() => new Intl.NumberFormat(locale), [locale]);
+  // A column whose values are all numbers is a measure: right-aligned with tabular figures so
+  // magnitudes line up and can be compared down the column, as they would be in a spreadsheet.
+  const numeric = React.useMemo(
+    () =>
+      new Set(
+        columns
+          .filter(
+            (column, columnIndex) =>
+              columnIndex > 0 &&
+              data.length > 0 &&
+              data.every((row) => row[column.key] == null || typeof row[column.key] === "number"),
+          )
+          .map((column) => column.key),
+      ),
+    [columns, data],
+  );
+  const render = (column: ChartDataTableColumn<TData>, row: TData) => {
+    const value = row[column.key];
+    if (column.format) return column.format(value, row);
+    if (typeof value === "number") return numberFormat.format(value);
+    return String(value ?? "");
+  };
+
   return (
     <table
       data-slot="chart-data-table"
-      className={cn("w-full border-collapse text-sm", className)}
+      className={cn("w-full border-collapse text-sm tabular-nums", className)}
       {...props}
     >
-      <caption className="mb-2 text-start font-medium">{caption}</caption>
+      <caption className="mb-2 text-start font-medium text-foreground">{caption}</caption>
       <thead>
         <tr className="border-b border-border">
           {columns.map((column) => (
-            <th key={column.key} scope="col" className="px-2 py-1.5 text-start font-medium">
+            <th
+              key={column.key}
+              scope="col"
+              className={cn(
+                "px-2 py-1.5 text-caption font-medium text-muted-foreground",
+                numeric.has(column.key) ? "text-end" : "text-start",
+              )}
+            >
               {column.header}
             </th>
           ))}
@@ -214,21 +279,22 @@ function ChartDataTable<TData extends Record<string, unknown>>({
         {data.map((row, index) => (
           <tr
             key={getRowKey?.(row, index) ?? index}
-            className="border-b border-border last:border-0"
+            className="border-b border-border-subtle last:border-0"
           >
-            {columns.map((column, columnIndex) => {
-              const value = row[column.key];
-              const content = column.format ? column.format(value, row) : String(value ?? "");
-              return columnIndex === 0 ? (
+            {columns.map((column, columnIndex) =>
+              columnIndex === 0 ? (
                 <th key={column.key} scope="row" className="px-2 py-1.5 text-start font-normal">
-                  {content}
+                  {render(column, row)}
                 </th>
               ) : (
-                <td key={column.key} className="px-2 py-1.5 text-start tabular-nums">
-                  {content}
+                <td
+                  key={column.key}
+                  className={cn("px-2 py-1.5", numeric.has(column.key) ? "text-end" : "text-start")}
+                >
+                  {render(column, row)}
                 </td>
-              );
-            })}
+              ),
+            )}
           </tr>
         ))}
       </tbody>
@@ -328,13 +394,23 @@ function isSafeCssValue(value: unknown): value is string {
   return true;
 }
 
-/** Series declared with `color`, as inline custom properties. */
+/**
+ * Series declared with `color`, as inline custom properties — plus every series that declares
+ * no colour at all, which takes the categorical colour for its position in the config. Position
+ * counts every entry, coloured or not, so giving one series an explicit colour never shifts the
+ * others. A `color` that fails validation is dropped, not replaced: the author asked for a colour,
+ * and substituting a palette slot would hide the mistake.
+ */
 function inlineSeriesVariables(config: ChartConfig) {
   const variables: Record<string, string> = {};
-  for (const [key, item] of Object.entries(config)) {
-    if (item.theme || !CSS_IDENTIFIER.test(key)) continue;
-    if (isSafeCssValue(item.color)) variables[`--color-${key}`] = item.color.trim();
-  }
+  Object.entries(config).forEach(([key, item], index) => {
+    if (item.theme || !CSS_IDENTIFIER.test(key)) return;
+    if (item.color === undefined) {
+      variables[`--color-${key}`] = chartSeriesColor(index);
+    } else if (isSafeCssValue(item.color)) {
+      variables[`--color-${key}`] = item.color.trim();
+    }
+  });
   return variables;
 }
 
@@ -418,6 +494,11 @@ type ChartTooltipContentProps = React.ComponentProps<"div"> & {
   indicator?: "line" | "dot" | "dashed";
   nameKey?: string;
   labelKey?: string;
+  /**
+   * Formats each value without taking over the row, which `formatter` does. Defaults to the
+   * locale's number format (the nearest `DirectionProvider`'s locale, then the runtime's).
+   */
+  valueFormatter?: (value: number | string, item: TooltipPayloadItem) => React.ReactNode;
 };
 
 function ChartTooltipContent({
@@ -434,8 +515,11 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
+  valueFormatter,
 }: ChartTooltipContentProps) {
   const { config } = useChart();
+  const locale = useLocale();
+  const numberFormat = React.useMemo(() => new Intl.NumberFormat(locale), [locale]);
 
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || !payload?.length) return null;
@@ -462,7 +546,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-popover",
+        "grid min-w-32 items-start gap-1.5 rounded-(--qx-corner-overlay) border border-border bg-popover px-2.5 py-1.5 text-xs text-popover-foreground shadow-popover",
         className,
       )}
     >
@@ -494,7 +578,7 @@ function ChartTooltipContent({
                           {
                             "h-2.5 w-2.5": indicator === "dot",
                             "w-1": indicator === "line",
-                            "w-0 border-[length:var(--qx-component-chart-reference-stroke-width)] border-dashed bg-transparent":
+                            "w-0 border-(length:--qx-component-chart-reference-stroke-width) border-dashed bg-transparent":
                               indicator === "dashed",
                             "my-0.5": nestLabel && indicator === "dashed",
                           },
@@ -521,8 +605,14 @@ function ChartTooltipContent({
                       </span>
                     </div>
                     {item.value !== undefined && (
-                      <span className="font-mono font-medium text-foreground tabular-nums">
-                        {typeof item.value === "number" ? item.value.toLocaleString() : item.value}
+                      // The value leads: the reader already knows the series, they want the
+                      // number. Tabular figures keep a column of values aligned.
+                      <span className="ms-3 font-medium text-foreground tabular-nums">
+                        {valueFormatter
+                          ? valueFormatter(item.value, item)
+                          : typeof item.value === "number"
+                            ? numberFormat.format(item.value)
+                            : item.value}
                       </span>
                     )}
                   </div>
@@ -542,6 +632,8 @@ type LegendPayloadItem = {
   value?: string | number;
   dataKey?: string | number;
   color?: string;
+  /** Recharts' legend type for the series: `line` for lines, `rect` for bars and areas, … */
+  type?: string;
 };
 
 type ChartLegendContentProps = React.ComponentProps<"div"> & {
@@ -564,8 +656,11 @@ function ChartLegendContent({
 
   return (
     <div
+      data-slot="chart-legend"
       className={cn(
-        "flex items-center justify-center gap-4",
+        // Wraps rather than overflowing a narrow card; legend text is secondary ink — the swatch
+        // carries the identity, never coloured text.
+        "flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-muted-foreground",
         verticalAlign === "top" ? "pb-3" : "pt-3",
         className,
       )}
@@ -573,6 +668,8 @@ function ChartLegendContent({
       {payload.map((item) => {
         const key = `${nameKey || item.dataKey || "value"}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
+        // The key mirrors the mark: a short stroke for a line series, a swatch for a filled one.
+        const lineKey = item.type === "line" || item.type === "plainline";
         return (
           <div
             key={String(item.value)}
@@ -584,11 +681,15 @@ function ChartLegendContent({
               <itemConfig.icon />
             ) : (
               <div
-                className="h-2 w-2 shrink-0 rounded-[var(--qx-corner-xs)]"
+                aria-hidden
+                className={cn(
+                  "shrink-0",
+                  lineKey ? "h-0.5 w-3 rounded-full" : "h-2 w-2 rounded-(--qx-corner-xs)",
+                )}
                 style={{ backgroundColor: item.color }}
               />
             )}
-            {itemConfig?.label}
+            {itemConfig?.label ?? item.value}
           </div>
         );
       })}
@@ -615,7 +716,12 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
   return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
 }
 
-export type { ChartContainerProps, ChartDataTableColumn, ChartDataTableProps };
+export type {
+  ChartContainerProps,
+  ChartDataTableColumn,
+  ChartDataTableProps,
+  ChartTooltipContentProps,
+};
 export {
   ChartContainer,
   ChartDataTable,
@@ -624,4 +730,5 @@ export {
   ChartStyle,
   ChartTooltip,
   ChartTooltipContent,
+  chartSeriesColor,
 };

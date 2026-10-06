@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Qeetrix UI playground</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='orange'/%3E%3Cpath transform='translate(4 4)' d='M12 4A9.5 9.5 0 0 0 18.5 12A9.5 9.5 0 0 0 12 20A9.5 9.5 0 0 0 5.5 12A9.5 9.5 0 0 0 12 4Z' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+    <script>
+      // Before first paint: put the theme class, density and direction on <html>, exactly as the
+      // ThemeProvider documentation recommends, so neither the shell nor a preview frame flashes
+      // the wrong theme. Frames (#/frame/…) take everything from their URL; the shell takes the
+      // last choice made on this machine. Both stay in sync with src/lib/prefs.ts and frame.ts.
+      (() => {
+        const root = document.documentElement;
+        const hash = location.hash || "";
+        const isFrame = hash.indexOf("#/frame/") === 0;
+        const params = new URLSearchParams(isFrame ? hash.split("?")[1] || "" : "");
+        let dark = false;
+        let density = null;
+        let dir = "ltr";
+        let theme = null;
+        if (isFrame) {
+          dark = params.get("theme") === "dark";
+          density = params.get("density");
+          dir = params.get("dir") === "rtl" ? "rtl" : "ltr";
+          root.setAttribute("data-pg-frame", "");
+        } else {
+          try {
+            theme = localStorage.getItem("qeetrix-ui-playground:theme");
+            density = localStorage.getItem("qeetrix-ui-playground:density");
+            dir = localStorage.getItem("qeetrix-ui-playground:dir") === "rtl" ? "rtl" : "ltr";
+          } catch (_) {}
+          dark =
+            theme === "dark" ||
+            ((!theme || theme === "system") && matchMedia("(prefers-color-scheme: dark)").matches);
+        }
+        if (isFrame && params.get("motion") === "reduce") {
+          // Reduced-motion simulation for JavaScript-driven motion (Recharts, carousels, the
+          // `usePrefersReducedMotion` hook): answer the media query as the OS would.
+          root.setAttribute("data-pg-motion", "reduce");
+          const original = window.matchMedia.bind(window);
+          const motionQuery = /prefers-reduced-motion\s*:\s*(reduce|no-preference)/;
+          window.matchMedia = (query) => {
+            const match = motionQuery.exec(String(query));
+            if (!match) return original(query);
+            return {
+              matches: match[1] === "reduce",
+              media: String(query),
+              onchange: null,
+              addEventListener: () => {},
+              removeEventListener: () => {},
+              addListener: () => {},
+              removeListener: () => {},
+              dispatchEvent: () => false,
+            };
+          };
+        }
+        root.classList.add(dark ? "dark" : "light");
+        root.setAttribute("data-qx-density", density === "compact" ? "compact" : "comfortable");
+        root.dir = dir;
+      })();
+    </script>
+    <style>
+      /* First paint, before the stylesheet has loaded: system colours only, no hard-coded hues. */
+      html { background: Canvas; color: CanvasText; }
+      .pg-boot { display: grid; place-items: center; align-content: center; gap: 12px; min-height: 100vh; font: 500 13px/1.4 system-ui, sans-serif; opacity: 0.7; }
+      html[data-pg-frame] .pg-boot { min-height: 0; padding: 24px; }
+    </style>
+  </head>
+  <body>
+    <div id="root"><div class="pg-boot" role="status">Loading the Qeetrix UI playground…</div></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

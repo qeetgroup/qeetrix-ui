@@ -77,6 +77,51 @@ describe("ScheduleCalendar", () => {
     const { container } = render(<ScheduleCalendar events={events} defaultDate={defaultDate} />);
     expect(await a11y(container)).toHaveNoViolations();
   });
+
+  it("announces the period it lands on", () => {
+    render(<ScheduleCalendar events={events} defaultDate={defaultDate} locale="en-US" />);
+    const title = screen.getByRole("heading", { level: 2 });
+    expect(title).toHaveAttribute("aria-live", "polite");
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    expect(title).toHaveTextContent("August 2026");
+  });
+
+  it("marks today as the current date in the week view, and names empty days", () => {
+    // Only `Date` is faked: today is pinned, timers keep running.
+    vi.useFakeTimers({ toFake: ["Date"], now: new Date(2026, 6, 10, 12) });
+    try {
+      const { container } = render(
+        <ScheduleCalendar
+          events={events}
+          defaultDate={defaultDate}
+          defaultView="week"
+          locale="en-US"
+        />,
+      );
+      const week = container.querySelector('[data-slot="schedule-week"]') as HTMLElement;
+      const current = week.querySelectorAll('[aria-current="date"]');
+      expect(current).toHaveLength(1);
+      // en-US orders this pair day-first ("10 Fri"), so assert the parts, not the order.
+      expect(current[0].querySelector("h3")).toHaveTextContent(/\b10\b/);
+      expect(current[0].querySelector("h3")).toHaveTextContent(/Fri/);
+      // An empty day says so to a screen reader instead of reading a dash.
+      expect(within(week).getAllByText("No events").length).toBeGreaterThan(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("lets an event's semantic colour class override the default chip", () => {
+    render(
+      <ScheduleCalendar
+        events={[{ ...events[0], color: "bg-success-subtle border-success-border" }]}
+        defaultDate={defaultDate}
+      />,
+    );
+    const chip = within(screen.getByRole("table")).getByRole("button", { name: /Standup/ });
+    expect(chip).toHaveClass("bg-success-subtle", "border-success-border");
+    expect(chip.className).not.toContain("--qx-component-calendar-event-background)");
+  });
 });
 
 /* ── One calendar, one time zone (I18N-001) ────────────────────────────────────────────────
@@ -196,10 +241,11 @@ describe("ScheduleCalendar time zone", () => {
 
   it("marks today by the requested zone's calendar, not the host's", () => {
     vi.useFakeTimers({ now: CROSSING_INSTANT, shouldAdvanceTime: true });
+    // Today is marked semantically, so it is found the way assistive technology finds it.
     const highlighted = () =>
-      Array.from(monthTable().querySelectorAll("td button"))
-        .filter((b) => b.className.includes("bg-primary"))
-        .map((b) => b.textContent?.trim());
+      Array.from(monthTable().querySelectorAll('td button[aria-current="date"]')).map((b) =>
+        b.textContent?.trim(),
+      );
 
     const { unmount } = render(
       <ScheduleCalendar events={[]} timezone="Pacific/Kiritimati" locale="en-US" />,
@@ -389,7 +435,7 @@ describe("ScheduleCalendar with a host zone that differs from the requested zone
     vi.useFakeTimers({ now: CROSSING_INSTANT, shouldAdvanceTime: true });
     render(<ScheduleCalendar events={[]} timezone={REQUESTED} locale="en-US" />);
     const highlighted = dayButtons()
-      .filter((b) => b.className.includes("bg-primary"))
+      .filter((b) => b.getAttribute("aria-current") === "date")
       .map((b) => b.textContent?.trim());
     expect(highlighted).toEqual(["11"]);
   });

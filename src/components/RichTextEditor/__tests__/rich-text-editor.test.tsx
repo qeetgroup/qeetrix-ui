@@ -5,6 +5,8 @@ import { axe } from "vitest-axe";
 
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
 import { RichTextEditor } from "@/components/RichTextEditor/rich-text-editor";
+import { DirectionProvider } from "@/providers/direction-provider";
+import { MessagesProvider } from "@/providers/messages-provider";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
@@ -102,9 +104,9 @@ describe("RichTextEditor toolbar and field semantics", () => {
     expect(screen.getByRole("button", { name: "Italic" })).toHaveFocus();
     fireEvent.keyDown(toolbar, { key: "ArrowLeft" });
     expect(bold).toHaveFocus();
-    // Wraps backwards to the last *enabled* control.
+    // Wraps backwards to the last *enabled* control (Undo/Redo start disabled).
     fireEvent.keyDown(toolbar, { key: "ArrowLeft" });
-    expect(screen.getByRole("button", { name: "Quote" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Link" })).toHaveFocus();
   });
 
   it("jumps to the first and last enabled control with Home and End", async () => {
@@ -114,8 +116,8 @@ describe("RichTextEditor toolbar and field semantics", () => {
     act(() => screen.getByRole("button", { name: "Heading 2" }).focus());
 
     fireEvent.keyDown(toolbar, { key: "End" });
-    // Undo/Redo start disabled with an empty history, so End lands on Quote.
-    expect(screen.getByRole("button", { name: "Quote" })).toHaveFocus();
+    // Undo/Redo start disabled with an empty history, so End lands on Link.
+    expect(screen.getByRole("button", { name: "Link" })).toHaveFocus();
     fireEvent.keyDown(toolbar, { key: "Home" });
     expect(screen.getByRole("button", { name: "Bold" })).toHaveFocus();
   });
@@ -376,5 +378,319 @@ describe("RichTextEditor form participation", () => {
     const box = await screen.findByRole("textbox", { name: "Rich text editor" });
     expect(box).not.toHaveAttribute("aria-invalid");
     expect(box).not.toHaveAttribute("aria-required");
+  });
+});
+
+/* ── Modernisation: toolbar semantics, states, placeholder, links ───────────────────────────── */
+
+describe("RichTextEditor toolbar controls", () => {
+  it("renders formats as toggles and history as plain actions", async () => {
+    render(<RichTextEditor aria-label="Notes" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    expect(screen.getByRole("button", { name: "Bold" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Code block" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    // Undo is a command, not a state — announcing "not pressed" for it was wrong.
+    expect(screen.getByRole("button", { name: "Undo" })).not.toHaveAttribute("aria-pressed");
+    expect(screen.getByRole("button", { name: "Link" })).not.toHaveAttribute("aria-pressed");
+    expect(screen.getByRole("button", { name: "Link" })).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("states every shortcut through aria-keyshortcuts", async () => {
+    render(<RichTextEditor aria-label="Notes" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    // jsdom reports a non-Apple platform, so Mod is Control.
+    expect(screen.getByRole("button", { name: "Bold" })).toHaveAttribute(
+      "aria-keyshortcuts",
+      "Control+B",
+    );
+    expect(screen.getByRole("button", { name: "Heading 2" })).toHaveAttribute(
+      "aria-keyshortcuts",
+      "Control+Alt+2",
+    );
+    expect(screen.getByRole("button", { name: "Link" })).toHaveAttribute(
+      "aria-keyshortcuts",
+      "Control+K",
+    );
+  });
+
+  it("points the toolbar at the surface it formats", async () => {
+    render(<RichTextEditor aria-label="Notes" />);
+    const box = await screen.findByRole("textbox", { name: "Notes" });
+    expect(box.id).not.toBe("");
+    expect(screen.getByRole("toolbar", { name: "Formatting" })).toHaveAttribute(
+      "aria-controls",
+      box.id,
+    );
+  });
+
+  it("mirrors the arrow keys in RTL", async () => {
+    render(
+      <DirectionProvider direction="rtl">
+        <RichTextEditor aria-label="Notes" />
+      </DirectionProvider>,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    const toolbar = screen.getByRole("toolbar", { name: "Formatting" });
+    act(() => screen.getByRole("button", { name: "Bold" }).focus());
+    // In RTL the next control sits to the left.
+    fireEvent.keyDown(toolbar, { key: "ArrowLeft" });
+    expect(screen.getByRole("button", { name: "Italic" })).toHaveFocus();
+    fireEvent.keyDown(toolbar, { key: "ArrowRight" });
+    expect(screen.getByRole("button", { name: "Bold" })).toHaveFocus();
+  });
+
+  it("takes its toolbar name from a MessagesProvider when no prop is given", async () => {
+    render(
+      <MessagesProvider messages={{ richTextEditor: { toolbar: "Mise en forme" } }}>
+        <RichTextEditor aria-label="Notes" />
+      </MessagesProvider>,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    expect(screen.getByRole("toolbar", { name: "Mise en forme" })).toBeInTheDocument();
+  });
+
+  it("turns the current block into a code block", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RichTextEditor aria-label="Notes" defaultValue="<p>x = 1</p>" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Code block" }));
+    expect(surface(container).querySelector("pre > code")).toHaveTextContent("x = 1");
+    expect(screen.getByRole("button", { name: "Code block" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    // Marks cannot apply inside a code block, so their controls say so instead of failing.
+    expect(screen.getByRole("button", { name: "Bold" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Link" })).toBeDisabled();
+  });
+});
+
+describe("RichTextEditor placeholder", () => {
+  it("disappears once the document has content, without a parent re-render", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RichTextEditor aria-label="Notes" placeholder="Say hello" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    const placeholder = () => container.querySelector("[data-slot='rich-text-editor-placeholder']");
+    expect(placeholder()).toHaveTextContent("Say hello");
+
+    // An unnamed, uncontrolled editor never re-renders its host on input; the placeholder used
+    // to read `editor.isEmpty` during that render and stayed painted over the text.
+    await user.click(screen.getByRole("button", { name: "Bullet list" }));
+    act(() => {
+      const editorEl = surface(container);
+      editorEl.focus();
+    });
+    await user.keyboard("Hi");
+    await waitFor(() => expect(placeholder()).toBeNull());
+  });
+
+  it("is not rendered for an editor that starts with content", async () => {
+    const { container } = render(
+      <RichTextEditor aria-label="Notes" placeholder="Say hello" defaultValue="<p>Hi</p>" />,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    expect(container.querySelector("[data-slot='rich-text-editor-placeholder']")).toBeNull();
+  });
+});
+
+describe("RichTextEditor states", () => {
+  it("disabled: not editable, not focusable, toolbar inert, reported and not submitted", async () => {
+    render(
+      <form aria-label="post">
+        <RichTextEditor aria-label="Body" name="body" defaultValue="<p>Draft</p>" disabled />
+      </form>,
+    );
+    const box = await screen.findByRole("textbox", { name: "Body" });
+    expect(box).toHaveAttribute("contenteditable", "false");
+    expect(box).toHaveAttribute("aria-disabled", "true");
+    expect(box).not.toHaveAttribute("tabindex");
+    expect(box).not.toHaveAttribute("aria-readonly");
+    const buttons = screen
+      .getAllByRole("button")
+      .filter((b) => b.hasAttribute("data-toolbar-index"));
+    expect(buttons.length).toBeGreaterThan(5);
+    for (const button of buttons) {
+      expect(button).toBeDisabled();
+      expect(button).toHaveAttribute("tabindex", "-1");
+    }
+    expect(screen.getByRole("toolbar")).toHaveAttribute("aria-disabled", "true");
+    // A disabled control does not submit, exactly as a native one does not.
+    const data = new FormData(screen.getByRole("form", { name: "post" }) as HTMLFormElement);
+    expect(data.get("body")).toBeNull();
+  });
+
+  it("read-only: stays focusable so the content can be reached and selected", async () => {
+    render(<RichTextEditor aria-label="Frozen" editable={false} defaultValue="<p>x</p>" />);
+    const box = await screen.findByRole("textbox", { name: "Frozen" });
+    expect(box).toHaveAttribute("tabindex", "0");
+    act(() => box.focus());
+    expect(box).toHaveFocus();
+  });
+
+  it("marks the frame invalid when the Field is", async () => {
+    const { container } = render(
+      <Field>
+        <FieldLabel>Notes</FieldLabel>
+        <RichTextEditor />
+        <FieldError>Required.</FieldError>
+      </Field>,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    expect(container.querySelector("[data-slot='rich-text-editor']")).toHaveAttribute(
+      "data-invalid",
+    );
+  });
+
+  it("has no axe violations when disabled", async () => {
+    const { container } = render(<RichTextEditor aria-label="Comment" disabled />);
+    await screen.findByRole("textbox", { name: "Comment" });
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+/*
+ * jsdom has no layout, so ProseMirror cannot read a pointer or keyboard selection here. These
+ * tests drive the two paths that need none: a collapsed caret (the address is inserted as the
+ * link text) and a caret inside an existing link (the whole link is re-pointed or removed).
+ * Applying a link to a dragged selection is verified in a real browser.
+ */
+describe("RichTextEditor links", () => {
+  const linkBar = () => screen.queryByRole("group", { name: "Edit link" });
+
+  it("opens the link bar from the toolbar and focuses the address field", async () => {
+    const user = userEvent.setup();
+    render(<RichTextEditor aria-label="Notes" defaultValue="<p>Docs</p>" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    const link = screen.getByRole("button", { name: "Link" });
+    await user.click(link);
+    expect(linkBar()).toBeInTheDocument();
+    expect(link).toHaveAttribute("aria-expanded", "true");
+    expect(link).toHaveAttribute("aria-controls", linkBar()?.id);
+    expect(screen.getByRole("textbox", { name: "Link address" })).toHaveFocus();
+  });
+
+  it("opens with Mod+K from the text", async () => {
+    const { container } = render(<RichTextEditor aria-label="Notes" defaultValue="<p>Docs</p>" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    act(() => surface(container).focus());
+    fireEvent.keyDown(surface(container), { key: "k", ctrlKey: true });
+    expect(linkBar()).toBeInTheDocument();
+  });
+
+  it("inserts the address as the link text at a caret, normalising a bare domain to https", async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+    const { container } = render(
+      <RichTextEditor aria-label="Notes" defaultValue="<p>Docs</p>" onChange={onChange} />,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(screen.getByRole("textbox", { name: "Link address" }), "qeet.in{Enter}");
+
+    const anchor = surface(container).querySelector("a");
+    expect(anchor).toHaveTextContent("qeet.in");
+    expect(anchor).toHaveAttribute("href", "https://qeet.in");
+    expect(linkBar()).toBeNull();
+    expect(onChange).toHaveBeenLastCalledWith(expect.stringContaining('href="https://qeet.in"'));
+  });
+
+  it("re-points an existing link without changing its text", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <RichTextEditor
+        aria-label="Notes"
+        defaultValue='<p><a href="https://old.example">Docs</a></p>'
+      />,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    const field = screen.getByRole("textbox", { name: "Link address" });
+    expect(field).toHaveValue("https://old.example");
+    await user.clear(field);
+    await user.type(field, "qeet.in/new{Enter}");
+
+    const anchors = surface(container).querySelectorAll("a");
+    expect(anchors).toHaveLength(1);
+    expect(anchors[0]).toHaveTextContent("Docs");
+    expect(anchors[0]).toHaveAttribute("href", "https://qeet.in/new");
+  });
+
+  it("links an email address with mailto:", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RichTextEditor aria-label="Notes" defaultValue="<p>x</p>" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(screen.getByRole("textbox", { name: "Link address" }), "ops@qeet.in{Enter}");
+    expect(surface(container).querySelector("a")).toHaveAttribute("href", "mailto:ops@qeet.in");
+  });
+
+  it("refuses a disallowed scheme and says why, without touching the document", async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+    const { container } = render(
+      <RichTextEditor aria-label="Notes" defaultValue="<p>Docs</p>" onChange={onChange} />,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    const field = screen.getByRole("textbox", { name: "Link address" });
+    await user.type(field, "javascript:alert(1){Enter}");
+
+    expect(surface(container).querySelector("a")).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(field).toHaveAttribute("aria-invalid", "true");
+    expect(field).toHaveAccessibleDescription(/web address/i);
+    expect(linkBar()).toBeInTheDocument();
+  });
+
+  it("closes on Escape and returns focus to the text", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RichTextEditor aria-label="Notes" defaultValue="<p>Docs</p>" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.keyboard("{Escape}");
+    expect(linkBar()).toBeNull();
+    // Tiptap restores focus on the next frame.
+    await waitFor(() => expect(surface(container)).toHaveFocus());
+  });
+
+  it("never submits the surrounding form from the address field", async () => {
+    const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
+    const user = userEvent.setup();
+    render(
+      <form aria-label="post" onSubmit={onSubmit}>
+        <RichTextEditor aria-label="Body" defaultValue="<p>Docs</p>" />
+      </form>,
+    );
+    await screen.findByRole("textbox", { name: "Body" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(screen.getByRole("textbox", { name: "Link address" }), "qeet.in{Enter}");
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("offers Remove for an existing link and unlinks it", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <RichTextEditor
+        aria-label="Notes"
+        defaultValue='<p><a href="https://qeet.in">Docs</a></p>'
+      />,
+    );
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    expect(screen.getByRole("textbox", { name: "Link address" })).toHaveValue("https://qeet.in");
+    await user.click(screen.getByRole("button", { name: "Remove link" }));
+    expect(surface(container).querySelector("a")).toBeNull();
+    expect(surface(container)).toHaveTextContent("Docs");
+  });
+
+  it("has no axe violations with the link bar open", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RichTextEditor aria-label="Notes" defaultValue="<p>Docs</p>" />);
+    await screen.findByRole("textbox", { name: "Notes" });
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    expect(await a11y(container)).toHaveNoViolations();
   });
 });

@@ -2,7 +2,6 @@
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio";
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
-import { CircleIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -16,21 +15,44 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   );
 }
 
+/**
+ * The Qeet selection control, round — the same vocabulary as `Checkbox`.
+ *
+ * A checked radio is a filled Ember disc with a graphite centre dot, rather than an Ember dot in
+ * an empty ring. The dot-in-ring form puts a ~3:1 orange glyph on whatever is behind the control
+ * (2.6:1 on the brand-subtle tint of a selected `RadioCard`, on a sunken panel or a hovered row);
+ * the filled form puts a white dot on Qeet Ember (4.6:1) and gives the edge the darker `border-brand`,
+ * which clears 3:1 on every surface in both themes.
+ *
+ * Base UI renders a `<span role="radio">`, so disabled is `data-disabled`, not `:disabled`.
+ */
 function Radio({ className, ...props }: RadioPrimitive.Root.Props) {
   return (
     <RadioPrimitive.Root
       data-slot="radio"
       className={cn(
-        "peer flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input bg-transparent text-primary outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-checked:border-primary dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+        "peer relative flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border outline-none after:absolute after:-inset-1 after:rounded-full",
+        "border-(--qx-component-input-border) bg-(--qx-component-input-background)",
+        "transition-[background-color,border-color] duration-fast ease-standard",
+        "data-unchecked:not-data-disabled:not-aria-invalid:hover:border-(--qx-component-input-border-hover)",
+        "data-checked:border-border-brand data-checked:bg-primary",
+        "focus-visible:focus-ring",
+        "aria-invalid:border-(--qx-component-input-border-invalid) aria-invalid:focus-visible:outline-(--qx-component-input-border-invalid)",
+        "data-readonly:cursor-default",
+        "data-disabled:cursor-not-allowed data-disabled:opacity-disabled",
+        "forced-colors:data-checked:bg-[Highlight]",
         className,
       )}
       {...props}
     >
       <RadioPrimitive.Indicator
         data-slot="radio-indicator"
-        className="flex items-center justify-center text-primary data-unchecked:hidden"
+        className="flex items-center justify-center data-unchecked:hidden"
       >
-        <CircleIcon aria-hidden className="size-2 fill-current" />
+        <span
+          aria-hidden
+          className="size-1.5 rounded-full bg-primary-foreground forced-colors:bg-[HighlightText]"
+        />
       </RadioPrimitive.Indicator>
     </RadioPrimitive.Root>
   );

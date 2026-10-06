@@ -2,43 +2,47 @@
   "color": {
     "text": {
       "primary": {
-        "$value": "{color.neutral.50}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       },
       "secondary": {
-        "$value": "{color.neutral.300}",
+        "$value": "{color.graphite.300}",
         "$type": "color"
       },
       "tertiary": {
-        "$value": "{color.neutral.400}",
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "placeholder": {
-        "$value": "{color.neutral.500}",
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "disabled": {
-        "$value": "{color.neutral.600}",
+        "$value": "{color.graphite.600}",
         "$type": "color"
       },
       "inverse": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.950}",
         "$type": "color"
       },
       "brand": {
-        "$value": "{color.brand.300}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "link": {
-        "$value": "{color.brand.300}",
+        "$value": "{color.qeet.400}",
+        "$type": "color"
+      },
+      "link-hover": {
+        "$value": "{color.qeet.300}",
         "$type": "color"
       },
       "success": {
-        "$value": "{color.success.300}",
+        "$value": "{color.success.400}",
         "$type": "color"
       },
       "warning": {
-        "$value": "{color.warning.300}",
+        "$value": "{color.warning.400}",
         "$type": "color"
       },
       "danger": {
@@ -46,79 +50,127 @@
         "$type": "color"
       },
       "info": {
-        "$value": "{color.info.300}",
+        "$value": "{color.info.400}",
         "$type": "color"
       },
       "on-brand": {
-        "$value": "{color.neutral.950}",
-        "$type": "color"
+        "$value": "{color.graphite.0}",
+        "$type": "color",
+        "$description": "White on the Qeet Ember action fill (action.primary, 4.56:1 at rest, 5.1:1 hover, 5.8:1 pressed). The same label in both themes: a filled Qeet control is white-on-ember everywhere."
       },
       "on-subtle": {
-        "$value": "{color.neutral.50}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       },
       "on-feedback": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.1000}",
         "$type": "color"
+      },
+      "on-feedback-strong": {
+        "$value": "{color.graphite.0}",
+        "$type": "color",
+        "$description": "The label on a feedback.<status>-strong fill (error, success, info)."
+      },
+      "on-warning-strong": {
+        "$value": "{color.graphite.950}",
+        "$type": "color",
+        "$description": "The label on feedback.warning-strong: near-black on amber, the hazard convention."
       }
     },
     "surface": {
       "canvas": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.950}",
         "$type": "color"
       },
       "default": {
-        "$value": "{color.neutral.850}",
+        "$value": "{color.graphite.925}",
         "$type": "color"
       },
       "elevated": {
-        "$value": "{color.neutral.800}",
+        "$value": "{color.graphite.900}",
+        "$type": "color"
+      },
+      "overlay": {
+        "$value": "{color.graphite.875}",
         "$type": "color"
       },
       "sunken": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.975}",
         "$type": "color"
       },
       "subtle": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.900}",
         "$type": "color"
       },
       "interactive": {
-        "$value": "{color.neutral.800}",
+        "$value": "{color.graphite.825}",
+        "$type": "color"
+      },
+      "interactive-hover": {
+        "$value": "{color.graphite.800}",
+        "$type": "color"
+      },
+      "interactive-active": {
+        "$value": "{color.graphite.750}",
+        "$type": "color"
+      },
+      "brand-subtle": {
+        "$value": "color-mix(in oklab, {color.graphite.0} 7%, transparent)",
+        "$type": "color",
+        "$description": "Dark selection is a neutral lift, not an orange tint: orange at dark-mode lightness is brown. The Qeet signal on a selected item comes from its indicator (border.brand) and brand-coloured icon or check, on a clean graphite lift. Translucent, so it reads the same on card, popover and sidebar."
+      },
+      "brand-subtle-hover": {
+        "$value": "color-mix(in oklab, {color.graphite.0} 10%, transparent)",
+        "$type": "color"
+      },
+      "brand-subtle-active": {
+        "$value": "color-mix(in oklab, {color.graphite.0} 13%, transparent)",
         "$type": "color"
       },
       "rail": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.975}",
         "$type": "color"
       },
       "inverse": {
-        "$value": "{color.neutral.100}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       }
     },
     "border": {
       "default": {
-        "$value": "{color.neutral.700}",
+        "$value": "{color.graphite.825}",
         "$type": "color"
       },
       "subtle": {
-        "$value": "{color.neutral.800}",
+        "$value": "{color.graphite.875}",
         "$type": "color"
       },
       "strong": {
-        "$value": "{color.neutral.600}",
+        "$value": "{color.graphite.750}",
+        "$type": "color"
+      },
+      "control": {
+        "$value": "{color.graphite.450}",
+        "$type": "color"
+      },
+      "control-hover": {
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "focused": {
-        "$value": "{color.brand.400}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "hover": {
-        "$value": "{color.neutral.500}",
+        "$value": "{color.graphite.400}",
+        "$type": "color"
+      },
+      "brand": {
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "danger": {
-        "$value": "{color.danger.400}",
+        "$value": "{color.danger.500}",
         "$type": "color"
       },
       "success": {
@@ -136,15 +188,16 @@
     },
     "action": {
       "primary": {
-        "$value": "{color.brand.500}",
-        "$type": "color"
+        "$value": "{color.qeet.600}",
+        "$type": "color",
+        "$description": "Qeet Ember (#D04800) — filled primary actions and checked controls, in both themes, always with white text. #F26D0E (qeet.500) stays the brand colour; it carries white at only 3.0:1, so it is not an action fill."
       },
       "primary-hover": {
-        "$value": "{color.brand.300}",
+        "$value": "color-mix(in oklab, {color.qeet.600}, {color.qeet.700})",
         "$type": "color"
       },
       "primary-active": {
-        "$value": "{color.brand.200}",
+        "$value": "{color.qeet.700}",
         "$type": "color"
       }
     },
@@ -164,23 +217,56 @@
       "info": {
         "$value": "{color.info.400}",
         "$type": "color"
+      },
+      "success-subtle": {
+        "$value": "color-mix(in oklab, {color.success.500} 15%, transparent)",
+        "$type": "color"
+      },
+      "warning-subtle": {
+        "$value": "color-mix(in oklab, {color.warning.500} 12%, transparent)",
+        "$type": "color"
+      },
+      "error-subtle": {
+        "$value": "color-mix(in oklab, {color.danger.500} 15%, transparent)",
+        "$type": "color"
+      },
+      "info-subtle": {
+        "$value": "color-mix(in oklab, {color.info.500} 15%, transparent)",
+        "$type": "color"
+      },
+      "success-strong": {
+        "$value": "{color.success.700}",
+        "$type": "color"
+      },
+      "warning-strong": {
+        "$value": "{color.warning.400}",
+        "$type": "color"
+      },
+      "error-strong": {
+        "$value": "{color.danger.700}",
+        "$type": "color",
+        "$description": "Solid status fills for messages that must not be missed — a blocking error, an account suspension. Theme-invariant: the 700 step carries a white label (text.on-feedback-strong) at ≥5:1 in both themes. Warning is the exception by convention: amber 400 with a near-black label (text.on-warning-strong), because white on amber is unreadable and a dark amber reads as brown. Use sparingly; the subtle surfaces are the default."
+      },
+      "info-strong": {
+        "$value": "{color.info.700}",
+        "$type": "color"
       }
     },
     "focus": {
       "ring": {
-        "$value": "{color.brand.400}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       }
     },
     "overlay": {
       "scrim": {
-        "$value": "{color.alpha.black-40}",
+        "$value": "color-mix(in oklab, {color.graphite.1000} 62%, transparent)",
         "$type": "color"
       }
     },
     "selection": {
       "background": {
-        "$value": "color-mix(in oklab, {color.action.primary} 22%, transparent)",
+        "$value": "color-mix(in oklab, {color.qeet.500} 32%, transparent)",
         "$type": "color"
       }
     },
@@ -188,6 +274,25 @@
       "filled": {
         "$value": "{color.amber.400}",
         "$type": "color"
+      }
+    }
+  },
+  "gradient": {
+    "surface-fade": {
+      "$type": "gradient",
+      "$description": "Dark surface fade.",
+      "$value": {
+        "angle": "180deg",
+        "stops": [
+          {
+            "color": "{color.surface.default}",
+            "position": 0
+          },
+          {
+            "color": "{color.surface.canvas}",
+            "position": 1
+          }
+        ]
       }
     }
   }

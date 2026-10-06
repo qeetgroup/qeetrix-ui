@@ -11,8 +11,14 @@ import {
 import * as React from "react";
 import { Badge } from "@/components/Badge/badge";
 import { Button } from "@/components/Button/button";
+import { EmptyState } from "@/components/EmptyState/empty-state";
 import { Feed } from "@/components/Feed/feed";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/Popover/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs/tabs";
 import type { MessagesFor } from "@/lib/messages";
 import { notificationCenterMessages } from "@/lib/messages";
@@ -56,16 +62,20 @@ const ICONS = {
   error: XCircleIcon,
 } as const;
 const ACCENT = {
-  info: "text-info",
-  success: "text-success",
-  warning: "text-warning",
-  error: "text-destructive",
+  info: "text-info-text",
+  success: "text-success-text",
+  warning: "text-warning-text",
+  error: "text-destructive-text",
 } as const;
 
 /**
  * In-app notification inbox: a bell trigger with an unread badge opening a
  * feed of notifications (all / unread tabs, mark-all-read, per-item dismiss).
  * Composes Popover + Tabs + Badge over the APG Feed pattern.
+ *
+ * Tuned for a dense event stream: one row per event, the time on the title line, unread
+ * carried by weight and a Qeet dot (never by colour alone — the dot is also named), status by a
+ * small coloured glyph rather than a tinted row, and PageUp/PageDown between items (Feed).
  */
 function NotificationCenter({
   items,
@@ -82,43 +92,57 @@ function NotificationCenter({
 
   const list = (data: NotificationItem[]) =>
     data.length === 0 ? (
-      <div className="flex flex-col items-center gap-1 px-4 py-12 text-center text-sm text-muted-foreground">
-        <BellIcon aria-hidden className="size-6 opacity-40" />
-        {emptyMessage ?? messages.empty}
-      </div>
+      <EmptyState
+        size="sm"
+        icon={BellIcon}
+        description={emptyMessage ?? messages.empty}
+        className="py-10"
+      />
     ) : (
       <Feed
         aria-label={messages.feed}
-        className="max-h-96 gap-0 divide-y divide-border overflow-y-auto"
-        itemClassName="flex gap-3 rounded-none border-0 bg-transparent px-3 py-2.5 shadow-none hover:bg-muted/40 hover:shadow-none focus-visible:bg-muted/40"
+        className="max-h-96 gap-0 divide-y divide-border-subtle overflow-y-auto overscroll-contain"
+        itemClassName="flex gap-3 rounded-none border-0 bg-transparent px-3 py-2.5 shadow-none transition-colors duration-fast ease-standard hover:bg-surface-interactive hover:shadow-none focus-visible:focus-ring-inset"
       >
         {data.map((item) => {
-          const Icon = ICONS[item.variant ?? "info"];
+          const variant = item.variant ?? "info";
+          const Icon = ICONS[variant];
           return (
             <React.Fragment key={item.id}>
               <span
-                className={cn(
-                  "mt-0.5 flex size-5 shrink-0 items-center justify-center",
-                  ACCENT[item.variant ?? "info"],
-                )}
+                aria-hidden
+                className={cn("flex h-5 w-4 shrink-0 items-center justify-center", ACCENT[variant])}
               >
-                <Icon className="size-5" />
+                <Icon className="size-4" />
               </span>
               <div className="min-w-0 flex-1 space-y-0.5">
-                <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                <div className="flex items-baseline gap-2 text-sm text-foreground">
                   {!item.read && (
                     <span
                       role="img"
                       aria-label={messages.unread}
-                      className="size-1.5 shrink-0 rounded-full bg-primary"
+                      className="size-1.5 shrink-0 -translate-y-px self-center rounded-full bg-border-brand forced-color-adjust-none forced-colors:bg-[CanvasText]"
                     />
                   )}
-                  <span className="truncate">{item.title}</span>
+                  <span
+                    className={cn(
+                      "min-w-0 flex-1 truncate",
+                      item.read ? "font-normal" : "font-semibold",
+                    )}
+                  >
+                    {item.title}
+                  </span>
+                  {item.time && (
+                    <span className="ms-auto shrink-0 text-xs text-muted-foreground tabular-nums">
+                      {item.time}
+                    </span>
+                  )}
                 </div>
                 {item.description && (
-                  <div className="text-sm text-muted-foreground">{item.description}</div>
+                  <div className="line-clamp-2 text-sm text-muted-foreground">
+                    {item.description}
+                  </div>
                 )}
-                {item.time && <div className="text-xs text-muted-foreground">{item.time}</div>}
                 {item.action && <div className="pt-1">{item.action}</div>}
               </div>
               {onDismiss && (
@@ -126,7 +150,7 @@ function NotificationCenter({
                   type="button"
                   aria-label={messages.dismiss}
                   onClick={() => onDismiss(item.id)}
-                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                  className="-me-1 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors duration-fast ease-standard hover:bg-surface-interactive-hover hover:text-foreground focus-visible:focus-ring"
                 >
                   <XIcon aria-hidden className="size-4" />
                 </button>
@@ -149,16 +173,22 @@ function NotificationCenter({
           >
             <BellIcon aria-hidden />
             {unread.length > 0 && (
-              <Badge className="absolute -inset-e-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[length:var(--qx-component-notification-center-count-font-size)] tabular-nums">
+              <Badge
+                aria-hidden
+                className="absolute -inset-e-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-(length:--qx-component-notification-center-count-font-size) tabular-nums ring-2 ring-background"
+              >
                 {unread.length > 9 ? "9+" : unread.length}
               </Badge>
             )}
           </Button>
         }
       />
-      <PopoverContent align={align} className="w-96 p-0">
+      <PopoverContent align={align} className="w-[min(24rem,calc(100vw-2rem))] p-0">
         <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
-          <span className="text-sm font-semibold">{messages.heading}</span>
+          {/* PopoverTitle names the inbox dialog (it was an unnamed role="dialog"). */}
+          <PopoverTitle className="font-heading text-sm font-semibold">
+            {messages.heading}
+          </PopoverTitle>
           {unread.length > 0 && onMarkAllRead && (
             <Button variant="ghost" size="sm" onClick={onMarkAllRead}>
               {messages.markAllRead}

@@ -61,10 +61,15 @@ export type RecommendedSize = (typeof RECOMMENDED_SIZE_SCALE)[number];
  * The library had three names for one tone — `destructive` (Button, Badge, Link, DropdownMenu),
  * `danger` (Alert, Banner) and `error` (Callout, Notification). `destructive` won on usage and
  * because it is what the bridge variable is called; the other two are kept as declared aliases.
+ *
+ * `brand` is the quiet Qeet tint (surface.brand-subtle with brand text and a brand edge) — a tone
+ * of its own, not `primary`: `primary` is the solid action fill. Badge, Timeline and the
+ * selected Chip use it.
  */
 export const CANONICAL_VARIANTS = [
   "default",
   "primary",
+  "brand",
   "secondary",
   "tertiary",
   "outline",
