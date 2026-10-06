@@ -34,6 +34,7 @@ const pages: { name: string; hash: string; wait?: string; settle?: number }[] = 
   { name: "inspector-data-table", hash: "#/components/data-table", settle: 3000 },
   { name: "inspector-dialog-demos", hash: "#/components/dialog?view=demos", settle: 2500 },
   { name: "foundations", hash: "#/foundations", settle: 3500 },
+  { name: "brand", hash: "#/brand", settle: 3500 },
   { name: "qa", hash: "#/qa", settle: 5000 },
   { name: "qa-compact", hash: "#/qa?density=compact", settle: 5000 },
   { name: "pattern-qeet-id-users", hash: "#/patterns/qeet-id-users", settle: 3000 },

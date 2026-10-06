@@ -11,6 +11,7 @@ import {
   PaletteIcon,
   Rows3Icon,
   ScanEyeIcon,
+  StampIcon,
   SunIcon,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -65,6 +66,14 @@ export function CommandMenu({
         icon: <PaletteIcon />,
         keywords: ["tokens", "colour", "color", "contrast", "typography"],
         payload: go("#/foundations"),
+      },
+      {
+        id: "page-brand",
+        group: "Pages",
+        title: "Brand · Qeet logo and wordmark",
+        icon: <StampIcon />,
+        keywords: ["logo", "wordmark", "brand", "qeet", "mark"],
+        payload: go("#/brand"),
       },
       {
         id: "page-qa",

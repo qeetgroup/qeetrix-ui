@@ -23,6 +23,7 @@ import {
   LayoutTemplateIcon,
   PaletteIcon,
   ScanEyeIcon,
+  StampIcon,
 } from "lucide-react";
 import { type ComponentType, useEffect } from "react";
 import { components, families, manifest } from "../lib/manifest";
@@ -47,6 +48,7 @@ const entries: readonly NavEntry[] = [
     badge: String(components.length),
   },
   { page: "foundations", label: "Foundations", path: "/foundations", icon: PaletteIcon },
+  { page: "brand", label: "Brand", path: "/brand", icon: StampIcon },
   { page: "qa", label: "Visual QA", path: "/qa", icon: ScanEyeIcon },
 ];
 

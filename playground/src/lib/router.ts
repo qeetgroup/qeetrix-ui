@@ -8,13 +8,21 @@ import { useSyncExternalStore } from "react";
  *   #/components/button?variant=outline  inspector, with its controls and render toggles
  *   #/foundations?section=contrast       theme lab
  *   #/qa?density=compact                 visual QA matrix
+ *   #/brand                              the Qeet logo and wordmark, and how to use them
  *   #/patterns/qeet-pay                  product patterns
  *
  * Links are plain `<a href="#/…">` (they push history); typing and toggles replace the current
  * entry instead, so Back steps through places rather than keystrokes.
  */
 
-export type Page = "overview" | "components" | "inspector" | "foundations" | "qa" | "patterns";
+export type Page =
+  | "overview"
+  | "components"
+  | "inspector"
+  | "foundations"
+  | "brand"
+  | "qa"
+  | "patterns";
 
 export interface Route {
   readonly page: Page | "not-found";
@@ -40,6 +48,7 @@ export function parseRoute(hash: string): Route {
       : { page: "components", query, path };
   }
   if (first === "foundations") return { page: "foundations", query, path };
+  if (first === "brand") return { page: "brand", query, path };
   if (first === "qa") return { page: "qa", query, path };
   if (first === "patterns") return { page: "patterns", id: second, query, path };
   return { page: "not-found", query, path };

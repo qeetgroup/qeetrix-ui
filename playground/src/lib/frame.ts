@@ -40,7 +40,8 @@ export type FrameRoute =
   | { readonly kind: "qa" }
   | { readonly kind: "qa-sample"; readonly id: string }
   | { readonly kind: "pattern"; readonly id: string }
-  | { readonly kind: "specimen" };
+  | { readonly kind: "specimen" }
+  | { readonly kind: "brand"; readonly id: string };
 
 export const defaultFrameEnv: FrameEnv = {
   theme: "light",
@@ -74,6 +75,8 @@ function routePath(route: FrameRoute): string {
       return `pattern/${route.id}`;
     case "specimen":
       return "specimen";
+    case "brand":
+      return `brand/${route.id}`;
   }
 }
 
@@ -144,6 +147,9 @@ export function parseFrameHash(hash: string): { route: FrameRoute; env: FrameEnv
       break;
     case "specimen":
       route = { kind };
+      break;
+    case "brand":
+      route = { kind, id: first };
       break;
     default:
       route = { kind: "qa" };

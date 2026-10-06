@@ -35,6 +35,7 @@ const QaSample = lazy(() => import("../pages/qa-board").then((m) => ({ default: 
 const FoundationsSpecimen = lazy(() =>
   import("../pages/foundations-specimen").then((m) => ({ default: m.FoundationsSpecimen })),
 );
+const BrandSample = lazy(() => import("../pages/brand").then((m) => ({ default: m.BrandSample })));
 const PatternView = lazy(() =>
   import("../pages/patterns").then((m) => ({ default: m.PatternView })),
 );
@@ -192,6 +193,14 @@ function FrameRouteContent({ route }: { route: FrameRoute }) {
         <Suspense fallback={<Loading />}>
           <Measured>
             <FoundationsSpecimen />
+          </Measured>
+        </Suspense>
+      );
+    case "brand":
+      return (
+        <Suspense fallback={<Loading />}>
+          <Measured>
+            <BrandSample id={route.id} />
           </Measured>
         </Suspense>
       );

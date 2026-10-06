@@ -66,6 +66,8 @@ function crumbsFor(route: Route): Crumb[] {
     }
     case "foundations":
       return [{ label: "Foundations" }];
+    case "brand":
+      return [{ label: "Brand" }];
     case "qa":
       return [{ label: "Visual QA" }];
     case "patterns": {

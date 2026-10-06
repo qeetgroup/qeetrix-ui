@@ -42,6 +42,7 @@ const InspectorPage = lazy(() =>
 const FoundationsPage = lazy(() =>
   import("../pages/foundations").then((m) => ({ default: m.FoundationsPage })),
 );
+const BrandPage = lazy(() => import("../pages/brand").then((m) => ({ default: m.BrandPage })));
 const QaPage = lazy(() => import("../pages/qa").then((m) => ({ default: m.QaPage })));
 const PatternsPage = lazy(() =>
   import("../pages/patterns/page").then((m) => ({ default: m.PatternsPage })),
@@ -57,6 +58,7 @@ const titles: Record<Route["page"], string> = {
   components: "Components",
   inspector: "Component",
   foundations: "Foundations",
+  brand: "Brand",
   qa: "Visual QA",
   patterns: "Patterns",
   "not-found": "Not found",
@@ -174,6 +176,8 @@ function RouteView({ route }: { route: Route }) {
       return <InspectorPage key={route.id} route={route} />;
     case "foundations":
       return <FoundationsPage route={route} />;
+    case "brand":
+      return <BrandPage />;
     case "qa":
       return <QaPage route={route} />;
     case "patterns":
