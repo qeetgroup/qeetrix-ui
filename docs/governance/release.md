@@ -5,11 +5,9 @@ rules (what makes a change major, minor or patch) live in [versioning.md](./vers
 document is about the *mechanics*. The flow is the same as `@qeetrix/icons`'.
 
 > [!WARNING]
-> **Set the version by hand before the next merge to `main`.** The work on `develop` since 2.0.0
-> is expected to ship as a major release (3.0.0). Merged with `package.json` still at `2.0.0`,
-> `version.yml` would bump it to `2.0.1`, and `release.yml` would publish breaking changes as a
-> patch on `latest`, which every consumer on a `^2` range would receive on their next install.
-> Set `version` to `3.0.0` in the PR; the bump leaves a raised version alone.
+> **The automatic bump is always a patch.** A PR that adds exports needs a minor, and one that
+> removes or renames anything a major — set `version` by hand in the PR; the bump leaves a raised
+> version alone. Merged as a patch, it reaches every consumer on a `^` range on their next install.
 
 ## How a release happens
 
@@ -30,7 +28,8 @@ Want a minor or major instead? Edit `version` in `package.json` yourself. The wo
 when the PR's version still equals `main`'s, so a manual bump is left alone rather than bumped
 twice.
 
-It skips fork PRs (their token is read-only) and never reacts to its own commit.
+It skips fork PRs (their token is read-only), never reacts to its own commit, and does nothing
+when the PR's head is already in `main` — a PR merged before the job ran is not bumped again.
 
 ### 2. Merge to main
 
@@ -67,7 +66,10 @@ no longer uses.
 
 Publishing needs one of these, and `release.yml` checks before trying:
 
-**A token.** An `NPM_TOKEN` secret with publish rights to the `@qeetrix` scope.
+**A token.** An `NPM_TOKEN` secret with publish rights to the `@qeetrix` scope. The Qeet Group
+organisation's `NPM_TOKEN` is shared with this repository, as with `qeetrix-icons`. Do not also
+set one on the `npm-publish` environment: an environment secret overrides the organisation's, and
+a stale one there fails the publish with `E404 Not Found - PUT …/@qeetrix%2fui`.
 
 **Trusted publishing (OIDC).** Configure a trusted publisher for `@qeetrix/ui` on npmjs.com
 pointing at this repository and the `Release` workflow, then set the repository variable
