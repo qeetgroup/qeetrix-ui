@@ -119,7 +119,7 @@ When a removal is actually happening:
 - [ ] `deprecation.removeIn` names the major, and the changelog says so
 - [ ] the consuming Qeet products have been migrated (`qeet-id-console`, `qeet-id-login`,
       `qeet-id-website`, `qeet-docs` at minimum)
-- [ ] the removal is in a **major** changeset with the migration path in the description
+- [ ] the removal ships in a **major** version, with the migration path in its changelog entry
 - [ ] `bun run check:exports -- --update` re-snapshots the surface in the same commit
 
 ---

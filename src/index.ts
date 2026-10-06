@@ -6,7 +6,7 @@
  *
  * The published surface is locked by src/__tests__/public-api.json — any addition or
  * removal must be re-snapshotted via `bun run check:exports -- --update` and land in
- * the same changeset. See scripts/check/exports.mjs.
+ * the same PR. See scripts/check/exports.mjs.
  */
 
 // Re-exported third-party types so consumers can type data-table/date-picker props

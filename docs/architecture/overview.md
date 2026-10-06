@@ -94,7 +94,7 @@ than the original three:
 1. **the lock** — every exported symbol is snapshotted in
    [`src/__tests__/public-api.json`](../../src/__tests__/public-api.json). Any addition or
    removal fails `verify` until it is re-snapshotted deliberately, so an API change is always a
-   visible line in a diff and always ships with a changeset.
+   visible line in a diff and always ships with a version bump and a changelog entry.
 2. **the signature lock** — [`public-props.json`](../../src/__tests__/public-props.json) records
    the declaration shape, not just the member names, so a required prop becoming optional or a
    literal union losing a member is a visible change too.
@@ -232,9 +232,10 @@ is documented in [component-manifest.md](../standards/component-manifest.md).
 - **Deprecation** — [docs/governance/deprecations.md](../governance/deprecations.md)
 - **API conventions** — [docs/standards/component-api.md](../standards/component-api.md)
 
-Changes ship through Changesets. A public API change is not just a version bump: it is a
-re-snapshotted `public-api.json`, a changeset at the right level, and — when a component's
-status or contract changes — an updated registry entry.
+Changes ship by merging to `main` ([release.md](../governance/release.md)). A public API change
+is not just a version bump: it is a re-snapshotted `public-api.json`, a version raised to the right
+level with its changelog entry, and — when a component's status or contract changes — an updated
+registry entry.
 
 ---
 

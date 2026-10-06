@@ -28,8 +28,8 @@ churn, and should expect to read the changelog.
 
 **The API is mostly settled; changes are possible but no longer casual.**
 
-Breaking changes are still allowed in a minor, but they are deliberate: they need a changeset
-that says what changed and what to do about it. In practice this is the status for a component
+Breaking changes are still allowed in a minor, but they are deliberate: they need a changelog
+entry that says what changed and what to do about it. In practice this is the status for a component
 that has one or two real consumers and one or two known rough edges.
 
 ### `stable`
@@ -90,7 +90,7 @@ never had audited.
 That is a re-labelling, not a regression. Nothing about those components changed; the label
 stopped over-promising. They are still governed by the public-API lock
 ([`src/__tests__/public-api.json`](../../src/__tests__/public-api.json)), and a breaking change
-to one of them still needs a changeset that says so. What `beta` withdraws is the promise that
+to one of them still needs a changelog entry that says so. What `beta` withdraws is the promise that
 breaking it would cost a major — a promise the library was making on 68 components' behalf
 without evidence.
 
