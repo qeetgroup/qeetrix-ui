@@ -39,6 +39,14 @@ jobs:
         run: |
           set -euo pipefail
 
+          # A PR can be merged before this job gets to run. Its head is then already part of the
+          # base branch, whose version now equals the PR's, and a bump would push a stray commit
+          # (2.0.1 -> 2.0.2) onto the source branch after the release.
+          if git merge-base --is-ancestor HEAD "origin/$BASE"; then
+            echo "This PR's head is already in $BASE (merged or empty). Nothing to bump."
+            exit 0
+          fi
+
           current=$(node -p "require('./package.json').version")
           base=$(git show "origin/$BASE:package.json" | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).version")
 

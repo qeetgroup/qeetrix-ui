@@ -1,5 +1,30 @@
 # @qeetrix/ui
 
+## 2.1.0
+
+### Minor Changes
+
+- **Ember + Graphite foundation.** A neutral Graphite ramp replaces the warm greys, so dark mode
+  is a neutral near-black. Primary actions use Qeet Ember `#D04800` with white text (4.55:1,
+  WCAG AA); `#F26D0E` stays the brand colour. Disabled primary buttons are neutral, and shadows
+  are neutral.
+- **New tokens and utilities.** About 260 new `--qx-*` variables, among them
+  `feedback.*-strong`, `text.on-feedback-strong` and `text.on-warning-strong`, with Tailwind
+  utilities such as `bg-canvas`, `bg-surface-*`, `text-link` and `border-control`, the
+  `focus-ring`, `focus-ring-inset` and `focus-ring-field` utilities, and motion duration
+  utilities.
+- **Alerts.** Stronger status tints, coloured titles, a 3px accent bar, and an opt-in
+  `emphasis="strong"`. Callout titles and toasts take the status colour too.
+- **84 new exports**, from the component modernisation: new parts (`DialogBody`, `DrawerBody`,
+  `SheetBody`, `TableEmpty`, `TimelineHeader`, `ToolbarSpacer`, `FieldSuccess`, `FieldWarning`,
+  `InputGroupButton`, `CarouselControls`, `CarouselIndicators`, `AlertAction`, `CommentMention`,
+  …), variant helpers (`separatorVariants`, `statVariants`, `emptyStateVariants`, …), and props
+  types for existing components.
+
+Nothing was removed: every 2.0.0 export, subpath, component and token variable is still there.
+Colours change visibly, so review screens that relied on the old orange primary or the warm dark
+mode.
+
 ## 2.0.0
 
 ### Major Changes
