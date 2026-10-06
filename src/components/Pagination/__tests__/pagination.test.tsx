@@ -147,3 +147,51 @@ describe("Pagination previous-page control", () => {
     expect(onPrev).not.toHaveBeenCalled();
   });
 });
+
+describe("Pagination loading and announcements", () => {
+  it("marks the bar busy, shows a status spinner and disables the controls while loading", () => {
+    render(
+      <Pagination hasPrev hasNext loading onFirst={vi.fn()} onNext={vi.fn()} itemsOnPage={50} />,
+    );
+    expect(screen.getByRole("navigation", { name: "Pagination" })).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    for (const button of screen.getAllByRole("button")) expect(button).toBeDisabled();
+  });
+
+  it("is not busy, and has no spinner, when idle", () => {
+    render(<Pagination hasNext onNext={vi.fn()} itemsOnPage={50} />);
+    expect(screen.getByRole("navigation")).not.toHaveAttribute("aria-busy");
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("announces the range politely when it changes", () => {
+    render(<Pagination itemsOnPage={50} total={1842} />);
+    const label = screen.getByText("Showing 50 of 1,842");
+    expect(label).toHaveAttribute("aria-live", "polite");
+    expect(label).toHaveAttribute("aria-atomic", "true");
+  });
+
+  it("has no axe violations while loading", async () => {
+    const { container } = render(
+      <Pagination hasPrev hasNext loading itemsOnPage={50} pageSize={50} />,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("Pagination narrow containers", () => {
+  // The bar responds to its own width (a size container), so in a split pane the "Prev"
+  // control folds away and "First" drops to its icon — and both keep their accessible names.
+  it("collapses by container width while keeping every control named", () => {
+    const { container } = render(
+      <Pagination hasPrev hasNext onFirst={vi.fn()} onNext={vi.fn()} itemsOnPage={5} />,
+    );
+    expect(container.querySelector('[data-slot="pagination"]')).toHaveClass("@container", "w-full");
+    expect(screen.getByRole("button", { name: "First page" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Previous page" })).toHaveClass("@md:inline-flex");
+    expect(screen.getByText("First")).toHaveClass("@xs:inline");
+  });
+});

@@ -151,3 +151,46 @@ describe("useCopyToClipboard", () => {
     await expect(pending).resolves.toBe(true);
   });
 });
+
+describe("CopyButton feedback", () => {
+  it("lays out both labels in one cell, so confirming never changes its width", () => {
+    const { container } = render(<CopyButton value="x" />);
+    const cell = container.querySelector('[data-slot="copy-feedback-label"]');
+    expect(cell).toHaveClass("inline-grid");
+    const [rest, done] = Array.from(cell?.children ?? []);
+    expect(rest).toHaveTextContent("Copy");
+    expect(done).toHaveTextContent("Copied!");
+    // The inactive label holds space but is invisible and out of the name.
+    expect(done).toHaveClass("invisible");
+    expect(done).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("confirms in place: success check, the copied label as name, data-copied", async () => {
+    render(<CopyButton value="hello" />);
+    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    const btn = await screen.findByRole("button", { name: "Copied!" });
+    expect(btn).toHaveAttribute("data-copied");
+    const icon = btn.querySelector('[data-slot="copy-feedback-icon"]');
+    const [copyGlyph, check] = Array.from(icon?.children ?? []);
+    expect(copyGlyph).toHaveClass("opacity-0");
+    expect(check).toHaveClass("text-success-text");
+    expect(check).not.toHaveClass("opacity-0");
+  });
+
+  it("returns to rest after the timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      render(<CopyButton value="hello" timeout={500} />);
+      await act(async () => {
+        fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+      });
+      expect(screen.getByRole("button", { name: "Copied!" })).toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(screen.getByRole("button", { name: "Copy" })).not.toHaveAttribute("data-copied");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

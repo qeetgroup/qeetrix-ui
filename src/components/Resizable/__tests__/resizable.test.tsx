@@ -178,6 +178,42 @@ describe("Resizable", () => {
     expect(separator).toHaveClass("w-px");
   });
 
+  it("styles the states the library actually publishes", () => {
+    // react-resizable-panels v4 reports state as data-separator=inactive|hover|focus|active|
+    // disabled. The previous `data-resize-handle-active` selector was the v2 attribute and
+    // never matched, so a drag had no visual feedback at all.
+    render(<TwoPanel />);
+    const separator = handle();
+    expect(separator.className).toContain("data-[separator=hover]:after:bg-control");
+    expect(separator.className).toContain("data-[separator=active]:after:bg-border-brand");
+    expect(separator.className).not.toContain("data-resize-handle-active");
+  });
+
+  it("uses the foundation focus recipe and survives forced colours", () => {
+    render(<TwoPanel />);
+    const separator = handle();
+    expect(separator).toHaveClass("focus-visible:focus-ring", "forced-colors:bg-[CanvasText]");
+    expect(separator.className).not.toMatch(/ring-ring\/disabled|ring-3/);
+  });
+
+  it("draws the state indicator on a pseudo-element along the divided axis", () => {
+    render(<TwoPanel orientation="horizontal" />);
+    expect(handle()).toHaveClass("after:inset-y-0", "after:-inset-x-px");
+
+    render(<TwoPanel orientation="vertical" />);
+    expect(screen.getAllByRole("separator", { name: "Resize" })[1]).toHaveClass(
+      "after:inset-x-0",
+      "after:-inset-y-px",
+    );
+  });
+
+  it("names the grip so it can be targeted", () => {
+    const { container } = render(<TwoPanel withHandle />);
+    const grip = container.querySelector('[data-slot="resizable-handle-grip"]');
+    expect(grip).not.toBeNull();
+    expect(grip?.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(<TwoPanel />);
     expect(await a11y(container)).toHaveNoViolations();

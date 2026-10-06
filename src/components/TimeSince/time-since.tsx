@@ -80,12 +80,24 @@ function dateFormatter(env: FormatEnvironment, withTime: boolean): Intl.DateTime
   return formatter;
 }
 
-function relativeFormatter(env: FormatEnvironment): Intl.RelativeTimeFormat {
-  const key = env.locale ?? "";
+/**
+ * `numeric: "always"` for every amount, and `"auto"` only to say "now".
+ *
+ * `"auto"` turns −1 day into "yesterday" and −1 month into "last month". Those are *calendar*
+ * words, and this component measures *elapsed* time: 23 hours before 23:30 is 00:30 the same
+ * day, which "auto" would call yesterday. "1 day ago" is never wrong. "now", on the other hand,
+ * is exactly what `"auto"` is for — and it is localised, where the hard-coded English "just now"
+ * this replaced was not.
+ */
+function relativeFormatter(
+  env: FormatEnvironment,
+  numeric: "always" | "auto",
+): Intl.RelativeTimeFormat {
+  const key = `${env.locale ?? ""}|${numeric}`;
   const cached = relativeFormatters.get(key);
   if (cached) return cached;
 
-  const formatter = new Intl.RelativeTimeFormat(env.locale, { numeric: "auto" });
+  const formatter = new Intl.RelativeTimeFormat(env.locale, { numeric });
   relativeFormatters.set(key, formatter);
 
   return formatter;
@@ -99,7 +111,8 @@ function toDate(v: string | Date | number): Date {
 
 interface FormattedTime {
   label: string;
-  iso: string;
+  /** `undefined` for an unparseable value: an invalid `datetime` attribute is worse than none. */
+  iso: string | undefined;
   absolute: string;
 }
 
@@ -107,7 +120,7 @@ function formatAbsolute(value: string | Date | number, env: FormatEnvironment): 
   const date = toDate(value);
   const timestamp = date.getTime();
   if (Number.isNaN(timestamp)) {
-    return { label: String(value), iso: String(value), absolute: String(value) };
+    return { label: String(value), iso: undefined, absolute: String(value) };
   }
 
   return {
@@ -117,6 +130,28 @@ function formatAbsolute(value: string | Date | number, env: FormatEnvironment): 
   };
 }
 
+const DAY_MS = 86_400_000;
+
+/** Below this, the label is "now": a seconds count that moves every render is noise. */
+const NOW_THRESHOLD_MS = 10_000;
+
+/**
+ * Each unit with its length and the rounded amount at which it gives way to the next one.
+ *
+ * Choosing by the *rounded* amount, smallest unit first, is what keeps the label from reading
+ * "60 seconds ago" or "24 hours ago": 59.6 s rounds to 60, which is not under 60, so it is
+ * reported as "1 minute ago". The previous rule took the largest unit the raw value reached and
+ * then rounded, which produced both.
+ */
+const RELATIVE_UNITS: readonly [Intl.RelativeTimeFormatUnit, number, number][] = [
+  ["second", 1_000, 60],
+  ["minute", 60_000, 60],
+  ["hour", 3_600_000, 24],
+  ["day", DAY_MS, 30],
+  ["month", 30 * DAY_MS, 12],
+  ["year", 365 * DAY_MS, Number.POSITIVE_INFINITY],
+];
+
 function format(
   value: string | Date | number,
   absoluteAfterDays: number,
@@ -125,42 +160,38 @@ function format(
 ): FormattedTime {
   const d = toDate(value);
   const t = d.getTime();
-  const iso = Number.isNaN(t) ? String(value) : d.toISOString();
-  const absolute = Number.isNaN(t) ? String(value) : dateFormatter(env, true).format(d);
-  if (Number.isNaN(t)) return { label: String(value), iso, absolute };
+  if (Number.isNaN(t)) return { label: String(value), iso: undefined, absolute: String(value) };
+  const iso = d.toISOString();
+  const absolute = dateFormatter(env, true).format(d);
 
   const diffMs = t - now;
   const past = diffMs <= 0;
   const abs = Math.abs(diffMs);
-  const dayMs = 86_400_000;
-  if (abs / dayMs > absoluteAfterDays) {
+  if (abs / DAY_MS > absoluteAfterDays) {
     return { label: dateFormatter(env, false).format(d), iso, absolute };
   }
-  if (abs < 10_000) {
-    return { label: past ? "just now" : "in a moment", iso, absolute };
+  if (abs < NOW_THRESHOLD_MS) {
+    return { label: relativeFormatter(env, "auto").format(0, "second"), iso, absolute };
   }
-  // Pick the largest unit where |value| ≥ 1.
-  const units: [Intl.RelativeTimeFormatUnit, number][] = [
-    ["year", 365 * dayMs],
-    ["month", 30 * dayMs],
-    ["day", dayMs],
-    ["hour", 3_600_000],
-    ["minute", 60_000],
-    ["second", 1_000],
-  ];
-  for (const [unit, ms] of units) {
-    if (abs >= ms) {
-      const v = Math.round(diffMs / ms);
-      return { label: relativeFormatter(env).format(v, unit), iso, absolute };
+  for (const [unit, ms, rollsOverAt] of RELATIVE_UNITS) {
+    const amount = Math.round(abs / ms);
+    if (amount < rollsOverAt) {
+      const signed = past ? -amount : amount;
+      return { label: relativeFormatter(env, "always").format(signed, unit), iso, absolute };
     }
   }
-  return { label: past ? "just now" : "in a moment", iso, absolute };
+  return { label: dateFormatter(env, false).format(d), iso, absolute };
 }
 
 /**
- * TimeSince renders a relative-time label ("5 minutes ago", "yesterday")
+ * TimeSince renders a relative-time label ("5 minutes ago", "1 day ago")
  * with a hover tooltip showing the absolute locale-formatted timestamp.
  * Values older than `absoluteAfterDays` switch to the absolute date.
+ *
+ * The phrasing is elapsed time, localised by `Intl.RelativeTimeFormat`: "now" under ten
+ * seconds, then seconds, minutes, hours, days, months and years, each giving way to the next at
+ * its natural boundary. Calendar words ("yesterday", "last month") are deliberately not used —
+ * see `relativeFormatter`.
  *
  * Auto-refreshes every `refreshIntervalMs` so a row that loaded as
  * "just now" ticks over to "1 minute ago" without a page reload.

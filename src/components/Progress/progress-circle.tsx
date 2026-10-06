@@ -3,7 +3,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const progressCircleVariants = cva("relative inline-flex items-center justify-center", {
+const progressCircleVariants = cva("relative inline-flex shrink-0 items-center justify-center", {
   variants: {
     size: {
       sm: "",
@@ -19,10 +19,10 @@ const progressCircleVariants = cva("relative inline-flex items-center justify-ce
 type NamedSize = "sm" | "md" | "lg";
 
 const SIZE_MAP = {
-  sm: { px: 40, sw: 5, showLabelDefault: false },
-  md: { px: 60, sw: 7, showLabelDefault: true },
-  lg: { px: 80, sw: 9, showLabelDefault: true },
-} satisfies Record<NamedSize, { px: number; sw: number; showLabelDefault: boolean }>;
+  sm: { px: 40, sw: 5, showLabelDefault: false, text: "text-micro" },
+  md: { px: 60, sw: 7, showLabelDefault: true, text: "text-xs" },
+  lg: { px: 80, sw: 9, showLabelDefault: true, text: "text-sm" },
+} satisfies Record<NamedSize, { px: number; sw: number; showLabelDefault: boolean; text: string }>;
 
 interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement> {
   /** 0–100; clamped automatically. */
@@ -37,6 +37,12 @@ interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: React.ReactNode;
 }
 
+/**
+ * Circular progress (`role="progressbar"`). Shares the Progress track and indicator tokens: the
+ * ring is the Qeet indicator role, ≥3:1 against both the track and the surface in both themes.
+ * The `#F26D0E` stroke it replaces was 2.8:1 against its own track on light surfaces, and the
+ * track itself (muted at 30%) was close to invisible.
+ */
 function ProgressCircle({
   value,
   size = "md",
@@ -54,6 +60,8 @@ function ProgressCircle({
   const effectiveShowLabel =
     showLabel ?? (typeof size === "string" ? SIZE_MAP[size].showLabelDefault : true);
   const sizeVariant = typeof size === "string" ? size : undefined;
+  const labelText =
+    typeof size === "string" ? SIZE_MAP[size].text : sizeNum >= 72 ? "text-sm" : "text-xs";
 
   const radius = (sizeNum - sw) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -67,30 +75,38 @@ function ProgressCircle({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={ariaLabel ?? `${clampedValue}%`}
+      data-complete={clampedValue === 100 || undefined}
       style={{ width: sizeNum, height: sizeNum }}
       className={cn(progressCircleVariants({ size: sizeVariant }), className)}
       {...props}
     >
-      <svg width={sizeNum} height={sizeNum} className="-rotate-90" aria-hidden="true">
+      <svg
+        width={sizeNum}
+        height={sizeNum}
+        className="-rotate-90 forced-color-adjust-none"
+        aria-hidden="true"
+      >
         {/* Track */}
         <circle
+          data-slot="progress-circle-track"
           cx={sizeNum / 2}
           cy={sizeNum / 2}
           r={radius}
           fill="none"
           stroke="currentColor"
           strokeWidth={sw}
-          className="text-muted/30"
+          className="text-(--qx-component-progress-track) forced-colors:text-[GrayText]"
         />
         {/* Fill */}
         <circle
+          data-slot="progress-circle-indicator"
           cx={sizeNum / 2}
           cy={sizeNum / 2}
           r={radius}
           fill="none"
           stroke="currentColor"
           strokeWidth={sw}
-          className="text-primary transition-all duration-500"
+          className="text-(--qx-component-progress-indicator) transition-[stroke-dashoffset] duration-slow ease-standard forced-colors:text-[Highlight]"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -99,7 +115,7 @@ function ProgressCircle({
       {(label !== undefined || effectiveShowLabel) && (
         <span
           data-slot="progress-circle-label"
-          className="absolute text-xs font-semibold tabular-nums"
+          className={cn("absolute font-ui font-semibold text-foreground tabular-nums", labelText)}
         >
           {label ?? `${clampedValue}%`}
         </span>

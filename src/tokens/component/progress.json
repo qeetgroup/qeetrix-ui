@@ -1,0 +1,17 @@
+{
+  "component": {
+    "progress": {
+      "$description": "Progress, ProgressCircle and Meter. The track and the default indicator are shared so a bar, a ring and a gauge read as one family. Theme-varying values go through the semantic CSS variables, so one declaration serves both themes.",
+      "track": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 10%, transparent)",
+        "$type": "color",
+        "$description": "The unfilled track. A translucent foreground tint, so it keeps the same relative weight on canvas, card, popover, sunken and status surfaces (1.23:1 light, 1.27-1.33:1 dark). The muted fill it replaces measured 1.03:1 on the light canvas, so the extent of the scale was barely visible."
+      },
+      "indicator": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color",
+        "$description": "The default fill: the Qeet indicator role (qeet-600 light, qeet-400 dark), not the qeet-500 action fill. #F26D0E measured 2.8:1 against the track on light surfaces and failed WCAG 1.4.11; this holds 3.2:1 or better against the track on every light surface and 6:1 in dark."
+      }
+    }
+  }
+}

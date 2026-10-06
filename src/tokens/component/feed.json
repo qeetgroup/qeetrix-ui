@@ -1,0 +1,22 @@
+{
+  "component": {
+    "feed": {
+      "$description": "Feed (the APG feed pattern under activity streams, audit logs and notification inboxes). Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "card-padding": {
+        "$value": "calc(var(--qx-control-cell-padding-y) + 0.25rem)",
+        "$type": "dimension",
+        "$description": "Padding of a card-variant article. One step above the density cell padding so a card keeps its breathing room at every density: 16px by default and comfortable, 10px compact."
+      },
+      "row-padding-y": {
+        "$value": "{control.cell-padding-y}",
+        "$type": "dimension",
+        "$description": "Block padding of a list-variant article. List rows are table-like, so they follow the table cell rhythm exactly."
+      },
+      "row-padding-x": {
+        "$value": "1rem",
+        "$type": "dimension",
+        "$description": "Inline padding of a list-variant article. Constant across densities: density compresses rhythm, not the reading edge."
+      }
+    }
+  }
+}

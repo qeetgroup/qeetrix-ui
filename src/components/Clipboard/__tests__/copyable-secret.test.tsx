@@ -136,3 +136,28 @@ describe("CopyableSecret", () => {
     expect(document.querySelectorAll("textarea")).toHaveLength(0);
   });
 });
+
+describe("CopyableSecret presentation", () => {
+  it("renders the value in a recessed, select-all code well", () => {
+    const { container } = render(<CopyableSecret value="sk_live_x" />);
+    const code = container.querySelector("code");
+    expect(code).toHaveClass("bg-surface-sunken", "select-all");
+  });
+
+  it("makes a one-line, scrolling value reachable from the keyboard", () => {
+    const { container, rerender } = render(<CopyableSecret value="sk_live_x" oneLine />);
+    expect(container.querySelector("code")).toHaveAttribute("tabindex", "0");
+    rerender(<CopyableSecret value="sk_live_x" />);
+    expect(container.querySelector("code")).not.toHaveAttribute("tabindex");
+  });
+
+  it("marks the confirmed state and keeps its width stable", async () => {
+    const { container } = render(<CopyableSecret value="abc" copiedDurationMs={1000} />);
+    fireEvent.click(screen.getByRole("button", { name: /copy/i }));
+    const btn = await screen.findByRole("button", { name: /copied/i });
+    expect(btn).toHaveAttribute("data-copied");
+    expect(container.querySelector('[data-slot="copy-feedback-label"]')).toHaveClass(
+      "sm:inline-grid",
+    );
+  });
+});

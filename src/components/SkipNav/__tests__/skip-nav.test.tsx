@@ -18,6 +18,37 @@ describe("SkipNav", () => {
     const link = screen.getByRole("link", { name: "Skip to content" });
     expect(link).toHaveAttribute("href", "#page-content");
   });
+
+  it("treats a bare id as a fragment rather than a relative URL", () => {
+    render(<SkipNav to="page-content">Skip</SkipNav>);
+    expect(screen.getByRole("link", { name: "Skip" })).toHaveAttribute("href", "#page-content");
+  });
+
+  it("leaves a path or URL target untouched", () => {
+    render(<SkipNav to="/docs#main">Skip</SkipNav>);
+    expect(screen.getByRole("link", { name: "Skip" })).toHaveAttribute("href", "/docs#main");
+  });
+
+  it("stays in the tab order and accessibility tree while out of view", () => {
+    // Hidden by transform, not by clipping or display: it must remain the first tab stop.
+    render(<SkipNav />);
+    const link = screen.getByRole("link", { name: "Skip to main content" });
+    expect(link).not.toHaveClass("sr-only", "hidden", "invisible");
+    expect(link).toHaveClass("fixed", "-translate-y-[calc(100%+2rem)]");
+  });
+
+  it("is revealed on any focus, above every layer, with the Qeet focus ring", () => {
+    // `not-sr-only` used to reset `position` to static, so the revealed link pushed the page
+    // down instead of floating over it.
+    render(<SkipNav />);
+    const link = screen.getByRole("link", { name: "Skip to main content" });
+    expect(link).toHaveClass(
+      "focus:translate-y-0",
+      "z-(--qx-z-skip-nav)",
+      "focus-visible:focus-ring",
+    );
+    expect(link.className).not.toMatch(/not-sr-only|ring-ring/);
+  });
 });
 
 describe("SkipNavContent", () => {

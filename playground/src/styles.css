@@ -1,0 +1,64 @@
+/**
+ * Playground stylesheet: the library's published entry, compiled together with the playground
+ * sources so Tailwind generates the utilities both use. Nothing here restyles a component — the
+ * chrome is built from Qeetrix components and semantic utilities, and every colour below is a
+ * token variable.
+ */
+@import "../../src/styles/styles.css";
+
+/* The library entry scans src/; the playground's own classes live here. */
+@source "./";
+
+/* Native scrollbars, form controls and the boot screen follow the active theme. The library
+ * does not set `color-scheme`; a consumer normally would. */
+:root {
+  color-scheme: light;
+}
+/* index.html paints the boot screen on <html> with a system colour. Once this stylesheet is in,
+ * hand the page back to <body> (bg-background from the base layer, or a frame's surface class),
+ * whose background then propagates to the whole viewport exactly as in a consumer app. */
+html:root {
+  background: transparent;
+}
+.dark {
+  color-scheme: dark;
+}
+
+/* ── Reduced-motion simulation (preview frames only) ───────────────────────────────────────
+ * A frame opened with `motion=reduce` gets two things: matchMedia answers `reduce` (patched in
+ * index.html, for JavaScript-driven motion such as Recharts and carousels), and the base
+ * layer's document-wide collapse below — a mirror of base.css's prefers-reduced-motion rule.
+ * Tailwind's `motion-reduce:`/`motion-safe:` variants are deliberately not redefined: redefining
+ * a variant moves it to the end of the variant order, which would change the cascade of the
+ * published utilities. Use the OS setting or DevTools emulation to exercise those. */
+html[data-pg-motion="reduce"] *,
+html[data-pg-motion="reduce"] *::before,
+html[data-pg-motion="reduce"] *::after {
+  animation-duration: max(var(--qx-motion-reduced-duration), 0.01ms) !important;
+  animation-delay: var(--qx-motion-reduced-duration) !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: max(var(--qx-motion-reduced-duration), 0.01ms) !important;
+  transition-delay: var(--qx-motion-reduced-duration) !important;
+  scroll-behavior: auto !important;
+}
+
+/* Preview frames size themselves to their content; the document never scrolls inside one. */
+html[data-pg-frame],
+html[data-pg-frame] body {
+  min-height: 0;
+}
+
+/* Checkerboard for alpha swatches in the theme lab, drawn from the border role. */
+.pg-checker {
+  background-image:
+    linear-gradient(45deg, var(--border) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--border) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--border) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--border) 75%);
+  background-size: 10px 10px;
+  background-position:
+    0 0,
+    0 5px,
+    5px -5px,
+    -5px 0;
+}

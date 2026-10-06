@@ -1,0 +1,27 @@
+{
+  "component": {
+    "qr-code": {
+      "$description": "QRCode. The two colours here are deliberately NOT theme-aware: they are scan optics, not styling. ISO/IEC 18004 readers expect dark modules on a light field, and many decoders do not try the inverted polarity, so the code keeps a light tile with dark modules in the dark theme too rather than inverting. Override them only with another dark-on-light pair of at least the same contrast.",
+      "foreground": {
+        "$value": "#000000",
+        "$type": "color",
+        "$description": "The modules. Theme-invariant black — maximum luminance contrast against the quiet zone in every theme, brand and forced-colors mode (the component opts out of forced-colour remapping)."
+      },
+      "background": {
+        "$value": "#ffffff",
+        "$type": "color",
+        "$description": "The quiet zone and the tile behind the modules. Theme-invariant white: in the dark theme this is the light tile that keeps the code scannable, which is the point — do not alias a theme-varying surface here."
+      },
+      "corner": {
+        "$value": "{corner.control}",
+        "$type": "dimension",
+        "$description": "The tile's corner. Only the quiet zone is rounded; the component drops the radius when the quiet zone is too thin to absorb it, so a corner never clips a finder pattern."
+      },
+      "border": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color",
+        "$description": "A hairline around the tile, so a white code on a white card still shows where its quiet zone ends."
+      }
+    }
+  }
+}

@@ -1,14 +1,32 @@
 {
-  "$description": "Theme overrides for component tokens \u2014 only for decisions that genuinely differ between light and dark. Anything identical in both themes belongs in src/tokens/component/.",
+  "$description": "Theme overrides for component tokens — only for decisions that genuinely differ between light and dark. Anything identical in both themes belongs in src/tokens/component/.",
   "component": {
+    "button": {
+      "outline": {
+        "background": {
+          "$value": "color-mix(in oklab, var(--qx-color-border-control) 12%, transparent)",
+          "$type": "color",
+          "$description": "The dark outline fill: a translucent wash of the control boundary, a quiet lift over whatever it sits on (canvas, card or overlay). This is the foundation-pass `dark:bg-input/12`, moved into a token so the variant carries no theme patch."
+        }
+      }
+    },
+    "switch": {
+      "thumb": {
+        "$value": "var(--qx-color-surface-inverse)",
+        "$type": "color",
+        "$description": "The off thumb: the light inverse surface on the control-grey track. It inverts to the graphite thumb-checked when on, so dark mode keeps the same light-off / graphite-on reading as light mode."
+      }
+    },
     "input": {
       "background": {
-        "$value": "color-mix(in oklab, var(--qx-color-border-default) 30%, transparent)",
-        "$type": "color"
+        "$value": "color-mix(in oklab, var(--qx-color-surface-sunken) 60%, transparent)",
+        "$type": "color",
+        "$description": "The dark writing surface: a translucent recessed well, a step below whatever surface the field sits on (canvas, card or overlay), so it reads as a slot to type into rather than a lifted grey slab. The ≥3:1 control boundary carries the affordance."
       },
       "background-disabled": {
-        "$value": "color-mix(in oklab, var(--qx-color-border-default) 80%, transparent)",
-        "$type": "color"
+        "$value": "transparent",
+        "$type": "color",
+        "$description": "A disabled dark field loses its well and fades with opacity-disabled, so it reads as unavailable without becoming a lighter grey block."
       }
     }
   }

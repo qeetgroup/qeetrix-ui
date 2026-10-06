@@ -208,3 +208,69 @@ describe("MentionInput popup state", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("MentionInput matching and keys", () => {
+  function Composer(props: Partial<React.ComponentProps<typeof MentionInput>>) {
+    const [value, setValue] = React.useState("");
+    return (
+      <MentionInput
+        aria-label="Comment"
+        value={value}
+        onValueChange={setValue}
+        people={[
+          { id: "1", label: "Martin José" },
+          { id: "2", label: "José Alvarez" },
+          { id: "3", label: "Zoë Kravitz" },
+        ]}
+        {...props}
+      />
+    );
+  }
+  const type = (text: string) =>
+    fireEvent.change(screen.getByRole("textbox", { name: "Comment" }), {
+      target: { value: text, selectionStart: text.length },
+    });
+
+  it("keeps the popup open through letters outside ASCII", () => {
+    render(<Composer />);
+    type("@Zoë");
+    expect(screen.getByRole("option", { name: "Zoë Kravitz" })).toBeInTheDocument();
+  });
+
+  it("ranks people whose name starts with the query first", () => {
+    render(<Composer />);
+    type("@jos");
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual([
+      "José Alvarez",
+      "Martin José",
+    ]);
+  });
+
+  it("caps the list at maxSuggestions", () => {
+    const people = Array.from({ length: 500 }, (_, i) => ({ id: String(i), label: `Person ${i}` }));
+    render(<Composer people={people} maxSuggestions={4} />);
+    type("@Person");
+    expect(screen.getAllByRole("option")).toHaveLength(4);
+  });
+
+  it("inserts the highlighted person on Tab", () => {
+    render(<Composer />);
+    type("@Zo");
+    fireEvent.keyDown(screen.getByRole("textbox", { name: "Comment" }), { key: "Tab" });
+    expect(screen.getByRole("textbox", { name: "Comment" })).toHaveValue("@Zoë Kravitz ");
+  });
+
+  it("closes the popup on Escape without letting the key reach an enclosing overlay", () => {
+    const onOuterKeyDown = vi.fn();
+    render(
+      // biome-ignore lint/a11y/noStaticElementInteractions: test harness listening for bubbling
+      <div onKeyDown={onOuterKeyDown}>
+        <Composer />
+      </div>,
+    );
+    type("@Zo");
+    fireEvent.keyDown(screen.getByRole("textbox", { name: "Comment" }), { key: "Escape" });
+    expect(screen.queryByRole("listbox")).toBeNull();
+    expect(onOuterKeyDown).not.toHaveBeenCalled();
+  });
+});

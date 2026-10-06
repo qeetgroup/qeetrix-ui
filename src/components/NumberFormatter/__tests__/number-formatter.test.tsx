@@ -23,6 +23,17 @@ describe("NumberFormatter", () => {
     expect(screen.getByText(/\$/)).toHaveTextContent("$42/mo");
   });
 
+  it("isolates its direction from surrounding text, overridably", () => {
+    // Inside right-to-left copy an un-isolated "-42%" reorders its sign; `dir="auto"` is the
+    // `<bdi>` behaviour.
+    const { rerender } = render(<NumberFormatter value={-42} suffix="%" locale="en-US" />);
+    const el = screen.getByText(/42/);
+    expect(el).toHaveAttribute("dir", "auto");
+    expect(el).toHaveClass("tabular-nums");
+    rerender(<NumberFormatter value={-42} suffix="%" locale="en-US" dir="rtl" />);
+    expect(screen.getByText(/42/)).toHaveAttribute("dir", "rtl");
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(
       <NumberFormatter value={1234567} prefix="$" suffix="/mo" locale="en-US" />,

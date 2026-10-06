@@ -55,9 +55,17 @@ function PreviewCardContent({
     >
       {hasStructuredContent ? (
         <>
-          {imageUrl && <img src={imageUrl} alt="" className="h-32 w-full object-cover" />}
+          {imageUrl && (
+            // Decorative: the title beside it carries the meaning. The sunken fill holds the
+            // space while the image loads and frames a transparent or white one.
+            <img src={imageUrl} alt="" className="h-32 w-full bg-surface-sunken object-cover" />
+          )}
           <div className="flex flex-col gap-1 p-3">
-            {title && <p className="text-sm font-semibold leading-snug">{title}</p>}
+            {title && (
+              <p className="line-clamp-2 text-sm leading-snug font-semibold text-foreground">
+                {title}
+              </p>
+            )}
             {description && (
               <p className="line-clamp-3 text-xs text-muted-foreground">{description}</p>
             )}
@@ -80,7 +88,7 @@ function PreviewCardTitle({ className, ...props }: ComponentProps<"p">) {
   return (
     <p
       data-slot="preview-card-title"
-      className={cn("text-sm font-semibold", className)}
+      className={cn("line-clamp-2 text-sm font-semibold text-foreground", className)}
       {...props}
     />
   );
@@ -100,7 +108,7 @@ function PreviewCardImage({ className, alt = "", ...props }: ComponentProps<"img
   return (
     <img
       data-slot="preview-card-image"
-      className={cn("h-32 w-full object-cover", className)}
+      className={cn("h-32 w-full bg-surface-sunken object-cover", className)}
       alt={alt}
       {...props}
     />

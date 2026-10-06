@@ -3,6 +3,8 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import * as React from "react";
+
+import { fieldText, fieldTrigger } from "@/internal/field-styles";
 import { cn } from "@/lib/utils";
 
 /**
@@ -66,7 +68,7 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
     <SelectPrimitive.Group
       data-slot="select-group"
-      className={cn("scroll-my-1 p-1", className)}
+      className={cn("scroll-my-1", className)}
       {...props}
     />
   );
@@ -76,7 +78,10 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
-      className={cn("flex flex-1 text-start", className)}
+      className={cn(
+        "block min-w-0 flex-1 truncate text-start [&_svg]:me-1.5 [&_svg]:inline-block [&_svg]:align-[-0.125em]",
+        className,
+      )}
       {...props}
     />
   );
@@ -87,13 +92,29 @@ type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
   size?: "sm" | "default";
 };
 
+/**
+ * The closed select. It is drawn with Input's own field recipe (`fieldTrigger` from
+ * `field-styles`: fill, ≥3:1 boundary, hover, focus, invalid, warning/success from the enclosing
+ * `Field`, dashed read-only, disabled), so a form mixing text fields, selects and comboboxes
+ * reads as one set of controls. While the popup is open the boundary holds its hover edge and
+ * the chevron turns, so "open" never rests on the popup alone.
+ *
+ * `sm` is one step under the density-resolved control height rather than a fixed 28px, so it
+ * follows compact and comfortable density too. A long value truncates; the trigger never
+ * outgrows its container.
+ */
 function SelectTrigger({ className, size = "default", children, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 ps-2.5 pe-2 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/disabled disabled:cursor-not-allowed disabled:opacity-disabled aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-(--qx-control-height) data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/disabled dark:aria-invalid:border-destructive/disabled dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        fieldTrigger,
+        fieldText,
+        "flex w-fit max-w-full items-center justify-between gap-1.5 py-1 ps-2.5 pe-2 whitespace-nowrap select-none",
+        "data-readonly:cursor-default",
+        "data-[size=default]:h-(--qx-component-input-height) data-[size=sm]:h-[calc(var(--qx-component-input-height)-0.25rem)] data-[size=sm]:rounded-md data-[size=sm]:ps-2 data-[size=sm]:pe-1.5",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -103,7 +124,7 @@ function SelectTrigger({ className, size = "default", children, ...props }: Sele
         render={
           <ChevronDownIcon
             aria-hidden
-            className="pointer-events-none size-4 text-muted-foreground"
+            className="pointer-events-none size-4 text-muted-foreground transition-transform duration-fast ease-standard data-popup-open:rotate-180"
           />
         }
       />
@@ -139,13 +160,17 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "relative isolate z-(--qx-z-popover) max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover text-popover-foreground shadow-popover ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-start-2 data-[side=inline-start]:slide-in-from-end-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "relative isolate z-(--qx-z-popover) max-h-(--available-height) w-(--anchor-width) min-w-36 max-w-(--available-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto overscroll-contain rounded-(--qx-corner-overlay) border border-border bg-popover bg-clip-padding text-popover-foreground shadow-popover",
+            // The menus' enter/exit: same distance, scale and curves.
+            "duration-fast ease-enter data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-1 data-[side=inline-end]:slide-in-from-start-1 data-[side=inline-start]:slide-in-from-end-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-97 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-97 data-closed:ease-exit",
             className,
           )}
           {...props}
         >
           <SelectScrollUpButton />
-          <SelectPrimitive.List>{children}</SelectPrimitive.List>
+          <SelectPrimitive.List data-slot="select-list" className="p-1">
+            {children}
+          </SelectPrimitive.List>
           <SelectScrollDownButton />
         </SelectPrimitive.Popup>
       </SelectPrimitive.Positioner>
@@ -157,31 +182,56 @@ function SelectLabel({ className, ...props }: SelectPrimitive.GroupLabel.Props) 
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-label"
-      className={cn("px-1.5 py-1 text-xs text-muted-foreground", className)}
+      className={cn("px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground", className)}
       {...props}
     />
   );
 }
 
+/**
+ * One option. The Qeet selected vocabulary, shared with `Combobox` and `Listbox`:
+ *
+ * - **highlighted** (pointer or keyboard) — the neutral interactive fill, as in menus;
+ * - **selected** — the quiet `brand-subtle` tint with the label kept in `text-foreground`, plus a
+ *   `text-brand` check at the inline end, so selection never rests on the tint;
+ * - **selected + highlighted** — the tint deepens one step;
+ * - **keyboard focus** — an inset ring, because the fill alone is a ~1.1:1 change.
+ *
+ * Rows are one step under the density-resolved control height (and 44px on coarse pointers), and
+ * long labels wrap rather than clip, so nothing is lost in a narrow popup.
+ *
+ * `data-[selected]:` is deliberate, not a non-canonical spelling: shadcn's `data-selected`
+ * custom variant matches only `[data-selected="true"]`, and Base UI writes a bare
+ * `data-selected=""`, so the short form never applies.
+ */
 function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Props) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1 ps-1.5 pe-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-disabled [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex min-h-[calc(var(--qx-control-height)-0.25rem)] w-full cursor-default items-center gap-2 rounded-md py-1 ps-2 pe-8 text-sm text-foreground outline-none select-none pointer-coarse:min-h-11",
+        "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
+        "data-[selected]:bg-brand-subtle data-[selected]:text-foreground data-[selected]:data-highlighted:bg-brand-subtle-hover",
+        "focus-visible:focus-ring-inset",
+        "data-disabled:pointer-events-none data-disabled:opacity-disabled",
+        "data-highlighted:forced-colors-selected",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">
+      <SelectPrimitive.ItemText className="flex min-w-0 flex-1 items-center gap-2 wrap-break-word">
         {children}
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute inset-e-2 flex size-4 items-center justify-center" />
+          <span
+            data-slot="select-item-indicator"
+            className="pointer-events-none absolute inset-e-2 flex size-4 items-center justify-center text-brand forced-colors:text-inherit"
+          />
         }
       >
-        <CheckIcon aria-hidden className="pointer-events-none" />
+        <CheckIcon aria-hidden strokeWidth={2.5} className="pointer-events-none" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );

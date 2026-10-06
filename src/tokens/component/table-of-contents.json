@@ -1,0 +1,12 @@
+{
+  "component": {
+    "table-of-contents": {
+      "$description": "TableOfContents. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "sticky-offset": {
+        "$value": "1.5rem",
+        "$type": "dimension",
+        "$description": "Gap between a `sticky` table of contents and the top of the viewport, also kept below it when the outline is taller than the screen. Owned here because it is a layout decision with no semantic counterpart. An application with a sticky header raises it (set the variable on the outline or a container) so the outline does not slide underneath."
+      }
+    }
+  }
+}

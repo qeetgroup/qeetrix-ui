@@ -1,0 +1,11 @@
+{
+  "component": {
+    "org-chart": {
+      "$description": "OrgChart connectors. The lines are the reporting relationships — which person a branch hangs from — so they are graphics needed to understand the chart and take the ≥3:1 control-boundary role rather than a decorative border.",
+      "connector": {
+        "$value": "var(--qx-color-border-control)",
+        "$type": "color"
+      }
+    }
+  }
+}

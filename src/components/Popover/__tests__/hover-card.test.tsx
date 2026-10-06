@@ -45,4 +45,22 @@ describe("HoverCard", () => {
     const { container } = render(<HoverCardExample />);
     expect(await a11y(container)).toHaveNoViolations();
   });
+
+  it("uses the shared anchored-overlay surface", () => {
+    render(<HoverCardExample open />);
+    const popup = document.querySelector('[data-slot="hover-card-content"]');
+    expect(popup?.className).toContain("bg-(--qx-component-popover-background)");
+    expect(popup?.className).toContain("border-(--qx-component-popover-border)");
+    expect(popup?.className).toContain("shadow-(--qx-component-popover-elevation)");
+    expect(popup?.className).toContain("max-h-(--available-height)");
+  });
+
+  it("has no axe violations when open", async () => {
+    render(<HoverCardExample open />);
+    // Isolated component render has no page landmarks — not a component concern.
+    const results = await axe(document.body, {
+      rules: { "color-contrast": { enabled: false }, region: { enabled: false } },
+    });
+    expect(results).toHaveNoViolations();
+  });
 });

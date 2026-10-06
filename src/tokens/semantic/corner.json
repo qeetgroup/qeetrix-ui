@@ -1,6 +1,6 @@
 {
   "corner": {
-    "$description": "Corner-radius roles. Named `corner` rather than `radius` because the shadcn bridge already publishes a single `--radius` knob at that path \u2014 a group and a leaf cannot share a token path, and the build resolves such a collision silently. These roles reference the Tailwind corner ramp (--radius-*), which is derived from --radius, so retuning that one knob still retunes every role. Fixed shapes alias the primitive scale directly.",
+    "$description": "Corner-radius roles. Named `corner` rather than `radius` because the shadcn bridge already publishes a single `--radius` knob at that path — a group and a leaf cannot share a token path, and the build resolves such a collision silently. These roles reference the Tailwind corner ramp (--radius-*), which is derived from --radius, so retuning that one knob still retunes every role. Fixed shapes alias the primitive scale directly.",
     "control": {
       "$value": "var(--radius-lg)",
       "$type": "dimension"
@@ -18,8 +18,9 @@
       "$type": "dimension"
     },
     "overlay": {
-      "$value": "var(--radius-lg)",
-      "$type": "dimension"
+      "$value": "var(--radius-xl)",
+      "$type": "dimension",
+      "$description": "Dialogs and other modal overlays share the surface radius, one step above controls, so overlays read as surfaces rather than oversized buttons."
     },
     "pill": {
       "$value": "{radii.pill}",
@@ -41,12 +42,12 @@
     "xs": {
       "$value": "{radii.xs}",
       "$type": "dimension",
-      "$description": "A hairline corner (2px) for dense chrome \u2014 chart swatches, tooltip arrows. Fixed rather than ramp-derived: at this size the ramp would round it away."
+      "$description": "A hairline corner (2px) for dense chrome — chart swatches, tooltip arrows. Fixed rather than ramp-derived: at this size the ramp would round it away."
     },
     "sm": {
       "$value": "{radii.s}",
       "$type": "dimension",
-      "$description": "A small fixed corner (4px) for controls that must stay squarer than the ramp \u2014 the checkbox box."
+      "$description": "A small fixed corner (4px) for controls that must stay squarer than the ramp — the checkbox box."
     }
   }
 }

@@ -2,43 +2,47 @@
   "color": {
     "text": {
       "primary": {
-        "$value": "{color.neutral.50}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       },
       "secondary": {
-        "$value": "{color.neutral.300}",
+        "$value": "{color.graphite.300}",
         "$type": "color"
       },
       "tertiary": {
-        "$value": "{color.neutral.400}",
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "placeholder": {
-        "$value": "{color.neutral.500}",
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "disabled": {
-        "$value": "{color.neutral.600}",
+        "$value": "{color.graphite.600}",
         "$type": "color"
       },
       "inverse": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.950}",
         "$type": "color"
       },
       "brand": {
-        "$value": "{color.brand.300}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "link": {
-        "$value": "{color.brand.300}",
+        "$value": "{color.qeet.400}",
+        "$type": "color"
+      },
+      "link-hover": {
+        "$value": "{color.qeet.300}",
         "$type": "color"
       },
       "success": {
-        "$value": "{color.success.300}",
+        "$value": "{color.success.400}",
         "$type": "color"
       },
       "warning": {
-        "$value": "{color.warning.300}",
+        "$value": "{color.warning.400}",
         "$type": "color"
       },
       "danger": {
@@ -46,79 +50,116 @@
         "$type": "color"
       },
       "info": {
-        "$value": "{color.info.300}",
+        "$value": "{color.info.400}",
         "$type": "color"
       },
       "on-brand": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.1000}",
         "$type": "color"
       },
       "on-subtle": {
-        "$value": "{color.neutral.50}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       },
       "on-feedback": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.1000}",
         "$type": "color"
       }
     },
     "surface": {
       "canvas": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.950}",
         "$type": "color"
       },
       "default": {
-        "$value": "{color.neutral.850}",
+        "$value": "{color.graphite.925}",
         "$type": "color"
       },
       "elevated": {
-        "$value": "{color.neutral.800}",
+        "$value": "{color.graphite.900}",
+        "$type": "color"
+      },
+      "overlay": {
+        "$value": "{color.graphite.875}",
         "$type": "color"
       },
       "sunken": {
-        "$value": "{color.neutral.950}",
+        "$value": "{color.graphite.975}",
         "$type": "color"
       },
       "subtle": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.900}",
         "$type": "color"
       },
       "interactive": {
-        "$value": "{color.neutral.800}",
+        "$value": "{color.graphite.825}",
+        "$type": "color"
+      },
+      "interactive-hover": {
+        "$value": "{color.graphite.800}",
+        "$type": "color"
+      },
+      "interactive-active": {
+        "$value": "{color.graphite.750}",
+        "$type": "color"
+      },
+      "brand-subtle": {
+        "$value": "color-mix(in oklab, {color.qeet.500} 13%, transparent)",
+        "$type": "color",
+        "$description": "Translucent in dark, unlike light: a selected row has to read as a Qeet tint on whatever it sits on — card, popover, sidebar — and dark surfaces step in lightness, so a tint mixed into one of them reads recessed on a lighter one. Over surface.default it is exactly the old opaque mix. The feedback *-subtle tints work the same way."
+      },
+      "brand-subtle-hover": {
+        "$value": "color-mix(in oklab, {color.qeet.500} 17%, transparent)",
+        "$type": "color"
+      },
+      "brand-subtle-active": {
+        "$value": "color-mix(in oklab, {color.qeet.500} 22%, transparent)",
         "$type": "color"
       },
       "rail": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.975}",
         "$type": "color"
       },
       "inverse": {
-        "$value": "{color.neutral.100}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       }
     },
     "border": {
       "default": {
-        "$value": "{color.neutral.700}",
+        "$value": "{color.graphite.825}",
         "$type": "color"
       },
       "subtle": {
-        "$value": "{color.neutral.800}",
+        "$value": "{color.graphite.875}",
         "$type": "color"
       },
       "strong": {
-        "$value": "{color.neutral.600}",
+        "$value": "{color.graphite.750}",
+        "$type": "color"
+      },
+      "control": {
+        "$value": "{color.graphite.450}",
+        "$type": "color"
+      },
+      "control-hover": {
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "focused": {
-        "$value": "{color.brand.400}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "hover": {
-        "$value": "{color.neutral.500}",
+        "$value": "{color.graphite.400}",
+        "$type": "color"
+      },
+      "brand": {
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "danger": {
-        "$value": "{color.danger.400}",
+        "$value": "{color.danger.500}",
         "$type": "color"
       },
       "success": {
@@ -136,15 +177,15 @@
     },
     "action": {
       "primary": {
-        "$value": "{color.brand.500}",
+        "$value": "{color.qeet.500}",
         "$type": "color"
       },
       "primary-hover": {
-        "$value": "{color.brand.300}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "primary-active": {
-        "$value": "{color.brand.200}",
+        "$value": "{color.qeet.300}",
         "$type": "color"
       }
     },
@@ -164,23 +205,39 @@
       "info": {
         "$value": "{color.info.400}",
         "$type": "color"
+      },
+      "success-subtle": {
+        "$value": "color-mix(in oklab, {color.success.500} 14%, transparent)",
+        "$type": "color"
+      },
+      "warning-subtle": {
+        "$value": "color-mix(in oklab, {color.warning.500} 14%, transparent)",
+        "$type": "color"
+      },
+      "error-subtle": {
+        "$value": "color-mix(in oklab, {color.danger.500} 14%, transparent)",
+        "$type": "color"
+      },
+      "info-subtle": {
+        "$value": "color-mix(in oklab, {color.info.500} 14%, transparent)",
+        "$type": "color"
       }
     },
     "focus": {
       "ring": {
-        "$value": "{color.brand.400}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       }
     },
     "overlay": {
       "scrim": {
-        "$value": "{color.alpha.black-40}",
+        "$value": "color-mix(in oklab, {color.graphite.1000} 62%, transparent)",
         "$type": "color"
       }
     },
     "selection": {
       "background": {
-        "$value": "color-mix(in oklab, {color.action.primary} 22%, transparent)",
+        "$value": "color-mix(in oklab, {color.qeet.500} 32%, transparent)",
         "$type": "color"
       }
     },
@@ -188,6 +245,25 @@
       "filled": {
         "$value": "{color.amber.400}",
         "$type": "color"
+      }
+    }
+  },
+  "gradient": {
+    "surface-fade": {
+      "$type": "gradient",
+      "$description": "Dark surface fade.",
+      "$value": {
+        "angle": "180deg",
+        "stops": [
+          {
+            "color": "{color.surface.default}",
+            "position": 0
+          },
+          {
+            "color": "{color.surface.canvas}",
+            "position": 1
+          }
+        ]
       }
     }
   }

@@ -1,0 +1,22 @@
+{
+  "component": {
+    "command-palette": {
+      "$description": "CommandPalette. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "width": {
+        "$value": "36rem",
+        "$type": "dimension",
+        "$description": "Preferred width. Wide enough for a title, its group and a shortcut on one line; the palette still shrinks to the viewport minus a 1rem margin on each side."
+      },
+      "item-height": {
+        "$value": "calc({control.height} + 0.25rem)",
+        "$type": "dimension",
+        "$description": "Minimum result height, one step over the control height: 36px at default density (unchanged), 40px comfortable, 32px compact."
+      },
+      "item-selected-background": {
+        "$value": "var(--qx-color-surface-brand-subtle)",
+        "$type": "color",
+        "$description": "The Qeet selected tint for the active result — the library's selected vocabulary, surface.brand-subtle. Dark brand-subtle is translucent, so on the overlay surface it separates at 1.20:1 (light 1.16:1) and keeps text.primary ≥11:1; the private overlay mix this used to be is within ΔE00 3 of it. The ≥3:1 cue is the border.brand indicator bar, not this tint."
+      }
+    }
+  }
+}

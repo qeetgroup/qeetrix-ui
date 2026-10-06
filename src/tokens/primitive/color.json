@@ -1,106 +1,514 @@
 {
   "color": {
     "neutral": {
-      "0": { "$value": "oklch(1 0 0)", "$type": "color" },
-      "50": { "$value": "oklch(0.985 0 0)", "$type": "color" },
-      "100": { "$value": "oklch(0.97 0 0)", "$type": "color" },
-      "200": { "$value": "oklch(0.922 0 0)", "$type": "color" },
-      "300": { "$value": "oklch(0.87 0 0)", "$type": "color" },
-      "400": { "$value": "oklch(0.708 0 0)", "$type": "color" },
-      "500": { "$value": "oklch(0.556 0 0)", "$type": "color" },
-      "600": { "$value": "oklch(0.439 0 0)", "$type": "color" },
-      "700": { "$value": "oklch(0.371 0 0)", "$type": "color" },
-      "800": { "$value": "oklch(0.269 0 0)", "$type": "color" },
-      "850": { "$value": "oklch(0.205 0 0)", "$type": "color" },
-      "900": { "$value": "oklch(0.145 0 0)", "$type": "color" },
-      "950": { "$value": "oklch(0.106 0 0)", "$type": "color" },
-      "1000": { "$value": "oklch(0 0 0)", "$type": "color" }
+      "0": {
+        "$value": "oklch(1 0 0)",
+        "$type": "color"
+      },
+      "50": {
+        "$value": "oklch(0.985 0 0)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.97 0 0)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.922 0 0)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.87 0 0)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.708 0 0)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.556 0 0)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.439 0 0)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.371 0 0)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.269 0 0)",
+        "$type": "color"
+      },
+      "850": {
+        "$value": "oklch(0.205 0 0)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.145 0 0)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.106 0 0)",
+        "$type": "color"
+      },
+      "1000": {
+        "$value": "oklch(0 0 0)",
+        "$type": "color"
+      },
+      "$description": "Pure achromatic gray (chroma 0), the pre-Graphite neutral. Kept published for consumers that read --qx-color-neutral-* from tokens.css; the semantic layer no longer uses it — it renders with the warm Graphite ramp."
     },
-
+    "graphite": {
+      "$description": "Graphite — Qeet's warm-neutral foundation (OKLCH, hue 60, chroma 0.004–0.011). The dominant environment of every Qeet product: calm surfaces, readable text, low fatigue, and a quiet warmth that pairs with Qeet orange. Denser at the dark end, where dark-mode surface hierarchy needs finer luminance steps.",
+      "0": {
+        "$value": "oklch(1 0 0)",
+        "$type": "color"
+      },
+      "25": {
+        "$value": "oklch(0.982 0.004 60)",
+        "$type": "color"
+      },
+      "50": {
+        "$value": "oklch(0.972 0.005 60)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.955 0.006 60)",
+        "$type": "color"
+      },
+      "150": {
+        "$value": "oklch(0.935 0.006 60)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.91 0.007 60)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.855 0.008 60)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.72 0.009 60)",
+        "$type": "color"
+      },
+      "450": {
+        "$value": "oklch(0.61 0.01 60)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.565 0.011 60)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.495 0.011 60)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.405 0.011 60)",
+        "$type": "color"
+      },
+      "750": {
+        "$value": "oklch(0.355 0.01 60)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.322 0.01 60)",
+        "$type": "color"
+      },
+      "825": {
+        "$value": "oklch(0.295 0.009 60)",
+        "$type": "color"
+      },
+      "875": {
+        "$value": "oklch(0.258 0.009 60)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.232 0.009 60)",
+        "$type": "color"
+      },
+      "925": {
+        "$value": "oklch(0.205 0.008 60)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.178 0.008 60)",
+        "$type": "color"
+      },
+      "975": {
+        "$value": "oklch(0.152 0.007 60)",
+        "$type": "color"
+      },
+      "1000": {
+        "$value": "oklch(0.128 0.007 60)",
+        "$type": "color"
+      }
+    },
+    "qeet": {
+      "$description": "Qeet — the brand (\"Ember\") ramp, owned by Qeet rather than borrowed from a framework palette. 500 is the official Qeet orange, #F26D0E exactly (oklch(0.686 0.1855 47.1629) round-trips to it); the other steps share the lightness ladder of the status ramps, with hue drifting warmer-yellow when light and redder when deep. 550 exists for the primary-action hover, which must stay ≥4.5:1 against the dark on-brand label. Orange has meaning: primary actions, selection, focus and key brand moments — never decoration.",
+      "50": {
+        "$value": "oklch(0.976 0.015 62)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.952 0.03 61.16)",
+        "$type": "color"
+      },
+      "150": {
+        "$value": "oklch(0.93 0.044 60.391)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.906 0.06 59.551)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.842 0.103 57.312)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.77 0.156 54.793)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.686 0.1855 47.1629)",
+        "$type": "color"
+      },
+      "550": {
+        "$value": "oklch(0.643 0.169 50.35)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.6 0.161 48.845)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.522 0.146 46.117)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.448 0.131 43.528)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.383 0.111 41.254)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.29 0.083 38)",
+        "$type": "color"
+      }
+    },
     "alpha": {
-      "white-10": { "$value": "oklch(1 0 0 / 10%)", "$type": "color" },
-      "white-15": { "$value": "oklch(1 0 0 / 15%)", "$type": "color" },
-      "black-40": { "$value": "oklch(0 0 0 / 40%)", "$type": "color" }
+      "white-10": {
+        "$value": "oklch(1 0 0 / 10%)",
+        "$type": "color"
+      },
+      "white-15": {
+        "$value": "oklch(1 0 0 / 15%)",
+        "$type": "color"
+      },
+      "black-40": {
+        "$value": "oklch(0 0 0 / 40%)",
+        "$type": "color"
+      }
     },
-
     "danger": {
-      "100": { "$value": "{color.neutral.100}", "$type": "color" },
-      "200": { "$value": "{color.neutral.200}", "$type": "color" },
-      "300": { "$value": "{color.neutral.300}", "$type": "color" },
-      "400": { "$value": "oklch(0.704 0.191 22.216)", "$type": "color" },
-      "500": { "$value": "oklch(0.577 0.245 27.325)", "$type": "color" },
-      "600": { "$value": "{color.neutral.600}", "$type": "color" },
-      "700": { "$value": "{color.neutral.700}", "$type": "color" },
-      "800": { "$value": "{color.neutral.800}", "$type": "color" },
-      "900": { "$value": "{color.neutral.900}", "$type": "color" }
+      "$description": "Status — danger / error (red, hue 17–24). A complete ramp: earlier steps that aliased neutral gray are gone, so error states and negative chart series can never resolve to gray. Kept clearly redder than Qeet orange (hue 47) so the two never read as the same signal.",
+      "50": {
+        "$value": "oklch(0.976 0.011 17)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.952 0.023 17.245)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.906 0.048 17.714)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.842 0.086 18.367)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.77 0.136 19.102)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.635 0.215 20.48)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.6 0.209 20.837)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.522 0.189 21.633)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.448 0.161 22.388)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.383 0.129 23.051)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.29 0.097 24)",
+        "$type": "color"
+      }
     },
-
+    "success": {
+      "$description": "Status — success (emerald green, hue 156–162), on the shared lightness ladder: 700 is the first step that passes AA as text on light surfaces, 400 on dark ones.",
+      "50": {
+        "$value": "oklch(0.976 0.017 156)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.952 0.036 156.21)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.906 0.068 156.612)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.842 0.105 157.172)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.77 0.135 157.802)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.68 0.15 158.589)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.6 0.137 159.289)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.522 0.118 159.971)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.448 0.1 160.618)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.383 0.085 161.187)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.29 0.063 162)",
+        "$type": "color"
+      }
+    },
+    "warning": {
+      "$description": "Status — warning (amber, hue 70–92). Deliberately yellower than Qeet orange so a warning never reads as a brand accent; 700 is AA text on light surfaces, 400 on dark.",
+      "50": {
+        "$value": "oklch(0.976 0.017 92)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.952 0.037 91.23)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.906 0.07 89.755)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.842 0.109 87.703)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.77 0.14 85.394)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.705 0.144 83.309)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.6 0.124 79.942)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.522 0.109 77.44)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.448 0.094 75.067)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.383 0.081 72.983)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.29 0.062 70)",
+        "$type": "color"
+      }
+    },
+    "info": {
+      "$description": "Status — info (blue, hue 238–252), on the shared lightness ladder.",
+      "50": {
+        "$value": "oklch(0.976 0.012 238)",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "oklch(0.952 0.025 238.49)",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "oklch(0.906 0.051 239.429)",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "oklch(0.842 0.087 240.735)",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "oklch(0.77 0.128 242.204)",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "oklch(0.64 0.16 244.857)",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "oklch(0.6 0.153 245.673)",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "oklch(0.522 0.138 247.265)",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "oklch(0.448 0.12 248.776)",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "oklch(0.383 0.096 250.102)",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "oklch(0.29 0.072 252)",
+        "$type": "color"
+      }
+    },
     "accent-blue": {
-      "500": { "$value": "oklch(0.488 0.243 264.376)", "$type": "color" }
+      "500": {
+        "$value": "oklch(0.488 0.243 264.376)",
+        "$type": "color"
+      }
     },
-
     "brand": {
-      "$description": "Qeet brand ramp — Qeet orange (OD-DS-03, ratified 2026-07-10). Aliases the Tailwind v4 `orange` ramp; #F26D0E ≈ orange.500. Re-brand by re-pointing these aliases (semantic/component tokens need no change).",
-      "100": { "$value": "{color.orange.100}", "$type": "color" },
-      "200": { "$value": "{color.orange.200}", "$type": "color" },
-      "300": { "$value": "{color.orange.300}", "$type": "color" },
-      "400": { "$value": "{color.orange.400}", "$type": "color" },
-      "500": { "$value": "{color.orange.500}", "$type": "color" },
-      "600": { "$value": "{color.orange.600}", "$type": "color" },
-      "700": { "$value": "{color.orange.700}", "$type": "color" },
-      "800": { "$value": "{color.orange.800}", "$type": "color" },
-      "900": { "$value": "{color.orange.900}", "$type": "color" }
+      "$description": "Qeet brand alias ramp. Every step aliases the owned Qeet ramp (color.qeet.*), so the semantic layer can keep saying `brand` and a re-brand is still one alias hop. 500 is #F26D0E.",
+      "50": {
+        "$value": "{color.qeet.50}",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "{color.qeet.100}",
+        "$type": "color"
+      },
+      "150": {
+        "$value": "{color.qeet.150}",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "{color.qeet.200}",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "{color.qeet.300}",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "{color.qeet.400}",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "{color.qeet.500}",
+        "$type": "color"
+      },
+      "550": {
+        "$value": "{color.qeet.550}",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "{color.qeet.600}",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "{color.qeet.700}",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "{color.qeet.800}",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "{color.qeet.900}",
+        "$type": "color"
+      },
+      "950": {
+        "$value": "{color.qeet.950}",
+        "$type": "color"
+      }
     },
-
     "accent": {
       "$description": "PLACEHOLDER — aliases neutral until brand palette is ratified (OD-DS-03).",
-      "100": { "$value": "{color.neutral.100}", "$type": "color" },
-      "300": { "$value": "{color.neutral.300}", "$type": "color" },
-      "500": { "$value": "{color.neutral.500}", "$type": "color" },
-      "700": { "$value": "{color.neutral.700}", "$type": "color" },
-      "900": { "$value": "{color.neutral.900}", "$type": "color" }
+      "100": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "{color.neutral.300}",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "{color.neutral.500}",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "{color.neutral.700}",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      }
     },
-
-    "success": {
-      "$description": "Status — success (emerald). oklch, aligned to the Tailwind v4 emerald ramp.",
-      "100": { "$value": "oklch(0.95 0.052 163)", "$type": "color" },
-      "300": { "$value": "oklch(0.845 0.143 164.978)", "$type": "color" },
-      "400": { "$value": "oklch(0.765 0.177 163.223)", "$type": "color" },
-      "500": { "$value": "oklch(0.696 0.17 162.48)", "$type": "color" },
-      "600": { "$value": "oklch(0.596 0.145 163.225)", "$type": "color" },
-      "700": { "$value": "oklch(0.508 0.118 165.612)", "$type": "color" },
-      "900": { "$value": "oklch(0.378 0.077 168.94)", "$type": "color" }
-    },
-
-    "warning": {
-      "$description": "Status — warning (amber). oklch, aligned to the Tailwind v4 amber ramp.",
-      "100": { "$value": "oklch(0.962 0.059 95.617)", "$type": "color" },
-      "300": { "$value": "oklch(0.879 0.169 91.605)", "$type": "color" },
-      "400": { "$value": "oklch(0.828 0.189 84.429)", "$type": "color" },
-      "500": { "$value": "oklch(0.769 0.188 70.08)", "$type": "color" },
-      "600": { "$value": "oklch(0.666 0.179 58.318)", "$type": "color" },
-      "700": { "$value": "oklch(0.555 0.163 48.998)", "$type": "color" },
-      "900": { "$value": "oklch(0.414 0.112 45.904)", "$type": "color" }
-    },
-
-    "info": {
-      "$description": "Status — info (sky). oklch, aligned to the Tailwind v4 sky ramp.",
-      "100": { "$value": "oklch(0.951 0.026 236.824)", "$type": "color" },
-      "300": { "$value": "oklch(0.828 0.111 230.318)", "$type": "color" },
-      "400": { "$value": "oklch(0.746 0.16 232.661)", "$type": "color" },
-      "500": { "$value": "oklch(0.685 0.169 237.323)", "$type": "color" },
-      "600": { "$value": "oklch(0.588 0.158 241.966)", "$type": "color" },
-      "700": { "$value": "oklch(0.5 0.134 242.749)", "$type": "color" },
-      "900": { "$value": "oklch(0.391 0.09 240.876)", "$type": "color" }
-    },
-
     "passkey": {
       "$description": "PLACEHOLDER — aliases neutral until passkey affordance palette is ratified (OD-DS-03).",
-      "100": { "$value": "{color.neutral.100}", "$type": "color" },
-      "300": { "$value": "{color.neutral.300}", "$type": "color" },
-      "500": { "$value": "{color.neutral.500}", "$type": "color" },
-      "700": { "$value": "{color.neutral.700}", "$type": "color" },
-      "900": { "$value": "{color.neutral.900}", "$type": "color" }
+      "100": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "{color.neutral.300}",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "{color.neutral.500}",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "{color.neutral.700}",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      }
     }
   }
 }

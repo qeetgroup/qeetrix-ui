@@ -1,23 +1,19 @@
 {
   "gradient": {
-    "$description": "Composite gradient tokens (DTCG `gradient`). `$value` = { angle, stops[] }; stop colours may alias the ramps. Serialized to CSS `linear-gradient(...)` by build-tokens.mjs → `--qx-gradient-*`.",
+    "$description": "Composite gradient tokens (DTCG `gradient`). `$value` = { angle, stops[] }; stop colours may alias the ramps. Serialized to CSS `linear-gradient(...)` by build-tokens.mjs → `--qx-gradient-*`. Theme-varying gradients (surface-fade) live in the theme overlays, so a light gradient can never leak into dark mode.",
     "brand": {
       "$type": "gradient",
       "$value": {
         "angle": "135deg",
         "stops": [
-          { "color": "{color.brand.500}", "position": 0 },
-          { "color": "{color.brand.700}", "position": 1 }
-        ]
-      }
-    },
-    "surface-fade": {
-      "$type": "gradient",
-      "$value": {
-        "angle": "180deg",
-        "stops": [
-          { "color": "{color.neutral.0}", "position": 0 },
-          { "color": "{color.neutral.100}", "position": 1 }
+          {
+            "color": "{color.qeet.500}",
+            "position": 0
+          },
+          {
+            "color": "{color.qeet.700}",
+            "position": 1
+          }
         ]
       }
     }

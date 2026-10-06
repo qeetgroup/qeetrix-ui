@@ -1,0 +1,12 @@
+{
+  "component": {
+    "notification-preference-matrix": {
+      "$description": "NotificationPreferenceMatrix (channel × category preferences). Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "cell-padding-y": {
+        "$value": "{control.cell-padding-y}",
+        "$type": "dimension",
+        "$description": "Block padding of a preference row. Follows the density cell padding, so a compact settings page fits more categories on screen."
+      }
+    }
+  }
+}

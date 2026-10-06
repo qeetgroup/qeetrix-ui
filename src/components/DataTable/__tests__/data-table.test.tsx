@@ -9,6 +9,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { axe } from "vitest-axe";
 import { DataTable } from "@/components/DataTable/data-table";
 import { DensityProvider } from "@/providers/density-provider";
+import { DirectionProvider } from "@/providers/direction-provider";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
@@ -433,11 +434,17 @@ describe("DataTable virtualized row semantics", () => {
   // all). Reporting a fixed `offsetHeight` is what @tanstack/virtual reads for the scroll
   // viewport, and it is enough to make the window real: with 500 rows at 50px in a 300px
   // viewport only ~17 render, and scrolling moves that window.
+  //
+  // Rendered rows are measured too (`measureElement` reads the same property), so a row reports
+  // the 50px its estimate claims — the assertions below then also prove that measuring a row
+  // keeps the window and the indices where the estimate put them.
   const nativeOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetHeight");
   beforeAll(() => {
     Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
       configurable: true,
-      get: () => 300,
+      get(this: HTMLElement) {
+        return this.dataset.slot === "table-row" ? 50 : 300;
+      },
     });
   });
   afterAll(() => {
@@ -929,5 +936,220 @@ describe("DataTable persisted state", () => {
     // Server output may not depend on storage the server cannot see: the browser's first render
     // has to be able to reproduce it byte for byte.
     expect(renderToStaticMarkup(persisted("users"))).toBe(withoutSavedView);
+  });
+});
+
+describe("DataTable body states", () => {
+  it("shows placeholder rows instead of the empty state while loading", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={[]} loading pageSize={3} enableColumnVisibility={false} />,
+    );
+    // "No results" before the first response arrives would be a false statement.
+    expect(screen.queryByText(/no results/i)).not.toBeInTheDocument();
+    const placeholders = container.querySelectorAll('[data-slot="data-table-skeleton-row"]');
+    expect(placeholders).toHaveLength(3);
+    for (const row of placeholders) expect(row).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+    expect(screen.getByRole("status")).toHaveTextContent("Loading rows");
+    // Only the header row reaches the accessibility tree.
+    expect(screen.getAllByRole("row")).toHaveLength(1);
+  });
+
+  it("announces a load failure in place of the rows", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={data}
+        error="Couldn't load members."
+        pageSize={1}
+        enableColumnVisibility={false}
+      />,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Couldn't load members.");
+    expect(screen.queryByText("Ada")).not.toBeInTheDocument();
+    // No pager for rows that are not there.
+    expect(screen.queryByText(/page 1 of/i)).not.toBeInTheDocument();
+  });
+
+  it("renders a custom error node as given", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={[]}
+        error={<button type="button">Retry</button>}
+        enableColumnVisibility={false}
+      />,
+    );
+    expect(within(screen.getByRole("alert")).getByRole("button", { name: "Retry" })).toBeVisible();
+  });
+
+  it("offers to reset filtering when nothing matches", async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} enableColumnVisibility={false} />);
+    await user.type(screen.getByRole("textbox", { name: /search/i }), "zzz");
+
+    expect(screen.getByText(/no results/i)).toBeInTheDocument();
+    expect(screen.getByText(/try adjusting your search or filters/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Reset" }));
+    expect(screen.getByRole("textbox", { name: /search/i })).toHaveValue("");
+    expect(screen.getByText("Ada")).toBeInTheDocument();
+  });
+
+  it("does not suggest adjusting filters on a table that is simply empty", () => {
+    render(<DataTable columns={columns} data={[]} enableColumnVisibility={false} />);
+    expect(screen.getByText(/no results/i)).toBeInTheDocument();
+    expect(screen.queryByText(/try adjusting/i)).not.toBeInTheDocument();
+  });
+
+  it("keeps the rows during a refetch and shows a progress rule", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={data} busy enableColumnVisibility={false} />,
+    );
+    expect(screen.getByText("Ada")).toBeInTheDocument();
+    expect(container.querySelector('[data-slot="data-table-progress"]')).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+  });
+
+  it("has no axe violations while loading or failed", async () => {
+    const loading = render(
+      <DataTable columns={columns} data={[]} loading enableColumnVisibility={false} label="M" />,
+    );
+    expect(await a11y(loading.container)).toHaveNoViolations();
+    loading.unmount();
+    const failed = render(
+      <DataTable
+        columns={columns}
+        data={[]}
+        error="Failed"
+        enableColumnVisibility={false}
+        label="M"
+      />,
+    );
+    expect(await a11y(failed.container)).toHaveNoViolations();
+  });
+});
+
+describe("DataTable selection, pinning and sorting chrome", () => {
+  it("tints selected rows and puts bulk actions in the selection strip", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <DataTable
+        columns={columns}
+        data={data}
+        enableColumnVisibility={false}
+        enableRowSelection
+        getRowLabel={(row) => row.original.name}
+        bulkActions={(rows) => <button type="button">Remove {rows.length}</button>}
+      />,
+    );
+    await user.click(screen.getByRole("checkbox", { name: "Select Ada" }));
+    const strip = container.querySelector('[data-slot="data-table-selection"]') as HTMLElement;
+    expect(strip).toHaveClass("bg-brand-subtle");
+    expect(within(strip).getByRole("button", { name: "Remove 1" })).toBeInTheDocument();
+  });
+
+  it("pins with logical insets, so rtl keeps pinned columns at the reading start", async () => {
+    const user = userEvent.setup();
+    render(
+      <DataTable columns={columns} data={data} enableColumnVisibility={false} enablePinning />,
+    );
+    await user.click(screen.getByRole("button", { name: /column options for name/i }));
+    await user.click(await screen.findByRole("menuitem", { name: "Pin left" }));
+
+    const header = screen.getByRole("columnheader", { name: /name/i });
+    expect(header.style.position).toBe("sticky");
+    expect(header.style.insetInlineStart).toBe("0px");
+    expect(header.style.left).toBe("");
+    // The pinned body cell is opaque but repaints the row's own tint.
+    const cell = screen.getByRole("cell", { name: "Ada" });
+    expect(cell.className).toContain("--qx-table-row-background");
+  });
+
+  it("names columns in the visibility menu by their header text", async () => {
+    const user = userEvent.setup();
+    type Row = { createdAt: string };
+    render(
+      <DataTable
+        columns={[createColumnHelper<Row>().accessor("createdAt", { header: "Created" })]}
+        data={[{ createdAt: "today" }]}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /columns/i }));
+    expect(await screen.findByRole("menuitemcheckbox", { name: "Created" })).toBeInTheDocument();
+  });
+
+  it("ranks each sorted column when sorting by more than one", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={data}
+        enableColumnVisibility={false}
+        state={{
+          sorting: [
+            { id: "role", desc: false },
+            { id: "name", desc: true },
+          ],
+        }}
+      />,
+    );
+    expect(
+      within(screen.getByRole("columnheader", { name: /role/i })).getByText("1"),
+    ).toBeVisible();
+    expect(
+      within(screen.getByRole("columnheader", { name: /name/i })).getByText("2"),
+    ).toBeVisible();
+  });
+
+  it("mirrors the resize keys under rtl", async () => {
+    const user = userEvent.setup();
+    render(
+      <DirectionProvider direction="rtl">
+        <DataTable
+          columns={columns}
+          data={data}
+          enableColumnVisibility={false}
+          enableColumnResizing
+        />
+      </DirectionProvider>,
+    );
+    const handle = screen.getByRole("separator", { name: "Resize name column" });
+    await user.click(handle);
+    // The edge is on the column's left in rtl, so ArrowLeft moves it outward and widens it.
+    await user.keyboard("{ArrowLeft}");
+    expect(handle).toHaveAttribute("aria-valuenow", "158");
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    expect(handle).toHaveAttribute("aria-valuenow", "142");
+  });
+});
+
+describe("DataTable faceted filter is an exact match (integration pass)", () => {
+  type Member = { name: string; status: string };
+  const helper = createColumnHelper<Member>();
+  const columns = [
+    helper.accessor("name", { header: "Name" }),
+    // The documented setup: TanStack's arrIncludesSome matched "active" inside "inactive".
+    helper.accessor("status", { header: "Status", filterFn: "arrIncludesSome" }),
+  ];
+  const data: Member[] = [
+    { name: "Asha", status: "active" },
+    { name: "Ravi", status: "inactive" },
+    { name: "Meera", status: "active" },
+  ];
+
+  it("keeps only rows whose value is one of the selected options", () => {
+    render(
+      <DataTable
+        label="Members"
+        columns={columns}
+        data={data}
+        facetedFilters={[{ columnId: "status", title: "Status" }]}
+        state={{ columnFilters: [{ id: "status", value: ["active"] }] }}
+      />,
+    );
+    expect(screen.getByText("Asha")).toBeInTheDocument();
+    expect(screen.getByText("Meera")).toBeInTheDocument();
+    expect(screen.queryByText("Ravi")).toBeNull();
   });
 });

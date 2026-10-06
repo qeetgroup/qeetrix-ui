@@ -36,6 +36,40 @@ describe("DataState", () => {
     expect(screen.queryByText("Data")).not.toBeInTheDocument();
   });
 
+  it("marks the loading branch busy", () => {
+    const { container } = render(
+      <DataState isLoading>
+        <p>Data</p>
+      </DataState>,
+    );
+    expect(container.querySelector('[data-state="loading"]')).toHaveAttribute("aria-busy", "true");
+  });
+
+  it("renders the default error as an alert carrying an error EmptyState", () => {
+    const { container } = render(
+      <DataState isError error="Request failed">
+        <p>Data</p>
+      </DataState>,
+    );
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Request failed");
+    expect(container.querySelector('[data-slot="empty-state"]')).toHaveAttribute(
+      "data-variant",
+      "error",
+    );
+  });
+
+  it("renders the default empty slot through EmptyState", () => {
+    const { container } = render(
+      <DataState isEmpty emptyTitle="No invoices">
+        <p>Data</p>
+      </DataState>,
+    );
+    expect(container.querySelector('[data-slot="empty-state-title"]')).toHaveTextContent(
+      "No invoices",
+    );
+  });
+
   it("renders custom error fallback", () => {
     render(
       <DataState isError errorFallback={<p>Custom error</p>}>

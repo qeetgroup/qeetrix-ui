@@ -5,9 +5,12 @@ import { axe } from "vitest-axe";
 
 import {
   Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
   MenubarSeparator,
   MenubarTrigger,
 } from "@/components/DropdownMenu/menubar";
@@ -245,5 +248,47 @@ describe("Menubar", () => {
       await user.keyboard("{ArrowRight}");
       expect(file).toHaveFocus();
     });
+  });
+});
+
+describe("Menubar item anatomy", () => {
+  it("shows trigger focus with the inset Qeet ring and keeps the open menu's trigger highlighted", () => {
+    render(<MenubarExample defaultOpen />);
+    const file = screen.getByRole("menuitem", { name: "File" });
+    expect(file.className).toContain("focus-visible:focus-ring-inset");
+    expect(file).toHaveAttribute("data-popup-open");
+    expect(file.className).toContain("data-popup-open:bg-accent");
+  });
+
+  it("supports inset, checkbox and radio items with the shared trailing indicator", () => {
+    render(
+      <Menubar>
+        <MenubarMenu defaultOpen>
+          <MenubarTrigger>View</MenubarTrigger>
+          <MenubarContent>
+            <MenubarCheckboxItem checked inset>
+              Status bar
+            </MenubarCheckboxItem>
+            <MenubarRadioGroup value="md">
+              <MenubarRadioItem value="md">Medium</MenubarRadioItem>
+            </MenubarRadioGroup>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>,
+    );
+    const checkbox = screen.getByRole("menuitemcheckbox", { name: "Status bar" });
+    expect(checkbox).toHaveAttribute("data-inset");
+    expect(
+      checkbox.querySelector('[data-slot="menubar-checkbox-item-indicator"]')?.className,
+    ).toContain("inset-e-2");
+    expect(screen.getByRole("menuitemradio", { name: "Medium" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+  });
+
+  it("follows density through the control height", () => {
+    render(<MenubarExample />);
+    expect(screen.getByRole("menubar").className).toContain("h-(--qx-control-height)");
   });
 });

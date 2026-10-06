@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { Tour } from "@/components/Tour/tour";
+import { DirectionProvider } from "@/providers/direction-provider";
 import { OVERLAY_ROOT_ATTRIBUTE } from "@/runtime/overlay";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
@@ -87,7 +88,8 @@ describe("Tour", () => {
     await user.click(trigger);
 
     expect(screen.getByRole("dialog")).toHaveAttribute("aria-modal", "true");
-    expect(screen.getByRole("button", { name: "Dismiss tour" })).toHaveFocus();
+    // Focus starts on the primary action, so Enter advances rather than dismissing.
+    expect(screen.getByRole("button", { name: /next/i })).toHaveFocus();
 
     await user.keyboard("{Escape}");
 
@@ -187,5 +189,122 @@ describe("Tour", () => {
     // jsdom measures every box as zero, so the anchor is at the origin and there is room on
     // the requested side; the point of the assertion is that the resolved side is exposed.
     expect(screen.getByRole("dialog")).toHaveAttribute("data-side", "right");
+  });
+
+  // ── Names, progression and announcements ─────────────────────────────────────────────────
+
+  it("names the step from its title and describes it with its content and position", () => {
+    render(<Tour steps={steps} open />);
+    const dialog = screen.getByRole("dialog", { name: "Welcome to the product" });
+    expect(dialog).toHaveAccessibleDescription("This is the first step of the tour. 1 of 2");
+  });
+
+  it("announces the new step politely when moving on, without moving focus", async () => {
+    const user = userEvent.setup();
+    render(<Tour steps={steps} open />);
+    const next = screen.getByRole("button", { name: /next/i });
+    await user.click(next);
+    const status = document.querySelector('[data-slot="tour-step-status"]');
+    expect(status).toHaveAttribute("aria-live", "polite");
+    expect(status).toHaveTextContent("Explore features, 2 of 2");
+    // The same button is now "Done" and still holds focus.
+    expect(screen.getByRole("button", { name: /done/i })).toHaveFocus();
+  });
+
+  it("follows the reading direction for the arrow keys", () => {
+    render(
+      <DirectionProvider direction="rtl">
+        <Tour steps={steps} open />
+      </DirectionProvider>,
+    );
+    // In RTL the inline-end direction is leftwards, so ArrowLeft advances.
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "ArrowLeft" });
+    expect(screen.getByRole("dialog", { name: "Explore features" })).toBeInTheDocument();
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "ArrowRight" });
+    expect(screen.getByRole("dialog", { name: "Welcome to the product" })).toBeInTheDocument();
+  });
+
+  it("leaves arrow keys typed into a field in the step to the field", () => {
+    render(
+      <Tour
+        steps={[{ ...steps[0], content: <input aria-label="Workspace name" /> }, steps[1]]}
+        open
+      />,
+    );
+    const field = screen.getByRole("textbox", { name: "Workspace name" });
+    fireEvent.keyDown(field, { key: "ArrowRight" });
+    expect(screen.getByRole("dialog", { name: "Welcome to the product" })).toBeInTheDocument();
+  });
+
+  it("uses the tour message catalogue and accepts overrides", () => {
+    render(<Tour steps={steps} open messages={{ dismiss: "Skip tour", back: "Previous" }} />);
+    expect(screen.getByRole("button", { name: "Skip tour" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /next/i }));
+    expect(screen.getByRole("button", { name: "Previous" })).toBeInTheDocument();
+  });
+
+  it("gives the dismiss control a 28px target", () => {
+    render(<Tour steps={steps} open />);
+    expect(screen.getByRole("button", { name: "Dismiss tour" })).toHaveAttribute(
+      "data-size",
+      "icon-sm",
+    );
+  });
+
+  // ── Spotlight ────────────────────────────────────────────────────────────────────────────
+  // jsdom measures every box as zero and implements neither clip-path nor scrolling, so these
+  // assert that a present target is spotlighted, that the scrim is the token, and that an
+  // off-screen target is asked to scroll into view.
+
+  it("cuts a spotlight out of the scrim when the target exists", () => {
+    render(
+      <>
+        <button type="button" id="step-one">
+          Search
+        </button>
+        <Tour steps={steps} open />
+      </>,
+    );
+    const backdrop = document.querySelector('[data-slot="tour-backdrop"]');
+    expect(backdrop).toHaveAttribute("data-spotlight");
+    expect(backdrop?.className).toContain("bg-(--qx-component-tour-scrim)");
+    expect(backdrop?.className).not.toMatch(/bg-black/);
+  });
+
+  it("dims the whole page when the target is missing", () => {
+    render(<Tour steps={steps} open />);
+    expect(document.querySelector('[data-slot="tour-backdrop"]')).not.toHaveAttribute(
+      "data-spotlight",
+    );
+  });
+
+  it("scrolls an off-screen target into view, since the page itself cannot scroll", () => {
+    const target = document.createElement("div");
+    target.id = "step-one";
+    document.body.appendChild(target);
+    const scrollIntoView = vi.fn();
+    target.scrollIntoView = scrollIntoView;
+    target.getBoundingClientRect = () =>
+      ({ top: 2000, left: 0, bottom: 2040, right: 100, width: 100, height: 40 }) as DOMRect;
+    try {
+      render(<Tour steps={steps} open />);
+      expect(scrollIntoView).toHaveBeenCalledWith({ block: "center", inline: "nearest" });
+    } finally {
+      target.remove();
+    }
+  });
+
+  it("does not scroll a target that is already visible", () => {
+    const target = document.createElement("div");
+    target.id = "step-one";
+    document.body.appendChild(target);
+    const scrollIntoView = vi.fn();
+    target.scrollIntoView = scrollIntoView;
+    try {
+      render(<Tour steps={steps} open />);
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    } finally {
+      target.remove();
+    }
   });
 });

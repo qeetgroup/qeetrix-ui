@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
@@ -167,5 +168,121 @@ describe("LogoUploader preview sources", () => {
   it("has no axe violations with a refused source", async () => {
     const { container } = render(<LogoUploader value="javascript:alert(1)" onChange={vi.fn()} />);
     expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("LogoUploader keyboard and screen-reader paths", () => {
+  it("empties into a real, focusable drop target that names its instruction", () => {
+    render(<LogoUploader value="" onChange={vi.fn()} />);
+    const zone = screen.getByRole("button", { name: /Drop a logo here/ });
+    expect(zone).toHaveAttribute("data-slot", "dropzone");
+    expect(zone).toHaveAttribute("tabindex", "0");
+    expect(zone).toHaveTextContent("PNG, JPG, SVG, or WEBP up to 2 MB");
+  });
+
+  it("adds no invisible tab stop for its file input", () => {
+    const { container } = render(
+      <LogoUploader value="https://example.com/logo.png" onChange={vi.fn()} />,
+    );
+    for (const input of container.querySelectorAll('input[type="file"]')) {
+      expect(input).toHaveAttribute("tabindex", "-1");
+    }
+  });
+
+  it("describes the drop target with the hint, and marks it invalid with the error", async () => {
+    render(
+      <LogoUploader value="" onChange={vi.fn()} accept=".png" hint="Shown on the sign-in page" />,
+    );
+    const zone = screen.getByRole("button");
+    expect(zone).toHaveAccessibleDescription("Shown on the sign-in page");
+    dropOnZone(fileOf("photo.jpg", "image/jpeg"));
+    await waitFor(() => expect(screen.getByRole("alert")).toBeInTheDocument());
+    expect(screen.getByRole("button")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("button")).toHaveAccessibleDescription(/file type isn't allowed/i);
+  });
+
+  it("ties a URL error to the URL field", () => {
+    render(<LogoUploader value="" onChange={vi.fn()} />);
+    const url = screen.getByRole("textbox", { name: "Logo URL" });
+    fireEvent.change(url, { target: { value: "javascript:alert(1)" } });
+    expect(url).toHaveAccessibleDescription(/can't be used as an image/i);
+  });
+});
+
+describe("LogoUploader preview", () => {
+  it("previews the logo on this theme's surface and the inverse one, naming it once", () => {
+    const { container } = render(
+      <LogoUploader value="https://example.com/logo.png" onChange={vi.fn()} />,
+    );
+    const tiles = container.querySelectorAll("[data-slot=logo-uploader-tile]");
+    expect(tiles).toHaveLength(2);
+    expect(tiles[1]).toHaveAttribute("data-surface", "inverse");
+    expect(tiles[1].className).toContain("--qx-color-surface-inverse");
+    expect(container.querySelectorAll("img")).toHaveLength(2);
+    expect(screen.getAllByRole("img")).toHaveLength(1);
+  });
+
+  it("shows the picked file's name and size instead of a generic label", async () => {
+    function Harness() {
+      const [value, setValue] = React.useState("");
+      return <LogoUploader value={value} onChange={setValue} />;
+    }
+    render(<Harness />);
+    dropOnZone(fileOf("acme-wordmark.png", "image/png", 2048));
+    await waitFor(() => expect(screen.getByText("acme-wordmark.png · 2 KB")).toBeInTheDocument());
+  });
+
+  it("replaces a preview that fails to load with a placeholder and an error", () => {
+    const { container } = render(
+      <LogoUploader value="https://example.com/missing.png" onChange={vi.fn()} />,
+    );
+    for (const img of container.querySelectorAll("img")) fireEvent.error(img);
+    expect(container.querySelector("img")).toBeNull();
+    expect(screen.getByRole("alert")).toHaveTextContent(/Couldn't render that source/);
+  });
+
+  it("falls back to the generic label for a data URL it did not read itself", () => {
+    render(<LogoUploader value="data:image/png;base64,AAAA" onChange={vi.fn()} />);
+    expect(screen.getByText("Uploaded file (preview)")).toBeInTheDocument();
+  });
+
+  it("replaces the logo when a file is dropped on the preview", async () => {
+    const onChange = vi.fn();
+    const { container } = render(
+      <LogoUploader value="https://example.com/logo.png" onChange={onChange} />,
+    );
+    const preview = container.querySelector("[data-slot=logo-uploader-preview]") as Element;
+    fireEvent.dragOver(preview);
+    expect(preview).toHaveAttribute("data-drag-over");
+    const file = fileOf("new.png", "image/png");
+    fireEvent.drop(preview, { dataTransfer: { files: { 0: file, length: 1, item: () => file } } });
+    expect(preview).not.toHaveAttribute("data-drag-over");
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    expect(onChange.mock.calls[0][0]).toMatch(/^data:/);
+  });
+
+  it("applies the accept policy to a dropped replacement too", async () => {
+    const onChange = vi.fn();
+    const { container } = render(
+      <LogoUploader value="https://example.com/logo.png" onChange={onChange} accept=".png" />,
+    );
+    const preview = container.querySelector("[data-slot=logo-uploader-preview]") as Element;
+    const file = fileOf("photo.jpg", "image/jpeg");
+    fireEvent.drop(preview, { dataTransfer: { files: { 0: file, length: 1, item: () => file } } });
+    await waitFor(() => expect(screen.getByRole("alert")).toBeInTheDocument());
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("ignores drops on the preview while disabled", () => {
+    const onChange = vi.fn();
+    const { container } = render(
+      <LogoUploader value="https://example.com/logo.png" onChange={onChange} disabled />,
+    );
+    const preview = container.querySelector("[data-slot=logo-uploader-preview]") as Element;
+    fireEvent.dragOver(preview);
+    expect(preview).not.toHaveAttribute("data-drag-over");
+    const file = fileOf("new.png", "image/png");
+    fireEvent.drop(preview, { dataTransfer: { files: { 0: file, length: 1, item: () => file } } });
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

@@ -34,6 +34,7 @@ import {
   ChevronRightIcon,
   ChevronsUpDownIcon,
   DownloadIcon,
+  InboxIcon,
   PinIcon,
   PlusCircleIcon,
   Rows2Icon,
@@ -49,6 +50,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -58,6 +60,7 @@ import { EmptyState } from "@/components/EmptyState/empty-state";
 import { Input } from "@/components/Input/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
 import { Separator } from "@/components/Separator/separator";
+import { Skeleton } from "@/components/Spinner/skeleton";
 import {
   TableBody,
   TableCaption,
@@ -68,20 +71,44 @@ import {
 } from "@/components/Table/table";
 import { DENSITY_MODES } from "@/contracts/density";
 import { VisuallyHidden } from "@/internal/visually-hidden";
+import { logicalDirectionForKey } from "@/lib/direction";
 import type { DataTableMessages, MessagesFor } from "@/lib/messages";
 import { dataTableMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
 import { type Density, useDensity } from "@/providers/density-provider";
+import { type Direction, useResolvedDirection } from "@/providers/direction-provider";
 import { useMessages } from "@/providers/messages-provider";
 import { readStoredJson, writeStoredJson } from "@/runtime/storage";
 
 interface DataTableFacet {
-  /** The column id this facet filters. The column must use `filterFn: "arrIncludesSome"`. */
+  /**
+   * The column id this facet filters. DataTable filters a faceted column by **exact** match on
+   * its value (or any of its values, for an array cell), unless the column sets its own
+   * `filterFn`. TanStack's `"arrIncludesSome"` — which these docs used to name — matches a string
+   * cell by substring, so choosing "active" also kept "inactive" rows; it is upgraded to the exact
+   * filter too.
+   */
   columnId: string;
   /** Label shown on the filter trigger. */
   title: string;
   /** Explicit options; if omitted, derived from the column's unique values. */
   options?: { label: string; value: string }[];
+}
+
+/** Exact facet match: the cell's value (or one of an array cell's values) is among those selected. */
+function facetFilter<TData>(row: Row<TData>, columnId: string, selected: unknown): boolean {
+  if (!Array.isArray(selected) || selected.length === 0) return true;
+  const cell = row.getValue(columnId);
+  const values = Array.isArray(cell) ? cell.map(String) : [String(cell)];
+  return values.some((value) => selected.includes(value));
+}
+facetFilter.autoRemove = (value: unknown) => !Array.isArray(value) || value.length === 0;
+
+/** A column definition's id, as TanStack derives it (explicit id, else the accessor key). */
+function columnDefId<TData, TValue>(column: ColumnDef<TData, TValue>): string | undefined {
+  if (column.id) return column.id;
+  const key = (column as { accessorKey?: unknown }).accessorKey;
+  return key === undefined ? undefined : String(key);
 }
 
 interface DataTableState {
@@ -104,9 +131,23 @@ interface DataTableProps<TData, TValue> {
   label?: string;
   /**
    * The rows on screen are stale while a fetch is in flight. Sets `aria-busy` on the table and
-   * announces the wait in a polite live region, so the change is not silent.
+   * announces the wait in a polite live region, so the change is not silent. The rows stay where
+   * they are — a refetch must not flash a skeleton — and a thin progress rule runs along the top
+   * of the body.
    */
   busy?: boolean;
+  /**
+   * There are no rows yet because the first fetch is still in flight. Renders placeholder rows in
+   * the shape of the table instead of the empty state, which would otherwise flash "No results"
+   * before the data arrives. Announced like `busy`.
+   */
+  loading?: boolean;
+  /**
+   * The rows could not be loaded. Rendered in place of the rows and announced as an alert. A string
+   * gets the built-in error panel; any other node is rendered as given, so a panel with a retry
+   * action (an `EmptyState` with an `action`, for example) can replace it entirely.
+   */
+  error?: React.ReactNode;
   /** Partially controlled table state. Omitted keys continue using internal state. */
   state?: DataTableState;
   onSortingChange?: OnChangeFn<SortingState>;
@@ -278,17 +319,56 @@ function csvField(value: unknown, guardFormulas: boolean): string {
   return /[",\n\r]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
 }
 
-/** Sticky offsets + z-index for a pinned column. */
+/**
+ * Sticky offsets + z-index for a pinned column.
+ *
+ * TanStack names the two pin sides "left" and "right", and they mean the inline start and end:
+ * the first columns in reading order and the last. The offsets are therefore written as logical
+ * insets, so a table under `dir="rtl"` keeps its start-pinned columns on the right, where its
+ * reading order begins — a physical `left` would have stuck them to the far end of the row.
+ */
 function pinStyles<TData>(column: Column<TData>): React.CSSProperties {
   const pinned = column.getIsPinned();
   if (!pinned) return {};
   return {
     position: "sticky",
-    left: pinned === "left" ? column.getStart("left") : undefined,
-    right: pinned === "right" ? column.getAfter("right") : undefined,
+    insetInlineStart: pinned === "left" ? column.getStart("left") : undefined,
+    insetInlineEnd: pinned === "right" ? column.getAfter("right") : undefined,
     zIndex: 2,
   };
 }
+
+/**
+ * Classes for a pinned cell. A pinned cell must be opaque, or the columns scrolling under it show
+ * through; it repaints the row's own tint (`--qx-table-row-background`, published by `TableRow`)
+ * over the surface so hover and selection still read across the whole row. The edge facing the
+ * scrolling columns gets a hairline, drawn as a pseudo-element because a collapsed-border table
+ * paints cell borders on the table, where they would not travel with the sticky cell.
+ */
+function pinClasses<TData>(column: Column<TData>, header: boolean): string | undefined {
+  const pinned = column.getIsPinned();
+  if (!pinned) return undefined;
+  const edge =
+    pinned === "left"
+      ? column.getIsLastColumn("left") &&
+        "after:absolute after:inset-y-0 after:inset-e-0 after:w-px after:bg-border"
+      : column.getIsFirstColumn("right") &&
+        "after:absolute after:inset-y-0 after:inset-s-0 after:w-px after:bg-border";
+  return cn(
+    !header &&
+      "bg-surface bg-[linear-gradient(var(--qx-table-row-background),var(--qx-table-row-background))]",
+    edge,
+  );
+}
+
+/** A column's visible name: its header when that is plain text, else its humanised id. */
+function columnDisplayName<TData>(column: Column<TData, unknown>): string {
+  const { header } = column.columnDef;
+  return typeof header === "string" && header.trim() ? header : columnLabel(column.id);
+}
+
+/** Placeholder bar widths, cycled across columns so loading rows do not read as a grid of bars. */
+const SKELETON_WIDTHS = ["w-3/4", "w-1/2", "w-2/3", "w-2/5", "w-4/5"] as const;
 
 /** Toolbar multi-select filter for a single column (faceted). */
 function FacetedFilter<TData>({
@@ -340,7 +420,7 @@ function FacetedFilter<TData>({
                 key={option.value}
                 type="button"
                 aria-pressed={isSelected}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus-visible:focus-ring-inset"
                 onClick={() => {
                   const next = new Set(selected);
                   if (isSelected) next.delete(option.value);
@@ -352,8 +432,9 @@ function FacetedFilter<TData>({
                 <span
                   className={cn(
                     "flex size-4 items-center justify-center rounded-sm border",
+                    // The Checkbox's checked look, so a faceted option reads as the same control.
                     isSelected
-                      ? "border-primary bg-primary text-primary-foreground"
+                      ? "border-border-brand bg-primary text-primary-foreground forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]"
                       : "border-input",
                   )}
                 >
@@ -361,7 +442,9 @@ function FacetedFilter<TData>({
                 </span>
                 <span className="flex-1 text-start">{option.label}</span>
                 {facets?.get(option.value) != null && (
-                  <span className="text-xs text-muted-foreground">{facets.get(option.value)}</span>
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {facets.get(option.value)}
+                  </span>
                 )}
               </button>
             );
@@ -397,11 +480,17 @@ function ColumnResizeHandle<TData, TValue>({
   header,
   onResize,
   messages,
+  direction,
 }: {
   header: Header<TData, TValue>;
   onResize: (columnId: string, size: number) => void;
   /** Resolved once by the table, so every separator reads alike. */
   messages: DataTableMessages;
+  /**
+   * The edge sits at the column's inline end, which is its left side under `dir="rtl"`. The arrow
+   * that moves the edge outward — and so widens the column — mirrors with it.
+   */
+  direction: Direction;
 }) {
   const { column } = header;
   const size = Math.round(column.getSize());
@@ -426,10 +515,11 @@ function ColumnResizeHandle<TData, TValue>({
       onTouchStart={header.getResizeHandler()}
       onClick={(e) => e.stopPropagation()}
       onKeyDown={(e) => {
+        const logical = logicalDirectionForKey(e.key, direction);
         const next =
-          e.key === "ArrowLeft"
+          logical === "inline-start"
             ? size - COLUMN_RESIZE_STEP
-            : e.key === "ArrowRight"
+            : logical === "inline-end"
               ? size + COLUMN_RESIZE_STEP
               : e.key === "Home"
                 ? min
@@ -441,10 +531,10 @@ function ColumnResizeHandle<TData, TValue>({
         onResize(column.id, Math.min(max, Math.max(min, next)));
       }}
       className={cn(
-        "absolute inset-e-0 top-0 m-0 h-full w-3 cursor-col-resize touch-none border-0 bg-transparent select-none outline-none",
-        "after:absolute after:inset-e-0 after:top-0 after:h-full after:w-px after:bg-border after:opacity-0 after:transition-opacity after:content-['']",
+        "absolute inset-e-0 top-0 z-1 m-0 h-full w-3 cursor-col-resize touch-none border-0 bg-transparent select-none outline-none",
+        "after:absolute after:inset-e-0 after:top-0 after:h-full after:w-px after:bg-border-strong after:opacity-0 after:transition-opacity after:duration-fast after:content-['']",
         "hover:after:opacity-100 focus-visible:after:w-0.5 focus-visible:after:bg-ring focus-visible:after:opacity-100",
-        "data-resizing:after:bg-primary data-resizing:after:opacity-100",
+        "data-resizing:after:w-0.5 data-resizing:after:bg-border-brand data-resizing:after:opacity-100",
       )}
     />
   );
@@ -568,6 +658,8 @@ function DataTable<TData, TValue>({
   caption,
   label,
   busy = false,
+  loading = false,
+  error,
   state: controlledState,
   onSortingChange,
   onColumnFiltersChange,
@@ -609,6 +701,9 @@ function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const messages = useMessages("dataTable", dataTableMessages, messageOverrides);
   const inheritedDensity = useDensity();
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  // Resize gestures and the resize keys follow the reading direction.
+  const direction = useResolvedDirection(rootRef);
   const captionId = React.useId();
   const [sorting, setSorting, setInternalSorting] = useControllableTableState(
     controlledState?.sorting,
@@ -760,14 +855,30 @@ function DataTable<TData, TValue>({
               }
               onClick={row.getToggleExpandedHandler()}
             >
-              {expanded ? <ChevronDownIcon aria-hidden /> : <ChevronRightIcon aria-hidden />}
+              {expanded ? (
+                <ChevronDownIcon aria-hidden />
+              ) : (
+                <ChevronRightIcon aria-hidden className="rtl:rotate-180" />
+              )}
             </Button>
           );
         },
       });
     }
-    return extra.length ? [...extra, ...columns] : columns;
-  }, [columns, enableRowSelection, enableExpanding, paginated, messages]);
+    // Faceted columns filter by exact match unless they bring their own filterFn.
+    const facetIds = new Set(facetedFilters?.map((facet) => facet.columnId));
+    const own =
+      facetIds.size === 0
+        ? columns
+        : columns.map((column) => {
+            const id = columnDefId(column);
+            if (!id || !facetIds.has(id)) return column;
+            if (column.filterFn !== undefined && column.filterFn !== "arrIncludesSome")
+              return column;
+            return { ...column, filterFn: facetFilter } as ColumnDef<TData, TValue>;
+          });
+    return extra.length ? [...extra, ...own] : own;
+  }, [columns, enableRowSelection, enableExpanding, paginated, messages, facetedFilters]);
 
   const sizingEnabled = enableColumnResizing || enablePinning;
 
@@ -794,6 +905,7 @@ function DataTable<TData, TValue>({
     pageCount,
     rowCount,
     columnResizeMode: "onChange",
+    columnResizeDirection: direction,
     getRowId,
     getRowCanExpand,
     onSortingChange: setSorting,
@@ -829,7 +941,11 @@ function DataTable<TData, TValue>({
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => estimateRowHeight ?? (density === "compact" ? 40 : 52),
+    // A first guess only: rendered rows are measured (`measureElement` below), so a row taller
+    // than the estimate — wrapped text, a 28px action button — corrects the scroll extent instead
+    // of overlapping its neighbour. The defaults are a single line of body text plus the density's
+    // cell padding and the 1px separator.
+    estimateSize: () => estimateRowHeight ?? (density === "compact" ? 33 : 45),
     overscan: 10,
     initialRect: {
       width: 0,
@@ -907,16 +1023,29 @@ function DataTable<TData, TValue>({
     enableExport ||
     Boolean(toolbarActions);
 
+  const isFiltering = hasColumnFilters || globalFilter.length > 0;
+  const hasError = error != null && error !== false;
+  const showRows = !loading && !hasError;
+  const visibleColumns = table.getVisibleLeafColumns();
+  const skeletonRowCount = Math.min(paginated ? pagination.pageSize : 5, 10);
+
+  const resetFiltering = () => {
+    table.resetColumnFilters();
+    setGlobalFilter("");
+  };
+
   const renderRow = (row: Row<TData>, position: number) => (
     <React.Fragment key={row.id}>
       <TableRow
+        ref={enableVirtualization ? rowVirtualizer.measureElement : undefined}
+        data-index={enableVirtualization ? position : undefined}
         aria-rowindex={ariaRowIndex(position)}
         data-state={row.getIsSelected() ? "selected" : undefined}
       >
         {row.getVisibleCells().map((cell) => (
           <TableCell
             key={cell.id}
-            className={cn(cell.column.getIsPinned() && "bg-background")}
+            className={pinClasses(cell.column, false)}
             style={{
               width: sizingEnabled ? cell.column.getSize() : undefined,
               ...pinStyles(cell.column),
@@ -927,8 +1056,8 @@ function DataTable<TData, TValue>({
         ))}
       </TableRow>
       {!enableVirtualization && row.getIsExpanded() && renderSubComponent && (
-        <TableRow className="hover:bg-transparent">
-          <TableCell colSpan={colSpan} className="bg-muted/30 p-0">
+        <TableRow data-slot="data-table-detail-row" className="hover:bg-transparent">
+          <TableCell colSpan={colSpan} className="bg-surface-subtle p-0 whitespace-normal">
             {renderSubComponent(row)}
           </TableCell>
         </TableRow>
@@ -936,16 +1065,100 @@ function DataTable<TData, TValue>({
     </React.Fragment>
   );
 
+  /* ── Body states ──────────────────────────────────────────────────────────────────────────
+   * Exactly one of: placeholder rows (first load), the error panel, the empty state, or data.
+   * Each non-data state is a single full-width row, so the header — and with it the shape of the
+   * table — stays put while the state changes.
+   */
+  let bodyState: React.ReactNode = null;
+  if (loading) {
+    bodyState = Array.from({ length: skeletonRowCount }, (_, rowIndex) => (
+      // Placeholders carry no data; hidden so assistive technology meets the busy table and its
+      // announcement instead of a column of empty rows.
+      // biome-ignore lint/suspicious/noArrayIndexKey: placeholder rows have no identity but their position.
+      <tr key={rowIndex} aria-hidden data-slot="data-table-skeleton-row" className="border-b">
+        {visibleColumns.map((column, columnIndex) => (
+          <td
+            key={column.id}
+            className="px-3 py-(--qx-control-cell-padding-y)"
+            style={{ width: sizingEnabled ? column.getSize() : undefined }}
+          >
+            {STRUCTURAL_COLUMN_IDS.has(column.id) ? (
+              <Skeleton className="size-4 rounded-(--qx-corner-sm)" />
+            ) : (
+              <Skeleton
+                className={cn(
+                  "h-3 rounded-(--qx-corner-sm)",
+                  SKELETON_WIDTHS[(columnIndex + rowIndex) % SKELETON_WIDTHS.length],
+                )}
+              />
+            )}
+          </td>
+        ))}
+      </tr>
+    ));
+  } else if (hasError) {
+    bodyState = (
+      <tr data-slot="data-table-error-row">
+        <td colSpan={colSpan} className="p-0">
+          <div role="alert" data-slot="data-table-error">
+            {typeof error === "string" || typeof error === "number" ? (
+              // The system zero state, error variant: the destructive tint stays on the icon tile
+              // so a failure reads as recoverable, not alarming.
+              <EmptyState size="sm" variant="error" description={error} />
+            ) : (
+              error
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  } else if (rows.length === 0) {
+    bodyState = (
+      <tr data-slot="data-table-empty-row">
+        <td colSpan={colSpan} className="p-0">
+          {emptyState ?? (
+            <EmptyState
+              size="sm"
+              // "No results" when a filter excluded the data, a neutral empty collection otherwise.
+              variant={isFiltering ? "no-results" : "default"}
+              icon={isFiltering ? undefined : InboxIcon}
+              title={messages.emptyTitle}
+              // The hint only applies when there is something to adjust; on a table that is
+              // simply empty it would send the reader looking for a filter that is not there.
+              description={isFiltering ? messages.emptyDescription : undefined}
+              action={
+                isFiltering ? (
+                  <Button variant="outline" size="sm" onClick={resetFiltering}>
+                    {messages.resetFilters}
+                  </Button>
+                ) : undefined
+              }
+            />
+          )}
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <div
+      ref={rootRef}
       data-slot="data-table"
       data-density={density}
       data-qx-density={densityOverride}
-      className={cn("flex flex-col rounded-xl ring-1 ring-foreground/10", className)}
+      data-state={loading ? "loading" : hasError ? "error" : busy ? "busy" : undefined}
+      className={cn(
+        "flex flex-col overflow-hidden rounded-xl border border-border bg-surface text-foreground",
+        className,
+      )}
     >
       {showToolbar && (
-        <div className="flex flex-col gap-2 border-b p-3 sm:flex-row sm:items-center">
-          <div className="flex flex-1 flex-wrap items-center gap-2">
+        <div
+          data-slot="data-table-toolbar"
+          className="flex flex-col gap-2 border-b border-border p-3 sm:flex-row sm:items-center"
+        >
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {enableSearch && (
               <div className="relative w-full sm:max-w-xs">
                 <SearchIcon
@@ -976,7 +1189,7 @@ function DataTable<TData, TValue>({
               </Button>
             )}
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             {enableDensity && (
               <Button
                 variant="outline"
@@ -1004,18 +1217,27 @@ function DataTable<TData, TValue>({
                   }
                 />
                 <DropdownMenuContent align="end" className="min-w-40">
-                  <DropdownMenuLabel>{messages.toggleColumns}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {hideableColumns.map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      className="capitalize"
-                    >
-                      {columnLabel(column.id)}
-                    </DropdownMenuCheckboxItem>
-                  ))}
+                  {/* A group label must sit inside its group — Base UI throws on opening the
+                      menu otherwise — and the group is what the label names for a screen reader. */}
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>{messages.toggleColumns}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {hideableColumns.map((column) => {
+                      const named = typeof column.columnDef.header === "string";
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={column.id}
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                          // A plain-text header is already the column's name as the reader knows
+                          // it; only the humanised id needs its first letter raised.
+                          className={named ? undefined : "capitalize"}
+                        >
+                          {columnDisplayName(column)}
+                        </DropdownMenuCheckboxItem>
+                      );
+                    })}
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -1025,17 +1247,23 @@ function DataTable<TData, TValue>({
       )}
 
       {enableRowSelection && selectedRowCount > 0 && (
-        <div className="flex flex-wrap items-center gap-2 border-b bg-muted/40 px-4 py-2 text-sm">
-          <span className="font-medium">{messages.selectedCount(selectedRowCount)}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ms-auto"
-            onClick={() => table.resetRowSelection()}
-          >
+        // The selection strip speaks the Qeet selected vocabulary — the same quiet tint as the
+        // selected rows — so the bulk actions read as belonging to them.
+        <div
+          data-slot="data-table-selection"
+          className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-border bg-brand-subtle px-3 py-1.5 text-sm text-foreground"
+        >
+          <span className="font-medium tabular-nums">
+            {messages.selectedCount(selectedRowCount)}
+          </span>
+          <Button variant="ghost" size="sm" onClick={() => table.resetRowSelection()}>
             {messages.clearSelection}
           </Button>
-          {bulkActions?.(selectedRows)}
+          {bulkActions && (
+            <div className="ms-auto flex flex-wrap items-center gap-1.5">
+              {bulkActions(selectedRows)}
+            </div>
+          )}
         </div>
       )}
 
@@ -1044,162 +1272,186 @@ function DataTable<TData, TValue>({
        * routinely missed by screen readers.
        */}
       <VisuallyHidden data-slot="data-table-status" role="status">
-        {busy ? messages.loading : ""}
+        {busy || loading ? messages.loading : ""}
       </VisuallyHidden>
 
-      <div
-        ref={scrollRef}
-        data-slot="data-table-scroll"
-        {...scrollRegionProps}
-        className={cn("relative w-full overflow-x-auto", scrollable && "overflow-y-auto")}
-        style={maxHeight != null ? { maxHeight } : undefined}
-      >
-        <table
-          data-slot="table"
-          aria-label={caption ? undefined : label}
-          aria-rowcount={ariaRowCount}
-          aria-busy={busy || undefined}
-          className="w-full caption-bottom text-sm"
-          style={sizingEnabled ? { width: table.getTotalSize(), tableLayout: "fixed" } : undefined}
+      <div className="relative">
+        {busy && !loading && (
+          // Refetch feedback that keeps the rows in place: a 2px rule along the top of the body.
+          // `animate-pulse` is collapsed by the global reduced-motion rule, leaving a static bar.
+          <div
+            aria-hidden
+            data-slot="data-table-progress"
+            className="pointer-events-none absolute inset-x-0 top-0 z-20 h-0.5 animate-pulse bg-primary motion-reduce:animate-none"
+          />
+        )}
+        <div
+          ref={scrollRef}
+          data-slot="data-table-scroll"
+          {...scrollRegionProps}
+          className={cn(
+            "relative w-full overflow-x-auto focus-visible:focus-ring-inset",
+            scrollable && "overflow-y-auto overscroll-contain",
+          )}
+          style={maxHeight != null ? { maxHeight } : undefined}
         >
-          {caption && <TableCaption id={captionId}>{caption}</TableCaption>}
-          <TableHeader className={cn(scrollable && "sticky top-0 z-10 bg-background")}>
-            {table.getHeaderGroups().map((headerGroup, headerIndex) => (
-              <TableRow
-                key={headerGroup.id}
-                aria-rowindex={ariaRowCount === undefined ? undefined : headerIndex + 1}
-              >
-                {headerGroup.headers.map((header) => {
-                  const canSort = header.column.getCanSort();
-                  const sorted = header.column.getIsSorted();
-                  const content = header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext());
-                  return (
-                    <TableHead
-                      key={header.id}
-                      aria-sort={
-                        canSort
-                          ? sorted === "asc"
-                            ? "ascending"
-                            : sorted === "desc"
-                              ? "descending"
-                              : "none"
-                          : undefined
-                      }
-                      className={cn("relative", header.column.getIsPinned() && "bg-background")}
-                      style={{
-                        width: sizingEnabled ? header.getSize() : undefined,
-                        ...pinStyles(header.column),
-                      }}
-                    >
-                      <div className="flex items-center gap-1">
-                        {canSort ? (
-                          <button
-                            type="button"
-                            onClick={header.column.getToggleSortingHandler()}
-                            className="-mx-1 inline-flex items-center gap-1 rounded px-1 py-0.5 hover:text-foreground"
-                          >
-                            {content}
-                            {sorted === "asc" ? (
-                              <ArrowUpIcon aria-hidden className="size-3.5" />
-                            ) : sorted === "desc" ? (
-                              <ArrowDownIcon aria-hidden className="size-3.5" />
-                            ) : (
-                              <ChevronsUpDownIcon aria-hidden className="size-3.5 opacity-40" />
-                            )}
-                          </button>
-                        ) : (
-                          content
-                        )}
-                        {enablePinning &&
-                          !STRUCTURAL_COLUMN_IDS.has(header.column.id) &&
-                          !header.isPlaceholder && (
-                            <DropdownMenu>
-                              <DropdownMenuTrigger
-                                render={
-                                  <Button
-                                    variant="ghost"
-                                    size="icon-xs"
-                                    className="ms-auto"
-                                    aria-label={messages.columnOptions(
-                                      columnLabel(header.column.id),
-                                    )}
-                                  >
-                                    <PinIcon
-                                      aria-hidden
-                                      className={cn(
-                                        header.column.getIsPinned()
-                                          ? "text-foreground"
-                                          : "opacity-40",
-                                      )}
-                                    />
-                                  </Button>
-                                }
-                              />
-                              <DropdownMenuContent align="start">
-                                <DropdownMenuItem onClick={() => header.column.pin("left")}>
-                                  {messages.pinLeft}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => header.column.pin("right")}>
-                                  {messages.pinRight}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => header.column.pin(false)}>
-                                  {messages.unpin}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+          <table
+            data-slot="table"
+            aria-label={caption ? undefined : label}
+            aria-rowcount={ariaRowCount}
+            aria-busy={busy || loading || undefined}
+            className="w-full caption-bottom text-sm tabular-nums"
+            style={
+              sizingEnabled ? { width: table.getTotalSize(), tableLayout: "fixed" } : undefined
+            }
+          >
+            {caption && <TableCaption id={captionId}>{caption}</TableCaption>}
+            <TableHeader sticky={scrollable}>
+              {table.getHeaderGroups().map((headerGroup, headerIndex) => (
+                <TableRow
+                  key={headerGroup.id}
+                  aria-rowindex={ariaRowCount === undefined ? undefined : headerIndex + 1}
+                >
+                  {headerGroup.headers.map((header) => {
+                    const canSort = header.column.getCanSort();
+                    const sorted = header.column.getIsSorted();
+                    // Shift-click adds a column to the sort. With more than one sort key the order
+                    // matters, so each sorted header shows its rank.
+                    const sortRank =
+                      sorted && sorting.length > 1 ? header.column.getSortIndex() + 1 : null;
+                    const content = header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext());
+                    return (
+                      <TableHead
+                        key={header.id}
+                        aria-sort={
+                          canSort
+                            ? sorted === "asc"
+                              ? "ascending"
+                              : sorted === "desc"
+                                ? "descending"
+                                : "none"
+                            : undefined
+                        }
+                        className={cn("relative", pinClasses(header.column, true))}
+                        style={{
+                          width: sizingEnabled ? header.getSize() : undefined,
+                          ...pinStyles(header.column),
+                        }}
+                      >
+                        <div className="flex min-w-0 items-center gap-1">
+                          {canSort ? (
+                            <button
+                              type="button"
+                              data-sorted={sorted || undefined}
+                              onClick={header.column.getToggleSortingHandler()}
+                              className="-mx-1 inline-flex min-w-0 items-center gap-1 rounded-(--qx-corner-sm) px-1 py-0.5 outline-none transition-colors duration-fast hover:text-foreground focus-visible:focus-ring data-sorted:text-foreground"
+                            >
+                              <span className="truncate">{content}</span>
+                              {sorted === "asc" ? (
+                                <ArrowUpIcon aria-hidden className="size-3.5 shrink-0" />
+                              ) : sorted === "desc" ? (
+                                <ArrowDownIcon aria-hidden className="size-3.5 shrink-0" />
+                              ) : (
+                                <ChevronsUpDownIcon
+                                  aria-hidden
+                                  className="size-3.5 shrink-0 opacity-50"
+                                />
+                              )}
+                              {sortRank !== null && (
+                                <span aria-hidden className="text-micro tabular-nums">
+                                  {sortRank}
+                                </span>
+                              )}
+                            </button>
+                          ) : (
+                            content
                           )}
-                      </div>
-                      {enableColumnResizing && header.column.getCanResize() && (
-                        <ColumnResizeHandle
-                          header={header}
-                          onResize={resizeColumn}
-                          messages={messages}
-                        />
-                      )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={colSpan} className="p-0">
-                  {emptyState ?? (
-                    <EmptyState
-                      title={messages.emptyTitle}
-                      description={messages.emptyDescription}
-                    />
+                          {enablePinning &&
+                            !STRUCTURAL_COLUMN_IDS.has(header.column.id) &&
+                            !header.isPlaceholder && (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger
+                                  render={
+                                    <Button
+                                      variant="ghost"
+                                      size="icon-xs"
+                                      className="ms-auto"
+                                      aria-label={messages.columnOptions(
+                                        columnLabel(header.column.id),
+                                      )}
+                                    >
+                                      <PinIcon
+                                        aria-hidden
+                                        className={cn(
+                                          header.column.getIsPinned()
+                                            ? "text-foreground"
+                                            : "opacity-50",
+                                        )}
+                                      />
+                                    </Button>
+                                  }
+                                />
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => header.column.pin("left")}>
+                                    {messages.pinLeft}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => header.column.pin("right")}>
+                                    {messages.pinRight}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => header.column.pin(false)}>
+                                    {messages.unpin}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            )}
+                        </div>
+                        {enableColumnResizing && header.column.getCanResize() && (
+                          <ColumnResizeHandle
+                            header={header}
+                            onResize={resizeColumn}
+                            messages={messages}
+                            direction={direction}
+                          />
+                        )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {bodyState ? (
+                bodyState
+              ) : enableVirtualization ? (
+                <>
+                  {paddingTop > 0 && (
+                    <tr aria-hidden data-slot="data-table-virtual-spacer">
+                      <td style={{ height: paddingTop }} colSpan={colSpan} />
+                    </tr>
                   )}
-                </TableCell>
-              </TableRow>
-            ) : enableVirtualization ? (
-              <>
-                {paddingTop > 0 && (
-                  <tr aria-hidden data-slot="data-table-virtual-spacer">
-                    <td style={{ height: paddingTop }} colSpan={colSpan} />
-                  </tr>
-                )}
-                {virtualRows?.map((vr) => renderRow(rows[vr.index], vr.index))}
-                {paddingBottom > 0 && (
-                  <tr aria-hidden data-slot="data-table-virtual-spacer">
-                    <td style={{ height: paddingBottom }} colSpan={colSpan} />
-                  </tr>
-                )}
-              </>
-            ) : (
-              rows.map(renderRow)
-            )}
-          </TableBody>
-        </table>
+                  {virtualRows?.map((vr) => renderRow(rows[vr.index], vr.index))}
+                  {paddingBottom > 0 && (
+                    <tr aria-hidden data-slot="data-table-virtual-spacer">
+                      <td style={{ height: paddingBottom }} colSpan={colSpan} />
+                    </tr>
+                  )}
+                </>
+              ) : (
+                rows.map(renderRow)
+              )}
+            </TableBody>
+          </table>
+        </div>
       </div>
 
-      {paginated && table.getPageCount() > 1 && (
-        <div className="flex items-center justify-between gap-2 border-t p-3 text-sm">
-          <span className="text-muted-foreground">
+      {paginated && showRows && table.getPageCount() > 1 && (
+        <div
+          data-slot="data-table-pagination"
+          className="flex items-center justify-between gap-2 border-t border-border px-3 py-2 text-sm"
+        >
+          <span className="text-muted-foreground tabular-nums">
             {messages.pageOf(table.getState().pagination.pageIndex + 1, table.getPageCount())}
           </span>
           <div className="flex items-center gap-1.5">
@@ -1209,7 +1461,7 @@ function DataTable<TData, TValue>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              <ChevronLeftIcon aria-hidden /> {messages.previousPage}
+              <ChevronLeftIcon aria-hidden className="rtl:rotate-180" /> {messages.previousPage}
             </Button>
             <Button
               variant="outline"
@@ -1217,7 +1469,7 @@ function DataTable<TData, TValue>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              {messages.nextPage} <ChevronRightIcon aria-hidden />
+              {messages.nextPage} <ChevronRightIcon aria-hidden className="rtl:rotate-180" />
             </Button>
           </div>
         </div>

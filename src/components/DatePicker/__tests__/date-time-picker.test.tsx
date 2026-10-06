@@ -1,9 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { DateTimePicker } from "@/components/DatePicker/date-time-picker";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
@@ -140,5 +141,107 @@ describe("DateTimePicker locale", () => {
     render(<DateTimePicker value={instant} locale="de-DE" withSeconds />);
     expect(screen.getByRole("button")).toHaveTextContent(german(true));
     expect(german(true)).not.toBe(german(false));
+  });
+});
+
+/* Fixed dates; "today" is pinned (Date only) wherever the opening month could depend on it. */
+const FAR_TODAY = new Date(2031, 2, 15, 12, 0);
+
+describe("DateTimePicker forms", () => {
+  const formData = () =>
+    new FormData(screen.getByRole("form", { name: "joining" }) as HTMLFormElement);
+
+  it("submits the local datetime-local string under its name", () => {
+    render(
+      <form aria-label="joining">
+        <DateTimePicker name="at" defaultValue={new Date(2026, 7, 4, 9, 5)} aria-label="At" />
+        <DateTimePicker
+          name="precise"
+          withSeconds
+          defaultValue={new Date(2026, 7, 4, 23, 59, 7)}
+          aria-label="Precise"
+        />
+        <DateTimePicker name="empty" aria-label="Empty" />
+      </form>,
+    );
+    expect(formData().get("at")).toBe("2026-08-04T09:05");
+    expect(formData().get("precise")).toBe("2026-08-04T23:59:07");
+    expect(formData().get("empty")).toBe("");
+  });
+
+  it("takes its name, description and invalid state from a Field", () => {
+    render(
+      <Field invalid>
+        <FieldLabel>Joining</FieldLabel>
+        <DateTimePicker defaultValue={new Date(2026, 7, 4, 9, 30)} />
+        <FieldDescription>Local time at the office.</FieldDescription>
+        <FieldError>Joining must be on a working day.</FieldError>
+      </Field>,
+    );
+    const trigger = screen.getByRole("button", { name: /^Joining .*2026/ });
+    expect(trigger).toHaveAttribute("aria-invalid", "true");
+    expect(trigger.getAttribute("aria-describedby")?.split(" ")).toContain(
+      screen.getByText("Local time at the office.").id,
+    );
+  });
+
+  it("does not duplicate the Field's control id in the popover's time columns", async () => {
+    render(
+      <Field>
+        <FieldLabel>Joining</FieldLabel>
+        <DateTimePicker defaultValue={new Date(2026, 7, 4, 9, 30)} />
+      </Field>,
+    );
+    const trigger = screen.getByRole("button", { name: /^Joining/ });
+    fireEvent.click(trigger);
+    const hours = await screen.findByRole("combobox", { name: "Hours" });
+    expect(hours.id).not.toBe(trigger.id);
+    expect(document.querySelectorAll(`[id="${trigger.id}"]`)).toHaveLength(1);
+  });
+});
+
+describe("DateTimePicker bounds and opening month", () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ["Date"], now: FAR_TODAY }));
+  afterEach(() => vi.useRealTimers());
+
+  it("opens on the value's month", async () => {
+    render(<DateTimePicker defaultValue={new Date(2026, 7, 4, 9, 30)} aria-label="At" />);
+    fireEvent.click(screen.getByRole("button", { name: /At/ }));
+    expect(await screen.findByRole("grid", { name: "August 2026" })).toBeInTheDocument();
+  });
+
+  it("moves a time picked on min's day up to min", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <DateTimePicker
+        defaultValue={new Date(2026, 7, 5, 10, 0)}
+        min={new Date(2026, 7, 4, 14, 0)}
+        onValueChange={onValueChange}
+        aria-label="At"
+        locale="en-US"
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /At/ }));
+    // The selected time (10:00) is kept when the day changes, which is before min on min's day.
+    fireEvent.click(await screen.findByRole("button", { name: /August 4, 2026/ }));
+    expect(onValueChange).toHaveBeenCalledExactlyOnceWith(new Date(2026, 7, 4, 14, 0));
+    expect(screen.getByRole("button", { name: /August 3, 2026/ })).toBeDisabled();
+  });
+
+  it("keeps the day and its time when the selected day is picked again", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <DateTimePicker
+        defaultValue={new Date(2026, 7, 4, 9, 30)}
+        onValueChange={onValueChange}
+        aria-label="At"
+        locale="en-US"
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /At/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /August 4, 2026, selected/ }));
+    await waitFor(() =>
+      expect(onValueChange).toHaveBeenCalledExactlyOnceWith(new Date(2026, 7, 4, 9, 30)),
+    );
   });
 });

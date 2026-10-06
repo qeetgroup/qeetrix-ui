@@ -190,3 +190,111 @@ describe("Select", () => {
     });
   });
 });
+
+describe("Select styling contract", () => {
+  const hasClass = (el: Element | null, token: string) =>
+    Boolean(el?.className.split(/\s+/).includes(token));
+
+  it("draws the trigger from Input's field tokens and focus recipe", () => {
+    render(<SelectExample />);
+    const trigger = screen.getByRole("combobox");
+    expect(hasClass(trigger, "[--field-edge:var(--qx-component-input-border)]")).toBe(true);
+    expect(hasClass(trigger, "bg-(--qx-component-input-background)")).toBe(true);
+    expect(hasClass(trigger, "rounded-(--qx-component-input-corner)")).toBe(true);
+    expect(hasClass(trigger, "focus-visible:focus-ring-field")).toBe(true);
+    expect(trigger.className).not.toMatch(/ring-ring\/disabled|dark:bg-input/);
+  });
+
+  it("follows density at both sizes — sm is one step under the control height, not 28px", () => {
+    render(
+      <Select>
+        <SelectTrigger aria-label="Small" size="sm">
+          <SelectValue placeholder="Small" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="a">A</SelectItem>
+        </SelectContent>
+      </Select>,
+    );
+    const trigger = screen.getByRole("combobox");
+    expect(
+      hasClass(trigger, "data-[size=sm]:h-[calc(var(--qx-component-input-height)-0.25rem)]"),
+    ).toBe(true);
+    expect(trigger.className).not.toMatch(/data-\[size=sm\]:h-7/);
+  });
+
+  it("forwards aria-invalid to the trigger", () => {
+    render(
+      <Select>
+        <SelectTrigger aria-label="Region" aria-invalid>
+          <SelectValue placeholder="Required" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="a">A</SelectItem>
+        </SelectContent>
+      </Select>,
+    );
+    expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("marks the selected option and draws its check", () => {
+    render(
+      <Select open value="banana">
+        <SelectTrigger aria-label="Fruit">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+        </SelectContent>
+      </Select>,
+    );
+    const banana = screen.getByRole("option", { name: "Banana" });
+    expect(banana).toHaveAttribute("aria-selected", "true");
+    expect(banana).toHaveAttribute("data-selected");
+    expect(banana.querySelector("[data-slot=select-item-indicator]")).not.toBeNull();
+    expect(screen.getByRole("option", { name: "Apple" })).not.toHaveAttribute("data-selected");
+  });
+
+  // Base UI writes `data-selected=""`; shadcn's `data-selected` custom variant matches only
+  // `="true"`. Written the short way, the selected tint would silently never apply.
+  it("styles selection with the attribute-presence variant Base UI's markup matches", () => {
+    render(
+      <Select open value="a">
+        <SelectTrigger aria-label="Pick">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="a">A</SelectItem>
+        </SelectContent>
+      </Select>,
+    );
+    const option = screen.getByRole("option", { name: "A" });
+    expect(hasClass(option, "data-[selected]:bg-brand-subtle")).toBe(true);
+    expect(option.className).not.toMatch(/(^|\s)data-selected:/);
+  });
+
+  it("has no axe violations when open with a selection and a disabled option", async () => {
+    render(
+      <Select open value="a">
+        <SelectTrigger aria-label="Pick">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Letters</SelectLabel>
+            <SelectItem value="a">A</SelectItem>
+            <SelectItem value="b" disabled>
+              B
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>,
+    );
+    expect(
+      await axe(document.body, {
+        rules: { "color-contrast": { enabled: false }, region: { enabled: false } },
+      }),
+    ).toHaveNoViolations();
+  });
+});

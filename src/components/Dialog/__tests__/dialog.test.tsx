@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -11,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/Dialog/dialog";
+import { Sheet, SheetContent, SheetTitle } from "@/components/Drawer/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
 import { Z_INDEX } from "@/lib/token-values";
 
@@ -137,5 +139,139 @@ describe("Dialog", () => {
     // The second Escape reaches the dialog.
     await user.keyboard("{Escape}");
     expect(onOpenChange).toHaveBeenCalledWith(false, expect.anything());
+  });
+
+  // ── Focus ────────────────────────────────────────────────────────────────────────────────
+
+  it("moves focus into the dialog on open and returns it to the trigger on close", async () => {
+    const user = userEvent.setup();
+    render(<DialogExample />);
+    const trigger = screen.getByRole("button", { name: "Open dialog" });
+
+    await user.click(trigger);
+    const dialog = await screen.findByRole("dialog");
+    await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
+
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(trigger).toHaveFocus();
+  });
+
+  // ── Surface, sizing and long content ─────────────────────────────────────────────────────
+
+  it("paints the scrim and surface from the dialog component tokens", () => {
+    render(<DialogExample open />);
+    const backdrop = document.querySelector('[data-slot="dialog-overlay"]');
+    expect(backdrop?.className).toContain("bg-(--qx-component-dialog-scrim)");
+    expect(backdrop?.className).not.toMatch(/bg-black/);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("bg-(--qx-component-dialog-background)");
+    expect(dialog.className).toContain("shadow-(--qx-component-dialog-elevation)");
+  });
+
+  it("keeps a gutter on narrow screens and steps its width with `size`", () => {
+    const { rerender } = render(
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Sized</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("w-[calc(100%-2rem)]");
+    expect(dialog).toHaveAttribute("data-size", "default");
+    expect(dialog.className).toContain("max-w-lg");
+
+    rerender(
+      <Dialog open>
+        <DialogContent size="xl">
+          <DialogTitle>Sized</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    expect(screen.getByRole("dialog")).toHaveAttribute("data-size", "xl");
+    expect(screen.getByRole("dialog").className).toContain("max-w-4xl");
+    expect(screen.getByRole("dialog").className).not.toContain("max-w-lg");
+  });
+
+  it("scrolls long content in DialogBody so the header and footer stay pinned", () => {
+    render(
+      <Dialog open>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Audit log</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>Long content</p>
+          </DialogBody>
+          <DialogFooter>
+            <button type="button">Done</button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>,
+    );
+    const body = document.querySelector('[data-slot="dialog-body"]');
+    // A flex column whose body may shrink below its content height is what pins the rest.
+    expect(screen.getByRole("dialog").className).toContain("flex-col");
+    expect(body?.className).toContain("overflow-y-auto");
+    expect(body?.className).toContain("min-h-0");
+    expect(body?.className).toContain("flex-1");
+  });
+
+  it("keeps a long title clear of the close button only when the button is shown", () => {
+    const { rerender } = render(
+      <Dialog open>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              A very long title that would otherwise run under the close button
+            </DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>,
+    );
+    expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
+    expect(screen.getByRole("dialog").className).toContain("*:data-[slot=dialog-header]:pe-8");
+
+    rerender(
+      <Dialog open>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Title</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>,
+    );
+    expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
+    expect(screen.getByRole("dialog").className).not.toContain("pe-8");
+  });
+
+  // ── Nesting ──────────────────────────────────────────────────────────────────────────────
+  // jsdom does not paint, so these assert the mechanism: Base UI marks the nested popup, the
+  // popup lifts itself onto the drawer layer, and the nested backdrop is rendered (Base UI omits
+  // it by default) so the parent is dimmed. The `has-[~[data-nested]]` lift on that backdrop is
+  // a sibling selector only a browser evaluates.
+
+  it("lifts a dialog opened from a Sheet above the sheet and dims the sheet", () => {
+    render(
+      <Sheet open>
+        <SheetContent showCloseButton={false}>
+          <SheetTitle>Invoice INV-2041</SheetTitle>
+          <Dialog open>
+            <DialogContent showCloseButton={false}>
+              <DialogTitle>Void this invoice?</DialogTitle>
+            </DialogContent>
+          </Dialog>
+        </SheetContent>
+      </Sheet>,
+    );
+    const nested = screen.getByRole("dialog", { name: "Void this invoice?" });
+    expect(nested).toHaveAttribute("data-nested");
+    expect(nested.className).toContain("data-nested:z-(--qx-z-drawer)");
+    expect(Z_INDEX.drawer).toBeGreaterThan(Z_INDEX.modal);
+
+    const backdrop = document.querySelector('[data-slot="dialog-overlay"]');
+    expect(backdrop).toBeInTheDocument();
+    expect(backdrop?.className).toContain("has-[~[data-nested]]:z-(--qx-z-drawer)");
   });
 });

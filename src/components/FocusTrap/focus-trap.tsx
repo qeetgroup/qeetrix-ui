@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { useFocusTrap } from "@/runtime/focus-trap";
 
 interface FocusTrapProps extends React.ComponentProps<"div"> {
@@ -23,18 +23,32 @@ interface FocusTrapProps extends React.ComponentProps<"div"> {
  * page or lock scroll, so it is not on its own a modal boundary — a pointer or a
  * virtual cursor can still reach the content behind it. Prefer `Dialog`,
  * `AlertDialog` or `Sheet` for anything that claims to be modal.
+ *
+ * Renders no styling of its own: the trap is behaviour, and the surface it wraps owns the
+ * look. A `ref` you pass is merged with the trap's own, so measuring or focusing the container
+ * from outside does not switch the trap off.
  */
 function FocusTrap({
   active = true,
   restoreFocus = true,
   initialFocusRef,
   children,
+  ref,
   ...props
 }: FocusTrapProps) {
   const { containerRef } = useFocusTrap(active, { restoreFocus, initialFocusRef });
 
+  const mergedRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      containerRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [containerRef, ref],
+  );
+
   return (
-    <div ref={containerRef} data-slot="focus-trap" {...props}>
+    <div ref={mergedRef} data-slot="focus-trap" {...props}>
       {children}
     </div>
   );

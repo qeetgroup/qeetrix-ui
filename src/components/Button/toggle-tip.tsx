@@ -36,14 +36,31 @@ interface ToggleTipTriggerProps {
    * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
    */
   messages?: MessagesFor<"toggleTip">;
+  /** Merged onto the trigger's own classes. */
+  className?: string;
 }
 
-function ToggleTipTrigger({ label, icon, messages: messageOverrides }: ToggleTipTriggerProps) {
+/**
+ * The info affordance beside a label. It sits inline with label text, so it is the 24px
+ * icon size (the WCAG 2.2 AA target minimum) rather than a 28px control that would push the
+ * line taller, and it rests at the muted text colour: it is help, not an action. While its
+ * popup is open it holds the hover tone, so the open tip is visibly anchored to it.
+ */
+function ToggleTipTrigger({
+  label,
+  icon,
+  messages: messageOverrides,
+  className,
+}: ToggleTipTriggerProps) {
   const messages = useMessages("toggleTip", toggleTipMessages, messageOverrides);
   return (
     <PopoverTrigger
       data-slot="toggle-tip-trigger"
-      className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+      className={cn(
+        buttonVariants({ variant: "ghost", size: "icon-xs" }),
+        "text-muted-foreground hover:text-foreground data-popup-open:bg-surface-interactive-hover data-popup-open:text-foreground",
+        className,
+      )}
       aria-label={label ?? messages.label}
     >
       {icon ?? <InfoIcon className="size-4" aria-hidden />}

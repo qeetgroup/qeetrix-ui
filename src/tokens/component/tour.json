@@ -1,7 +1,7 @@
 {
   "component": {
     "tour": {
-      "$description": "Guided-tour card geometry. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "$description": "Guided-tour card geometry and spotlight. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
       "card-width": {
         "$value": "288px",
         "$type": "dimension"
@@ -9,6 +9,20 @@
       "offset": {
         "$value": "12px",
         "$type": "dimension"
+      },
+      "scrim": {
+        "$value": "var(--qx-color-overlay-scrim)",
+        "$type": "color"
+      },
+      "spotlight-padding": {
+        "$value": "6px",
+        "$type": "dimension",
+        "$description": "Breathing room between the spotlighted target and the edge of the cut-out. Read at runtime (it shapes a clip-path), so it must stay a plain px length."
+      },
+      "spotlight-corner": {
+        "$value": "8px",
+        "$type": "dimension",
+        "$description": "Corner of the spotlight cut-out. A plain px length for the same reason as spotlight-padding: the cut-out is a clip-path path computed in script."
       }
     }
   }

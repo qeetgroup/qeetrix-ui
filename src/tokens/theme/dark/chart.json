@@ -2,21 +2,63 @@
   "color": {
     "data": {
       "categorical": {
-        "1": { "$value": "{color.blue.300}", "$type": "color" },
-        "2": { "$value": "{color.orange.300}", "$type": "color" },
-        "3": { "$value": "{color.emerald.300}", "$type": "color" },
-        "4": { "$value": "{color.violet.300}", "$type": "color" },
-        "5": { "$value": "{color.rose.300}", "$type": "color" },
-        "6": { "$value": "{color.cyan.300}", "$type": "color" },
-        "7": { "$value": "{color.amber.300}", "$type": "color" },
-        "8": { "$value": "{color.indigo.300}", "$type": "color" }
+        "1": {
+          "$value": "{color.blue.400}",
+          "$type": "color"
+        },
+        "2": {
+          "$value": "{color.teal.300}",
+          "$type": "color"
+        },
+        "3": {
+          "$value": "{color.qeet.400}",
+          "$type": "color"
+        },
+        "4": {
+          "$value": "{color.violet.300}",
+          "$type": "color"
+        },
+        "5": {
+          "$value": "{color.pink.400}",
+          "$type": "color"
+        },
+        "6": {
+          "$value": "{color.lime.300}",
+          "$type": "color"
+        },
+        "7": {
+          "$value": "{color.cyan.500}",
+          "$type": "color"
+        },
+        "8": {
+          "$value": "{color.graphite.400}",
+          "$type": "color"
+        }
       },
-      "grid": { "$value": "{color.neutral.700}", "$type": "color" },
-      "axis": { "$value": "{color.neutral.300}", "$type": "color" },
-      "reference": { "$value": "{color.neutral.400}", "$type": "color" },
-      "positive": { "$value": "{color.success.300}", "$type": "color" },
-      "negative": { "$value": "{color.danger.300}", "$type": "color" },
-      "warning": { "$value": "{color.warning.300}", "$type": "color" }
+      "grid": {
+        "$value": "{color.graphite.825}",
+        "$type": "color"
+      },
+      "axis": {
+        "$value": "{color.graphite.300}",
+        "$type": "color"
+      },
+      "reference": {
+        "$value": "{color.graphite.450}",
+        "$type": "color"
+      },
+      "positive": {
+        "$value": "{color.success.400}",
+        "$type": "color"
+      },
+      "negative": {
+        "$value": "{color.danger.400}",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "{color.warning.400}",
+        "$type": "color"
+      }
     }
   }
 }

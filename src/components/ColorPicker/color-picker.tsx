@@ -2,9 +2,13 @@
 
 import type * as React from "react";
 
+import { ColorSwatch } from "@/components/ColorPicker/color-swatch";
 import { useFieldControl } from "@/components/Input/field";
 import { useControllableState } from "@/hooks/use-controllable-state";
+import { fieldSurface, fieldText } from "@/internal/field-styles";
+import { colorPickerMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import { useMessages } from "@/providers/messages-provider";
 
 interface ColorPickerProps {
   /** Hex value like "#4F46E5" (3- or 6-digit). Empty string = no color set. Omit to go uncontrolled. */
@@ -75,6 +79,21 @@ function isValidHex(hex: string): boolean {
 }
 
 /**
+ * "No colour set". Drawn from two semantic colours through component tokens, so the pattern
+ * re-themes with the document — it used to be a light-grey literal over transparent, which read
+ * as a bright patch on a dark surface.
+ */
+const CHECKERBOARD =
+  "repeating-conic-gradient(var(--qx-component-color-picker-checker) 0% 25%, var(--qx-component-color-picker-checker-alt) 0% 50%) 50% / 12px 12px";
+
+/** The hex field: Input's own recipe (`fieldSurface`), in the code face. */
+const HEX_INPUT_CLASS = cn(
+  fieldSurface,
+  fieldText,
+  "h-(--qx-component-input-height) px-2.5 py-1 font-mono",
+);
+
+/**
  * ColorPicker consolidates the (clickable-swatch + hex-text + native
  * picker) combo into one primitive. The swatch is a `<label>` wrapping
  * a hidden `<input type="color">` so clicking it opens the browser's
@@ -108,6 +127,7 @@ function ColorPicker({
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
 }: ColorPickerProps) {
+  const messages = useMessages("colorPicker", colorPickerMessages);
   const [value, setValue] = useControllableState<string>({
     value: valueProp,
     defaultValue,
@@ -126,27 +146,29 @@ function ColorPicker({
   });
 
   return (
-    <div data-slot="color-picker" className={cn("flex flex-col gap-2", className)}>
+    <div data-slot="color-picker" className={cn("flex min-w-0 flex-col gap-2", className)}>
       <div className="flex items-center gap-2">
+        {/* The preview opens the platform picker. It is the field's height in every density,
+            keeps the chosen colour under forced colors, and shows the focus ring of the
+            invisible native input it wraps. */}
         <label
+          data-slot="color-picker-swatch"
+          data-empty={valid ? undefined : ""}
           className={cn(
-            "relative grid size-9 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-md border",
-            disabled && "pointer-events-none opacity-disabled",
+            "relative block size-(--qx-component-input-height) shrink-0 cursor-pointer overflow-hidden rounded-(--qx-component-input-corner) border border-(--qx-component-input-border) forced-color-adjust-none",
+            "has-[input:enabled]:hover:border-(--qx-component-input-border-hover)",
+            "has-focus-visible:focus-ring",
+            disabled && "cursor-not-allowed opacity-disabled",
           )}
-          aria-label="Open colour picker"
-          style={{
-            background: valid
-              ? value
-              : // Checkered pattern indicates "no colour set"
-                "repeating-conic-gradient(#e5e7eb 0% 25%, transparent 0% 50%) 50% / 12px 12px",
-          }}
+          style={{ background: valid ? value : CHECKERBOARD }}
         >
           <input
             type="color"
+            aria-label={messages.open}
             value={nativeValue}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
             disabled={disabled}
-            className="absolute inset-0 cursor-pointer opacity-0"
+            className="absolute inset-0 size-full cursor-[inherit] opacity-0"
           />
         </label>
         <input
@@ -163,40 +185,31 @@ function ColorPicker({
           required={required}
           pattern={HEX_PATTERN}
           id={field.id}
-          aria-label={field["aria-labelledby"] ? undefined : (ariaLabel ?? "Hex colour")}
+          aria-label={field["aria-labelledby"] ? undefined : (ariaLabel ?? messages.hex)}
           aria-labelledby={field["aria-labelledby"]}
           aria-describedby={field["aria-describedby"]}
           aria-errormessage={field["aria-errormessage"]}
           aria-invalid={field["aria-invalid"] ?? false}
-          className={cn(
-            "h-(--qx-control-height) w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 font-mono text-sm transition-colors outline-none",
-            "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/disabled",
-            "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-disabled",
-            "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
-          )}
+          className={HEX_INPUT_CLASS}
         />
       </div>
       {presets.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
+        // Presets are ColorSwatches, so selection is a check glyph and an outline — never the
+        // swatch colour alone — and each is a 24px target.
+        <div data-slot="color-picker-presets" className="flex flex-wrap gap-1.5">
           {presets.map((p) => {
             const isActive =
               valid && expandShortHex(value).toLowerCase() === expandShortHex(p).toLowerCase();
             return (
-              <button
+              <ColorSwatch
                 key={p}
-                type="button"
-                onClick={() => setValue(p)}
-                disabled={disabled}
-                aria-label={`Set colour ${p}`}
-                aria-pressed={isActive}
+                color={p}
+                size="md"
+                label={messages.setColor(p)}
                 title={p}
-                className={cn(
-                  "size-5 rounded-md border transition-transform",
-                  "hover:scale-110",
-                  isActive && "ring-2 ring-ring ring-offset-1",
-                  disabled && "pointer-events-none opacity-disabled",
-                )}
-                style={{ background: p }}
+                selected={isActive}
+                disabled={disabled}
+                onClick={() => setValue(p)}
               />
             );
           })}

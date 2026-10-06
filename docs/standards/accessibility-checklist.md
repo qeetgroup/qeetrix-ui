@@ -72,7 +72,9 @@ Rules: [accessibility.md](./accessibility.md) ·
       inline-axis arrows.
 - [ ] **Reduced motion** — covered by the base rule for CSS motion; scripted motion needs
       `usePrefersReducedMotion`.
-- [ ] **Forced colors** — paints only with bridge variables; no shadow-only affordance.
+- [ ] **Forced colors** — paints only with bridge variables; no shadow-only affordance; a
+      selected/highlighted/pressed fill uses `forced-colors-selected`, an indicator `Highlight`, a
+      selected container a `Highlight` edge ([theming.md](./theming.md#forced-colors)).
 - [ ] **Contrast** — any new semantic pair added to `scripts/check/contrast.mjs`.
 - [ ] **Target size** — adequate for the context, or the rationale recorded.
 

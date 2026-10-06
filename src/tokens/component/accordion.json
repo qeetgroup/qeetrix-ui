@@ -1,0 +1,27 @@
+{
+  "component": {
+    "accordion": {
+      "$description": "Accordion (and the Collapsible panel it shares its motion with). Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens.",
+      "trigger-padding-block": {
+        "$value": "calc(var(--qx-control-cell-padding-y) + 0.25rem)",
+        "$type": "dimension",
+        "$description": "Block padding of a trigger row. Rides the density cell padding with a fixed 4px of breathing room, so the default row is unchanged (16px, a 52px row for one line of label), compact tightens to 10px (40px), and comfortable stays at the default."
+      },
+      "divider": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color",
+        "$description": "The rule between items. Decorative — the triggers themselves are the structure."
+      },
+      "focus-bleed": {
+        "$value": "calc(var(--qx-focus-offset) + var(--qx-focus-outline-width))",
+        "$type": "dimension",
+        "$description": "How far a descendant's focus ring reaches outside its box. An open panel clips its contents to animate height; it clips this much outside its own edges rather than at them, so a control flush with the panel edge keeps its whole ring."
+      },
+      "duration": {
+        "$value": "{motion.duration.normal}",
+        "$type": "duration",
+        "$description": "Height transition of a panel opening or closing, and the indicator's turn. Collapses under prefers-reduced-motion through the base layer."
+      }
+    }
+  }
+}

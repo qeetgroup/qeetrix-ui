@@ -1,0 +1,88 @@
+{
+  "component": {
+    "calendar": {
+      "$description": "Calendar and ScheduleCalendar. Component tokens reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. Qeet appears only where it means something: the selected day (and a range's two ends) is the solid action fill with its dark label, the days between them are the quiet brand tint, and today is a graphite marker (weight plus a dot), never a second orange.",
+      "cell-size": {
+        "$value": "{control.height}",
+        "$type": "dimension",
+        "$description": "One day cell, square. The density-resolved control height, so the grid tightens with compact density (28px) and opens up with comfortable (36px) exactly as the fields around it do."
+      },
+      "day-corner": {
+        "$value": "{corner.chip}",
+        "$type": "dimension",
+        "$description": "A day is a chip-sized target, so it takes the chip corner — one radius for single days and for a range's end caps."
+      },
+      "day-background-hover": {
+        "$value": "var(--qx-color-surface-interactive-hover)",
+        "$type": "color",
+        "$description": "Hovering an unselected day: the neutral interactive fill, the same one a hovered menu item or ghost button uses."
+      },
+      "selected-background": {
+        "$value": "var(--qx-color-action-primary)",
+        "$type": "color",
+        "$description": "The selected day and a range's two ends: the solid Qeet action fill. It is the one orange in the grid."
+      },
+      "selected-background-hover": {
+        "$value": "var(--qx-color-action-primary-hover)",
+        "$type": "color"
+      },
+      "selected-foreground": {
+        "$value": "var(--qx-color-text-on-brand)",
+        "$type": "color",
+        "$description": "The dark label on the action fill (6.7:1). White on Qeet 500 is 3.0:1 and fails AA."
+      },
+      "range-background": {
+        "$value": "var(--qx-color-surface-brand-subtle)",
+        "$type": "color",
+        "$description": "The days between a range's ends: the library's selected tint, surface.brand-subtle, so the span reads as one selection without a band of solid orange. Dark brand-subtle is translucent, so the band stays visible on a picker's overlay surface (1.20:1); the private 14% mix this used to be is within ΔE00 1 of it in both themes."
+      },
+      "range-background-hover": {
+        "$value": "var(--qx-color-surface-brand-subtle-hover)",
+        "$type": "color",
+        "$description": "Hovering a day inside the range: the selected-hover step every selected item uses."
+      },
+      "range-foreground": {
+        "$value": "var(--qx-color-text-on-subtle)",
+        "$type": "color"
+      },
+      "outside-foreground": {
+        "$value": "var(--qx-color-text-tertiary)",
+        "$type": "color",
+        "$description": "Days from the neighbouring months. Still selectable, so still legible (AA) — just a step quieter than the month's own days."
+      },
+      "disabled-foreground": {
+        "$value": "var(--qx-color-text-disabled)",
+        "$type": "color",
+        "$description": "Days outside min/max or otherwise disabled. Always paired with a strike-through, so the state never rests on colour alone."
+      },
+      "unavailable-background": {
+        "$value": "var(--qx-color-surface-sunken)",
+        "$type": "color",
+        "$description": "Days that exist but are taken (booked, blocked, a holiday): a sunken well behind the struck-through number, which separates 'unavailable' from 'out of range'."
+      },
+      "event-background": {
+        "$value": "var(--qx-color-surface-interactive)",
+        "$type": "color",
+        "$description": "ScheduleCalendar's default event chip: a graphite chip, so a busy month does not turn orange. ScheduleEvent.color overrides it per event."
+      },
+      "event-background-hover": {
+        "$value": "var(--qx-color-surface-interactive-hover)",
+        "$type": "color"
+      },
+      "event-indicator": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color",
+        "$description": "The inline-start bar on a default event chip (≥3:1). The chip's only Qeet, and the cue that survives without the fill."
+      },
+      "today-background": {
+        "$value": "var(--qx-color-surface-inverse)",
+        "$type": "color",
+        "$description": "ScheduleCalendar's today marker: an inverse graphite disc behind the date. Neutral, so 'today' never competes with selection or primary actions."
+      },
+      "today-foreground": {
+        "$value": "var(--qx-color-text-inverse)",
+        "$type": "color"
+      }
+    }
+  }
+}

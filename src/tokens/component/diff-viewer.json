@@ -1,0 +1,23 @@
+{
+  "component": {
+    "diff-viewer": {
+      "$description": "DiffViewer line and word highlights. Changed lines sit on the designed, opaque status surfaces; the changed words inside a modified line take a stronger wash of the status fill so the eye lands on the edit, not just the line. The washes are translucent because they are drawn over the line surface, and both keep body text ≥7:1 in light and dark. Colour is never the only channel: every changed line also carries a +/− marker and a screen-reader prefix.",
+      "add-background": {
+        "$value": "var(--qx-color-feedback-success-subtle)",
+        "$type": "color"
+      },
+      "remove-background": {
+        "$value": "var(--qx-color-feedback-error-subtle)",
+        "$type": "color"
+      },
+      "add-emphasis": {
+        "$value": "color-mix(in oklab, var(--qx-color-feedback-success) 24%, transparent)",
+        "$type": "color"
+      },
+      "remove-emphasis": {
+        "$value": "color-mix(in oklab, var(--qx-color-feedback-error) 22%, transparent)",
+        "$type": "color"
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "elevation": {
+    "$description": "Dark elevation roles — same names as light, rendered with the shadow-dark values.",
+    "flat": {
+      "$value": "{shadow-dark.none}",
+      "$type": "shadow"
+    },
+    "inset": {
+      "$value": "{shadow-dark.inset-subtle}",
+      "$type": "shadow"
+    },
+    "raised": {
+      "$value": "{shadow-dark.rest}",
+      "$type": "shadow"
+    },
+    "hover": {
+      "$value": "{shadow-dark.hover}",
+      "$type": "shadow"
+    },
+    "overlay": {
+      "$value": "{shadow-dark.popover}",
+      "$type": "shadow"
+    },
+    "modal": {
+      "$value": "{shadow-dark.modal}",
+      "$type": "shadow"
+    },
+    "subtle": {
+      "$value": "{shadow-dark.ramp.xs}",
+      "$type": "shadow"
+    },
+    "low": {
+      "$value": "{shadow-dark.ramp.sm}",
+      "$type": "shadow"
+    },
+    "ramp": {
+      "$description": "The Tailwind shadow scale (shadow-2xs…shadow-xl), exposed as semantic aliases so src/styles/index.css can map the utilities without restating the values or reaching into the primitive layer.",
+      "2xs": {
+        "$value": "{shadow-dark.ramp.2xs}",
+        "$type": "shadow"
+      },
+      "xs": {
+        "$value": "{shadow-dark.ramp.xs}",
+        "$type": "shadow"
+      },
+      "sm": {
+        "$value": "{shadow-dark.ramp.sm}",
+        "$type": "shadow"
+      },
+      "md": {
+        "$value": "{shadow-dark.ramp.md}",
+        "$type": "shadow"
+      },
+      "lg": {
+        "$value": "{shadow-dark.ramp.lg}",
+        "$type": "shadow"
+      },
+      "xl": {
+        "$value": "{shadow-dark.ramp.xl}",
+        "$type": "shadow"
+      }
+    }
+  }
+}

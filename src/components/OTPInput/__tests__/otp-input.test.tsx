@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
-import { Field, FieldLabel } from "@/components/Input/field";
+import { Field, FieldError, FieldLabel } from "@/components/Input/field";
 import { OTPInput } from "@/components/OTPInput/otp-input";
 import { DirectionProvider } from "@/providers/direction-provider";
 
@@ -141,29 +141,126 @@ describe("OTPInput form participation", () => {
 });
 
 describe("OTPInput direction", () => {
-  it("mirrors box navigation in rtl", () => {
+  it("keeps the code in number order under rtl, so the arrows follow the screen", () => {
+    // A code is a number and numbers read left to right in Arabic and Hebrew too: mirroring the
+    // boxes made a code copied from an SMS read backwards. The row is reversed under RTL so the
+    // first digit stays on the left, and ArrowRight is the next digit in both directions.
     render(
       <DirectionProvider direction="rtl">
-        <OTPInput length={4} aria-label="Code" />
+        <OTPInput length={4} defaultValue="1234" aria-label="Code" />
       </DirectionProvider>,
     );
-    expect(screen.getByRole("group")).toHaveAttribute("data-direction", "rtl");
+    const group = screen.getByRole("group");
+    expect(group).toHaveAttribute("data-direction", "rtl");
+    expect(group.className).toMatch(/data-\[direction=rtl\]:flex-row-reverse/);
     const boxes = screen.getAllByRole("textbox");
     boxes[0].focus();
-    // The digits keep their order; only the spatial mapping mirrors, so the key pointing at
-    // the next box under `dir="rtl"` is ArrowLeft.
-    fireEvent.keyDown(boxes[0], { key: "ArrowLeft" });
+    fireEvent.keyDown(boxes[0], { key: "ArrowRight" });
     expect(boxes[1]).toHaveFocus();
-    fireEvent.keyDown(boxes[1], { key: "ArrowRight" });
+    fireEvent.keyDown(boxes[1], { key: "ArrowLeft" });
     expect(boxes[0]).toHaveFocus();
   });
 
   it("keeps the ltr mapping when nothing declares a direction", () => {
-    render(<OTPInput length={4} aria-label="Code" />);
+    render(<OTPInput length={4} defaultValue="1234" aria-label="Code" />);
     expect(screen.getByRole("group")).toHaveAttribute("data-direction", "ltr");
     const boxes = screen.getAllByRole("textbox");
     boxes[0].focus();
     fireEvent.keyDown(boxes[0], { key: "ArrowRight" });
     expect(boxes[1]).toHaveFocus();
+  });
+});
+
+describe("OTPInput one-time-code behaviour", () => {
+  it("spreads an autofilled code that lands in one box across all of them", () => {
+    const onComplete = vi.fn();
+    render(<OTPInput aria-label="Code" onComplete={onComplete} />);
+    const boxes = screen.getAllByRole("textbox") as HTMLInputElement[];
+    // iOS "From Messages" and password managers insert the whole code into the focused box.
+    fireEvent.change(boxes[0], { target: { value: "482913" } });
+    expect(boxes.map((b) => b.value).join("")).toBe("482913");
+    expect(onComplete).toHaveBeenCalledWith("482913");
+  });
+
+  it("does not truncate autofill with a per-box maxLength", () => {
+    render(<OTPInput aria-label="Code" />);
+    for (const box of screen.getAllByRole("textbox")) {
+      expect(box).not.toHaveAttribute("maxlength");
+      expect(box).toHaveAttribute("autocomplete", "one-time-code");
+      expect(box).toHaveAttribute("inputmode", "numeric");
+    }
+  });
+
+  it("keeps the new keystroke when typing beside an existing digit", () => {
+    const onChange = vi.fn();
+    render(<OTPInput length={4} defaultValue="1" onChange={onChange} aria-label="Code" />);
+    const boxes = screen.getAllByRole("textbox");
+    fireEvent.change(boxes[0], { target: { value: "17" } });
+    expect(onChange).toHaveBeenLastCalledWith("7");
+  });
+
+  it("pastes a whole code from the first box, wherever it was pasted", () => {
+    render(<OTPInput length={4} defaultValue="12" aria-label="Code" />);
+    const boxes = screen.getAllByRole("textbox") as HTMLInputElement[];
+    fireEvent.paste(boxes[1], { clipboardData: { getData: () => "9 8 7 6" } });
+    expect(boxes.map((b) => b.value).join("")).toBe("9876");
+  });
+
+  it("continues a pasted fragment from the box it was pasted into", () => {
+    render(<OTPInput length={6} defaultValue="12" aria-label="Code" />);
+    const boxes = screen.getAllByRole("textbox") as HTMLInputElement[];
+    fireEvent.paste(boxes[2], { clipboardData: { getData: () => "34" } });
+    expect(boxes.map((b) => b.value).join("")).toBe("1234");
+    expect(boxes[4]).toHaveFocus();
+  });
+
+  it("never lets focus land beyond the first empty box, so the code has no holes", () => {
+    render(<OTPInput length={6} defaultValue="12" aria-label="Code" />);
+    const boxes = screen.getAllByRole("textbox");
+    boxes[4].focus();
+    expect(boxes[2]).toHaveFocus();
+  });
+
+  it("still advances focus as each digit is typed", () => {
+    render(<OTPInput length={3} aria-label="Code" />);
+    const boxes = screen.getAllByRole("textbox");
+    boxes[0].focus();
+    fireEvent.change(boxes[0], { target: { value: "4" } });
+    expect(boxes[1]).toHaveFocus();
+    fireEvent.change(boxes[1], { target: { value: "2" } });
+    expect(boxes[2]).toHaveFocus();
+  });
+
+  it("is a single tab stop on the typing position", () => {
+    render(<OTPInput length={4} defaultValue="12" aria-label="Code" />);
+    const tabbable = screen.getAllByRole("textbox").map((b) => b.getAttribute("tabindex"));
+    expect(tabbable).toEqual(["-1", "-1", "0", "-1"]);
+  });
+
+  it("honours autoFocus on the first box", () => {
+    render(<OTPInput length={4} autoFocus aria-label="Code" />);
+    expect(screen.getAllByRole("textbox")[0]).toHaveFocus();
+  });
+
+  it("marks every box invalid inside an errored Field", () => {
+    render(
+      <Field>
+        <FieldLabel>Code</FieldLabel>
+        <OTPInput length={2} />
+        <FieldError>That code has expired.</FieldError>
+      </Field>,
+    );
+    for (const box of screen.getAllByRole("textbox")) {
+      expect(box).toHaveAttribute("aria-invalid", "true");
+    }
+  });
+
+  it("draws decorative group separators without adding boxes or names", async () => {
+    const { container } = render(<OTPInput length={6} groupSize={3} aria-label="Code" />);
+    expect(screen.getAllByRole("textbox")).toHaveLength(6);
+    const separators = container.querySelectorAll("[data-slot=otp-input-separator]");
+    expect(separators).toHaveLength(1);
+    expect(separators[0]).toHaveAttribute("aria-hidden", "true");
+    expect(await a11y(container)).toHaveNoViolations();
   });
 });

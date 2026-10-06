@@ -180,10 +180,13 @@ These are library-wide guarantees rather than per-component work, verified in
   advances) comes from `DirectionProvider`. A bare `dir="rtl"` attribute mirrors the layout and
   leaves arrow keys running left-to-right. See [rtl.md](./rtl.md).
 - **Forced colors** — every bridge colour variable is remapped to a system colour, shadows are
-  removed, and focus falls back to a `Highlight` outline. The chart series are the one deliberate
-  exemption: eight series mapped onto system colours would be eight identical lines, so they keep
-  their authored colour under `forced-color-adjust: none`, and `ChartDataTable` is the non-colour
-  alternative.
+  removed, and focus falls back to a `Highlight` outline. A state carried by a fill behind a label
+  (highlighted, selected, current, pressed) paints the system selection with
+  `forced-colors-selected`; indicators take `Highlight` directly and selected containers a
+  `Highlight` edge — the three recipes in [theming.md § Forced colors](./theming.md#forced-colors).
+  The chart series are the one deliberate exemption: eight series mapped onto system colours
+  would be eight identical lines, so they keep their authored colour under
+  `forced-color-adjust: none`, and `ChartDataTable` is the non-colour alternative.
 
 ---
 

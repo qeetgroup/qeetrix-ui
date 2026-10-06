@@ -75,12 +75,23 @@ per-component special cases. Those belong to the token layer.
 The brand ramp is one alias hop from the palette:
 
 ```json
-"brand": { "500": { "$value": "{color.orange.500}" } }
+"brand": { "500": { "$value": "{color.qeet.500}" } }
 ```
 
-Re-point those nine aliases and the whole system follows — semantic tokens, the bridge,
-component tokens and every component. Nothing downstream needs editing. That is the point of
-having the layers.
+`color.qeet` is Qeet's own ramp — 13 steps, 50…950 plus 150 and 550, built in OKLCH on the same
+lightness ladder as the status ramps, with `qeet.500` exactly `#F26D0E`. It is not an alias of
+Tailwind orange. Re-point the thirteen `brand` aliases and the whole system follows — semantic
+tokens, the bridge, component tokens and every component. Nothing downstream needs editing. That
+is the point of having the layers.
+
+Two properties of the ramp that a re-brand has to re-check rather than assume:
+
+- **The label on the brand fill is dark.** White on `#F26D0E` is 3.0:1, so
+  `color.text.on-brand` (and `--primary-foreground`) is `graphite.1000`: 6.7:1 at rest, 5.7:1 on
+  hover, 4.8:1 pressed. A darker brand might want white back.
+- **`brand.500` is a fill, not a text colour.** Brand-coloured text is `color.text.brand`
+  (`qeet.700` light, `qeet.400` dark); links are `color.text.link` / `link-hover`. Step 700 is the
+  AA text step on light surfaces and 400 on dark — the same rule holds for every ramp.
 
 Retuning corners is one variable: `--radius`. The Tailwind corner ramp is derived from it with
 `calc()`, and the semantic corner roles reference the ramp, so overriding `--radius` at runtime
@@ -114,13 +125,67 @@ runtime stylesheet, so it will not resolve. Change the semantic token that point
 
 ## Forced colors
 
-`src/styles/index.css` maps the bridge onto system colours under
+`src/styles/base.css` maps the bridge onto system colours under
 `@media (forced-colors: active)`: `Canvas`, `CanvasText`, `ButtonFace`, `Highlight`, `Mark`.
 Shadows and the skeleton shimmer are suppressed, focus falls back to a `Highlight` outline at
 the token's outline width, and overlays become opaque `Canvas`.
 
-Because components render bridge variables rather than literal colours, a component needs no
-forced-colors branch of its own.
+Most of a component needs no forced-colors branch of its own: text, borders and plain fills are
+forced by the browser. What does need one is any **state that is carried by a fill** — the
+browser removes authored fills, so a highlighted menu item or a selected day would otherwise look
+exactly like its neighbours. There is one recipe per kind of state, and only these three:
+
+| The state is shown by… | Forced-colours treatment | How |
+|:--|:--|:--|
+| **a fill behind a label** — a highlighted menu item or option, the active tab, the current nav or sidebar item, a selected calendar day or availability slot, a pressed toggle or toolbar button, the active segment, the current step marker | the system selection: `Highlight` fill and edge, `HighlightText` for the item **and every descendant** | `forced-colors-selected`, under the state's variant: `data-highlighted:forced-colors-selected`, `data-[active]:forced-colors-selected`, `data-pressed:forced-colors-selected`, `aria-selected:forced-colors-selected` |
+| **an indicator with no text on it** — a selection bar, a checkbox box, a radio dot, a switch track, a slider range, a progress fill | `Highlight` directly | `forced-colors:bg-[Highlight]` / `forced-colors:before:bg-[Highlight]` / `forced-colors:border-[Highlight]` |
+| **a container with content** — a selected card, file card, checkbox card or radio card | a `Highlight` **edge**, never a fill (a fill would turn a whole card of content into selection colour) | `forced-colors:data-selected:border-[Highlight]` |
+
+Plain **hover** paints nothing in forced colours. The bridge maps the hover fills (`--accent`,
+`--sidebar-accent`, and the sidebar's selected tint) to `Canvas` / `CanvasText`; keyboard users
+see the `Highlight` focus outline instead, and menus and listboxes still highlight under the
+pointer, because Base UI's `data-highlighted` follows it.
+
+### Why the recipe opts out of adjustment
+
+Under `forced-color-adjust: auto`, Chromium paints a `Canvas` **text backplate** behind every
+glyph. `HighlightText` on a `Highlight` fill therefore renders white on white: the fill shows
+around the text, and the text vanishes into its own backplate. Until the integration pass the
+bridge mapped `--accent` to `Highlight` / `HighlightText`, so every `hover:bg-accent
+hover:text-accent-foreground` had this bug. `forced-colors-selected` sets
+`forced-color-adjust: none` on the item, which removes the backplate, and then names every colour
+it paints — including `HighlightText` for each descendant, because under `none` a descendant's
+authored colour (a brand check, muted secondary text) would otherwise show through. Everything
+in it is `!important`: this is a user accessibility mode, and no authored state tint may outrank
+it. The utility is defined once, in `src/styles/index.css`.
+
+### Opting a control out
+
+`base.css` re-asserts `forced-color-adjust: auto` on native controls and on the control roles
+(`button`, `[role=option]`, `[role=tab]`, …), so a control nested in a subtree that opted out — a
+chart, a rating — still takes part in forced colours. That rule is a **layered default** (`@layer
+base`): a component's own `forced-colors:forced-color-adjust-none` beats it without `!`. It used
+to be unlayered, which silently disabled every opt-out written without `!` (colour swatches,
+segmented-control labels). Opt out only where colour is the information (a swatch, a chart
+series, a QR tile) and name system colours for everything else you paint.
+
+## State variants
+
+shadcn's state variants — `data-active:`, `data-checked:`, `data-open:`, `data-selected:`,
+`data-disabled:` and the rest, from `shadcn/tailwind.css` — wrap their selector in `:where()`, so
+they add **no specificity** and lose to `hover:` and `focus-visible:` on the same property. A
+selected sidebar item turned grey under the pointer; a pressed rich-text link button lost its tint.
+
+Qeetrix components therefore spell a state that must hold against hover in the **attribute
+form** — `data-[active]:`, `data-[selected]:`, `data-[checked]:` — which compiles to
+`[data-active]` and is ordered after `hover:`, and give the hovered state its own step
+(`data-[active]:hover:bg-brand-subtle-hover`). The attribute form matches **presence**, so a
+component writes the attribute only while the state holds: `data-active={active || undefined}`
+(Base UI's `useRender` state and its own parts already do). shadcn's variants are left as they
+ship, because a consumer's classes compile against the same stylesheet; `index.css` redefines
+only `data-selected:`, to match presence the way its siblings do.
+
+The shorter variant is fine for a property nothing else on the element sets (`data-open:animate-in`).
 
 ---
 
@@ -151,10 +216,9 @@ That is all. The registry — not a list in any script — is what makes the the
 | | reads the registry | so a registered theme gets |
 |:--|:--|:--|
 | `scripts/build/tokens.mjs` | ✓ | its variables emitted under its selector, in `tokens.css` |
-| `bun run check:tokens` | ✓ | parity against the base theme, type checks, cycle detection |
-| `bun run check:contrast` | ✓ | every text, focus and non-text pair measured |
+| `src/__tests__/token-governance.test.ts` | ✓ | the token-graph rules — parity against the base theme, types, cycles — and 207 contrast pairs |
 
-A `src/tokens/theme/*` directory with **no** registry entry is a hard error in all three, and a
+A `src/tokens/theme/*` directory with **no** registry entry is a hard error in the build, and a
 registry entry with no directory is too. Before the registry existed the theme list was the
 literal `["light", "dark"]` in those three files, so a third directory was built by nothing and
 checked by nothing — it silently did not exist.
@@ -178,22 +242,26 @@ artifact the host selects.
 ## What to check when a theme changes
 
 ```bash
-bun run check:tokens     # parity, types, references — every registered theme
-bun run check:contrast   # WCAG AA + 1.4.11 — every registered theme
+bun run build:tokens
+bunx vitest run src/__tests__/token-governance.test.ts
 ```
 
-`check:contrast` is the one that matters most here. Three tiers, and the difference between the
-last two is the point:
+The governance test reads the theme registry, so a new theme is measured the moment it is
+registered. It holds three things, per theme:
 
-- **text/focus, blocking** — 22 pairs per theme at AA, including every feedback fill, both
-  focus-ring surfaces and the four code-syntax roles.
-- **non-text, blocking** — 8 pairs per theme at 3:1 (WCAG 1.4.11): the focused and invalid
-  border, and each status fill against the page. These pass today; the tier exists so they cannot
-  stop passing.
-- **known 1.4.11 gaps, reported** — pairs that are below 3:1 *right now*. Each one has to name
-  the surface, what else conveys the information, and — where nothing else does — say so. The
-  register is validated both ways: a pair that climbs above its target fails as stale, so it gets
-  promoted to the blocking tier instead of lingering as an excuse.
+- **the token graph** — every rule in `scripts/lib/tokens.mjs`: layer direction, references,
+  types, cycles, cross-component coupling, undocumented literals, theme parity;
+- **207 contrast pairs**, measured on the generated `tokens.css` the browser receives — `var()`
+  chains followed, `color-mix()` mixed, translucent fills (selection, the dark field wash, the
+  status tints) composited over the surface they sit on. 139 are text at 4.5:1: every text role
+  on all eleven surfaces, links and brand text, the on-brand label on rest/hover/pressed, status
+  text on its own subtle surface, the bridge pairs components actually paint with, the sidebar,
+  placeholder inside a field, selected text, and six syntax roles on three code surfaces. 68 are
+  non-text at 3:1 (WCAG 1.4.11): `border.control`, `--input`, `--ring` and `border.brand` on all
+  eleven surfaces, the sidebar indicator, the field border on its own fill, and the chart series
+  and chart chrome;
+- **theme-scoped values** — elevation and the surface-fade gradient must be authored per theme,
+  and `base.css` must declare each theme's `color-scheme`.
 
 Because the bridge references semantic tokens, those pairs are the pairs that render.
 
@@ -201,31 +269,29 @@ Because the bridge references semantic tokens, those pairs are the pairs that re
 
 ## Non-text contrast
 
-Four gaps are registered with **no alternate affordance**, and they are all the same token:
-`color.border.default`, which `--border` *and* `--input` both reference. As a divider it is
-outside 1.4.11 — a rule between two rows is decoration. As the resting boundary of a
-transparent-filled control it is a real failure: 1.26:1 in light, 1.72–1.97:1 in dark, against a
-3:1 requirement.
+Resting control boundaries have their own role, `color.border.control`, and `--input` references
+it. That closes the gap this section used to register: `--input` was `color.border.default`, a
+divider colour, at 1.26:1 in light and 1.72:1 in dark.
 
-Closing it is a coordinated change, not a token tweak, which is why it is registered rather than
-fixed. `--input` is rendered as a **border** by 25 components and as a **fill** (`bg-input/30`
-and friends) by 28 more, so darkening it to pass would also darken every dark-mode field wash and
-the light-mode Switch off-track. The fix is to split a `color.border.control` role out of
-`color.border.default` and retarget `--input` to it. Measured candidates, for whoever takes that
-decision:
+| | `border.control` | `border.control-hover` | worst surface |
+|:--|:--|:--|:--|
+| light | `graphite.450` | `graphite.600` | 3.07:1 on `surface.brand-subtle-hover` (3.8:1 on white) |
+| dark | `graphite.450` | `graphite.400` | 3.32:1 on `surface.interactive-hover` (4.7:1 on `surface.default`) |
 
-| | now | 3:1 needs |
-|:--|:--|:--|
-| light, against `surface.canvas`/`default` (both white) | `neutral.200`, 1.26:1 | `neutral.400` is 2.59:1 — short. A new `neutral.450` at L 0.65 gives 3.24:1; `neutral.500` gives 4.73:1 |
-| dark, against `surface.elevated` (the worst case) | `neutral.700`, 1.45:1 | `neutral.500` gives 3.19:1; `neutral.400` gives 5.83:1 |
+`--input` is painted as a **border** by about 25 components and as a **fill** by about 28 more
+(`dark:bg-input/30` and friends, shadcn's idiom). A 3:1 boundary at the old fill percentages would
+have turned every dark field into a grey slab, so the fills were rescaled to keep their previous
+visual weight: `/30 → /12`, `/40 → /16`, `/disabled → /20` on hover, `/80 → /35` when disabled,
+and `dark:border-input → dark:border-border-strong` where the border was decorative (outline
+button, chip, active tab). Consumer components written against shadcn that derive fills from
+`--input` will look heavier in dark mode and should do the same.
 
-Note the direction reverses per theme, and that `color.border.hover` (light `neutral.400`) would
-have to move too, or hover would become *lighter* than rest.
+Still below 3:1, deliberately:
 
-Three further pairs are registered **with** an alternate affordance and need no token change:
-`border.strong` (structure, not a control), `border.hover` (pointer-only, accompanied by a
-background and cursor change), and `action.primary` at 2.83:1 in light (0.17 short, but the
-checked state is carried by a glyph at 4.5:1 and by `aria-checked`).
+- `border.default` and `border.subtle` — dividers and card edges, decoration rather than a
+  control boundary, so outside 1.4.11.
+- `action.primary` as a fill against the page — 3.0:1 on white, 2.9:1 on the light canvas. A
+  primary button is identified by its label (6.7:1), not by its fill edge.
 
 ---
 
@@ -256,21 +322,23 @@ Inside `@layer base` (so any host rule of equal specificity that is unlayered wi
 
 | Selector | Effect |
 |:--|:--|
+| `:root`, `.dark` | `color-scheme: light` / `dark`, so browser-drawn UI (scrollbars, form controls, autofill) follows the theme |
 | `*` | `border-color` and `outline-color` defaults |
 | `html` | `font-sans`, antialiasing, `font-feature-settings` |
 | `body` | `bg-background`, `font-sans`, `text-foreground` |
 | `::selection` | selection background |
 | `h1`–`h6` | `font-heading`, `tracking-tight` |
-| `button`, `[role="button"]`, `input`, `select`, `textarea`, `label` | `font-family: var(--font-ui)` |
+| `button`, `[role="button"]`, `input`, `select`, `textarea`, `label`, and the menu, sidebar and breadcrumb text slots | `font-family: var(--font-ui)` |
 | `button:not(:disabled)`, `[role="button"]:not(:disabled)` | `cursor: pointer` |
 | `[data-slot="skeleton"]` | the shimmer sweep |
 | `*`, `::before`, `::after` under `prefers-reduced-motion` | all animation and transition collapsed, `!important` |
+| native controls and control roles under `forced-colors` | `forced-color-adjust: auto` — a default a component's own opt-out overrides (§ Forced colors) |
 
 Unlayered, so it beats everything (this is intended — forced colors is not negotiable):
 
 | Selector | Effect |
 |:--|:--|
-| `:root`, `.dark` under `forced-colors` | the whole bridge remapped to system colours |
+| `:root`, `.dark` under `forced-colors` | the whole bridge remapped to system colours; hover fills to `Canvas` |
 | `*` under `forced-colors` | `box-shadow`/`text-shadow` removed, `!important` |
 | `:focus-visible` under `forced-colors` | `Highlight` outline, `!important` |
 | a handful of `[data-slot=…]` rules | overlays opaque, skeleton stilled, chart and rating opted out of the forced palette |

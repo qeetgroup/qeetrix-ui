@@ -1,0 +1,22 @@
+{
+  "component": {
+    "timeline": {
+      "$description": "Timeline (vertical event history). Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "gap": {
+        "$value": "calc(var(--qx-control-field-gap) * 1.5)",
+        "$type": "dimension",
+        "$description": "Space between two events. One and a half field gaps: 24px by default and comfortable, 12px compact, so a dense activity history compresses with the rest of the page."
+      },
+      "gap-minor": {
+        "$value": "calc(var(--qx-control-field-gap) * 0.75)",
+        "$type": "dimension",
+        "$description": "Space after a minor (system / housekeeping) event. Half the major rhythm, so runs of low-importance events read as one quiet block."
+      },
+      "marker-size": {
+        "$value": "1.5rem",
+        "$type": "dimension",
+        "$description": "The marker box every event aligns to. Dots and icon markers share it, so mixed events keep one rail and the connector stays centred."
+      }
+    }
+  }
+}

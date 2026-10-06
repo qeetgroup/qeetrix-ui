@@ -1,11 +1,27 @@
 {
   "component": {
     "switch": {
-      "$description": "Switch track and thumb geometry. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "$description": "Switch track and thumb. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why. The on/off distinction is carried three ways so it never rests on hue: the thumb's position, the track fill, and the thumb's lightness, which inverts from a light thumb (off) to a graphite thumb (on). The off thumb is theme-varying, so it lives in the theme overlays.",
       "thumb-size": {
         "$value": "18.4px",
         "$type": "dimension",
         "$description": "The default track height. Derived from the 32px track width at the design's 1.74:1 ratio, so it is not a scale step."
+      },
+      "track": {
+        "$value": "var(--qx-color-border-control)",
+        "$type": "color"
+      },
+      "track-checked": {
+        "$value": "var(--qx-color-action-primary)",
+        "$type": "color"
+      },
+      "track-checked-hover": {
+        "$value": "var(--qx-color-action-primary-hover)",
+        "$type": "color"
+      },
+      "thumb-checked": {
+        "$value": "var(--qx-color-text-on-brand)",
+        "$type": "color"
       }
     }
   }

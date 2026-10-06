@@ -1,0 +1,12 @@
+{
+  "component": {
+    "rating": {
+      "$description": "Rating icons. The value is carried by shape — a filled icon against an outlined one — and by the accessible name, never by hue alone. Component tokens reference semantic tokens through their CSS variables, so one declaration re-themes.",
+      "filled-edge": {
+        "$value": "color-mix(in oklab, var(--qx-color-rating-filled) 65%, var(--qx-color-text-primary))",
+        "$type": "color",
+        "$description": "The outline of a filled icon. The rating fill is a light gold that sits at ~1.7:1 on a light surface, so on its own a filled star has no edge a low-vision user can find; drawing it in the fill mixed toward the text colour gives a deep-gold edge at ≥3.4:1 on every light surface and a pale-gold one on dark, without changing the fill."
+      }
+    }
+  }
+}

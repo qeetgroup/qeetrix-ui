@@ -1,0 +1,11 @@
+{
+  "component": {
+    "tree-view": {
+      "$description": "TreeView rows. A tree row is a list row, a step tighter than a form control: it derives from the density-resolved control height so compact and comfortable subtrees move the tree with everything else, without a density metric of its own.",
+      "row-height": {
+        "$value": "calc(var(--qx-control-height) - 0.25rem)",
+        "$type": "dimension"
+      }
+    }
+  }
+}

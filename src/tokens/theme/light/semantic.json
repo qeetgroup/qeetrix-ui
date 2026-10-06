@@ -2,35 +2,42 @@
   "color": {
     "text": {
       "primary": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.950}",
         "$type": "color"
       },
       "secondary": {
-        "$value": "{color.neutral.600}",
+        "$value": "{color.graphite.700}",
         "$type": "color"
       },
       "tertiary": {
-        "$value": "{color.neutral.500}",
+        "$value": "{color.graphite.600}",
         "$type": "color"
       },
       "placeholder": {
-        "$value": "{color.neutral.500}",
-        "$type": "color"
+        "$value": "{color.graphite.600}",
+        "$type": "color",
+        "$description": "Placeholder text is real text: held to 4.5:1 on field backgrounds, not dimmed to disabled."
       },
       "disabled": {
-        "$value": "{color.neutral.400}",
+        "$value": "{color.graphite.400}",
         "$type": "color"
       },
       "inverse": {
-        "$value": "{color.neutral.0}",
+        "$value": "{color.graphite.0}",
         "$type": "color"
       },
       "brand": {
-        "$value": "{color.brand.700}",
-        "$type": "color"
+        "$value": "{color.qeet.700}",
+        "$type": "color",
+        "$description": "Readable Qeet orange for text and icons: the AA step of the ramp, not the 500 fill."
       },
       "link": {
-        "$value": "{color.brand.600}",
+        "$value": "{color.qeet.700}",
+        "$type": "color",
+        "$description": "Links use the AA text step of the Qeet ramp. Deliberately not color.action.primary: the primary button keeps Qeet 500 with a dark label, while link text has to reach 4.5:1 on its own."
+      },
+      "link-hover": {
+        "$value": "{color.qeet.800}",
         "$type": "color"
       },
       "success": {
@@ -42,7 +49,7 @@
         "$type": "color"
       },
       "danger": {
-        "$value": "{color.danger.500}",
+        "$value": "{color.danger.700}",
         "$type": "color"
       },
       "info": {
@@ -50,75 +57,119 @@
         "$type": "color"
       },
       "on-brand": {
-        "$value": "{color.neutral.900}",
-        "$type": "color"
+        "$value": "{color.graphite.1000}",
+        "$type": "color",
+        "$description": "The label on a Qeet 500 fill. Dark, because white on #F26D0E is 3.0:1 and fails AA; graphite-1000 holds ≥4.5:1 on the rest, hover and active fills."
       },
       "on-subtle": {
-        "$value": "{color.neutral.850}",
+        "$value": "{color.graphite.950}",
         "$type": "color"
       },
       "on-feedback": {
-        "$value": "{color.neutral.0}",
+        "$value": "{color.graphite.0}",
         "$type": "color"
       }
     },
     "surface": {
       "canvas": {
-        "$value": "{color.neutral.0}",
-        "$type": "color"
+        "$value": "{color.graphite.25}",
+        "$type": "color",
+        "$description": "The page. Light: a warm off-white, so white cards read as cards without heavy borders. Dark: deep warm graphite, never pure black."
       },
       "default": {
-        "$value": "{color.neutral.0}",
+        "$value": "{color.graphite.0}",
         "$type": "color"
       },
       "elevated": {
-        "$value": "{color.neutral.0}",
+        "$value": "{color.graphite.0}",
         "$type": "color"
       },
+      "overlay": {
+        "$value": "{color.graphite.0}",
+        "$type": "color",
+        "$description": "Popovers, menus and dialogs. In dark mode the step above elevated, so an overlay separates by luminance first and shadow second."
+      },
       "sunken": {
-        "$value": "{color.neutral.100}",
+        "$value": "{color.graphite.100}",
         "$type": "color"
       },
       "subtle": {
-        "$value": "{color.neutral.100}",
+        "$value": "{color.graphite.50}",
         "$type": "color"
       },
       "interactive": {
-        "$value": "{color.neutral.100}",
+        "$value": "{color.graphite.100}",
+        "$type": "color"
+      },
+      "interactive-hover": {
+        "$value": "{color.graphite.150}",
+        "$type": "color"
+      },
+      "interactive-active": {
+        "$value": "{color.graphite.200}",
+        "$type": "color"
+      },
+      "brand-subtle": {
+        "$value": "{color.qeet.100}",
+        "$type": "color",
+        "$description": "The Qeet selected state (selected navigation, active tab, chosen filter, selected row or command item): a restrained warm tint in light, an ember-on-graphite surface in dark — Qeet without being orange everywhere. Pair it with text.primary or text.brand and, where a non-colour cue is needed, border.brand."
+      },
+      "brand-subtle-hover": {
+        "$value": "{color.qeet.150}",
+        "$type": "color"
+      },
+      "brand-subtle-active": {
+        "$value": "{color.qeet.200}",
         "$type": "color"
       },
       "rail": {
-        "$value": "{color.neutral.50}",
+        "$value": "{color.graphite.50}",
         "$type": "color"
       },
       "inverse": {
-        "$value": "{color.neutral.900}",
+        "$value": "{color.graphite.900}",
         "$type": "color"
       }
     },
     "border": {
       "default": {
-        "$value": "{color.neutral.200}",
-        "$type": "color"
+        "$value": "{color.graphite.200}",
+        "$type": "color",
+        "$description": "Decorative: card edges and dividers. Not for identifying a control — that is border.control."
       },
       "subtle": {
-        "$value": "{color.neutral.100}",
+        "$value": "{color.graphite.150}",
         "$type": "color"
       },
       "strong": {
-        "$value": "{color.neutral.300}",
+        "$value": "{color.graphite.300}",
+        "$type": "color"
+      },
+      "control": {
+        "$value": "{color.graphite.450}",
+        "$type": "color",
+        "$description": "The boundary that identifies an interactive control (inputs, selects, checkboxes, radios, switch tracks): ≥3:1 against every surface a control sits on (WCAG 1.4.11), unlike the decorative border.default."
+      },
+      "control-hover": {
+        "$value": "{color.graphite.600}",
         "$type": "color"
       },
       "focused": {
-        "$value": "{color.brand.600}",
+        "$value": "{color.qeet.600}",
         "$type": "color"
       },
       "hover": {
-        "$value": "{color.neutral.400}",
-        "$type": "color"
+        "$value": "{color.graphite.600}",
+        "$type": "color",
+        "$description": "Kept for compatibility; equals border.control-hover."
+      },
+      "brand": {
+        "$value": "{color.qeet.600}",
+        "$type": "color",
+        "$description": "A Qeet indicator that has to be seen without colour fill, e.g. the active-navigation bar or a selected tab underline: ≥3:1 on every surface."
       },
       "danger": {
-        "$value": "{color.danger.500}",
+        "$value": "{color.danger.600}",
         "$type": "color"
       },
       "success": {
@@ -136,15 +187,16 @@
     },
     "action": {
       "primary": {
-        "$value": "{color.brand.500}",
-        "$type": "color"
+        "$value": "{color.qeet.500}",
+        "$type": "color",
+        "$description": "Qeet 500, #F26D0E, in both themes: the primary action is the brand moment."
       },
       "primary-hover": {
-        "$value": "{color.brand.600}",
+        "$value": "{color.qeet.550}",
         "$type": "color"
       },
       "primary-active": {
-        "$value": "{color.brand.700}",
+        "$value": "{color.qeet.600}",
         "$type": "color"
       }
     },
@@ -158,30 +210,49 @@
         "$type": "color"
       },
       "error": {
-        "$value": "{color.danger.500}",
+        "$value": "{color.danger.700}",
         "$type": "color"
       },
       "info": {
         "$value": "{color.info.700}",
         "$type": "color"
+      },
+      "success-subtle": {
+        "$value": "{color.success.50}",
+        "$type": "color",
+        "$description": "Subtle status backgrounds (alerts, inline messages, status badges): text.<status> on them holds 4.5:1."
+      },
+      "warning-subtle": {
+        "$value": "{color.warning.50}",
+        "$type": "color"
+      },
+      "error-subtle": {
+        "$value": "{color.danger.50}",
+        "$type": "color"
+      },
+      "info-subtle": {
+        "$value": "{color.info.50}",
+        "$type": "color"
       }
     },
     "focus": {
       "ring": {
-        "$value": "{color.brand.600}",
-        "$type": "color"
+        "$value": "{color.qeet.600}",
+        "$type": "color",
+        "$description": "Solid Qeet focus colour, ≥3:1 against every surface. Components may draw a translucent halo from it, but the indicator itself is this colour."
       }
     },
     "overlay": {
       "scrim": {
-        "$value": "{color.alpha.black-40}",
+        "$value": "color-mix(in oklab, {color.graphite.1000} 40%, transparent)",
         "$type": "color"
       }
     },
     "selection": {
       "background": {
-        "$value": "color-mix(in oklab, {color.action.primary} 22%, transparent)",
-        "$type": "color"
+        "$value": "color-mix(in oklab, {color.qeet.500} 20%, transparent)",
+        "$type": "color",
+        "$description": "Text selection: a Qeet tint that keeps selected text at ≥4.5:1."
       }
     },
     "rating": {
@@ -189,6 +260,25 @@
       "filled": {
         "$value": "{color.amber.400}",
         "$type": "color"
+      }
+    }
+  },
+  "gradient": {
+    "surface-fade": {
+      "$type": "gradient",
+      "$description": "A quiet surface-to-background fade. Theme-aware, so light stops never appear in dark mode.",
+      "$value": {
+        "angle": "180deg",
+        "stops": [
+          {
+            "color": "{color.surface.default}",
+            "position": 0
+          },
+          {
+            "color": "{color.surface.subtle}",
+            "position": 1
+          }
+        ]
       }
     }
   }

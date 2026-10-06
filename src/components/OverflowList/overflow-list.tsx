@@ -100,6 +100,20 @@ function OverflowList({
     recompute(measurement.widths);
   }, [needsMeasure, items, measurement, recompute]);
 
+  // Web fonts swap in after first paint (`font-display: swap`), and the first measurement was
+  // taken in the fallback face — Qeet UI is not the same width as the system font, so the row
+  // collapsed to the wrong count until something else re-rendered it. Re-measure once the
+  // document's fonts have settled.
+  React.useEffect(() => {
+    let cancelled = false;
+    document.fonts?.ready.then(() => {
+      if (!cancelled) setMeasurement(null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Resize only changes the space available, not the intrinsic item widths, so it recomputes
   // from the cache instead of re-mounting the whole row. ResizeObserver never fires in jsdom.
   React.useLayoutEffect(() => {
@@ -116,14 +130,16 @@ function OverflowList({
 
   const overflow =
     hiddenCount > 0 ? (
-      <div data-slot="overflow-list-overflow" className="shrink-0">
+      <div data-slot="overflow-list-overflow" className="flex shrink-0 items-center">
         {renderOverflow ? (
           renderOverflow(hidden, hiddenCount)
         ) : (
           <Popover>
             <PopoverTrigger
               data-slot="overflow-list-trigger"
-              className="inline-flex h-6 items-center rounded-full border border-border px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/disabled"
+              // The chip vocabulary (corner, scale) so "+N" reads as one more item in the row,
+              // not as a foreign pill; neutral hover, and a pressed look while its popover is open.
+              className="inline-flex h-6 min-w-6 items-center justify-center rounded-(--qx-corner-chip) border border-border px-1.5 text-xs font-medium text-muted-foreground tabular-nums transition-colors duration-fast ease-standard hover:bg-surface-interactive-hover hover:text-foreground focus-visible:focus-ring data-popup-open:bg-surface-interactive data-popup-open:text-foreground"
               aria-label={messages.showMore(hiddenCount)}
             >
               +{hiddenCount}
@@ -141,7 +157,14 @@ function OverflowList({
       className={cn("relative w-full", className)}
       {...props}
     >
-      <div ref={rowRef} className={cn("flex flex-nowrap items-center overflow-hidden", gap)}>
+      {/* The row clips its overflow, so it carries 0.25rem of padding cancelled by an equal
+          negative margin: the width available to the items is unchanged, but focus rings and
+          shadows on the items (and the trigger) have room to draw instead of being cut off. */}
+      <div
+        ref={rowRef}
+        data-slot="overflow-list-row"
+        className={cn("-m-1 flex flex-nowrap items-center overflow-hidden p-1", gap)}
+      >
         {collapseFrom === "start" && overflow}
         {visible.map((item, i) => {
           const itemKey = `${collapseFrom === "start" ? hiddenCount + i : i}`;

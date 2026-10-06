@@ -1,22 +1,65 @@
 {
   "color": {
     "data": {
+      "$description": "Data-visualisation roles, independent of application chrome. The eight categorical series keep one hue order in both themes (blue · teal · Qeet · violet · pink · lime · sky/cyan · graphite) and alternate lightness so series stay separable under the common colour-vision deficiencies (worst-case OKLab distance ≥0.046 light / ≥0.061 dark under normal, deuteranopia, protanopia and tritanopia); every series is ≥3:1 on its surface. Qeet orange is series 3 — present, never automatically dominant. Colour is never the only channel: charts also render legends, labels and ChartDataTable. positive/negative/warning are semantic, from the status ramps — negative is red, never gray.",
       "categorical": {
-        "1": { "$value": "{color.blue.700}", "$type": "color" },
-        "2": { "$value": "{color.orange.700}", "$type": "color" },
-        "3": { "$value": "{color.emerald.700}", "$type": "color" },
-        "4": { "$value": "{color.violet.700}", "$type": "color" },
-        "5": { "$value": "{color.rose.700}", "$type": "color" },
-        "6": { "$value": "{color.cyan.800}", "$type": "color" },
-        "7": { "$value": "{color.amber.800}", "$type": "color" },
-        "8": { "$value": "{color.indigo.700}", "$type": "color" }
+        "1": {
+          "$value": "{color.blue.600}",
+          "$type": "color"
+        },
+        "2": {
+          "$value": "{color.teal.700}",
+          "$type": "color"
+        },
+        "3": {
+          "$value": "{color.qeet.600}",
+          "$type": "color"
+        },
+        "4": {
+          "$value": "{color.violet.800}",
+          "$type": "color"
+        },
+        "5": {
+          "$value": "{color.pink.500}",
+          "$type": "color"
+        },
+        "6": {
+          "$value": "{color.lime.700}",
+          "$type": "color"
+        },
+        "7": {
+          "$value": "{color.sky.600}",
+          "$type": "color"
+        },
+        "8": {
+          "$value": "{color.graphite.700}",
+          "$type": "color"
+        }
       },
-      "grid": { "$value": "{color.neutral.300}", "$type": "color" },
-      "axis": { "$value": "{color.neutral.600}", "$type": "color" },
-      "reference": { "$value": "{color.neutral.500}", "$type": "color" },
-      "positive": { "$value": "{color.success.700}", "$type": "color" },
-      "negative": { "$value": "{color.danger.600}", "$type": "color" },
-      "warning": { "$value": "{color.warning.700}", "$type": "color" }
+      "grid": {
+        "$value": "{color.graphite.200}",
+        "$type": "color"
+      },
+      "axis": {
+        "$value": "{color.graphite.600}",
+        "$type": "color"
+      },
+      "reference": {
+        "$value": "{color.graphite.500}",
+        "$type": "color"
+      },
+      "positive": {
+        "$value": "{color.success.600}",
+        "$type": "color"
+      },
+      "negative": {
+        "$value": "{color.danger.600}",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "{color.warning.600}",
+        "$type": "color"
+      }
     }
   }
 }

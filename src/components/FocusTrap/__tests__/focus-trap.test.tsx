@@ -262,6 +262,37 @@ describe("FocusTrap", () => {
     expect(screen.getByRole("button", { name: "Outer tail" })).toHaveFocus();
   });
 
+  it("keeps trapping when the consumer passes its own ref", async () => {
+    // `{...props}` used to spread the consumer's `ref` over the trap's own, which left the
+    // trap with no container and silently switched it off.
+    const user = userEvent.setup();
+    const objectRef = React.createRef<HTMLDivElement>();
+    let callbackNode: HTMLDivElement | null = null;
+    render(
+      <div>
+        <FocusTrap active ref={objectRef}>
+          <button type="button">First</button>
+          <button type="button">Last</button>
+        </FocusTrap>
+        <FocusTrap
+          active={false}
+          ref={(node) => {
+            callbackNode = node;
+          }}
+        >
+          <button type="button">Elsewhere</button>
+        </FocusTrap>
+      </div>,
+    );
+
+    expect(objectRef.current).toHaveAttribute("data-slot", "focus-trap");
+    expect(callbackNode).toHaveAttribute("data-slot", "focus-trap");
+    expect(screen.getByRole("button", { name: "First" })).toHaveFocus();
+    screen.getByRole("button", { name: "Last" }).focus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "First" })).toHaveFocus();
+  });
+
   it("does not restore focus to a trigger that was removed while the trap was open", () => {
     function Disappearing() {
       const [trapped, setTrapped] = React.useState(false);

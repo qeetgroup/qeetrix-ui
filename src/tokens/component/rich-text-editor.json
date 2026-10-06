@@ -1,0 +1,49 @@
+{
+  "component": {
+    "rich-text-editor": {
+      "$description": "RichTextEditor. The editor is a form field, so its frame speaks the same language as Input and Textarea: the 3:1 control boundary, the field corner, the field focus treatment. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens.",
+      "corner": {
+        "$value": "{corner.field}",
+        "$type": "dimension"
+      },
+      "border": {
+        "$value": "var(--qx-color-border-control)",
+        "$type": "color",
+        "$description": "The editable frame's boundary — the control boundary every field uses, at 3:1 against the surfaces it sits on."
+      },
+      "border-hover": {
+        "$value": "var(--qx-color-border-control-hover)",
+        "$type": "color"
+      },
+      "border-readonly": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color",
+        "$description": "A read-only editor keeps a quiet, decorative frame: it still bounds the content, but no longer claims to be a control you can type into."
+      },
+      "background": {
+        "$value": "transparent",
+        "$type": "color",
+        "$description": "The editing surface takes the surface it is placed on, like every Qeetrix field."
+      },
+      "background-disabled": {
+        "$value": "var(--qx-color-surface-sunken)",
+        "$type": "color"
+      },
+      "toolbar-background": {
+        "$value": "var(--qx-color-surface-subtle)",
+        "$type": "color",
+        "$description": "The formatting strip sits one quiet step off the editing surface, so chrome and content read as two layers without a heavier rule between them."
+      },
+      "divider": {
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color",
+        "$description": "Rules between the toolbar, the link bar and the content."
+      },
+      "caret": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color",
+        "$description": "The text caret. Brand, because the caret is where focus is and focus is Qeet orange; the brand border role is designed at 3:1 or better on every surface, so the caret meets non-text contrast in both themes."
+      }
+    }
+  }
+}

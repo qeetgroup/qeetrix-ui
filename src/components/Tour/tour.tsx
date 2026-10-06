@@ -6,8 +6,14 @@ import * as React from "react";
 import { Button } from "@/components/Button/button";
 import { useFocusTrap } from "@/components/FocusTrap/focus-trap";
 import { Portal } from "@/internal/portal";
+import { VisuallyHidden } from "@/internal/visually-hidden";
+import { logicalDirectionForKey } from "@/lib/direction";
+import type { MessagesFor } from "@/lib/messages";
+import { tourMessages } from "@/lib/messages";
 import { COMPONENT } from "@/lib/token-values";
 import { cn } from "@/lib/utils";
+import { useResolvedDirection } from "@/providers/direction-provider";
+import { useMessages } from "@/providers/messages-provider";
 import { useModalOverlay } from "@/runtime/overlay";
 import { type AnchorSide, resolveAnchoredPosition } from "@/runtime/overlay-position";
 
@@ -53,6 +59,11 @@ interface TourProps {
   onDismiss?: () => void;
   /** Extra classes forwarded to the step card. */
   className?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"tour">;
 }
 
 // ─── useTour hook ─────────────────────────────────────────────────────────────
@@ -115,11 +126,12 @@ function useTour(steps: TourStepDef[], options: UseTourOptions = {}): UseTourRet
 // ─── tourCardVariants ─────────────────────────────────────────────────────────
 
 /**
- * Base visual classes for the floating tour card.
+ * Base visual classes for the floating tour card: the Qeet overlay surface at the modal
+ * elevation, because the card is a modal dialog (the page behind it is inert).
  * Extend via `className` when embedding TourStep standalone.
  */
 const tourCardVariants = cva(
-  "fixed z-(--qx-z-tour) w-(--qx-component-tour-card-width) rounded-lg border bg-card p-4 text-card-foreground shadow-modal",
+  "fixed z-(--qx-z-tour) w-(--qx-component-tour-card-width) max-w-[calc(100vw-1rem)] rounded-(--qx-corner-overlay) border border-border bg-popover bg-clip-padding p-4 text-popover-foreground shadow-modal outline-none duration-normal ease-enter animate-in fade-in-0 zoom-in-97",
 );
 
 // ─── Position helpers ─────────────────────────────────────────────────────────
@@ -147,7 +159,9 @@ interface Coords {
  */
 function measurePosition(step: TourStepDef, card: HTMLElement | null): Coords {
   const anchor = document.querySelector(step.target)?.getBoundingClientRect() ?? null;
-  const cardRect = card?.getBoundingClientRect();
+  // Layout size, not getBoundingClientRect: the card's entry animation scales it, and a rect
+  // measured mid-animation is a few pixels short, which pushed the clamped card past its margin.
+  const cardSize = card ? { width: card.offsetWidth, height: card.offsetHeight } : null;
 
   const { top, left, side } = resolveAnchoredPosition({
     anchor: anchor && {
@@ -157,13 +171,128 @@ function measurePosition(step: TourStepDef, card: HTMLElement | null): Coords {
       height: anchor.height,
     },
     side: step.placement ?? "bottom",
-    size: { width: cardRect?.width || CARD_WIDTH, height: cardRect?.height ?? 0 },
+    size: { width: cardSize?.width || CARD_WIDTH, height: cardSize?.height ?? 0 },
     viewport: { width: window.innerWidth, height: window.innerHeight },
     offset: CARD_OFFSET,
     margin: VIEWPORT_MARGIN,
   });
 
   return { top, left, side };
+}
+
+/**
+ * Bring a step's target on screen before it is spotlighted. The tour locks page scroll, so a
+ * target below the fold could otherwise never be seen. Instant rather than smooth: nothing is
+ * animated from script, so there is no motion to reduce.
+ */
+function revealTarget(selector: string) {
+  const target = document.querySelector(selector);
+  if (!target) return;
+  const rect = target.getBoundingClientRect();
+  const visible =
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= window.innerHeight &&
+    rect.right <= window.innerWidth;
+  if (!visible) target.scrollIntoView?.({ block: "center", inline: "nearest" });
+}
+
+/** Whether a key event belongs to a text-entry control inside the step content. */
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName);
+}
+
+// ─── Spotlight ────────────────────────────────────────────────────────────────
+
+interface Rect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+function readPixels(name: string, fallback: number): number {
+  const value = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue(name),
+  );
+  return Number.isFinite(value) ? value : fallback;
+}
+
+/**
+ * An even-odd clip path: everything, minus a rounded rectangle around the target. A clip-path
+ * rather than a giant box-shadow because forced-colors mode removes every shadow — the
+ * base stylesheet turns this backdrop into a Canvas veil there, and the hole survives.
+ */
+function spotlightClipPath(rect: Rect | null): string | undefined {
+  if (!rect) return undefined;
+  const pad = readPixels("--qx-component-tour-spotlight-padding", 6);
+  const corner = readPixels("--qx-component-tour-spotlight-corner", 8);
+  const x = rect.left - pad;
+  const y = rect.top - pad;
+  const w = rect.width + pad * 2;
+  const h = rect.height + pad * 2;
+  const r = Math.max(0, Math.min(corner, w / 2, h / 2));
+  const outer = "M-1 -1H100000V100000H-1Z";
+  const hole =
+    `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}` +
+    `A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}` +
+    `V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`;
+  return `path(evenodd, "${outer} ${hole}")`;
+}
+
+/** The target's viewport rect, kept current through resize, any scroll and size changes. */
+function useTargetRect(selector: string): Rect | null {
+  const [rect, setRect] = React.useState<Rect | null>(null);
+
+  React.useLayoutEffect(() => {
+    const target = document.querySelector(selector);
+    if (!target) {
+      setRect(null);
+      return;
+    }
+    const measure = () => {
+      const r = target.getBoundingClientRect();
+      setRect((prev) =>
+        prev &&
+        prev.top === r.top &&
+        prev.left === r.left &&
+        prev.width === r.width &&
+        prev.height === r.height
+          ? prev
+          : { top: r.top, left: r.left, width: r.width, height: r.height },
+      );
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    window.addEventListener("scroll", measure, { capture: true, passive: true });
+    const observer = new ResizeObserver(measure);
+    observer.observe(target);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", measure, { capture: true });
+      observer.disconnect();
+    };
+  }, [selector]);
+
+  return rect;
+}
+
+/** The dimmed backdrop with a cut-out over the current target. Clicking it dismisses. */
+function TourSpotlight({ selector, onDismiss }: { selector: string; onDismiss: () => void }) {
+  const rect = useTargetRect(selector);
+  return (
+    <div
+      data-slot="tour-backdrop"
+      data-spotlight={rect ? "" : undefined}
+      className="fixed inset-0 z-(--qx-z-tour-backdrop) bg-(--qx-component-tour-scrim) duration-normal ease-standard animate-in fade-in-0"
+      style={{ clipPath: spotlightClipPath(rect) }}
+      onClick={onDismiss}
+      aria-hidden="true"
+      // OVERLAY_ROOT_ATTRIBUTE from @/runtime/overlay — written literally, see TourStep.
+      data-qx-overlay-root=""
+    />
+  );
 }
 
 // ─── TourStep ─────────────────────────────────────────────────────────────────
@@ -176,13 +305,23 @@ interface TourStepProps {
   onPrev: () => void;
   onDismiss: () => void;
   className?: string;
+  /**
+   * Overrides for this component's built-in English strings. Each key falls back to the
+   * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
+   */
+  messages?: MessagesFor<"tour">;
 }
 
 /**
  * Floating card anchored to the current step's target element.
  * Rendered by Tour internally; also exportable for custom layouts.
  *
- * Keyboard: Escape → dismiss · ArrowRight → next · ArrowLeft → prev
+ * Keyboard: Escape → dismiss · the inline-end arrow → next · the inline-start arrow → prev
+ * (ArrowRight / ArrowLeft in English, mirrored in RTL). Arrows typed into a field inside the
+ * step content stay with the field.
+ *
+ * Focus starts on the primary action, so Enter advances. Moving between steps keeps focus
+ * where it is and announces the new step politely instead of re-reading the whole card.
  */
 function TourStep({
   step,
@@ -192,11 +331,19 @@ function TourStep({
   onPrev,
   onDismiss,
   className,
+  messages: messageOverrides,
 }: TourStepProps) {
+  const messages = useMessages("tour", tourMessages, messageOverrides);
   const [coords, setCoords] = React.useState<Coords>({ top: 0, left: 0, side: "bottom" });
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === totalSteps - 1;
-  const { containerRef } = useFocusTrap(true);
+  const nextRef = React.useRef<HTMLButtonElement | null>(null);
+  const { containerRef } = useFocusTrap(true, { initialFocusRef: nextRef });
+  const direction = useResolvedDirection(containerRef);
+  const titleId = React.useId();
+  const contentId = React.useId();
+  const counterId = React.useId();
+  const counter = messages.progress(currentIndex + 1, totalSteps);
 
   const reposition = React.useCallback(() => {
     const next = measurePosition(step, containerRef.current);
@@ -206,6 +353,12 @@ function TourStep({
       prev.top === next.top && prev.left === next.left && prev.side === next.side ? prev : next,
     );
   }, [step, containerRef]);
+
+  // Declared before the positioning effect so it runs first: the card is placed against where
+  // the target is after it has been scrolled into view.
+  React.useLayoutEffect(() => {
+    revealTarget(step.target);
+  }, [step.target]);
 
   // Position follows the target: recompute on step change, on viewport resize, when anything
   // scrolls (capture, so scroll containers count) and when the card's own size changes.
@@ -230,10 +383,14 @@ function TourStep({
     if (event.key === "Escape") {
       event.preventDefault();
       onDismiss();
-    } else if (event.key === "ArrowRight") {
+      return;
+    }
+    if (isEditableTarget(event.target)) return;
+    const logical = logicalDirectionForKey(event.key, direction);
+    if (logical === "inline-end") {
       event.preventDefault();
       onNext();
-    } else if (event.key === "ArrowLeft") {
+    } else if (logical === "inline-start") {
       event.preventDefault();
       onPrev();
     }
@@ -245,7 +402,8 @@ function TourStep({
       data-slot="tour-step"
       data-side={coords.side}
       role="dialog"
-      aria-label={step.title}
+      aria-labelledby={titleId}
+      aria-describedby={`${contentId} ${counterId}`}
       aria-modal="true"
       onKeyDown={handleKeyDown}
       className={cn(tourCardVariants(), className)}
@@ -258,42 +416,64 @@ function TourStep({
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <p data-slot="tour-step-title" className="text-sm font-semibold leading-snug">
+        <p
+          // Re-keyed per step so the new title fades in: the motion marks the progression.
+          key={`title-${currentIndex}`}
+          id={titleId}
+          data-slot="tour-step-title"
+          className="min-w-0 pt-1 font-heading text-base leading-snug font-semibold text-pretty text-foreground duration-normal ease-enter animate-in fade-in-0"
+        >
           {step.title}
         </p>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon-sm"
           onClick={onDismiss}
-          aria-label="Dismiss tour"
-          className="inline-flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-70 transition-opacity hover:opacity-100"
+          aria-label={messages.dismiss}
+          data-slot="tour-dismiss-button"
+          className="-me-1.5 -mt-0.5 shrink-0 text-muted-foreground hover:text-foreground"
         >
-          <XIcon aria-hidden className="size-3.5" />
-        </button>
+          <XIcon aria-hidden />
+        </Button>
       </div>
 
       {/* Content */}
-      <div data-slot="tour-step-content" className="mt-2 text-sm text-muted-foreground">
+      <div
+        key={`content-${currentIndex}`}
+        id={contentId}
+        data-slot="tour-step-content"
+        className="mt-1.5 text-sm text-pretty text-muted-foreground duration-normal ease-enter animate-in fade-in-0"
+      >
         {step.content}
       </div>
 
       {/* Footer — counter + navigation */}
       <div className="mt-4 flex items-center justify-between gap-2">
-        <span data-slot="tour-step-counter" className="text-xs text-muted-foreground">
-          {currentIndex + 1} of {totalSteps}
+        <span
+          id={counterId}
+          data-slot="tour-step-counter"
+          className="font-ui text-xs text-muted-foreground tabular-nums"
+        >
+          {counter}
         </span>
         <div className="flex gap-2">
           {!isFirst && (
             <Button variant="outline" size="sm" onClick={onPrev} data-slot="tour-prev-button">
-              <ChevronLeftIcon aria-hidden />
-              Back
+              <ChevronLeftIcon aria-hidden className="rtl:rotate-180" />
+              {messages.back}
             </Button>
           )}
-          <Button size="sm" onClick={onNext} data-slot="tour-next-button">
-            {isLast ? "Done" : "Next"}
-            {!isLast && <ChevronRightIcon aria-hidden />}
+          <Button ref={nextRef} size="sm" onClick={onNext} data-slot="tour-next-button">
+            {isLast ? messages.done : messages.next}
+            {!isLast && <ChevronRightIcon aria-hidden className="rtl:rotate-180" />}
           </Button>
         </div>
       </div>
+
+      {/* Focus stays on the button that was pressed, so the new step is announced here. */}
+      <VisuallyHidden role="status" aria-live="polite" data-slot="tour-step-status">
+        {messages.stepStatus(step.title, counter)}
+      </VisuallyHidden>
     </div>
   );
 }
@@ -303,9 +483,10 @@ function TourStep({
 /**
  * Step-by-step guided product onboarding overlay.
  *
- * Spotlights a target element and shows a floating card with navigation
- * controls. Supports both controlled (`open`) and uncontrolled (`defaultOpen`)
- * modes.
+ * Spotlights a target element — the page is dimmed with the overlay scrim and the target shows
+ * through a rounded cut-out — and shows a floating card with navigation controls. The page
+ * behind is inert and does not scroll; each step scrolls its own target into view. Supports
+ * both controlled (`open`) and uncontrolled (`defaultOpen`) modes.
  *
  * ```tsx
  * <Tour
@@ -326,6 +507,7 @@ function Tour({
   onComplete,
   onDismiss,
   className,
+  messages,
 }: TourProps) {
   const isControlled = controlledOpen !== undefined;
   const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
@@ -375,14 +557,7 @@ function Tour({
   // appears once there is a document to attach it to.
   return (
     <Portal>
-      {/* Semi-transparent backdrop — clicking it dismisses the tour */}
-      <div
-        data-slot="tour-backdrop"
-        className="fixed inset-0 z-(--qx-z-tour-backdrop) bg-black/40"
-        onClick={handleDismiss}
-        aria-hidden="true"
-        data-qx-overlay-root=""
-      />
+      <TourSpotlight selector={currentStep.target} onDismiss={handleDismiss} />
       {/* Floating step card */}
       <TourStep
         step={currentStep}
@@ -392,10 +567,11 @@ function Tour({
         onPrev={handlePrev}
         onDismiss={handleDismiss}
         className={className}
+        messages={messages}
       />
     </Portal>
   );
 }
 
-export type { TourProps, TourStepDef, UseTourOptions, UseTourReturn };
+export type { TourProps, TourStepDef, TourStepProps, UseTourOptions, UseTourReturn };
 export { Tour, TourStep, tourCardVariants, useTour };

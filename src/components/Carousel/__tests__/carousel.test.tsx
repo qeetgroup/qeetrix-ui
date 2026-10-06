@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
@@ -6,6 +6,8 @@ import {
   Carousel,
   type CarouselApi,
   CarouselContent,
+  CarouselControls,
+  CarouselIndicators,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
@@ -28,6 +30,7 @@ import { DirectionProvider } from "@/providers/direction-provider";
 const fake = vi.hoisted(() => ({
   enabled: false,
   inView: [] as number[],
+  selected: 0,
   options: undefined as Record<string, unknown> | undefined,
   withAutoplay: false,
   container: null as HTMLElement | null,
@@ -35,6 +38,7 @@ const fake = vi.hoisted(() => ({
   api: null as ReturnType<() => unknown> | null,
   scrollPrev: vi.fn(),
   scrollNext: vi.fn(),
+  scrollTo: vi.fn(),
   autoplayStop: vi.fn(),
   autoplayPlay: vi.fn(),
 }));
@@ -49,16 +53,20 @@ vi.mock("embla-carousel-react", async (importOriginal) => {
     fake.container = node;
   };
   const makeApi = () => {
+    const slideNodes = () => [
+      ...(fake.container?.querySelectorAll<HTMLElement>("[data-slot='carousel-item']") ?? []),
+    ];
     const self = {
-      slideNodes: () => [
-        ...(fake.container?.querySelectorAll<HTMLElement>("[data-slot='carousel-item']") ?? []),
-      ],
+      slideNodes,
       slidesInView: () => fake.inView,
       canScrollPrev: () => true,
       canScrollNext: () => true,
       scrollPrev: fake.scrollPrev,
       scrollNext: fake.scrollNext,
-      selectedScrollSnap: () => 0,
+      scrollTo: fake.scrollTo,
+      // One snap per slide, which is what a full-width slide gives.
+      scrollSnapList: () => slideNodes().map((_, index) => index),
+      selectedScrollSnap: () => fake.selected,
       plugins: () =>
         fake.withAutoplay ? { autoplay: { stop: fake.autoplayStop, play: fake.autoplayPlay } } : {},
       on: (event: string, cb: (api: unknown, event: string) => void) => {
@@ -150,10 +158,21 @@ describe("Carousel", () => {
     expect(screen.getByRole("button", { name: "Next slide" })).toBeInTheDocument();
   });
 
-  it("disables the previous control at the start", () => {
+  it("disables the previous control at the start, without taking it out of the tab order", () => {
     render(<CarouselExample />);
     // No slides scrolled past yet, so there is nothing to go back to.
-    expect(screen.getByRole("button", { name: "Previous slide" })).toBeDisabled();
+    const previous = screen.getByRole("button", { name: "Previous slide" });
+    expect(previous).toHaveAttribute("aria-disabled", "true");
+    // Focusable while disabled: pressing Next onto the last slide must not drop focus to <body>.
+    expect(previous).not.toHaveAttribute("disabled");
+    act(() => previous.focus());
+    expect(previous).toHaveFocus();
+  });
+
+  it("chooses chevrons rather than marketing arrows for the controls", () => {
+    render(<CarouselExample />);
+    const next = screen.getByRole("button", { name: "Next slide" });
+    expect(next.querySelector("svg")).toHaveClass("lucide-chevron-right");
   });
 
   it("moves the real Embla carousel with the arrow keys", () => {
@@ -272,6 +291,7 @@ function withFakeEmbla() {
   beforeEach(() => {
     fake.enabled = true;
     fake.inView = [];
+    fake.selected = 0;
     fake.options = undefined;
     fake.withAutoplay = false;
     fake.container = null;
@@ -279,6 +299,7 @@ function withFakeEmbla() {
     fake.api = null;
     fake.scrollPrev.mockClear();
     fake.scrollNext.mockClear();
+    fake.scrollTo.mockClear();
     fake.autoplayStop.mockClear();
     fake.autoplayPlay.mockClear();
     window.matchMedia = originalMatchMedia;
@@ -616,5 +637,171 @@ describe("Carousel reduced motion", () => {
     render(<Gallery />);
     expect(screen.getByRole("button", { name: "Previous slide" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next slide" })).toBeInTheDocument();
+  });
+});
+
+/* ── Controls row, indicators, announcements and focus rescue ───────────────────────────── */
+
+function Paged({ withIndicators = true }: { withIndicators?: boolean } = {}) {
+  return (
+    <Carousel aria-label="Featured products">
+      <CarouselContent>
+        <CarouselItem>
+          <button type="button">Buy one</button>
+        </CarouselItem>
+        <CarouselItem>
+          <button type="button">Buy two</button>
+        </CarouselItem>
+        <CarouselItem>
+          <button type="button">Buy three</button>
+        </CarouselItem>
+      </CarouselContent>
+      <CarouselControls>
+        <CarouselPrevious />
+        {withIndicators && <CarouselIndicators aria-label="Choose a slide" />}
+        <CarouselNext />
+      </CarouselControls>
+    </Carousel>
+  );
+}
+
+const indicators = () =>
+  within(screen.getByRole("group", { name: "Choose a slide" })).getAllByRole("button");
+
+describe("Carousel controls row", () => {
+  withFakeEmbla();
+
+  it("renders Previous/Next in flow inside CarouselControls, and as an overlay outside it", () => {
+    const { unmount } = render(<Paged />);
+    const row = document.querySelector("[data-slot='carousel-controls']");
+    expect(row).toContainElement(screen.getByRole("button", { name: "Next slide" }));
+    expect(screen.getByRole("button", { name: "Next slide" })).not.toHaveClass("absolute");
+    unmount();
+
+    render(<Gallery />);
+    expect(screen.getByRole("button", { name: "Next slide" })).toHaveClass("absolute");
+  });
+});
+
+describe("Carousel indicators", () => {
+  withFakeEmbla();
+
+  it("renders one named button per scroll snap and marks the current one", () => {
+    render(<Paged />);
+    const dots = indicators();
+    expect(dots.map((d) => d.getAttribute("aria-label"))).toEqual(["1 of 3", "2 of 3", "3 of 3"]);
+    expect(dots[0]).toHaveAttribute("aria-current", "true");
+    expect(dots[1]).not.toHaveAttribute("aria-current");
+  });
+
+  it("is a single tab stop: only the current indicator is tabbable", () => {
+    render(<Paged />);
+    expect(indicators().map((d) => d.getAttribute("tabindex"))).toEqual(["0", "-1", "-1"]);
+  });
+
+  it("scrolls to a snap when an indicator is pressed, and follows the selection", () => {
+    render(<Paged />);
+    fireEvent.click(indicators()[2] as HTMLElement);
+    expect(fake.scrollTo).toHaveBeenCalledExactlyOnceWith(2);
+
+    fake.selected = 2;
+    emit("select");
+    expect(indicators()[2]).toHaveAttribute("aria-current", "true");
+    expect(indicators()[2]).toHaveAttribute("tabindex", "0");
+    expect(indicators()[0]).not.toHaveAttribute("aria-current");
+  });
+
+  it("keeps focus with the current indicator when the arrow keys move the slide", () => {
+    render(<Paged />);
+    const first = indicators()[0] as HTMLElement;
+    act(() => first.focus());
+    fireEvent.keyDown(first, { key: "ArrowRight" });
+    expect(fake.scrollNext).toHaveBeenCalledTimes(1);
+
+    fake.selected = 1;
+    emit("select");
+    expect(indicators()[1]).toHaveFocus();
+  });
+
+  it("renders nothing until there are two snaps to choose between", () => {
+    render(
+      <Carousel aria-label="Single">
+        <CarouselContent>
+          <CarouselItem>Only</CarouselItem>
+        </CarouselContent>
+        <CarouselIndicators aria-label="Choose a slide" />
+      </Carousel>,
+    );
+    emit("reInit");
+    expect(screen.queryByRole("group", { name: "Choose a slide" })).toBeNull();
+  });
+
+  it("has no axe violations with the controls row", async () => {
+    const { container } = render(<Paged />);
+    fake.inView = [0];
+    emit("slidesInView");
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});
+
+describe("Carousel announcements", () => {
+  withFakeEmbla();
+
+  const status = () => document.querySelector("[data-slot='carousel-status']");
+
+  it("is a polite, atomic status region that starts empty", () => {
+    render(<Paged />);
+    expect(status()).toHaveAttribute("aria-live", "polite");
+    expect(status()).toHaveAttribute("aria-atomic", "true");
+    expect(status()).toHaveTextContent("");
+  });
+
+  it("announces the new position after a move the user asked for", () => {
+    render(<Paged />);
+    fireEvent.click(screen.getByRole("button", { name: "Next slide" }));
+    fake.selected = 1;
+    emit("select");
+    expect(status()).toHaveTextContent("2 of 3");
+  });
+
+  it("stays quiet when the selection changes on its own (drag, autoplay)", () => {
+    render(<Paged />);
+    fake.selected = 2;
+    emit("select");
+    expect(status()).toHaveTextContent("");
+  });
+});
+
+describe("Carousel focus rescue", () => {
+  withFakeEmbla();
+
+  it("moves focus to the incoming slide when the focused slide leaves the view", () => {
+    render(<Gallery />);
+    fake.inView = [0];
+    emit("slidesInView");
+    const buyOne = screen.getByRole("button", { name: "Buy one" });
+    act(() => buyOne.focus());
+
+    fake.inView = [1];
+    fake.selected = 1;
+    emit("select");
+
+    const [first, second] = items();
+    expect(first).toHaveAttribute("inert");
+    // Focus did not fall to <body>: it is on the slide that replaced the one that held it.
+    expect(second).toHaveFocus();
+    // Programmatically focusable only — never a tab stop.
+    expect(second).toHaveAttribute("tabindex", "-1");
+  });
+
+  it("leaves focus alone when it is outside the slides", () => {
+    render(<Gallery />);
+    fake.inView = [0];
+    emit("slidesInView");
+    const next = screen.getByRole("button", { name: "Next slide" });
+    act(() => next.focus());
+    fake.inView = [1];
+    emit("select");
+    expect(next).toHaveFocus();
   });
 });

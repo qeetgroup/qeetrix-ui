@@ -134,9 +134,15 @@ detection rules are data rather than control flow:
 |:--|:--|:--|:--|
 | `rtl` | uses logical utilities (`ps-`, `pe-`, `ms-`, `me-`, `start-`, `end-`, `text-start`, `rtl:`) | uses physical utilities only | no directional styling at all |
 | `darkMode` | paints anything | — | paints nothing |
-| `density` | reads `--qx-density-*`, `useDensity` or `data-qx-density` | has metrics density could drive, but does not read it | no metrics to scale |
+| `density` | reads `--qx-density-*`, `useDensity`, `data-qx-density`, or any variable the token graph resolves to a density metric — as `var(--x)` or Tailwind's `h-(--x)` shorthand | has metrics density could drive, but does not read it | no metrics to scale (declared, never derived) |
 | `reducedMotion` | uses `usePrefersReducedMotion`, `motion-reduce:` or `prefers-reduced-motion` | something moves and nothing handles it | nothing moves |
 | `ssr` | `server-safe` — no `"use client"` | — | `client-boundary` — declares `"use client"` |
+
+The evidence is the component's own file **plus the `src/internal/` modules it imports** — the
+shared field recipe, the copy-feedback swap. Those are private implementation split out so
+several families share one copy, so their classes are the importing component's styling.
+Composing another *public* component (IconButton rendering Button) is not followed; a wrapper
+that gets a capability by composition declares it in the registry.
 
 Two of those need justifying.
 
@@ -151,7 +157,11 @@ dialog identically in both directions. Presence of a physical property is a reas
 a defect — so it lands in the review backlog rather than being reported as a failure.
 
 `capabilities` can be overridden per component in the registry, for cases where a review has
-settled what the signal could not. No overrides are declared today.
+settled what the signal could not — density by composition (IconButton, Toolbar, the pickers),
+`not-applicable` / `unsupported` density decisions, and scripted-motion false positives
+(a `requestAnimationFrame` that moves focus, not pixels). A declaration wins over derivation, so
+a stale one hides evidence: when a component starts reading a density metric, delete its
+`unsupported`.
 
 ### `states`
 

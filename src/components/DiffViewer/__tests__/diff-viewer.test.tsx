@@ -25,8 +25,70 @@ describe("DiffViewer", () => {
     expect(screen.getByRole("group", { name: "After version" })).toBeInTheDocument();
     expect(screen.getByText("Removed:")).toBeInTheDocument();
     expect(screen.getByText("Added:")).toBeInTheDocument();
-    expect(screen.getByText("-")).toBeInTheDocument();
-    expect(screen.getByText("+")).toBeInTheDocument();
+    // The glyphs are a visible channel for sighted readers and hidden from assistive technology,
+    // which hears the prefixes above instead of "minus" and "plus".
+    expect(screen.getByText("\u2212")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByText("+")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("prefixes changed lines for screen readers in unified mode too", () => {
+    const { container } = render(<DiffViewer before={"same\nold"} after={"same\nnew"} />);
+    const removed = container.querySelector('[data-slot="diff-line"][data-type="remove"]');
+    const added = container.querySelector('[data-slot="diff-line"][data-type="add"]');
+    expect(removed).toHaveTextContent("Removed:");
+    expect(added).toHaveTextContent("Added:");
+    // Unchanged lines get no prefix.
+    expect(
+      container.querySelector('[data-slot="diff-line"][data-type="same"]'),
+    ).not.toHaveTextContent(/Added:|Removed:/);
+  });
+
+  it("labels each split pane with a visible header", () => {
+    render(
+      <DiffViewer
+        before={"a"}
+        after={"b"}
+        mode="split"
+        beforeLabel="config.v1.json"
+        afterLabel="config.v2.json"
+      />,
+    );
+    expect(screen.getByRole("group", { name: "config.v1.json" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "config.v2.json" })).toBeInTheDocument();
+  });
+
+  it("emphasises the changed words of a modified line, not the whole line", () => {
+    const { container } = render(
+      <DiffViewer before={'  "region": "ap-south-1",'} after={'  "region": "eu-west-1",'} />,
+    );
+    const emphasised = (type: string) =>
+      Array.from(
+        container.querySelectorAll(
+          `[data-slot="diff-line"][data-type="${type}"] [data-slot="diff-line-text"] span`,
+        ),
+      ).map((el) => el.textContent);
+    expect(emphasised("remove").join("")).toBe("ap-south");
+    expect(emphasised("add").join("")).toBe("eu-west");
+  });
+
+  it("leaves a rewritten line without word emphasis", () => {
+    const { container } = render(<DiffViewer before={"alpha beta"} after={"gamma delta"} />);
+    expect(container.querySelectorAll('[data-slot="diff-line-text"] span')).toHaveLength(0);
+  });
+
+  it("counts additions and removals in the header", () => {
+    render(<DiffViewer before={"a\nb"} after={"a\nB\nC"} beforeLabel="v1" afterLabel="v2" />);
+    expect(screen.getByText("+2")).toBeInTheDocument();
+    expect(screen.getByText("\u22121")).toBeInTheDocument();
+  });
+
+  it("lays code out left to right under an rtl document", () => {
+    const { container } = render(
+      <div dir="rtl">
+        <DiffViewer before={"a"} after={"b"} />
+      </div>,
+    );
+    expect(container.querySelector('[data-slot="diff-viewer"]')).toHaveAttribute("dir", "ltr");
   });
 
   it("has no axe violations", async () => {
@@ -78,15 +140,19 @@ function lcsDiff(a: string[], b: string[]): Op[] {
   return ops;
 }
 
-/** Reads the op list back out of a rendered unified diff. */
+/**
+ * Reads the op list back out of a rendered unified diff. Each line publishes its kind as
+ * `data-type`; the marker cell is not parsed, because it also holds the screen-reader prefix.
+ */
 function renderedOps(container: Element): Op[] {
   const root = container.querySelector('[data-slot="diff-viewer"]');
   if (!root) throw new Error("no diff-viewer rendered");
-  return Array.from(root.children).map((row) => {
-    const cells = Array.from(row.children).map((cell) => cell.textContent ?? "");
-    const [oldLine, newLine, marker, text] = cells;
-    const type = marker === "+" ? "add" : marker === "-" ? "remove" : "same";
-    const op: Op = { type, text };
+  return Array.from(root.querySelectorAll('[data-slot="diff-line"]')).map((row) => {
+    const cell = (slot: string) => row.querySelector(`[data-slot="${slot}"]`)?.textContent ?? "";
+    const type = row.getAttribute("data-type") as Op["type"];
+    const op: Op = { type, text: cell("diff-line-text") };
+    const oldLine = cell("diff-line-number-old");
+    const newLine = cell("diff-line-number-new");
     if (oldLine) op.oldLine = Number(oldLine);
     if (newLine) op.newLine = Number(newLine);
     return op;

@@ -1,8 +1,19 @@
 "use client";
 
-import type * as React from "react";
+import { LockIcon } from "lucide-react";
+import * as React from "react";
 
+import { Checkbox } from "@/components/Checkbox/checkbox";
 import { Switch } from "@/components/Switch/switch";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/Table/table";
 import type { MessagesFor } from "@/lib/messages";
 import { notificationPreferenceMatrixMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
@@ -11,11 +22,23 @@ import { useMessages } from "@/providers/messages-provider";
 interface PrefChannel {
   key: string;
   label: string;
+  /** A glyph shown with the channel's header — the fastest way to find a column. */
+  icon?: React.ReactNode;
 }
 interface PrefCategory {
   key: string;
   label: string;
   description?: string;
+  /**
+   * The channels this category can be delivered on. Omitted, every channel applies; a channel
+   * not listed renders as "not available" instead of a control that would do nothing.
+   */
+  channels?: string[];
+  /**
+   * Channels an administrator has fixed for this category — a security alert that is always
+   * emailed. The current value is shown and cannot be changed.
+   */
+  locked?: string[];
 }
 /** category key → channel key → enabled. */
 type PreferenceMatrix = Record<string, Record<string, boolean>>;
@@ -41,6 +64,17 @@ interface NotificationPreferenceMatrixProps {
    */
   categoryHeader?: React.ReactNode;
   /**
+   * The control in each cell.
+   *
+   * - `switch` (default) — each change takes effect immediately, as preference pages that save
+   *   as you go do. Announced as "on / off".
+   * - `checkbox` — the matrix is part of a form that is submitted, or reviewed, as a whole.
+   *   Announced as "checked / not checked".
+   */
+  control?: "switch" | "checkbox";
+  /** Disables every cell, e.g. while the preferences are loading or saving. */
+  disabled?: boolean;
+  /**
    * Overrides for this component's built-in English strings. Each key falls back to the
    * nearest `MessagesProvider`, then to the default — see `@qeetrix/ui/providers`.
    */
@@ -48,15 +82,40 @@ interface NotificationPreferenceMatrixProps {
   className?: string;
 }
 
+/*
+ * Explicit table roles. Below 32rem the rows re-flow into stacked cards with CSS `display`,
+ * and WebKit drops native table semantics from elements whose display changes. Restating the
+ * roles keeps the row and column headers in the accessibility tree at every width.
+ */
+const ROLE = {
+  table: { role: "table" },
+  rowgroup: { role: "rowgroup" },
+  row: { role: "row" },
+  columnheader: { role: "columnheader" },
+  rowheader: { role: "rowheader" },
+  cell: { role: "cell" },
+} as const;
+
+const CELL_PADDING = "py-[var(--qx-component-notification-preference-matrix-cell-padding-y)]";
+
 /**
- * Channel × category notification preferences — a grid of switches.
+ * Channel × category notification preferences — a grid of switches (or checkboxes).
  *
  * The relationships a sighted user reads off the layout are in the markup: a
  * `<caption>` names the table, channel headers are `<th scope="col">` and each
  * category is a `<th scope="row">`, so table-navigation mode announces "Security
- * alerts, Email" rather than an unlabelled cell. Each switch also names both of
+ * alerts, Email" rather than an unlabelled cell. Each control also names both of
  * its axes, which is what a screen reader reads in ordinary reading mode where
  * table headers are not announced.
+ *
+ * **Scanning.** Rows take the table hover wash so the eye can follow a category across;
+ * controls sit centred under centred channel headers (with optional icons) so a column reads
+ * as one line; channels that do not apply to a category show a quiet dash instead of a dead
+ * control; locked cells carry a lock glyph.
+ *
+ * **Narrow containers.** Below a 32rem container width the matrix re-flows into one card per
+ * category, each channel a labelled row with its control at the inline end — the settings-list
+ * shape mobile users expect. It is the same table underneath, so nothing is mounted twice.
  */
 function NotificationPreferenceMatrix({
   channels,
@@ -66,6 +125,8 @@ function NotificationPreferenceMatrix({
   caption,
   captionVisible = false,
   categoryHeader,
+  control = "switch",
+  disabled = false,
   messages: messageOverrides,
   className,
 }: NotificationPreferenceMatrixProps) {
@@ -74,6 +135,8 @@ function NotificationPreferenceMatrix({
     notificationPreferenceMatrixMessages,
     messageOverrides,
   );
+  const lockedDescriptionId = React.useId();
+  const hasLocked = categories.some((cat) => cat.locked && cat.locked.length > 0);
   const toggle = (cat: string, ch: string, checked: boolean) => {
     onValueChange({ ...value, [cat]: { ...value[cat], [ch]: checked } });
   };
@@ -81,55 +144,143 @@ function NotificationPreferenceMatrix({
   return (
     <div
       data-slot="notification-preference-matrix"
-      className={cn("w-full overflow-x-auto", className)}
+      data-control={control}
+      className={cn("@container w-full", className)}
     >
-      <table className="w-full border-collapse text-sm">
-        <caption
+      {hasLocked && (
+        <span id={lockedDescriptionId} hidden>
+          {messages.locked}
+        </span>
+      )}
+      <Table {...ROLE.table} className="caption-top border-collapse">
+        <TableCaption
           data-slot="notification-preference-matrix-caption"
           className={cn(
-            captionVisible ? "pb-2 text-start text-sm text-muted-foreground" : "sr-only",
+            captionVisible ? "mt-0 pb-2 text-start text-sm text-muted-foreground" : "sr-only",
           )}
         >
           {caption ?? messages.caption}
-        </caption>
-        <thead>
-          <tr className="border-b border-border">
-            <th scope="col" className="py-2 pe-4 text-start font-medium text-muted-foreground">
+        </TableCaption>
+        <TableHeader {...ROLE.rowgroup} className="@max-lg:sr-only">
+          <TableRow {...ROLE.row}>
+            <TableHead {...ROLE.columnheader} scope="col" className="ps-0 pe-4 text-start">
               {categoryHeader ?? messages.categoryHeader}
-            </th>
+            </TableHead>
             {channels.map((ch) => (
-              <th
+              <TableHead
                 key={ch.key}
+                {...ROLE.columnheader}
                 scope="col"
-                className="px-3 py-2 text-center font-medium text-muted-foreground"
+                className="min-w-20 px-3 text-center"
               >
-                {ch.label}
-              </th>
+                <span className="inline-flex items-center justify-center gap-1.5">
+                  {ch.icon && (
+                    <span
+                      aria-hidden
+                      className="flex text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
+                    >
+                      {ch.icon}
+                    </span>
+                  )}
+                  {ch.label}
+                </span>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody {...ROLE.rowgroup}>
           {categories.map((cat) => (
-            <tr key={cat.key} className="border-b border-border last:border-0">
-              <th scope="row" className="py-3 pe-4 text-start font-normal">
+            <TableRow
+              key={cat.key}
+              {...ROLE.row}
+              className="@max-lg:flex @max-lg:flex-col @max-lg:gap-1 @max-lg:py-3"
+            >
+              <TableHead
+                {...ROLE.rowheader}
+                scope="row"
+                className={cn(
+                  CELL_PADDING,
+                  "h-auto min-w-40 ps-0 pe-4 align-middle text-sm font-normal whitespace-normal text-foreground @max-lg:block @max-lg:min-w-0 @max-lg:p-0 @max-lg:pb-1",
+                )}
+              >
                 <div className="font-medium text-foreground">{cat.label}</div>
                 {cat.description && (
                   <div className="text-xs text-muted-foreground">{cat.description}</div>
                 )}
-              </th>
-              {channels.map((ch) => (
-                <td key={ch.key} className="px-3 py-3 text-center">
-                  <Switch
-                    checked={!!value[cat.key]?.[ch.key]}
-                    onCheckedChange={(checked) => toggle(cat.key, ch.key, checked)}
-                    aria-label={messages.cell(cat.label, ch.label)}
-                  />
-                </td>
-              ))}
-            </tr>
+              </TableHead>
+              {channels.map((ch) => {
+                const available = !cat.channels || cat.channels.includes(ch.key);
+                const locked = cat.locked?.includes(ch.key) ?? false;
+                const checked = !!value[cat.key]?.[ch.key];
+                const name = messages.cell(cat.label, ch.label);
+                const controlProps = {
+                  checked,
+                  disabled: disabled || locked,
+                  "aria-label": name,
+                  "aria-describedby": locked ? lockedDescriptionId : undefined,
+                };
+                return (
+                  <TableCell
+                    key={ch.key}
+                    {...ROLE.cell}
+                    data-available={available || undefined}
+                    data-locked={locked || undefined}
+                    className={cn(
+                      CELL_PADDING,
+                      "px-3 text-center @max-lg:flex @max-lg:min-h-9 @max-lg:items-center @max-lg:gap-2 @max-lg:p-0 @max-lg:text-start",
+                      // A channel that does not apply is noise in a stacked list.
+                      !available && "@max-lg:hidden",
+                    )}
+                  >
+                    {/* The channel's name for sighted users once the column headers are
+                        hidden; assistive technology already has the header and the control's
+                        own name, so it is not read twice. */}
+                    <span
+                      aria-hidden
+                      className="hidden min-w-0 flex-1 items-center gap-2 text-sm text-foreground @max-lg:flex"
+                    >
+                      {ch.icon && (
+                        <span className="flex text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4">
+                          {ch.icon}
+                        </span>
+                      )}
+                      {ch.label}
+                    </span>
+                    {available ? (
+                      <span className="relative inline-flex items-center justify-center gap-1.5 align-middle">
+                        {/* Beside the control rather than in line with it, so a locked cell's
+                            control stays on the column's centre line (and on the list's edge). */}
+                        {locked && (
+                          <LockIcon
+                            aria-hidden
+                            className="absolute inset-e-full me-1.5 size-3.5 text-muted-foreground @max-lg:static @max-lg:me-0"
+                          />
+                        )}
+                        {control === "checkbox" ? (
+                          <Checkbox
+                            {...controlProps}
+                            onCheckedChange={(next) => toggle(cat.key, ch.key, next === true)}
+                          />
+                        ) : (
+                          <Switch
+                            {...controlProps}
+                            onCheckedChange={(next) => toggle(cat.key, ch.key, next)}
+                          />
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        <span aria-hidden>—</span>
+                        <span className="sr-only">{messages.notAvailable}</span>
+                      </span>
+                    )}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

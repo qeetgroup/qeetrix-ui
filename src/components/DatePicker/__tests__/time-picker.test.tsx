@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { TimePicker } from "@/components/DatePicker/time-picker";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
 
@@ -300,5 +301,101 @@ describe("TimePicker state ownership", () => {
     await user.click(screen.getByRole("combobox", { name: "Hours" }));
     expect(screen.queryByRole("listbox")).toBeNull();
     expect(onValueChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("TimePicker invalid values", () => {
+  it("treats an unreal time as no value rather than an empty column", () => {
+    render(<TimePicker aria-label="Time" value="25:99" />);
+    expect(screen.getByRole("combobox", { name: "Hours" })).toHaveTextContent("HH");
+    expect(screen.getByRole("combobox", { name: "Minutes" })).toHaveTextContent("MM");
+  });
+});
+
+describe("TimePicker forms", () => {
+  const formData = () =>
+    new FormData(screen.getByRole("form", { name: "shift" }) as HTMLFormElement);
+
+  it("submits the canonical 24h string under its name", async () => {
+    render(
+      <form aria-label="shift">
+        <TimePicker name="start" defaultValue="09:30" hourCycle={12} aria-label="Start" />
+      </form>,
+    );
+    expect(formData().get("start")).toBe("09:30");
+    await pick("Hours", "2");
+    expect(formData().get("start")).toBe("02:30");
+  });
+
+  it("submits seconds only with withSeconds, and nothing valid as empty", () => {
+    render(
+      <form aria-label="shift">
+        <TimePicker name="a" defaultValue="09:30:15" withSeconds aria-label="A" />
+        <TimePicker name="b" aria-label="B" />
+        <TimePicker name="c" defaultValue="09:30" disabled aria-label="C" />
+      </form>,
+    );
+    expect(formData().get("a")).toBe("09:30:15");
+    expect(formData().get("b")).toBe("");
+    // A disabled control does not submit, as a native one does not.
+    expect(formData().has("c")).toBe(false);
+  });
+
+  it("is named by a surrounding Field and reaches its label, description and error", () => {
+    render(
+      <Field invalid>
+        <FieldLabel>Shift start</FieldLabel>
+        <TimePicker defaultValue="09:30" />
+        <FieldDescription>Local time at the site.</FieldDescription>
+        <FieldError>Shifts start on the half hour.</FieldError>
+      </Field>,
+    );
+    const group = screen.getByRole("group", { name: "Shift start" });
+    const description = screen.getByText("Local time at the site.");
+    expect(group.getAttribute("aria-describedby")?.split(" ")).toContain(description.id);
+    for (const column of screen.getAllByRole("combobox")) {
+      expect(column).toHaveAttribute("aria-invalid", "true");
+    }
+    // The label's `for` lands on the hours column, the group's first stop.
+    const label = screen.getByText("Shift start");
+    expect(label).toHaveAttribute("for", screen.getByRole("combobox", { name: "Hours" }).id);
+  });
+
+  it("lets an explicit aria-labelledby name the group", () => {
+    render(
+      <>
+        <h2 id="heading">Break</h2>
+        <TimePicker aria-labelledby="heading" />
+      </>,
+    );
+    expect(screen.getByRole("group", { name: "Break" })).toBeInTheDocument();
+  });
+
+  it("hides the colons from assistive technology", () => {
+    const { container } = render(<TimePicker aria-label="Time" withSeconds />);
+    const colons = Array.from(container.querySelectorAll("fieldset > span")).filter(
+      (span) => span.textContent === ":",
+    );
+    expect(colons).toHaveLength(2);
+    for (const colon of colons) expect(colon).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("sizes its columns to the field height by default, and to sm on request", () => {
+    const { unmount } = render(<TimePicker aria-label="Time" />);
+    expect(screen.getByRole("combobox", { name: "Hours" })).toHaveAttribute("data-size", "default");
+    unmount();
+    render(<TimePicker aria-label="Time" size="sm" />);
+    expect(screen.getByRole("combobox", { name: "Hours" })).toHaveAttribute("data-size", "sm");
+  });
+
+  it("has no axe violations inside an invalid Field", async () => {
+    const { container } = render(
+      <Field invalid>
+        <FieldLabel>Shift start</FieldLabel>
+        <TimePicker defaultValue="09:30" hourCycle={12} />
+        <FieldError>Shifts start on the half hour.</FieldError>
+      </Field>,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
   });
 });

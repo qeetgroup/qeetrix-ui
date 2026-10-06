@@ -1,0 +1,35 @@
+{
+  "component": {
+    "table": {
+      "$description": "Table rows, header band and footer, shared by Table and DataTable. Every colour is a semantic surface or border role referenced through its --qx-color-* variable, so one declaration re-themes in light and dark. Hover is a translucent wash rather than an opaque surface because a table sits on cards, canvases and sunken wells alike; selection is the quiet Qeet tint plus a ≥3:1 brand indicator bar, so it never rests on the tint alone.",
+      "header-background": {
+        "$value": "var(--qx-color-surface-subtle)",
+        "$type": "color"
+      },
+      "footer-background": {
+        "$value": "var(--qx-color-surface-subtle)",
+        "$type": "color"
+      },
+      "separator": {
+        "$value": "var(--qx-color-border-subtle)",
+        "$type": "color"
+      },
+      "row-background-hover": {
+        "$value": "color-mix(in oklab, var(--qx-color-surface-interactive) 70%, transparent)",
+        "$type": "color"
+      },
+      "row-background-selected": {
+        "$value": "var(--qx-color-surface-brand-subtle)",
+        "$type": "color"
+      },
+      "row-background-selected-hover": {
+        "$value": "var(--qx-color-surface-brand-subtle-hover)",
+        "$type": "color"
+      },
+      "row-indicator": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color"
+      }
+    }
+  }
+}

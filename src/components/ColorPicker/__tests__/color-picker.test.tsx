@@ -169,3 +169,51 @@ describe("ColorPicker form participation", () => {
     );
   });
 });
+
+describe("ColorPicker non-colour indicators and theming", () => {
+  it("marks the active preset with a check glyph, not only its colour", () => {
+    render(<ColorPicker value="#3b82f6" onChange={vi.fn()} presets={["#3b82f6", "#ef4444"]} />);
+    const active = screen.getByRole("button", { name: "Set colour #3b82f6" });
+    const inactive = screen.getByRole("button", { name: "Set colour #ef4444" });
+    expect(active.querySelector("[data-slot=color-swatch-check]")).not.toBeNull();
+    expect(inactive.querySelector("[data-slot=color-swatch-check]")).toBeNull();
+  });
+
+  // The "no colour" checkerboard was `#e5e7eb` over transparent — a bright patch on a dark
+  // surface. It now draws from component tokens that resolve to semantic colours per theme.
+  it("draws the empty-state checkerboard from theme-aware tokens", () => {
+    const { container } = render(<ColorPicker value="" onChange={vi.fn()} presets={[]} />);
+    const swatch = container.querySelector<HTMLElement>("[data-slot=color-picker-swatch]");
+    expect(swatch).toHaveAttribute("data-empty");
+    const background = swatch?.getAttribute("style") ?? "";
+    expect(background).toContain("var(--qx-component-color-picker-checker)");
+    expect(background).toContain("var(--qx-component-color-picker-checker-alt)");
+    expect(background).not.toMatch(/#e5e7eb/i);
+  });
+
+  it("names the native colour input and rings its preview when the input is focused", () => {
+    const { container } = render(<ColorPicker value="#10b981" onChange={vi.fn()} presets={[]} />);
+    const native = container.querySelector('input[type="color"]');
+    expect(native).toHaveAccessibleName("Open colour picker");
+    const swatch = container.querySelector("[data-slot=color-picker-swatch]");
+    expect(swatch?.className.split(/\s+/)).toContain("has-focus-visible:focus-ring");
+  });
+
+  it("sizes the preview to the field height, so it lines up at every density", () => {
+    const { container } = render(<ColorPicker value="#10b981" onChange={vi.fn()} presets={[]} />);
+    const swatch = container.querySelector("[data-slot=color-picker-swatch]");
+    expect(swatch?.className.split(/\s+/)).toContain("size-(--qx-component-input-height)");
+  });
+
+  it("draws the hex field from Input's tokens and focus recipe", () => {
+    render(<ColorPicker value="#10b981" onChange={vi.fn()} presets={[]} ariaLabel="Colour" />);
+    const input = screen.getByRole("textbox", { name: "Colour" });
+    expect(input.className.split(/\s+/)).toEqual(
+      expect.arrayContaining([
+        "[--field-edge:var(--qx-component-input-border)]",
+        "focus-visible:focus-ring-field",
+      ]),
+    );
+    expect(input.className).not.toMatch(/ring-ring\/disabled/);
+  });
+});

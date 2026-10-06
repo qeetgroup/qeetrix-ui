@@ -69,6 +69,8 @@ const MOTION_MARKERS = [
   /\btransition(?:-|\b)/,
   /\banimate-/,
   /\bduration-\d/,
+  // The named motion roles (`duration-fast`, `duration-(--qx-motion-duration-normal)`).
+  /\bduration-(?:instant|fast|normal|slow|deliberate|\(--)/,
   /\bdata-(?:starting|ending)-style\b/,
   /\bkeyframes\b/,
   /\btransition:/,
@@ -87,7 +89,9 @@ const DENSITY_MARKERS = [/--qx-density-/, /\buseDensity\b/, /data-qx-density/];
 /** The component paints something, so it has a light/dark story to tell. */
 const COLOUR_MARKERS = [
   /\b(?:bg|border|ring|shadow|fill|stroke|divide|outline|decoration|accent|caret)-[a-z]/,
-  /\btext-(?:foreground|muted|primary|secondary|destructive|accent|card|popover|success|warning|error|info)/,
+  /\btext-(?:foreground|muted|primary|secondary|destructive|accent|card|popover|success|warning|error|info|brand|link|sidebar|syntax|rating)/,
+  // Tailwind v4's variable shorthand: `bg-(--qx-component-kbd-background)`, `text-(--…)`.
+  /\b(?:bg|border|ring|shadow|fill|stroke|divide|outline|decoration|accent|caret|text)-\(--/,
   /\bdark:/,
   /\bplaceholder:/,
 ];
@@ -195,7 +199,8 @@ export function deriveDarkModeSupport(source) {
 export function deriveDensitySupport(source, densityAware = new Set()) {
   if (matchesAny(source, DENSITY_MARKERS)) return "supported";
   for (const variable of densityAware) {
-    if (source.includes(`var(${variable})`)) return "supported";
+    // `var(--x)`, `var(--x, fallback)` and Tailwind v4's `h-(--x)` shorthand all read the variable.
+    if (source.includes(`(${variable})`) || source.includes(`(${variable},`)) return "supported";
   }
   return "unknown";
 }

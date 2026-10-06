@@ -147,3 +147,135 @@ describe("NotificationPreferenceMatrix table relationships", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("NotificationPreferenceMatrix controls", () => {
+  it("offers checkbox semantics for form-submitted preferences", () => {
+    const onValueChange = vi.fn();
+    render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={CATEGORIES}
+        value={{ billing: { push: true } }}
+        onValueChange={onValueChange}
+        control="checkbox"
+      />,
+    );
+    expect(screen.queryAllByRole("switch")).toHaveLength(0);
+    expect(screen.getAllByRole("checkbox")).toHaveLength(4);
+    expect(screen.getByRole("checkbox", { name: "Billing via Push" })).toBeChecked();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Security via Email" }));
+    expect(onValueChange).toHaveBeenCalledWith({
+      billing: { push: true },
+      security: { email: true },
+    });
+  });
+
+  it("shows unavailable channels as not available instead of a dead control", () => {
+    render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={[{ key: "digest", label: "Weekly digest", channels: ["email"] }]}
+        value={{}}
+        onValueChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole("switch", { name: "Weekly digest via Email" })).toBeInTheDocument();
+    expect(screen.queryByRole("switch", { name: "Weekly digest via Push" })).toBeNull();
+    expect(screen.getByText("Not available")).toHaveClass("sr-only");
+  });
+
+  it("locks administrator-fixed cells and says why", () => {
+    const onValueChange = vi.fn();
+    render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={[{ key: "security", label: "Security", locked: ["email"] }]}
+        value={{ security: { email: true } }}
+        onValueChange={onValueChange}
+      />,
+    );
+    const locked = screen.getByRole("switch", { name: "Security via Email" });
+    expect(locked).toBeChecked();
+    expect(locked).toHaveAttribute("aria-disabled", "true");
+    expect(locked).toHaveAccessibleDescription("Managed by your organization");
+    expect(screen.getByRole("switch", { name: "Security via Push" })).not.toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+  });
+
+  it("disables every cell", () => {
+    render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={CATEGORIES}
+        value={{}}
+        onValueChange={() => {}}
+        disabled
+      />,
+    );
+    for (const control of screen.getAllByRole("switch")) {
+      expect(control).toHaveAttribute("aria-disabled", "true");
+    }
+  });
+
+  it("keeps channel icons out of the column header names", () => {
+    render(
+      <NotificationPreferenceMatrix
+        channels={[{ key: "email", label: "Email", icon: <svg data-testid="mail" /> }]}
+        categories={CATEGORIES}
+        value={{}}
+        onValueChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole("columnheader", { name: "Email" })).toBeInTheDocument();
+    expect(screen.getAllByTestId("mail")[0].closest("[aria-hidden]")).not.toBeNull();
+  });
+
+  it("keeps explicit table roles so the stacked layout stays a table", () => {
+    render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={CATEGORIES}
+        value={{}}
+        onValueChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole("table")).toHaveAttribute("role", "table");
+    for (const header of screen.getAllByRole("rowheader")) {
+      expect(header).toHaveAttribute("role", "rowheader");
+    }
+  });
+
+  it("translates the not-available and locked strings", () => {
+    render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={[
+          { key: "security", label: "Security", channels: ["email"], locked: ["email"] },
+        ]}
+        value={{}}
+        onValueChange={() => {}}
+        messages={{ notAvailable: "Nicht verfügbar", locked: "Vom Administrator festgelegt" }}
+      />,
+    );
+    expect(screen.getByText("Nicht verfügbar")).toBeInTheDocument();
+    expect(screen.getByRole("switch")).toHaveAccessibleDescription("Vom Administrator festgelegt");
+  });
+
+  it("has no axe violations with checkboxes, locked and unavailable cells", async () => {
+    const { container } = render(
+      <NotificationPreferenceMatrix
+        channels={CHANNELS}
+        categories={[
+          { key: "security", label: "Security", locked: ["email"] },
+          { key: "digest", label: "Digest", channels: ["email"] },
+        ]}
+        value={{ security: { email: true } }}
+        onValueChange={() => {}}
+        control="checkbox"
+      />,
+    );
+    expect(await a11y(container)).toHaveNoViolations();
+  });
+});

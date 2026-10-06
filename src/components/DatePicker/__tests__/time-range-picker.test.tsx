@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
 import { TimeRangePicker } from "@/components/DatePicker/time-range-picker";
@@ -130,5 +130,87 @@ describe("TimeRangePicker clock", () => {
     // The window is anchored at the click, not at the mount.
     expect(emitted.to.getTime() - emitted.from.getTime()).toBe(36e5);
     expect(Math.abs(emitted.to.getTime() - RealDate.now())).toBeLessThan(5_000);
+  });
+});
+
+/* Fixed dates; "today" is pinned (Date only) where the opening month depends on it. */
+describe("TimeRangePicker custom ranges and presets", () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ["Date"], now: new Date(2031, 2, 15, 12, 0) }));
+  afterEach(() => vi.useRealTimers());
+
+  it("opens on last month and this one when there is no custom range", async () => {
+    render(<TimeRangePicker locale="en-US" />);
+    fireEvent.click(screen.getByRole("button", { name: /last 24 hours/i }));
+    expect(await screen.findByRole("grid", { name: "February 2031" })).toBeInTheDocument();
+    expect(screen.getByRole("grid", { name: "March 2031" })).toBeInTheDocument();
+  });
+
+  it("opens on the custom range when there is one", async () => {
+    render(
+      <TimeRangePicker
+        locale="en-US"
+        defaultValue={{ preset: "custom", from: new Date(2026, 7, 1), to: new Date(2026, 7, 3) }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button"));
+    expect(await screen.findByRole("grid", { name: "August 2026" })).toBeInTheDocument();
+  });
+
+  it("includes the whole last day of a custom range", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <TimeRangePicker
+        locale="en-US"
+        onValueChange={onValueChange}
+        defaultValue={{ preset: "custom", from: new Date(2026, 7, 1), to: new Date(2026, 7, 1) }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(await screen.findByRole("button", { name: /August 3, 2026/ }));
+    const emitted = onValueChange.mock.calls.at(-1)?.[0];
+    expect(emitted.preset).toBe("custom");
+    expect(emitted.from).toEqual(new Date(2026, 7, 1));
+    // The last instant of 3 August, not its midnight — "Aug 1 – Aug 3" includes Aug 3.
+    expect(emitted.to).toEqual(new Date(2026, 7, 3, 23, 59, 59, 999));
+  });
+
+  it("reports the selected preset as pressed, and only that one", async () => {
+    render(<TimeRangePicker defaultValue={{ preset: "7d", from: new Date(), to: new Date() }} />);
+    fireEvent.click(screen.getByRole("button", { name: /last 7 days/i }));
+    await screen.findAllByRole("grid");
+    const pressed = screen
+      .getAllByRole("button", { pressed: true })
+      .map((b) => b.textContent?.trim());
+    expect(pressed).toEqual(["Last 7 days"]);
+    expect(screen.getByRole("button", { name: "Last hour" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+  });
+
+  it("disables days outside min/max", async () => {
+    render(
+      <TimeRangePicker
+        locale="en-US"
+        max={new Date(2026, 7, 10)}
+        defaultValue={{ preset: "custom", from: new Date(2026, 7, 1), to: new Date(2026, 7, 3) }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button"));
+    expect(await screen.findByRole("button", { name: /August 11, 2026/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /August 10, 2026/ })).toBeEnabled();
+  });
+});
+
+describe("TimeRangePicker trigger", () => {
+  it("prefixes an aria-label to the current window, and can be disabled", () => {
+    render(<TimeRangePicker aria-label="Log window" disabled />);
+    const trigger = screen.getByRole("button", { name: "Log window, Last 24 hours" });
+    expect(trigger).toBeDisabled();
+  });
+
+  it("keeps its data-slot", () => {
+    render(<TimeRangePicker />);
+    expect(screen.getByRole("button")).toHaveAttribute("data-slot", "time-range-picker");
   });
 });

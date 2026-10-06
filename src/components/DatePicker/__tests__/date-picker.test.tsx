@@ -1,9 +1,23 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { DatePicker, DateRangePicker } from "@/components/DatePicker/date-picker";
 import { Field, FieldLabel } from "@/components/Input/field";
+
+/*
+ * Deterministic dates. Every value below is built from local parts, and any test whose outcome
+ * depends on which month the calendar opens on pins "today" with a faked `Date` — only `Date`, so
+ * timers, transitions and `waitFor` keep running on the real clock. The pinned today is years
+ * away from every value on purpose: a picker that opened on today's month instead of the
+ * value's (the defect behind the old `2026-08-17` failures) cannot pass by coincidence.
+ */
+const FAR_TODAY = new Date(2031, 2, 15, 12, 0); // Sat 15 Mar 2031
+
+function pinToday(today: Date = FAR_TODAY) {
+  vi.useFakeTimers({ toFake: ["Date"], now: today });
+}
 
 const a11y = (c: Element) =>
   axe(c, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
@@ -119,17 +133,25 @@ describe("DatePicker form participation", () => {
   });
 
   it("submits the newly picked day after a selection", async () => {
-    render(
-      <form aria-label="when">
-        <DatePicker name="due" defaultValue={new Date(2026, 7, 4)} aria-label="Due" />
-      </form>,
-    );
-    fireEvent.click(screen.getByRole("button", { name: /Due/ }));
-    const dayCells = (await screen.findAllByRole("button")).filter(
-      (b) => b.textContent?.trim() === "17",
-    );
-    fireEvent.click(dayCells[0]);
-    await waitFor(() => expect(submitted("due")).toEqual(["2026-08-17"]));
+    // Today is pinned years away: the calendar has to open on the value's month for "17" to
+    // mean 17 August. This used to read the real clock and broke once August 2026 had passed.
+    pinToday();
+    try {
+      render(
+        <form aria-label="when">
+          <DatePicker name="due" defaultValue={new Date(2026, 7, 4)} aria-label="Due" />
+        </form>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Due/ }));
+      const dayCells = (await screen.findAllByRole("button")).filter(
+        (b) => b.textContent?.trim() === "17",
+      );
+      expect(dayCells).toHaveLength(1);
+      fireEvent.click(dayCells[0]);
+      await waitFor(() => expect(submitted("due")).toEqual(["2026-08-17"]));
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("keeps the selected date in the trigger's name when a Field labels it", () => {
@@ -220,5 +242,249 @@ describe("DatePicker locale", () => {
       <DateRangePicker value={{ from: day, to: new Date(2026, 0, 31) }} />,
     );
     expect(html).toContain("Jan 1, 2026 – Jan 31, 2026");
+  });
+});
+
+/* ── Which month the calendar opens on ─────────────────────────────────────────────────── */
+describe("DatePicker opening month", () => {
+  beforeEach(() => pinToday());
+  afterEach(() => vi.useRealTimers());
+
+  it("opens on the selected value's month, not today's", async () => {
+    render(<DatePicker defaultValue={new Date(2026, 7, 4)} aria-label="Due" />);
+    fireEvent.click(screen.getByRole("button", { name: /Due/ }));
+    expect(await screen.findByRole("grid", { name: /August 2026/ })).toBeInTheDocument();
+    // …with the selected day as the focus target.
+    const selected = screen.getByRole("button", { name: /August 4.*selected/ });
+    await waitFor(() => expect(selected).toHaveFocus());
+  });
+
+  it("opens on today's month when there is no value", async () => {
+    render(<DatePicker aria-label="Due" />);
+    fireEvent.click(screen.getByRole("button", { name: /Due/ }));
+    expect(await screen.findByRole("grid", { name: /March 2031/ })).toBeInTheDocument();
+  });
+
+  it("follows a controlled value to its month on every open", async () => {
+    const { rerender } = render(<DatePicker value={new Date(2026, 7, 4)} aria-label="Due" />);
+    const trigger = screen.getByRole("button", { name: /Due/ });
+    fireEvent.click(trigger);
+    expect(await screen.findByRole("grid", { name: /August 2026/ })).toBeInTheDocument();
+    fireEvent.keyDown(screen.getByRole("grid"), { key: "Escape" });
+    await waitFor(() => expect(screen.queryByRole("grid")).not.toBeInTheDocument());
+
+    rerender(<DatePicker value={new Date(2027, 0, 9)} aria-label="Due" />);
+    fireEvent.click(trigger);
+    expect(await screen.findByRole("grid", { name: /January 2027/ })).toBeInTheDocument();
+  });
+
+  it("opens a range on the month its range starts", async () => {
+    render(
+      <DateRangePicker
+        defaultValue={{ from: new Date(2026, 9, 28), to: new Date(2026, 10, 3) }}
+        aria-label="Period"
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Period/ }));
+    expect(await screen.findByRole("grid", { name: /October 2026/ })).toBeInTheDocument();
+    expect(screen.getByRole("grid", { name: /November 2026/ })).toBeInTheDocument();
+  });
+});
+
+/* ── Selection, clearing and bounds ─────────────────────────────────────────────────────── */
+describe("DatePicker selection", () => {
+  const dayButton = (name: RegExp) => screen.getByRole("button", { name });
+
+  it("confirms, rather than empties, when the selected day is picked again", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <form aria-label="when">
+        <DatePicker
+          name="due"
+          defaultValue={new Date(2026, 7, 4)}
+          onValueChange={onValueChange}
+          aria-label="Due"
+        />
+      </form>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Due/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /August 4.*selected/ }));
+    await waitFor(() => expect(screen.queryByRole("grid")).not.toBeInTheDocument());
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls[0][0]).toEqual(new Date(2026, 7, 4));
+    expect(
+      new FormData(screen.getByRole("form", { name: "when" }) as HTMLFormElement).get("due"),
+    ).toBe("2026-08-04");
+  });
+
+  it("offers Clear only when clearable and set, and Clear empties the value", async () => {
+    const onValueChange = vi.fn();
+    const { unmount } = render(
+      <DatePicker defaultValue={new Date(2026, 7, 4)} aria-label="Plain" />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Plain/ }));
+    await screen.findByRole("grid");
+    expect(screen.queryByRole("button", { name: "Clear" })).not.toBeInTheDocument();
+    unmount();
+
+    render(
+      <form aria-label="when">
+        <DatePicker
+          name="due"
+          clearable
+          defaultValue={new Date(2026, 7, 4)}
+          onValueChange={onValueChange}
+          aria-label="Due"
+        />
+      </form>,
+    );
+    const trigger = screen.getByRole("button", { name: /Due/ });
+    fireEvent.click(trigger);
+    fireEvent.click(await screen.findByRole("button", { name: "Clear" }));
+    expect(onValueChange).toHaveBeenCalledExactlyOnceWith(undefined);
+    await waitFor(() => expect(screen.queryByRole("grid")).not.toBeInTheDocument());
+    expect(trigger).toHaveTextContent("Pick a date");
+    expect(
+      new FormData(screen.getByRole("form", { name: "when" }) as HTMLFormElement).get("due"),
+    ).toBe("");
+  });
+
+  it("disables days outside min/max and stops navigation at their months", async () => {
+    render(
+      <DatePicker
+        defaultValue={new Date(2026, 7, 10)}
+        min={new Date(2026, 7, 5)}
+        max={new Date(2026, 7, 20)}
+        aria-label="Due"
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Due/ }));
+    await screen.findByRole("grid", { name: /August 2026/ });
+    expect(dayButton(/August 4,/)).toBeDisabled();
+    expect(dayButton(/August 5,/)).toBeEnabled();
+    expect(dayButton(/August 20,/)).toBeEnabled();
+    expect(dayButton(/August 21,/)).toBeDisabled();
+    expect(screen.getByRole("button", { name: /previous month/i })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+    expect(screen.getByRole("button", { name: /next month/i })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+  });
+
+  it("names unavailable days as such and does not let them be picked", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <DatePicker
+        defaultValue={new Date(2026, 7, 10)}
+        unavailable={[new Date(2026, 7, 14)]}
+        onValueChange={onValueChange}
+        aria-label="Due"
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Due/ }));
+    const taken = await screen.findByRole("button", { name: /August 14.*, unavailable$/ });
+    expect(taken).toBeDisabled();
+    expect(taken).toHaveAttribute("data-unavailable", "true");
+    fireEvent.click(taken);
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+});
+
+/* ── Keyboard: the whole round trip, with user-event ────────────────────────────────────── */
+describe("DatePicker keyboard", () => {
+  it("opens from the keyboard, moves by day, picks with Enter and returns focus", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <DatePicker
+        defaultValue={new Date(2026, 7, 4)}
+        onValueChange={onValueChange}
+        aria-label="Due"
+      />,
+    );
+    const trigger = screen.getByRole("button", { name: /Due/ });
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    const selected = await screen.findByRole("button", { name: /August 4.*selected/ });
+    await waitFor(() => expect(selected).toHaveFocus());
+
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("button", { name: /August 5,/ })).toHaveFocus();
+    await user.keyboard("{ArrowDown}");
+    expect(screen.getByRole("button", { name: /August 12,/ })).toHaveFocus();
+
+    await user.keyboard("{Enter}");
+    expect(onValueChange).toHaveBeenCalledExactlyOnceWith(new Date(2026, 7, 12));
+    await waitFor(() => expect(screen.queryByRole("grid")).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
+  });
+
+  it("closes on Escape without changing the value, and returns focus", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <DatePicker
+        defaultValue={new Date(2026, 7, 4)}
+        onValueChange={onValueChange}
+        aria-label="Due"
+      />,
+    );
+    const trigger = screen.getByRole("button", { name: /Due/ });
+    await user.click(trigger);
+    await screen.findByRole("grid");
+    await user.keyboard("{ArrowRight}{Escape}");
+    await waitFor(() => expect(screen.queryByRole("grid")).not.toBeInTheDocument());
+    expect(onValueChange).not.toHaveBeenCalled();
+    await waitFor(() => expect(trigger).toHaveFocus());
+  });
+});
+
+/* ── The calendar speaks the trigger's language ─────────────────────────────────────────── */
+describe("DatePicker calendar locale", () => {
+  beforeEach(() => pinToday());
+  afterEach(() => vi.useRealTimers());
+
+  it("formats the popover's calendar in the trigger's locale", async () => {
+    render(<DatePicker defaultValue={new Date(2026, 9, 6)} locale="de-DE" aria-label="Datum" />);
+    fireEvent.click(screen.getByRole("button", { name: /Datum/ }));
+    const grid = await screen.findByRole("grid", { name: "Oktober 2026" });
+    // Narrow weekday letters on screen, the full name as each header's label. (DayPicker hides
+    // the header row from assistive technology: every day button names its full date.)
+    const headers = Array.from(grid.querySelectorAll("thead th"));
+    expect(headers.map((th) => th.getAttribute("aria-label"))).toContain("Dienstag");
+    expect(headers.map((th) => th.textContent)).toEqual(["S", "M", "D", "M", "D", "F", "S"]);
+    expect(screen.getByRole("button", { name: /^Dienstag, 6\. Oktober 2026/ })).toBeInTheDocument();
+    expect(grid.closest("[data-slot=calendar]")).toHaveAttribute("lang", "de-DE");
+  });
+});
+
+/* ── Narrow viewports ───────────────────────────────────────────────────────────────────── */
+describe("DateRangePicker on a narrow viewport", () => {
+  const original = window.matchMedia;
+  afterEach(() => {
+    window.matchMedia = original;
+  });
+
+  it("shows one month below the md breakpoint, two above it", async () => {
+    window.matchMedia = ((query: string) => ({
+      ...original(query),
+      matches: query.includes("max-width"),
+    })) as typeof window.matchMedia;
+    const { unmount } = render(
+      <DateRangePicker defaultValue={{ from: new Date(2026, 7, 4) }} aria-label="Period" />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Period/ }));
+    await screen.findByRole("grid");
+    expect(screen.getAllByRole("grid")).toHaveLength(1);
+    unmount();
+
+    window.matchMedia = original;
+    render(<DateRangePicker defaultValue={{ from: new Date(2026, 7, 4) }} aria-label="Period" />);
+    fireEvent.click(screen.getByRole("button", { name: /Period/ }));
+    await screen.findAllByRole("grid");
+    expect(screen.getAllByRole("grid")).toHaveLength(2);
   });
 });

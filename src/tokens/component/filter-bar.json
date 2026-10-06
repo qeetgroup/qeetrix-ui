@@ -1,0 +1,12 @@
+{
+  "component": {
+    "filter-bar": {
+      "$description": "FilterBar (search, saved views and active filters above a table). Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "chip-height": {
+        "$value": "calc(var(--qx-control-height) - 0.25rem)",
+        "$type": "dimension",
+        "$description": "Height of an active-filter chip: one step under the bar's controls so filters read as values rather than buttons, and density-resolved with them — 28px by default, 24px compact, 32px comfortable."
+      }
+    }
+  }
+}

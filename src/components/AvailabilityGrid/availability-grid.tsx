@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckIcon } from "lucide-react";
 import * as React from "react";
 
 import { logicalDirectionForKey } from "@/lib/direction";
@@ -53,6 +54,11 @@ interface AvailabilityGridProps {
  *
  * Unavailable slots use `aria-disabled`, not `disabled`: they stay focusable, so
  * arrowing across the grid does not skip over them silently.
+ *
+ * No state rests on colour. A selected slot carries a check mark on the quiet Qeet tint, an
+ * unavailable slot is hatched in a sunken well, a free slot is the plain surface — and under
+ * forced colours selection takes the system highlight and the hatch is redrawn in GrayText. The
+ * slot height follows `data-qx-density` (`--qx-component-availability-grid-slot-height`).
  *
  * The tab stop follows focus wherever it comes from — arrow keys, a click, or a
  * programmatic `focus()` — so returning to the widget lands where the user left.
@@ -186,11 +192,13 @@ function AvailabilityGrid({
               this column really does hold the time labels. */}
           <span className="sr-only">{timeColumnHeader ?? messages.timeColumnHeader}</span>
         </div>
-        {days.map((d) => (
+        {days.map((d, di) => (
           // biome-ignore lint/a11y/useSemanticElements: see the role="grid" note above.
           // biome-ignore lint/a11y/useFocusableInteractive: header cells are structure, not tab stops.
           <div
-            key={d}
+            // By position: two columns may share a label ("Mon" in a two-week grid).
+            // biome-ignore lint/suspicious/noArrayIndexKey: the index *is* the column's identity — slot keys are "<day>:<time>" indices too.
+            key={di}
             role="columnheader"
             className="bg-card px-2 py-1.5 text-center text-xs font-medium text-muted-foreground"
           >
@@ -201,12 +209,13 @@ function AvailabilityGrid({
       {times.map((t, ti) => (
         // biome-ignore lint/a11y/useSemanticElements: see the role="grid" note above.
         // biome-ignore lint/a11y/useFocusableInteractive: rows are structure, not tab stops.
-        <div role="row" className="contents" key={t}>
+        // biome-ignore lint/suspicious/noArrayIndexKey: by position, as above — two rows may share a label.
+        <div role="row" className="contents" key={ti}>
           {/* biome-ignore lint/a11y/useSemanticElements: see the role="grid" note above. */}
           {/* biome-ignore lint/a11y/useFocusableInteractive: header cells are structure, not tab stops. */}
           <div
             role="rowheader"
-            className="bg-card px-2 py-1 text-end text-xs text-muted-foreground tabular-nums"
+            className="flex items-center justify-end bg-card px-2 text-end text-xs whitespace-nowrap text-muted-foreground tabular-nums"
           >
             {t}
           </div>
@@ -232,15 +241,18 @@ function AvailabilityGrid({
                   setFocused([ti, di]);
                   toggle(key);
                 }}
+                data-state={isBlocked ? "unavailable" : isSel ? "selected" : "available"}
                 className={cn(
-                  "h-7 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/disabled focus-visible:ring-inset",
+                  "flex h-(--qx-component-availability-grid-slot-height) items-center justify-center transition-colors duration-fast ease-standard outline-none focus-visible:focus-ring-inset",
                   isBlocked
-                    ? "cursor-not-allowed bg-muted [background-image:repeating-linear-gradient(45deg,transparent,transparent_4px,var(--border)_4px,var(--border)_5px)]"
+                    ? "cursor-not-allowed bg-(--qx-component-availability-grid-unavailable-background) [background-image:repeating-linear-gradient(45deg,transparent,transparent_5px,var(--qx-component-availability-grid-unavailable-pattern)_5px,var(--qx-component-availability-grid-unavailable-pattern)_6px)] forced-colors:bg-[Canvas] forced-colors:forced-color-adjust-none forced-colors:[--qx-component-availability-grid-unavailable-pattern:GrayText]"
                     : isSel
-                      ? "bg-primary/80 hover:bg-primary"
-                      : "bg-card hover:bg-accent",
+                      ? "bg-(--qx-component-availability-grid-selected-background) text-(--qx-component-availability-grid-selected-indicator) hover:bg-(--qx-component-availability-grid-selected-background-hover) forced-colors-selected"
+                      : "bg-(--qx-component-availability-grid-slot-background) hover:bg-(--qx-component-availability-grid-slot-background-hover)",
                 )}
-              />
+              >
+                {isSel && !isBlocked && <CheckIcon aria-hidden className="size-3.5" />}
+              </button>
             );
           })}
         </div>

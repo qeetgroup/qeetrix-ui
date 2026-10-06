@@ -191,3 +191,67 @@ describe("NavigationMenu disclosure", () => {
     expect(await a11y(baseElement)).toHaveNoViolations();
   });
 });
+
+describe("NavigationMenu current page", () => {
+  function WithCurrent() {
+    return (
+      <NavigationMenu aria-label="Main">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/pricing" active>
+              Pricing
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/customers">
+              Customers
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    );
+  }
+
+  it("announces the active link as the current page", () => {
+    render(<WithCurrent />);
+    expect(screen.getByRole("link", { name: "Pricing" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Customers" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("draws the current page in the Qeet selection tint, not the disabled opacity", () => {
+    render(<WithCurrent />);
+    const className = screen.getByRole("link", { name: "Pricing" }).getAttribute("class") ?? "";
+    expect(className).toContain("data-[active]:bg-brand-subtle");
+    expect(className).not.toContain("/disabled");
+  });
+
+  it("uses the foundation focus ring on triggers and links", () => {
+    render(<MegaMenu />);
+    const triggerClass = trigger("Products").getAttribute("class") ?? "";
+    expect(triggerClass).toContain("focus-visible:focus-ring");
+    expect(triggerClass).not.toContain("ring-ring/disabled");
+    expect(navigationMenuTriggerStyle()).toContain("focus-visible:focus-ring");
+  });
+
+  it("caps the floating panel at the space available, so it stays on a phone's screen", async () => {
+    render(<MegaMenu />);
+    fireEvent.click(trigger("Products"));
+    await waitFor(() =>
+      expect(document.querySelector('[data-slot="navigation-menu-popup"]')).not.toBeNull(),
+    );
+    expect(document.querySelector('[data-slot="navigation-menu-popup"]')).toHaveClass(
+      "max-w-(--available-width)",
+    );
+  });
+});
+
+describe("NavigationMenu trigger disabled (integration pass)", () => {
+  it("dims on data-disabled: Base UI's trigger is focusableWhenDisabled, so :disabled never matches", () => {
+    expect(navigationMenuTriggerStyle()).toContain("data-disabled:opacity-disabled");
+    expect(navigationMenuTriggerStyle()).toContain("data-disabled:pointer-events-none");
+  });
+
+  it("paints the current page with the library forced-colours selection recipe", () => {
+    expect(navigationMenuTriggerStyle()).toContain("data-[active]:forced-colors-selected");
+  });
+});

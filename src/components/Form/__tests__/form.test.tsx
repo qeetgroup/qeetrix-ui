@@ -147,3 +147,18 @@ describe("Form", () => {
     expect(await a11y(container)).toHaveNoViolations();
   });
 });
+
+describe("FormErrorSummary links", () => {
+  it("moves focus to the control, not only the scroll position", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <FormErrorSummary errors={[{ controlId: "email", message: "Enter your email" }]} />
+        <label htmlFor="email">Email</label>
+        <input id="email" aria-invalid="true" />
+      </>,
+    );
+    await user.click(screen.getByRole("link", { name: "Enter your email" }));
+    expect(screen.getByRole("textbox", { name: "Email" })).toHaveFocus();
+  });
+});

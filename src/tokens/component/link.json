@@ -1,0 +1,17 @@
+{
+  "component": {
+    "link": {
+      "$description": "Link. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "destructive-foreground-hover": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-danger) 75%, var(--qx-color-text-primary))",
+        "$type": "color",
+        "$description": "Hover for the destructive link. The semantic layer has no danger-hover text role, so this follows the rule the link role itself follows — hover moves toward the primary text colour, darker in light and lighter in dark — and so gains contrast on hover instead of fading (the previous /80 alpha lost it)."
+      },
+      "underline-offset": {
+        "$value": "0.25em",
+        "$type": "dimension",
+        "$description": "Underline gap, em-relative so an inline link keeps the same proportion in a caption and in a heading. Clears descenders in Qeet Text without detaching from the word."
+      }
+    }
+  }
+}

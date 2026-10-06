@@ -1,0 +1,27 @@
+{
+  "component": {
+    "scroll-area": {
+      "$description": "ScrollArea scrollbar. Component tokens reference semantic tokens; a literal here is a decision this component owns, and the description is why.",
+      "thumb": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 28%, transparent)",
+        "$type": "color",
+        "$description": "Resting thumb: a translucent graphite tint of the text colour, so one value reads on every surface a scroll area lives on — canvas, card, sunken log well, menu, nested panel — in both themes. Quiet at rest (about 2:1); clipped content already signals that the region scrolls."
+      },
+      "thumb-hover": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 46%, transparent)",
+        "$type": "color",
+        "$description": "Thumb while the pointer is over the scroll area or the user is scrolling — the moment its position is being read — at 3:1 or better against every surface in both themes."
+      },
+      "thumb-active": {
+        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 60%, transparent)",
+        "$type": "color",
+        "$description": "Thumb under the pointer or being dragged: the direct-manipulation state, one clear step above hover."
+      },
+      "size": {
+        "$value": "10px",
+        "$type": "dimension",
+        "$description": "Scrollbar thickness, padding included (the thumb is 6px inside a 2px gutter). Fixed rather than density-scaled: it is a pointer target, and compact density must not make it harder to grab."
+      }
+    }
+  }
+}

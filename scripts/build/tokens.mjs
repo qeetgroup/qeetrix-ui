@@ -31,6 +31,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import StyleDictionary from "style-dictionary";
 import { loadThemeRegistry } from "../lib/themes.mjs";
+import { densityAwareVariables, loadTokenGraph } from "../lib/tokens.mjs";
 
 const PKG = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const TOKENS = join(PKG, "src/tokens");
@@ -228,11 +229,51 @@ function densityModeCss(tokens) {
     .map(([name, value]) => `  --qx-density-${name}-default: ${value};`)
     .join("\n");
 
+  // A custom property's var() references are substituted where it is *declared*, and descendants
+  // inherit the substituted value. `--qx-control-height: var(--qx-density-control-height, …)` is
+  // declared on :root, so a nested `[data-qx-density]` would change --qx-density-* and nothing
+  // derived from it. Re-declaring every density-derived variable inside each density scope makes
+  // it re-resolve there — which is what lets DensityProvider's subtree scope actually work.
+  const derived = densityDerivedDeclarations();
+  const scope = (body) => [body, derived].filter(Boolean).join("\n");
+  // `default` resets an inherited density by un-setting the mode variables, so their
+  // `-default` fallbacks apply again inside a compact or comfortable ancestor.
+  const reset = Object.keys(density)
+    .filter((name) => typeof density[name] === "object" && "default" in density[name])
+    .map((name) => `  --qx-density-${name}: initial;`)
+    .join("\n");
+
   return [
     `:root {\n${defaults}\n}`,
-    `[data-qx-density="comfortable"] {\n${declarations("comfortable")}\n}`,
-    `[data-qx-density="compact"] {\n${declarations("compact")}\n}`,
+    `[data-qx-density="default"] {\n${scope(reset)}\n}`,
+    `[data-qx-density="comfortable"] {\n${scope(declarations("comfortable"))}\n}`,
+    `[data-qx-density="compact"] {\n${scope(declarations("compact"))}\n}`,
   ].join("\n\n");
+}
+
+/** Every emitted runtime variable whose value reaches a density variable through var(). */
+function densityDerivedDeclarations() {
+  const aware = densityAwareVariables(loadTokenGraph({ root: PKG }));
+  const declarationsOf = (css) =>
+    [...css.matchAll(/^\s*(--[a-z0-9-]+):\s*(.+);\s*$/gm)].map(([, name, value]) => [name, value]);
+  // A theme-varying variable cannot be re-declared here without overriding its theme value
+  // (a density scope and `.dark` have equal specificity), so one would be a build error.
+  const themeVarying = new Set(
+    registry
+      .slice(1)
+      .flatMap(({ name }) => declarationsOf(read(`consumable-${name}.css`)).map(([n]) => n)),
+  );
+  const lines = [];
+  for (const [name, value] of declarationsOf(read(`consumable-${registry[0].name}.css`))) {
+    if (!aware.has(name) || !value.includes("var(")) continue;
+    if (themeVarying.has(name)) {
+      throw new Error(
+        `${name} is density-derived and theme-varying; it cannot be re-declared per density scope.`,
+      );
+    }
+    lines.push(`  ${name}: ${value};`);
+  }
+  return lines.join("\n");
 }
 
 const concat = (platform) => registry.map(({ name }) => read(`${platform}-${name}.css`)).join("\n");

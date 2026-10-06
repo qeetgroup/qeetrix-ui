@@ -78,8 +78,55 @@ const pascal = (slug) =>
     .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
     .join("");
 
+/**
+ * The entry's `name`: the module's real component export when one matches the slug's PascalCase
+ * name case-insensitively (`qr-code` → `QRCode`, `otp-input` → `OTPInput`, `json-tree` →
+ * `JSONTree`), so a consumer can import what the manifest names. A module of several parts with
+ * no export of its own name (`chart`, `clipboard`, `resizable`) keeps the module's name.
+ */
+const componentName = (slug, source) => {
+  const base = pascal(slug);
+  const exported = new Set();
+  for (const match of source.matchAll(/export\s*{([^}]*)}/g)) {
+    for (const part of match[1].split(",")) {
+      const name = part
+        .trim()
+        .replace(/^type\s+/, "")
+        .split(/\s+as\s+/)
+        .pop()
+        ?.trim();
+      if (name) exported.add(name);
+    }
+  }
+  for (const match of source.matchAll(/export (?:function|const) (\w+)/g)) exported.add(match[1]);
+  if (exported.has(base)) return base;
+  const match = [...exported].find(
+    (name) => /^[A-Z]/.test(name) && name.toLowerCase() === base.toLowerCase(),
+  );
+  return match ?? base;
+};
+
 const isComponent = (f) => /\.tsx$/.test(f) && !/\.(test|stories)\.tsx$/.test(f);
 const read = (path) => (existsSync(path) ? readFileSync(path, "utf8") : "");
+
+/**
+ * The `src/internal/` modules a component imports, as source text.
+ *
+ * Internal modules are private implementation — the shared field recipe, the copy-feedback
+ * swap, the logical-side resolver — split out so several families can share one copy without it
+ * becoming a public subpath. Their classes are the component's own styling, so they are evidence
+ * for the component that imports them. (Importing another *public* component is composition, which
+ * the detector deliberately does not follow; see deriveDensitySupport.)
+ */
+const INTERNAL = join(PKG, "src/internal");
+const internalSourceOf = (source) =>
+  [...source.matchAll(/from\s+["']@\/internal\/([a-z0-9-]+)["']/g)]
+    .map(([, name]) =>
+      [".ts", ".tsx"].map((ext) => join(INTERNAL, `${name}${ext}`)).find((p) => existsSync(p)),
+    )
+    .filter(Boolean)
+    .map((path) => readFileSync(path, "utf8"))
+    .join("\n");
 
 // One entry per src/components/<Family>/<slug>.tsx, with its colocated test source so the
 // testing contract can be observed rather than declared.
@@ -162,7 +209,8 @@ const components = entries
     const test = testSources.get(slug) ?? "";
 
     const derived = describeComponentSource({
-      source,
+      // The component's own file first: the client directive is read from its head.
+      source: `${source}\n${internalSourceOf(source)}`,
       cvaGroups: readCvaVariantGroups(join(PKG, relativePath)),
       stateVocabulary: contracts.INTERACTION_STATES,
       densityAware,
@@ -180,7 +228,7 @@ const components = entries
 
     return {
       slug,
-      name: pascal(slug),
+      name: componentName(slug, source),
       category,
       layer: layerOf(relativePath, contracts.LAYER_DIRECTORIES),
 

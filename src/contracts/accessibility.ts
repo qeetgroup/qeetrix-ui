@@ -131,6 +131,8 @@ export const KEYBOARD_KEYS = [
   "type-ahead",
   "delete",
   "backspace",
+  /** `*` — the APG treeview's "expand all siblings". */
+  "asterisk",
 ] as const;
 export type KeyboardKey = (typeof KEYBOARD_KEYS)[number];
 

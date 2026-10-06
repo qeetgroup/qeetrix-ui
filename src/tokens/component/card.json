@@ -1,7 +1,7 @@
 {
   "component": {
     "card": {
-      "$description": "Card. Component tokens are the customisation point for one component. They reference SEMANTIC tokens \u2014 by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
+      "$description": "Card. Component tokens are the customisation point for one component. They reference SEMANTIC tokens — by token path when the value is theme-agnostic, or through the semantic CSS variable (--qx-color-*) when it is theme-varying, so one declaration covers both themes. A component token must never reference another component's tokens. Everything lives under the `component.*` namespace: the shadcn bridge already publishes leaves named `input`, `card`, `radius` and so on, and a token path cannot be both a leaf and a group.",
       "corner": {
         "$value": "{corner.surface}",
         "$type": "dimension"
@@ -10,21 +10,48 @@
         "$value": "var(--qx-color-surface-default)",
         "$type": "color"
       },
+      "background-elevated": {
+        "$value": "var(--qx-color-surface-elevated)",
+        "$type": "color",
+        "$description": "Fill of the `elevated` variant. Identical to the default surface in light; one step lighter in dark, where elevation is carried by lightness as much as by shadow."
+      },
       "foreground": {
         "$value": "var(--qx-color-text-primary)",
         "$type": "color"
       },
       "ring": {
-        "$value": "color-mix(in oklab, var(--qx-color-text-primary) 10%, transparent)",
-        "$type": "color"
+        "$value": "var(--qx-color-border-default)",
+        "$type": "color",
+        "$description": "The card's 1px boundary, and the colour of its internal dividers (a header `border-b`, the footer rule). Painted as a real border rather than a box-shadow ring so the boundary survives forced-colours mode, where box-shadow is stripped; the name predates that switch and is kept so existing overrides still apply."
+      },
+      "border-hover": {
+        "$value": "var(--qx-color-border-strong)",
+        "$type": "color",
+        "$description": "Boundary of an `interactive` card under the pointer. Decorative feedback paired with the hover lift — never the only signal, so it does not need 3:1."
+      },
+      "border-selected": {
+        "$value": "var(--qx-color-border-brand)",
+        "$type": "color",
+        "$description": "Boundary of a `selected` card, doubled to 2px with a matching ring. The brand border role is designed at 3:1 or better against every surface, so selection passes non-text contrast instead of relying on a tint."
+      },
+      "footer-background": {
+        "$value": "var(--qx-color-surface-subtle)",
+        "$type": "color",
+        "$description": "The band behind a card's footer actions — one quiet step off the card surface in both themes."
       },
       "elevation": {
-        "$value": "{elevation.raised}",
+        "$value": "var(--qx-elevation-raised)",
         "$type": "shadow"
       },
       "elevation-hover": {
-        "$value": "{elevation.hover}",
-        "$type": "shadow"
+        "$value": "var(--qx-elevation-hover)",
+        "$type": "shadow",
+        "$description": "Lift of an `interactive` card under the pointer. Static cards do not lift: a hover response on a surface that does nothing is a false affordance."
+      },
+      "elevation-elevated": {
+        "$value": "var(--qx-elevation-hover)",
+        "$type": "shadow",
+        "$description": "Resting shadow of the `elevated` variant — one step above a default card, for the one surface on a page that has to stand forward (a summary panel, a floating detail). Separate from elevation-hover so the two can be tuned independently."
       }
     }
   }

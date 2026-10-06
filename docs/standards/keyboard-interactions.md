@@ -114,6 +114,8 @@ ArrowDown / ArrowUp      move between visible items
 ArrowRight               expand, or move to the first child
 ArrowLeft                collapse, or move to the parent
 Home / End               first / last visible item
+*                        expand every sibling of the focused item
+A–Z                      type-ahead to the next item whose label starts with the letter
 Enter                    activate
 ```
 
@@ -125,6 +127,22 @@ Under `rtl`, expand/collapse follow the inline axis: ArrowLeft expands.
 Tab / Shift+Tab   cycle within the dialog — focus does not leave
 Escape            close, and return focus to the trigger
 ```
+
+### FloatingWindow — non-modal, movable
+
+```text
+Tab                    into and out of the window — it does not trap focus
+Escape                 close (when the window has onClose), while focus is inside it
+Arrow keys             on the title bar's move handle: move the window 8px
+Shift + Arrow keys     move it 40px
+```
+
+WCAG 2.1.1: a pointer drag is never the only way to move it. The move handle is the first stop in
+the title bar, named "Move window" and described by its keyboard hint (both in the
+`floatingWindow` message group). The arrows are physical in every direction, as the window's
+position is — ArrowLeft moves it left on screen under `rtl` too — and the window stays partly on
+screen exactly as a pointer drag keeps it. `useFloatingWindow` exposes the same move as
+`moveHandleProps` and `moveBy` for a custom title bar.
 
 ### Popover · HoverCard
 

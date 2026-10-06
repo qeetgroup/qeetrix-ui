@@ -1,0 +1,41 @@
+{
+  "component": {
+    "avatar": {
+      "$description": "Avatar, AvatarGroup and AvatarBadge. Component tokens reference SEMANTIC tokens through their CSS variables, so one declaration re-themes with the document. The fallback is a neutral graphite tile — identity is carried by the initials and the accessible name, never by an invented per-user colour.",
+      "fallback": {
+        "background": {
+          "$value": "var(--qx-color-surface-interactive)",
+          "$type": "color",
+          "$description": "The initials tile. The neutral interactive fill: one step off every surface in both themes, so an image-less avatar still reads as an object."
+        },
+        "foreground": {
+          "$value": "var(--qx-color-text-secondary)",
+          "$type": "color",
+          "$description": "Initials and the fallback icon. Secondary text, held to 4.5:1 on the fallback fill in both themes."
+        }
+      },
+      "ring": {
+        "$value": "var(--qx-color-surface-default)",
+        "$type": "color",
+        "$description": "The cut-out ring that separates stacked avatars and the badge from the avatar beneath. It should match the surface the avatar sits on: the default surface covers cards, panels and tables; set this variable on a container that places avatars on another surface (the canvas, a sidebar)."
+      },
+      "corner-square": {
+        "$value": "25%",
+        "$type": "dimension",
+        "$description": "The square (organisation, workspace, app) shape. A percentage rather than a ramp step so a 20px and a 48px tile read as the same shape — a fixed radius would make the small one a circle and the large one a sharp square."
+      },
+      "badge": {
+        "background": {
+          "$value": "var(--qx-color-action-primary)",
+          "$type": "color",
+          "$description": "The default badge dot: Qeet 500 as a graphic (≥3:1 against the ring). Status badges (presence) pass their own status fill."
+        },
+        "foreground": {
+          "$value": "var(--qx-color-text-on-brand)",
+          "$type": "color",
+          "$description": "An icon inside the default badge. The dark on-brand label — white on #F26D0E fails."
+        }
+      }
+    }
+  }
+}

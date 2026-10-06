@@ -171,6 +171,17 @@ published import path (`@qeetrix/ui/components/<slug>`) is flat, so moving a com
 categories is invisible to consumers. Cross-category imports are normal and go through the `@/`
 alias.
 
+**Every module in a family folder is public.** `scripts/build/subpath-shims.mjs` publishes the
+flat path for each slug in [`scripts/config/component-map.json`](../../scripts/config/component-map.json)
+and **fails the build** on any compiled module in `src/components/<Family>/` the map does not name
+— otherwise `"./components/*"` would publish it by accident. A helper several families share but
+no consumer should import (the field recipe, the copy-feedback swap, the logical-side resolver,
+the swatch tone) therefore lives in `src/internal/`, the non-public layer, not beside the
+component that first needed it. `internal` may not import `components` or `providers`: pass the
+value in (`usePhysicalSide(side, useDirection())`) rather than reaching up. (The source tree
+today uses `src/components/<Family>/` and `src/internal/`; the `primitives` layer described above
+is the target, not yet the layout.)
+
 ---
 
 ## blocks — `src/blocks/`

@@ -37,9 +37,46 @@ describe("PasswordStrengthMeter", () => {
     expect(screen.getByText("Fair")).toBeInTheDocument();
   });
 
-  it("hides the label when hideLabel=true", () => {
+  it("hides the label visually when hideLabel=true, but still announces it", () => {
     render(<PasswordStrengthMeter value="Hello123!" hideLabel />);
-    expect(screen.queryByText(/Weak|Fair|Good|Strong/)).not.toBeInTheDocument();
+    // The bar alone carries no text, so the label moves to the visually-hidden layer rather
+    // than leaving the live region silent.
+    const label = screen.getByText(/Weak|Fair|Good|Strong/);
+    expect(label.closest(".sr-only")).not.toBeNull();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /Password strength: (Weak|Fair|Good|Strong)/,
+    );
+  });
+
+  it("announces what the label is about, not only the bare word", () => {
+    render(<PasswordStrengthMeter value="abc" />);
+    expect(screen.getByRole("status")).toHaveTextContent("Password strength: Weak");
+  });
+
+  it("accepts a translated status prefix", () => {
+    render(
+      <PasswordStrengthMeter
+        value="abc"
+        statusPrefix="Sicherheit:"
+        labels={["", "Schwach", "Mittel", "Gut", "Stark"]}
+      />,
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("Sicherheit: Schwach");
+  });
+
+  it("does not rely on colour: the filled-segment count tracks the score", () => {
+    const { container, rerender } = render(<PasswordStrengthMeter value="" score={1} />);
+    const filled = () =>
+      container.querySelectorAll("[data-slot=password-strength-meter-segment][data-filled]").length;
+    expect(filled()).toBe(1);
+    rerender(<PasswordStrengthMeter value="" score={3} />);
+    expect(filled()).toBe(3);
+    rerender(<PasswordStrengthMeter value="" score={4} />);
+    expect(filled()).toBe(4);
+    // The segments are decorative; the text is the accessible channel.
+    expect(
+      container.querySelector("[data-slot=password-strength-meter-segment]")?.parentElement,
+    ).toHaveAttribute("aria-hidden", "true");
   });
 
   it("renders feedback lines", () => {
