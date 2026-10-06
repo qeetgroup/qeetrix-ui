@@ -237,32 +237,24 @@ instead of exiting green.
 | `check:contrast` | WCAG-AA on every semantic text/surface pair, both themes |
 | `check:performance` | the scale baseline in `src/__tests__/performance/baseline.json` — budgets may only shrink |
 
-**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update` and record a changeset. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/component-api.md](docs/standards/component-api.md).
+**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update`, raise the version and add the changelog entry. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/component-api.md](docs/standards/component-api.md).
 
 ---
 
 ## 🚢 Release
 
-Versioning + publishing run on [Changesets](https://github.com/changesets/changesets) and are
-documented in [docs/governance/release.md](docs/governance/release.md), behind a gate:
+Releasing is merging — the same flow as `@qeetrix/icons`, in three workflows
+([docs/governance/release.md](docs/governance/release.md)):
 
-```bash
-bun run changeset          # record a change + bump level
-bun run version-packages   # apply bumps + changelog (usually CI)
-bun run check:release      # the publication preflight — posture, lockfile, pinned toolchain
-bun run release            # check:release → verify → verify:package → publish
-```
+| Workflow | Trigger | What it does |
+|:--|:--|:--|
+| [`version.yml`](.github/workflows/version.yml) | PR opened or pushed | Bumps the patch version on your branch, unless you already raised it |
+| [`release.yml`](.github/workflows/release.yml) | Merge to `main` | Runs build · typecheck · lint · test, publishes to npm, **then** tags `vX.Y.Z` and opens a GitHub Release |
+| [`rollback.yml`](.github/workflows/rollback.yml) | Manual | Points npm's `latest` back at an older version |
 
-`bun run release` cannot publish something the quality gate rejects, and
-[`.github/workflows/release.yml`](.github/workflows/release.yml) is the only place it is meant to
-run: merging to `main` opens the **Version Packages** PR, and merging *that* publishes — after
-`check:release`, `verify` and `verify:package` all pass in the protected `npm-publish` environment.
-
-> **Publication is currently blocked, on purpose.** `bun run check:release` fails while
-> `license: "UNLICENSED"` sits next to public publication settings, and while `bun.lock` is
-> uncommitted. Both are decisions, not defects — see
-> [docs/governance/release.md](docs/governance/release.md) for what a human still has to do
-> (licence posture, registry, `npm-publish` environment reviewers, branch protection).
+For a **minor or major**, set `version` in `package.json` by hand in the PR; the bump leaves a
+raised version alone. A merge that does not change the version publishes nothing, and there is no
+`bun run release`.
 
 **Supported development environments: macOS and Linux.** The scripts use Node's filesystem and
 path APIs rather than a POSIX shell, but only Linux is exercised in CI, so Windows is unverified
@@ -283,6 +275,6 @@ rather than supported.
 | 🔧 Contributing | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 
 Part of the **Qeet Group** workspace. Licensed **UNLICENSED** (private to Qeet Group) pending the
-public-release decision — which is why `bun run check:release` refuses to publish. See
-[docs/governance/release.md](docs/governance/release.md).
+public-release decision, although the package is published publicly on npm — see
+[docs/governance/release.md](docs/governance/release.md#open-decisions).
 

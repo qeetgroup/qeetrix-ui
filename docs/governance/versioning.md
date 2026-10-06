@@ -4,8 +4,9 @@
 mean" — it is "what counts as a breaking change for a *design system*", where the contract
 includes behaviour and accessibility, not only types.
 
-Releases run through [Changesets](../../.changeset/). Every change that touches the published
-surface needs one.
+Every PR's version bump is visible in its diff: `version.yml` raises the patch, and you raise a
+minor or major by hand ([release.md](./release.md)). Every change that touches the published
+surface also needs a [CHANGELOG.md](../../CHANGELOG.md) entry.
 
 ---
 
@@ -111,7 +112,7 @@ The table above describes a `stable` component. For the others (see
 [component-status.md](./component-status.md)):
 
 - `experimental` — a breaking change is a **minor**, no deprecation cycle required
-- `beta` — a breaking change is a **minor**, but needs a changeset that explains the migration
+- `beta` — a breaking change is a **minor**, but needs a changelog entry that explains the migration
 - `stable` — as above: breaking changes are majors and follow
   [the deprecation lifecycle](./deprecations.md)
 
@@ -135,14 +136,14 @@ A public API change is not just a version number:
    breaking change that a list of names cannot see.
 3. **Update the registry** if a status, accessibility contract or deprecation changed, and
    regenerate the manifest (`bun run build:manifest`).
-4. **Write the changeset** — `bun run changeset`. The description is what ends up in
-   [CHANGELOG.md](../../CHANGELOG.md); write it for the person doing the upgrade.
+4. **Set the level and write the changelog.** `version.yml` bumps the patch on your PR; for a
+   minor or major, set `version` in `package.json` yourself. Add the matching section to
+   [CHANGELOG.md](../../CHANGELOG.md), written for the person doing the upgrade.
 5. **`bun run verify`.** If it passes, CI passes.
 
-Merging the **Version Packages** PR applies the bumps and publishes — after `check:release`,
-`verify` and `verify:package` pass in the protected release workflow. Publication is currently
-blocked on an unresolved licence decision; see
-[release.md](./release.md) for the mechanics and what a human still has to configure.
+Merging the PR to `main` publishes that version, then tags it — after build, typecheck, lint and
+test pass in the protected release workflow. See [release.md](./release.md) for the mechanics,
+rollback, and the publishing setup.
 
 ---
 

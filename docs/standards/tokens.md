@@ -354,5 +354,5 @@ a generated variable. It restates no values — that was how the shadow ramp cam
 4. `bun run build:tokens && bun run check:tokens`.
 5. If it is a colour that text will sit on, add the pair to
    [`scripts/check/contrast.mjs`](../../scripts/check/contrast.mjs).
-6. Changeset: a new token is a **minor**; changing what an existing token *means* is a
+6. Version and changelog: a new token is a **minor**; changing what an existing token *means* is a
    **major**. See [versioning.md](../governance/versioning.md).

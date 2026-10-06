@@ -72,8 +72,11 @@ Categories: `actions` · `inputs` · `selection` · `pickers` · `navigation` ·
 8. `bun run check:exports -- --update` to re-snapshot the public API. The snapshot records
    *signatures*, not just names: a prop's optionality, its declared type, a props type's
    generics and what it extends. A newly required prop or a narrowed union fails the check.
-9. `bun run changeset` — `minor` for new exports, `major` for removals or
-   renames. See [docs/governance/versioning.md](./docs/governance/versioning.md).
+9. Set the version and write the changelog. `version.yml` bumps the patch on
+   your PR; set `version` in `package.json` yourself for a `minor` (new
+   exports) or `major` (removals or renames), and add the section to
+   `CHANGELOG.md`. See [docs/governance/versioning.md](./docs/governance/versioning.md)
+   and [docs/governance/release.md](./docs/governance/release.md).
 
 ## Moving a component between categories
 
@@ -86,7 +89,8 @@ the public surface is unchanged.
 
 `src/__tests__/public-api.json` records every exported symbol. Any addition or
 removal fails `verify` until you re-snapshot it deliberately — so an API change
-is always a visible line in the diff and always ships with a changeset.
+is always a visible line in the diff and always ships with a version bump and a
+changelog entry.
 
 To keep a symbol out of the barrel (deprecated aliases), mark the file
 `@barrel-exclude`; it stays reachable only via its deep import.

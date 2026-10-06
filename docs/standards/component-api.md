@@ -496,4 +496,4 @@ The full checklist is in [CONTRIBUTING.md](../../CONTRIBUTING.md). In contract t
 2. Declare its `accessibility` — the APG pattern it implements, or `"none"` with a reason.
 3. Everything else (capabilities, states, variants, test coverage) is derived. Do not declare
    what the generator can observe.
-4. Re-snapshot the public API and record a changeset.
+4. Re-snapshot the public API, raise the version, and add the changelog entry.

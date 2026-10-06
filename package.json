@@ -131,9 +131,6 @@
     "build:tokens": "node scripts/build/tokens.mjs",
     "build:logos": "node scripts/build/logos.mjs",
     "clean": "node scripts/build/clean.mjs",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "release": "bun run build && changeset publish",
     "prepack": "bun run build",
     "playground": "vite --config playground/vite.config.ts",
     "playground:build": "vite build --config playground/vite.config.ts"
@@ -164,7 +161,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
-    "@changesets/cli": "^2.31.0",
     "@tailwindcss/vite": "^4.3.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

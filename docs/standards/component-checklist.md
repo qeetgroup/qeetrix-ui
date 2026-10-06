@@ -81,5 +81,5 @@ things in.
 - [ ] **`bun run verify`** — it names anything missed.
 - [ ] **`bun run check:exports -- --update`** to re-snapshot the export list and the declared
       props, in the same commit.
-- [ ] **`bun run changeset`** — a new component is a minor
-      ([versioning.md](../governance/versioning.md)).
+- [ ] **Raise the version to a minor** in `package.json` and add the `CHANGELOG.md` entry — a
+      new component is a minor ([versioning.md](../governance/versioning.md)).

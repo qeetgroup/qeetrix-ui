@@ -1,79 +1,109 @@
 # Release & publication
 
-How `@qeetrix/ui` gets from a merged PR to a registry, what stops it, and what is still an open
-decision. Versioning rules (what makes a change major/minor/patch) live in
-[versioning.md](./versioning.md); this document is about the *mechanics and the authorisation*.
+How `@qeetrix/ui` gets from a merged PR to the registry, and how to undo a release. Versioning
+rules (what makes a change major, minor or patch) live in [versioning.md](./versioning.md); this
+document is about the *mechanics*. The flow is the same as `@qeetrix/icons`'.
 
-## The gate
+> [!WARNING]
+> **Set the version by hand before the next merge to `main`.** The work on `develop` since 2.0.0
+> is expected to ship as a major release (3.0.0). Merged with `package.json` still at `2.0.0`,
+> `version.yml` would bump it to `2.0.1`, and `release.yml` would publish breaking changes as a
+> patch on `latest`, which every consumer on a `^2` range would receive on their next install.
+> Set `version` to `3.0.0` in the PR; the bump leaves a raised version alone.
 
-```
-bun run check:release   →   bun run verify   →   bun run verify:package   →   changeset publish
-```
+## How a release happens
 
-`bun run release` runs exactly that chain, and so does
-[`.github/workflows/release.yml`](../../.github/workflows/release.yml). There is no shorter path:
-the `release` script used to be `build && changeset publish`, which meant a laptop with a token
-could publish a tarball that no quality gate had ever seen.
+Three workflows, and you drive all of it by opening a PR.
 
-| Step | Refuses to release when |
-|:--|:--|
-| `check:release` | the publication posture is self-contradictory, the lockfile is missing, the toolchain is not pinned, or the publish path is not gated |
-| `verify` | types, lint, tests, architecture, the API lock, a11y coverage, tokens or contrast fail |
-| `verify:package` | the packed tarball does not resolve every published path, denies every internal one, and compile in real consumers |
+| Workflow | Trigger | What it does |
+|:--|:--|:--|
+| [`version.yml`](../../.github/workflows/version.yml) | PR opened or pushed | Bumps the patch version on your branch |
+| [`release.yml`](../../.github/workflows/release.yml) | Merge to `main` | Publishes to npm, then tags the commit |
+| [`rollback.yml`](../../.github/workflows/rollback.yml) | Manual | Points `latest` back at an older version |
 
-`check:release` is reported as its own CI job. Everything it fails on is a decision or a
-credential, never a code defect, so it is deliberately not part of `verify`.
+### 1. Open a PR
 
-## What only a human can do
+`version.yml` bumps the patch version in `package.json` and commits it to your branch, so **the
+version you are about to ship is visible in the PR diff** rather than decided later by a bot.
 
-These four live outside the repository. Until they are done, a release cannot succeed — which is
-the intended state, not a bug.
+Want a minor or major instead? Edit `version` in `package.json` yourself. The workflow only acts
+when the PR's version still equals `main`'s, so a manual bump is left alone rather than bumped
+twice.
 
-1. **Decide the publication posture** (blocking, see `META-001`). `package.json` currently says
-   `"license": "UNLICENSED"` with `"private": false` and `publishConfig.access: "public"`, and
-   `.changeset/config.json` says `access: "public"`. That combination cannot be correct. Either:
-   - **internal** — set `"private": true`, or set `publishConfig.access` *and*
-     `.changeset/config.json` `access` to `"restricted"` and point `publishConfig.registry` at the
-     Qeet Group registry; or
-   - **public** — obtain the legal approval, replace `UNLICENSED` with the granted SPDX licence id,
-     and commit the matching `LICENSE` file.
+It skips fork PRs (their token is read-only) and never reacts to its own commit.
 
-   `check:release` accepts either and refuses the mixture. Nobody should resolve this by guessing.
-2. **Commit the lockfile.** `bun install --lockfile-only --save-text-lockfile`, then commit
-   `bun.lock`. CI already runs `bun install --frozen-lockfile`, which has nothing to freeze
-   without it.
-3. **Create the `npm-publish` environment** in repository settings, with required reviewers and
-   the `NPM_TOKEN` secret, and set the `QEETRIX_NPM_REGISTRY` variable if publishing anywhere
-   other than `registry.npmjs.org`. The release job declares `environment: npm-publish`, so
-   without it the job cannot run at all.
-4. **Protect `main`**: no direct pushes, and CI (`verify`, `package`, `changeset`) required. The
-   repository cannot enforce its own branch protection, so `check:release` cannot check this one.
+### 2. Merge to main
 
-Once the package is genuinely public and licensed, also enable provenance — uncomment
-`NPM_CONFIG_PROVENANCE` in the release workflow. `check:release` refuses provenance while the
-package is not publicly licensed, because npm only attests public packages.
+`release.yml` publishes that version and **then** pushes the matching `vX.Y.Z` tag and opens a
+GitHub Release with notes generated from the merged PRs. The tag comes last on purpose: every `v*`
+tag is a version that really shipped.
 
-## Reproducibility
+Before publishing it runs the same gate as CI: `build`, `typecheck`, `lint`, `test`. (`build`
+comes first because it generates the token files `typecheck` reads.) A merge that does not change
+the version publishes nothing and succeeds, so re-running is always safe.
 
-- **One pinned toolchain.** `packageManager: "bun@1.3.14"` is the single source of truth;
-  `engines.bun` and every workflow's `bun-version` must equal it, and `check:release` compares
-  them. A floating `1.3` in CI meant CI could resolve a dependency tree no release ever tested.
-- **Generated artifacts are reproducible.** `component-manifest.json` and the brand logo
-  components are tracked, so CI regenerates them and fails on any diff
-  (`bun run check:generated`, plus `git diff --exit-code` after `bun run build`). The manifest
-  carries no wall-clock stamp: `generated` is the date the catalog last *changed*, and
-  `QEETRIX_MANIFEST_DATE` pins it for hermetic builds. Story coverage comes from the sibling
-  `qeetrix-story` checkout when present and is carried forward from the tracked manifest when not,
-  so the file no longer depends on which repositories a machine happens to have.
+There is no `bun run release`. Releasing is merging.
 
-## What a release still does not prove
+### 3. If it was a bad release
 
-- **Server components.** The Next.js RSC consumer pass needs `qeetrix-docs` installed next to
-  this repo. CI and the release workflow set `QEETRIX_SKIP_NEXT_CONSUMER=1` and print a loud
-  warning; enabling it needs a cross-repository checkout and token.
-- **The correct changeset *level*.** CI enforces that a changeset exists
-  (`changeset status --since=<base>`), and `check:exports` fails on any surface or signature
-  change, so a breaking change cannot land silently — but nothing machine-verifies that a
-  `major` was not filed as a `minor`. That is a review responsibility.
-- **Dependency vulnerability and licence status.** No audit runs in this repository yet; a
-  lockfile is the precondition for one.
+Run **Actions → Rollback → Run workflow** and give it the version to go back to.
+
+npm will not let a published version be replaced, and unpublishing breaks every lockfile that
+already pins it. So a rollback moves the `latest` dist-tag to a known-good version instead:
+
+- anyone installing fresh gets the good version
+- anyone who pinned the bad version explicitly keeps working
+
+To go forward again, either release normally or run the rollback with the newer version.
+
+## The changelog
+
+[CHANGELOG.md](../../CHANGELOG.md) is written by hand, in the PR that raises the version: add a
+section for the new version and write it for the person doing the upgrade (what changed, and for
+a major, how to migrate). Entries up to 2.0.0 were generated by Changesets, which this repository
+no longer uses.
+
+## Publishing setup
+
+Publishing needs one of these, and `release.yml` checks before trying:
+
+**A token.** An `NPM_TOKEN` secret with publish rights to the `@qeetrix` scope.
+
+**Trusted publishing (OIDC).** Configure a trusted publisher for `@qeetrix/ui` on npmjs.com
+pointing at this repository and the `Release` workflow, then set the repository variable
+`QEETRIX_NPM_TRUSTED_PUBLISHING` to `true`. It needs **npm ≥ 11.5**, which is why the workflow
+pins `node-version: 24`; on Node 20 (npm 10) the OIDC path cannot work.
+
+Set the `QEETRIX_NPM_REGISTRY` variable to publish anywhere other than `registry.npmjs.org`.
+
+**When publishing is not configured the job succeeds with a warning** and writes the missing
+steps into the run summary, and **no tag is created**. That is deliberate: a permanently red
+workflow trains people to ignore it, and a tag with nothing published behind it is worse than no
+tag.
+
+A protected `npm-publish` environment is referenced by both `release.yml` and `rollback.yml`. If
+it does not exist GitHub creates it unprotected, so add required reviewers there if a human
+should approve each publish.
+
+## Open decisions
+
+These live outside the code, and only a human can settle them.
+
+- **Licence posture.** `package.json` says `"license": "UNLICENSED"` while the package is
+  published publicly (`publishConfig.access: "public"`; versions up to 2.0.0 are on npmjs.com).
+  Either obtain the approval and replace `UNLICENSED` with the granted SPDX id (and commit the
+  matching `LICENSE`), or make the package internal: `publishConfig.access: "restricted"` and a
+  Qeet Group registry in `QEETRIX_NPM_REGISTRY`.
+- **Protect `main`**: no direct pushes, CI required. The repository cannot enforce its own branch
+  protection.
+
+## Known limits
+
+- **The bump commit does not re-run CI.** GitHub does not start workflows for pushes made with
+  the workflow's own `GITHUB_TOKEN`, so CI's last result is for the commit before the bump. The
+  bump only edits `version`, so that result still holds; but if branch protection *requires* CI on
+  the head commit, push any follow-up commit (or re-run CI) before merging.
+- **Nothing machine-verifies the bump level.** The automatic bump is always a patch. A new export
+  needs a minor and a breaking change a major, raised by hand — that is a review responsibility.
+- **One pinned toolchain.** `packageManager: "bun@1.3.14"` is the source of truth; every
+  workflow's `BUN_VERSION` must equal it, and nothing checks that automatically.
