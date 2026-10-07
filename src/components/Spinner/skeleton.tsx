@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  *
  * The resting colour is `--qx-component-skeleton-background`, a translucent foreground tint, so
  * a placeholder keeps the same weight on canvas, card, popover and sunken surfaces in both
- * themes. The shimmer sweep is defined once in `base.css` and stops under reduced motion; in
+ * themes. The shimmer sweep is defined once in `styles.css` and stops under reduced motion; in
  * forced-colors mode the background is dropped, so the block keeps a GrayText outline.
  *
  * A skeleton has no text of its own. Mark the region it stands in for as busy

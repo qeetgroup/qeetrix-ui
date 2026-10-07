@@ -43,7 +43,7 @@ in jsdom.** What is there now, and the claim each one closes:
 | `focus-containment.test.tsx` | `FocusTrap` wraps a **native** Tab and Shift+Tab, and lets focus out when inactive | `user-event` computed the next element itself, from its own idea of the tab order |
 | `carousel-visibility.test.tsx` | With the real Embla and real measurement, content in an out-of-view slide cannot be focused, and operability moves with the window | `embla-carousel-react` was mocked entirely; the assertions were about a fake visibility report |
 | `hit-target.test.tsx` | The DataTable column resizer is a 12px target that hit-testing lands on, while its visible rule stays 1px | The value model only; the geometry was unassertable |
-| `media/base-layer-media-queries.test.tsx` | `base.css` really collapses a declared 150ms transition under `prefers-reduced-motion`, and really remaps the theme bridge variables to system colours under `forced-colors` | The rules were asserted to exist in the stylesheet, which is a different claim from applying |
+| `media/base-layer-media-queries.test.tsx` | the host-global section of `styles.css` really collapses a declared 150ms transition under `prefers-reduced-motion`, and really remaps the theme bridge variables to system colours under `forced-colors` | The rules were asserted to exist in the stylesheet, which is a different claim from applying |
 
 `media/` runs in a **second browser instance** whose Playwright context has `reducedMotion: "reduce"`
 and `forcedColors: "active"` set. Both are properties of the browser context, so they cannot be

@@ -112,7 +112,7 @@ describe("Drawer", () => {
     render(<DrawerExample open />);
     const viewport = document.querySelector('[data-slot="drawer-viewport"]');
     expect(viewport?.className).toContain("z-(--qx-z-drawer)");
-    // The sheet-overlay slot is what base.css's forced-colors backdrop rule targets.
+    // The sheet-overlay slot is what the stylesheet's forced-colors backdrop rule targets.
     const backdrop = document.querySelector('[data-slot="sheet-overlay"]');
     expect(backdrop?.className).toContain("z-(--qx-z-drawer-backdrop)");
     expect(backdrop?.className).toContain("bg-(--qx-component-dialog-scrim)");

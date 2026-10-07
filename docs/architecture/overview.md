@@ -77,7 +77,7 @@ The published surface is **only** what the entry points export:
 | `@qeetrix/ui/blocks/<name>` · `/providers/<name>` | one block · one provider |
 | `@qeetrix/ui/hooks/<name>` | the four public hooks — `use-media-query`, `use-mobile`, `use-motion`, `use-prefers-reduced-motion` |
 | `@qeetrix/ui/lib/<name>` | the four public helpers — `utils` (`cn`), `motion`, `responsive`, `token-values` |
-| `@qeetrix/ui/styles.css` · `/base.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens; `base.css` is the host-global layer, separately importable |
+| `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | the stylesheet (one entry, host-global rules included) + the generated token files |
 | `@qeetrix/ui/manifest.json` | the generated component manifest |
 
 Everything else is **denied**, not merely undocumented.

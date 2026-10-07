@@ -68,7 +68,7 @@ function DrawerContent({
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Backdrop
-        // The sheet-overlay slot keeps the forced-colors backdrop rule in base.css applying.
+        // The sheet-overlay slot keeps the forced-colors backdrop rule in styles.css applying.
         data-slot="sheet-overlay"
         className="fixed inset-0 z-(--qx-z-drawer-backdrop) bg-(--qx-component-dialog-scrim) opacity-[calc(1-var(--drawer-swipe-progress,0))] transition-opacity duration-slow ease-enter data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*var(--qx-motion-duration-normal))] data-ending-style:ease-exit data-swiping:duration-0"
       />

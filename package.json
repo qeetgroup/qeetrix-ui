@@ -1,6 +1,6 @@
 {
   "name": "@qeetrix/ui",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": false,
   "description": "Qeetrix UI — the Qeet Group React component library (shadcn + Base UI, Tailwind v4).",
   "license": "UNLICENSED",
@@ -31,7 +31,6 @@
       "default": "./dist/index.js"
     },
     "./styles.css": "./dist/styles/index.css",
-    "./base.css": "./dist/styles/base.css",
     "./qeetrix.css": "./dist/styles/tokens.css",
     "./tokens.css": "./dist/styles/tokens.raw.css",
     "./tokens.json": "./dist/styles/tokens.json",

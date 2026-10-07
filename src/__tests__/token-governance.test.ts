@@ -9,11 +9,12 @@
  *      are designed for, in every registered theme, measured on the generated CSS the browser
  *      actually receives — var() chains followed, color-mix() mixed, translucent fills
  *      composited over the surface they sit on;
- *   3. the host-global surface of base.css, so a new rule on a consumer's document is a
- *      reviewed change to the list below rather than a line that slips in.
+ *   3. the host-global section of styles.css, so a new rule on a consumer's document is a
+ *      reviewed change to the list below rather than a line that slips in;
+ *   4. the published CSS entries: one hand-authored stylesheet, exported as styles.css.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { converter, formatHex, parse, wcagContrast } from "culori";
@@ -30,6 +31,7 @@ type Finding = { rule: string; token: string; theme: string | null; message: str
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const tokensCss = join(root, "src/styles/tokens.css");
+const stylesheet = join(root, "src/styles/index.css");
 const themes: { name: string; selector: string; colorScheme: string }[] = JSON.parse(
   readFileSync(join(root, "scripts/config/themes.json"), "utf8"),
 ).themes;
@@ -355,16 +357,16 @@ describe("theme-scoped values", () => {
     expect(new Set(values).size).toBe(themes.length);
   });
 
-  it("base.css declares each theme's native color-scheme", () => {
-    const base = readFileSync(join(root, "src/styles/base.css"), "utf8");
+  it("the stylesheet declares each theme's native color-scheme", () => {
+    const css = readFileSync(stylesheet, "utf8");
     for (const t of themes) {
       const escaped = t.selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      expect(base).toMatch(new RegExp(`${escaped}\\s*\\{\\s*color-scheme:\\s*${t.colorScheme};`));
+      expect(css).toMatch(new RegExp(`${escaped}\\s*\\{\\s*color-scheme:\\s*${t.colorScheme};`));
     }
   });
 });
 
-describe("host-global surface of base.css", () => {
+describe("host-global section of styles.css", () => {
   /** The rules @qeetrix/ui/styles.css applies to the consumer's document. docs/standards/theming.md. */
   const HOST_GLOBAL = [
     ":root",
@@ -386,10 +388,9 @@ describe("host-global surface of base.css", () => {
   ];
 
   it("is exactly the reviewed list", () => {
-    const css = readFileSync(join(root, "src/styles/base.css"), "utf8").replace(
-      /\/\*[\s\S]*?\*\//g,
-      "",
-    );
+    const css = readFileSync(stylesheet, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    // One base layer, so a second block cannot add host-global rules outside the list.
+    expect(css.split("@layer base").length - 1).toBe(1);
     const layer = css.slice(css.indexOf("@layer base"));
     const selectors: string[] = [];
     let depth = 0;
@@ -413,5 +414,42 @@ describe("host-global surface of base.css", () => {
       else buffer += ch;
     }
     expect(selectors).toEqual(HOST_GLOBAL);
+  });
+});
+
+describe("published CSS entries", () => {
+  const exportsMap: Record<string, unknown> = JSON.parse(
+    readFileSync(join(root, "package.json"), "utf8"),
+  ).exports;
+
+  // One stylesheet, one entry. The base layer was once split into its own file while styles.css
+  // kept pointing at the other half, and every consumer silently lost it — reduced motion and
+  // forced colors included. Nothing checked the export map, so nothing noticed.
+  it("export the stylesheet as styles.css, next to the generated token files only", () => {
+    expect(exportsMap["./styles.css"]).toBe("./dist/styles/index.css");
+    expect(Object.keys(exportsMap).filter((key) => key.endsWith(".css"))).toEqual([
+      "./styles.css",
+      "./qeetrix.css",
+      "./tokens.css",
+    ]);
+  });
+
+  it("keep one hand-authored stylesheet in src/styles", () => {
+    const generated = new Set(["tokens.css", "tokens.raw.css"]);
+    const authored = readdirSync(join(root, "src/styles")).filter(
+      (file) => file.endsWith(".css") && !generated.has(file),
+    );
+    expect(authored).toEqual(["index.css"]);
+  });
+
+  it("point every dist/styles target at a file postbuild copies from src/styles", () => {
+    for (const target of Object.values(exportsMap)) {
+      if (typeof target !== "string" || !target.startsWith("./dist/styles/")) continue;
+      const file = target.slice("./dist/styles/".length);
+      expect(
+        existsSync(join(root, "src/styles", file)),
+        `${target} has no src/styles/${file}`,
+      ).toBe(true);
+    }
   });
 });

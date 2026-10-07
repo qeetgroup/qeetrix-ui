@@ -1,5 +1,24 @@
 # @qeetrix/ui
 
+## Unreleased
+
+### Patch Changes
+
+- **`@qeetrix/ui/styles.css` includes the base layer again.** Since 2.0.0 the base layer lived in
+  a separate `base.css` that `styles.css` never reached, so apps importing `styles.css` silently
+  went without it: page type and background, heading and control fonts, the skeleton shimmer,
+  the reduced-motion collapse and the forced-colors mapping. Headings, body text and native
+  controls pick up Qeetrix fonts and colours again, so check screens that were styled while the
+  layer was missing. No import changes.
+- **One stylesheet.** The base layer is merged back into `src/styles/index.css`, and
+  `@qeetrix/ui/styles.css` is the only stylesheet entry. The generated token files
+  (`qeetrix.css`, `tokens.css`, `tokens.json`) are unchanged.
+- **Removed `@qeetrix/ui/base.css`.** It exported the base layer on its own and only worked
+  compiled alongside `styles.css`, which now includes it. No known consumer imports it; if you do,
+  delete the import.
+- The export map, and the rule that `src/styles` holds one hand-authored stylesheet, are now
+  locked by `src/__tests__/token-governance.test.ts`.
+
 ## 2.1.0
 
 ### Minor Changes
