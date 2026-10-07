@@ -28,7 +28,7 @@ component styles                    Tailwind utilities, resolved through @theme
 | component | `src/tokens/component/`, `src/tokens/theme/<t>/component.json` | `--qx-component-*` |
 | component (bridge) | `src/tokens/theme/<t>/bridge.json` | unprefixed `--primary`, `--card`, … |
 
-`bun run check:tokens` enforces the direction. Dependencies are deny-by-default:
+The token rules (`scripts/lib/tokens.mjs`, run by `token-governance.test.ts` in `bun run test`) enforce the direction. Dependencies are deny-by-default:
 
 ```text
 primitive  → primitive
@@ -55,8 +55,8 @@ Those are the tokens components actually render, which makes the bridge a compon
 by function, whatever its filename says.
 
 Every bridge entry references a **semantic** token. That indirection is what makes the contrast
-gate meaningful: before it existed, the bridge aliased primitives directly and
-`bun run check:contrast` was measuring a parallel set of tokens that nothing displayed.
+gate meaningful: before it existed, the bridge aliased primitives directly and the contrast check
+was measuring a parallel set of tokens that nothing displayed.
 
 ---
 
@@ -79,7 +79,7 @@ gate meaningful: before it existed, the bridge aliased primitives directly and
 The bridge publishes leaves called `input`, `card` and `radius`. A group at the same path
 collides with them, and **Style Dictionary resolves that collision by silently dropping one
 side — no error, no output.** Three token groups were lost that way while this layer was being
-built, which is why `check:tokens` runs before the build and why:
+built, which is why the token rules check for it and why:
 
 - component tokens are namespaced `component.*`
 - the corner roles are called `corner.*`, not `radius.*`
@@ -151,7 +151,7 @@ primitive to alias.
 
 That is allowed, on one condition: **the token, or a group above it, must carry a
 `$description` saying why.** An undocumented literal in the semantic or component layer is
-indistinguishable from an author who skipped the token, so `check:tokens` rejects it.
+indistinguishable from an author who skipped the token, so the token rules reject it.
 
 ```json
 "corner-xs": {
@@ -206,7 +206,7 @@ token count is a cost, not an achievement.
 **A component token must never reference another component's tokens.** `dialog.background →
 card.background` couples two components that should merely agree; each points at its own
 semantic surface instead (`color.surface.overlay` for the dialog, `color.surface.default` for the
-card). `check:tokens` rejects the coupling.
+card). The token rules reject the coupling.
 
 ### Referencing a theme-varying semantic token
 
@@ -245,7 +245,7 @@ things at it, remove it in a major. Record it with a DTCG `$extensions` entry:
 }
 ```
 
-`check:tokens` requires `since`, `reason` and an explicit `replacement` (use `null` to state
+The token rules require `since`, `reason` and an explicit `replacement` (use `null` to state
 there is no successor), verifies the replacement exists and is not itself deprecated, and
 **fails if any live token still references the deprecated one**. Deleting a token outright is a
 major — see [versioning.md](../governance/versioning.md).
@@ -254,8 +254,8 @@ major — see [versioning.md](../governance/versioning.md).
 
 ## Raw values in component source
 
-Design decisions belong in tokens, not in class names.
-`bun run check:token-usage` scans component source and rejects:
+Design decisions belong in tokens, not in class names. These are not allowed in component source
+— held in review since the scan that rejected them (`check:token-usage`) was removed in 01dce7a:
 
 | Rejected | Instead |
 |:--|:--|
@@ -269,10 +269,12 @@ Design decisions belong in tokens, not in class names.
 The second row is the one that is easy to get wrong. A **named Tailwind palette class looks
 token-backed** — it is a class name, not a hex literal — but the palette is deliberately absent
 from the runtime stylesheet, so `text-sky-700` is a value baked into the component: no brand theme
-re-points it, the forced-colors mapping never sees it, and `check:contrast` has no pair to measure.
-Only the semantic namespaces are governed. CodeBlock, JSONTree and Rating passed the scan for
-months this way; they now render `text-syntax-key` and `fill-rating-filled`, which are semantic
-roles with a value per theme and a blocking contrast pair each.
+re-points it, the forced-colors mapping never sees it, and the contrast test has no pair to
+measure. Only the semantic namespaces are governed. CodeBlock, JSONTree and Rating once rendered
+palette classes this way; they now render `text-syntax-key` and `fill-rating-filled`, semantic
+roles with a value per theme. The syntax roles have contrast pairs in `token-governance.test.ts`;
+the rating fill is a recorded WCAG 1.4.11 exception, and their own suites guard the palette
+classes from coming back.
 
 If a component genuinely needs a colour vocabulary the semantic roles do not cover, add the roles
 — that is what `color.syntax.*` and `color.data.categorical.*` are.
@@ -281,15 +283,9 @@ What is *not* rejected, because it is arithmetic rather than a design decision:
 `calc()`, `min()`, `max()`, and anything containing `var()`. `translate-x-[calc(100%-2px)]`
 is layout maths; `rounded-[2px]` is a corner someone chose.
 
-Two escape hatches, deliberately different:
-
-- **[`raw-value-exemptions.json`](../../scripts/config/raw-value-exemptions.json)** — colours
-  that are *domain data*, not styling: the colour picker's hex input, the QR encoder's RGBA
-  arguments. Each needs a reason.
-- **[`raw-dimension-baseline.json`](../../scripts/config/raw-dimension-baseline.json)** — a
-  ratchet over the lengths that predate the token architecture. The gate fails on anything new;
-  the list may only shrink. Reseed with
-  `node scripts/check/token-usage.mjs --init` **only** when entries have been removed.
+Colours that are *domain data*, not styling — the colour picker's hex input, the QR encoder's
+RGBA arguments — are the legitimate exception; say why in a comment. (The exemptions file and the
+raw-length ratchet that backed the scan went with it in 01dce7a.)
 
 `ring-[3px]` in `angle-slider` and `calendar` is the canonical backlog entry: it should be
 `--qx-focus-ring-width`.
@@ -352,8 +348,8 @@ a generated variable. It restates no values — that was how the shadow ramp cam
    several components mean the same thing by it, it is semantic.
 3. **Does it vary by theme?** Colour usually does; geometry usually does not. Theme-varying
    goes in `theme/<t>/`, and must be present in **both** themes.
-4. `bun run build:tokens && bun run check:tokens`.
-5. If it is a colour that text will sit on, add the pair to
-   [`scripts/check/contrast.mjs`](../../scripts/check/contrast.mjs).
+4. `bun run build:tokens && bun run test` — `token-governance.test.ts` runs the token rules.
+5. If it is a colour that text will sit on, add the pair to the contrast pairs in
+   [`src/__tests__/token-governance.test.ts`](../../src/__tests__/token-governance.test.ts).
 6. Version and changelog: a new token is a **minor**; changing what an existing token *means* is a
    **major**. See [versioning.md](../governance/versioning.md).

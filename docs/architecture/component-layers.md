@@ -2,7 +2,8 @@
 
 Every `.ts`/`.tsx` file under `src/` belongs to exactly one layer. Membership is by directory,
 declared in [`src/contracts/layers.ts`](../../src/contracts/layers.ts) as `LAYER_DIRECTORIES`,
-and a file that no layer claims fails `bun run check:architecture` — there is no "other".
+and a file that no layer claims breaks the contract — there is no "other". (Held in review: the
+architecture checker that failed on it was removed in 01dce7a.)
 
 Layers are listed here from most foundational to most composed.
 
@@ -69,7 +70,7 @@ rendering anything.
 
 **What it may import.** `runtime`, `tokens`.
 
-**What it may never import.** `components`, `blocks`, `primitives`. Runtime is
+**What it may never import.** `components`, `blocks`, `internal`. Runtime is
 component-agnostic — behaviour is passed *into* it, not looked up.
 
 ---
@@ -98,18 +99,16 @@ component.
 
 ---
 
-## primitives — `src/primitives/`
+## internal — `src/internal/`
 
-**What it is.** The smallest renderable pieces that carry no design opinion: a slot, a
-polymorphic element, a portal, a visually-hidden wrapper. They render; they do not decide how
-anything looks.
+**What it is.** Pieces several families share but no consumer imports: the portal and
+visually-hidden primitives the public `Portal` and `VisuallyHidden` wrap, the field recipe, the
+copy-feedback swap, the logical-side resolver, the swatch tone. Not published.
 
-**What it may import.** `primitives`, `hooks`, `lib`, `runtime`, `tokens`.
+**What it may import.** `internal`, `hooks`, `lib`, `runtime`, `tokens`.
 
-**What it may never import.** `components`, `blocks`, `providers`.
-
-**Where it lives today.** `components/utility/portal.tsx`,
-`components/utility/visually-hidden.tsx`, `components/utility/focus-trap.tsx`.
+**What it may never import.** `components`, `providers`, `blocks`, `patterns` — pass a value in
+(`usePhysicalSide(side, useDirection())`) rather than reaching up.
 
 ---
 
@@ -126,21 +125,20 @@ interface of its own.
 
 ---
 
-## components — `src/components/<category>/`
+## components — `src/components/<Family>/`
 
-**What it is.** The library: 137 modules across ten categories (`actions`, `inputs`,
-`selection`, `pickers`, `navigation`, `feedback`, `surfaces`, `data-display`, `layout`,
-`utility`). Category ownership is declared in
-[`scripts/config/category-map.json`](../../scripts/config/category-map.json).
+**What it is.** The library: 137 modules in 97 family folders — a component and its close
+relatives (`Pagination` holds `pagination` and `pagination-bar`). Family ownership is declared in
+[`scripts/config/component-map.json`](../../scripts/config/component-map.json).
 
-**What it may import.** `components`, `primitives`, `providers`, `hooks`, `lib`,
-`runtime`, `contracts`, `tokens`.
+**What it may import.** `components`, `internal`, `providers`, `hooks`, `lib`, `runtime`,
+`contracts`, `tokens`.
 
-**What it may never import.** `blocks`.
+**What it may never import.** `blocks`, `patterns`.
 
-**Note on categories.** A category is a *filing decision*, not an architectural boundary — the
+**Note on families.** A family is a *filing decision*, not an architectural boundary — the
 published import path (`@qeetrix/ui/components/<slug>`) is flat, so moving a component between
-categories is invisible to consumers. Cross-category imports are normal and go through the `@/`
+families is invisible to consumers. Cross-family imports are normal and go through the `@/`
 alias.
 
 **Every module in a family folder is public.** `scripts/build/subpath-shims.mjs` publishes the
@@ -150,9 +148,7 @@ and **fails the build** on any compiled module in `src/components/<Family>/` the
 no consumer should import (the field recipe, the copy-feedback swap, the logical-side resolver,
 the swatch tone) therefore lives in `src/internal/`, the non-public layer, not beside the
 component that first needed it. `internal` may not import `components` or `providers`: pass the
-value in (`usePhysicalSide(side, useDirection())`) rather than reaching up. (The source tree
-today uses `src/components/<Family>/` and `src/internal/`; the `primitives` layer described above
-is the target, not yet the layout.)
+value in (`usePhysicalSide(side, useDirection())`) rather than reaching up.
 
 ---
 
@@ -165,10 +161,10 @@ components for a recurring layout or flow (list + detail). Neither is a componen
 `tsconfig.build.json` leaves both folders out of `dist/`, so `@qeetrix/ui` stays the component
 library and nothing else. Apps copy a block or pattern file and adapt it.
 
-**What they may import.** Only the package entry — `@qeetrix/ui` — plus `@qeetrix/icons` (root
-import) and React: exactly what an app that copies the file has. `LAYER_ALLOWED_DEPENDENCIES`
-gives both layers `entry` and nothing else, and `biome check` rejects `@/…` and per-icon imports
-there.
+**What they may import.** Only the package — `@qeetrix/ui` — plus `@qeetrix/icons` (root import)
+and React: exactly what an app that copies the file has. `biome check` enforces that, rejecting
+`@/…`, `../` and per-icon imports there. In `LAYER_ALLOWED_DEPENDENCIES` both layers sit above
+everything, so the table stays transitively closed.
 
 **What imports them.** Nothing in the package. The playground's pattern pages import them, as an
 app would after copying them. Each keeps its tests in `__tests__/`, run by `bun run test` and
@@ -188,8 +184,8 @@ its permissions.
 
 ## tests — `src/__tests__/`, and any `__tests__/` folder
 
-**What it is.** The global harness (setup, a11y smoke, hydration, client boundaries, API lock,
-governance) plus the colocated suites under each category.
+**What it is.** The global harness (setup, axe smoke, SSR, hydration, token governance) plus the
+colocated suites in each family folder.
 
 **Dependency rules do not apply.** A test file is not part of the shipped module graph — a
 harness legitimately renders a component, wraps it in a provider and asserts on a lib helper in

@@ -5,8 +5,7 @@
  * (src/manifests/component-registry.ts) are authored in TypeScript on purpose: `tsc` is then
  * the first gate, so an invalid status or ARIA pattern is a compile error with a "did you
  * mean" hint. Build and check scripts are plain `.mjs` run by node, so they cannot import
- * those modules — they read them statically instead, with the TypeScript compiler that
- * scripts/check/exports.mjs already relies on.
+ * those modules — they read them statically instead, with the TypeScript compiler API.
  *
  * Only literals are evaluated: strings, numbers, booleans, null, arrays and object literals,
  * unwrapping `as const` / `satisfies` / parentheses. Anything else (a function, a computed

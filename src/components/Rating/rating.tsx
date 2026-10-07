@@ -149,9 +149,9 @@ function Rating({
   // mirroring the arrow keys do above, so a click one star further toward the inline end and
   // the key that raises the value now move in the same direction.
   //
-  // Asserted in `src/__tests__/browser/rating-pointer.test.tsx`, not in jsdom: jsdom reports
-  // an all-zero `getBoundingClientRect`, so both branches return the same value there and the
-  // mirrored arithmetic is indistinguishable from the unmirrored.
+  // Not assertable in jsdom: it reports an all-zero `getBoundingClientRect`, so both branches
+  // return the same value there and the mirrored arithmetic is indistinguishable from the
+  // unmirrored. The browser test that asserted it with real layout was removed in 01dce7a.
   function valueFromPointer(e: React.MouseEvent<HTMLElement>): number | null {
     const starEl = (e.target as HTMLElement).closest<HTMLElement>("[data-rating-index]");
     if (!starEl) return null;

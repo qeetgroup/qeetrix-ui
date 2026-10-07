@@ -4,9 +4,9 @@
  * Components are organized by family under src/components/<Family>/; this barrel
  * re-exports every family, the providers, hooks and lib helpers.
  *
- * The published surface is locked by src/__tests__/public-api.json — any addition or
- * removal must be re-snapshotted via `bun run check:exports -- --update` and land in
- * the same PR. See scripts/check/exports.mjs.
+ * Every name here is public API: an addition is a minor and a removal is a major, each with a
+ * changelog entry. Nothing locks the surface automatically since the export check was removed
+ * (01dce7a), so review this file's diff.
  */
 
 // Re-exported third-party types so consumers can type data-table/date-picker props

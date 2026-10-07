@@ -20,9 +20,10 @@
  *      complete.
  *   3. **`removeIn` stays `null`** until a removal is actually announced in a major.
  *   4. **`status` is typed, not defaulted.** Every entry states its own maturity, and `stable`
- *      has to be earned: `check:contract` requires a unit suite, a test that runs axe, a
- *      reviewed ARIA pattern and an audited `semantic` dimension. 68 components are `beta`
- *      for want of that last one — see docs/governance/component-status.md.
+ *      has to be earned: a unit suite, a test that runs axe, a reviewed ARIA pattern and an
+ *      audited `semantic` dimension (checked by `check:contract` until 01dce7a, by review now).
+ *      62 components are `beta`, most for want of that last one — see
+ *      docs/governance/component-status.md.
  *   5. **`capabilities.density: "not-applicable"` is a declaration.** Source inspection can
  *      prove that a component reads a density metric; it cannot decide that density is
  *      irrelevant to one. So `not-applicable` and `unsupported` are declared here and nowhere
@@ -41,8 +42,9 @@
  *      01dce7a; until they return, this rule is enforced by review.)
  *
  * TypeScript is the first gate: an invalid status, category or pattern is a compile error.
- * scripts/check/component-contract.mjs is the second: it checks the keys against
- * scripts/config/category-map.json so an entry cannot outlive its component.
+ * There is no second gate since the contract check was removed in 01dce7a: the manifest build
+ * reads entries by slug and silently ignores one whose component is gone, so delete an entry
+ * together with its component.
  *
  * @see docs/governance/component-status.md
  * @see docs/governance/deprecations.md
@@ -107,7 +109,8 @@ export type ComponentDeclaration = {
      * The manifest reads variants out of `cva()`, so a component that styles with
      * `data-[size=…]` utilities recorded `null` — indistinguishable from a component with no
      * size axis at all. Declaring the source here makes the two different facts different
-     * data, and `check:contract` requires a record for every axis prop the source declares.
+     * data. Every axis prop the source declares needs a record here (review holds that since
+     * the contract check was removed in 01dce7a).
      */
     axisSources?: Readonly<Partial<Record<AxisPropName, AxisSourceRecord>>>;
     /** The controlled-state triples this component supports. */
@@ -124,8 +127,8 @@ export type ComponentDeclaration = {
  * the "Phase 1 baseline", which made every one of the 145 components a stability promise by
  * omission: 144 were labelled `stable` and not one of those labels was a decision anybody
  * recorded. `experimental` is the value here purely so the type is satisfiable — a component
- * that reaches the manifest on this value fails `check:contract`, which is what "explicit at
- * registration" means in practice.
+ * that reaches the manifest on this value shows up as `experimental`, and review sends it back:
+ * that is what "explicit at registration" means now that the `check:contract` failure is gone.
  *
  * @see docs/governance/component-status.md § Promotion evidence
  */

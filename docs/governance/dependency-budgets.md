@@ -1,19 +1,17 @@
 # Dependency and bundle budgets
 
 `@qeetrix/ui` is one package with seven heavy feature libraries in its runtime dependencies. This
-document is the answer to "what does that cost a consumer", with numbers, and the policy that
-keeps the numbers honest.
+document is the answer to "what does that cost a consumer", with numbers, and the policy for
+keeping them honest.
 
-```bash
-bun run check:bundle                      # gate: measure and compare to the baseline
-node scripts/check/bundle.mjs --record    # re-measure and re-record, then read the diff
-```
+> **No gate runs today.** The bundle gate (`scripts/check/bundle.mjs`, `bun run check:bundle`) and
+> its baseline (`scripts/config/bundle-baseline.json`) were removed on 2026-08-23 (01dce7a). The
+> numbers below are its last recording, from the day before. They have not been re-measured
+> since, and the package has changed: icons moved to `@qeetrix/icons`, `lucide-react` left, and
+> eight blocks and patterns left the package for `src/blocks/` and `src/patterns/`.
 
-Measurements live in
-[`scripts/config/bundle-baseline.json`](../../scripts/config/bundle-baseline.json). They are taken
-with Vite/Rolldown in production mode, minified, `react` and `react-dom` external, bundling from
-`src/` — the same module graph `tsc` emits into `dist/`, so the gate needs no build and cannot
-measure a stale one.
+They were taken with Vite/Rolldown in production mode, minified, `react` and `react-dom` external,
+bundling from `src/` — the same module graph `tsc` emits into `dist/`.
 
 ---
 
@@ -33,21 +31,21 @@ Recorded 2026-08-22. `gzip` is the number that matters to a consumer's users.
 | Carousel (Embla) | 89.5 KiB | 26.2 KiB |
 | Resizable (react-resizable-panels) | 81.9 KiB | 22.3 KiB |
 | QRCode (qrcode, dijkstrajs) | 71.1 KiB | 19.7 KiB |
-| Every block | 98.8 KiB | 26.6 KiB |
+| Every block (then in the package) | 98.8 KiB | 26.6 KiB |
 
-### Tree-shaking works, and that is now a test
+### Tree-shaking works
 
 The two Button rows are the interesting ones. Importing `Button` through the root barrel — which
 statically re-exports Recharts, TipTap, ProseMirror, TanStack, Embla, react-day-picker and qrcode —
 costs about **100 bytes gzip more** than importing it directly. 609 KiB collapses to 15 KiB.
 
 So `BUNDLE-001`'s "tree-shaking quality is unknown rather than proven bad" resolves to **proven
-good**, and there is no case for splitting entry points on bundle grounds. `check:bundle` asserts
+good**, and there is no case for splitting entry points on bundle grounds. The removed gate asserted
 both halves of that: the overhead stays under 256 bytes, and none of the seven heavy packages may
-appear in a bundle that renders one Button. If someone adds a module-scope side effect to
-`src/index.ts`, that is the test that fails.
+appear in a bundle that renders one Button. Nothing checks it now, so a module-scope side effect
+added to `src/index.ts` would go unnoticed until someone measures again.
 
-**Deep imports are still supported** (`@qeetrix/ui/components/data-display/chart`) and remain the
+**Deep imports are still supported** (`@qeetrix/ui/components/chart`) and remain the
 right choice for a consumer whose bundler is older or whose `sideEffects` handling is unknown. They
 are no longer *necessary* for tree-shaking with a modern bundler.
 
@@ -91,12 +89,13 @@ and copied wholesale into `dist/` by `scripts/build/postbuild.mjs`.
 Those 11 are **recorded, not deleted.** `./fonts/*` is a published wildcard export, so removing a
 file from it is a consumer-visible change that nobody can verify is unused from inside this
 repository — and a font file costs install space, not download bandwidth, since a browser fetches
-only what an `@font-face` asks for. The gate is shaped accordingly:
+only what an `@font-face` asks for. The removed gate was shaped accordingly, and nothing replaces
+it today:
 
-- The total payload is on a shrink-only budget.
-- A **new** unreferenced font file fails the gate. The recorded list can only shrink.
-- The referenced list is parsed from the stylesheet, not hard-coded, so adding an `@font-face`
-  automatically permits its file.
+- The total payload was on a shrink-only budget.
+- A **new** unreferenced font file failed the gate; the recorded list could only shrink.
+- The referenced list was parsed from the stylesheet, not hard-coded, so adding an `@font-face`
+  automatically permitted its file.
 
 Pruning them is a one-line change to `postbuild.mjs` (copy the parsed referenced set plus `*.txt`
 licences instead of the whole tree) and a major-version note. It needs somebody to accept the
@@ -106,9 +105,9 @@ licences instead of the whole tree) and a major-version note. It needs somebody 
 
 ## Policy
 
-Budgets are a **ratchet, not a target**. Each is the measurement plus 10%, rounded up to whole KiB —
-the same shape as the scale baseline `check:performance` governs.
-Budgets may only shrink. `scripts/check/bundle.mjs` fails a commit that:
+The policy the removed gate enforced, and the one to restore with it: budgets are a **ratchet, not
+a target**. Each is the measurement plus 10%, rounded up to whole KiB, and budgets may only shrink.
+A commit fails if it:
 
 - exceeds a budget,
 - raises a budget relative to git `HEAD`,
@@ -116,5 +115,5 @@ Budgets may only shrink. `scripts/check/bundle.mjs` fails a commit that:
 - leaves a budget more than 25% above what the entry now measures.
 
 These numbers are deterministic: the only legitimate drift is a dependency release or a real
-change to the source. When one moves them, `--record` and let the reviewer see the diff. A budget
-that goes up without a sentence explaining why is the thing this gate exists to prevent.
+change to the source. When one moves them, re-record and let the reviewer see the diff. A budget
+that goes up without a sentence explaining why is the thing the gate existed to prevent.

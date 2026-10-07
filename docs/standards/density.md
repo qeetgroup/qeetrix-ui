@@ -61,15 +61,8 @@ className="h-[var(--qx-density-control-height,2.25rem)]"
 ```
 
 The third form is a real bug, not a style preference: the control renders one size on its own
-and a different one inside a `DensityProvider`. `bun run check:tokens` reports every occurrence:
-
-```text
-⚠ 8 inline density fallback(s) in 8 component(s) disagree with the density tokens
-  src/components/navigation/tabs.tsx: --qx-density-control-height falls back to 2.25rem,
-    tokens say 2rem
-```
-
-It reports rather than fails, because deciding which number is right is a design call.
+and a different one inside a `DensityProvider`. Nothing detects it automatically: the report that
+listed every disagreeing fallback went with `check:tokens` in 01dce7a, so review catches it.
 
 ---
 
@@ -121,9 +114,7 @@ Density should not be forced onto content-only components where it is genuinely 
 Blockquote has nothing to compress. The point is that saying so is a decision, not a default.
 
 The 20 families that participate today are locked per slug in
-`src/__tests__/token-governance.test.ts`. The aggregate ratchet in `check:contract` counts
-`unknown` totals, so one component could lose density support while another gained it and the
-count would not move; the per-slug list fails by name instead.
+`src/__tests__/token-governance.test.ts`, so a family that loses density support fails by name.
 
 ---
 

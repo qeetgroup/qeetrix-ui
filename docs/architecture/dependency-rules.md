@@ -5,15 +5,16 @@ layer appears in the source layer's allow-list in
 [`src/contracts/layers.ts`](../../src/contracts/layers.ts). Nothing is permitted by omission —
 if a layer needs a new edge, someone adds it deliberately and the reason ends up in a diff.
 
-`bun run check:architecture` enforces this against the real module graph. Imports are resolved
-to files with TypeScript's own dependency scanner and the tsconfig `@/*` alias, so re-exports,
-type-only imports and dynamic `import()` are all seen and nothing is matched by substring.
+> **Held in review today.** The checker that enforced this against the real module graph
+> (`scripts/check/architecture.mjs`, `bun run check:architecture`) was removed on 2026-08-23
+> (01dce7a). The graph analysis it used is still in
+> [`scripts/lib/layers.mjs`](../../scripts/lib/layers.mjs), so restoring the check means wiring
+> that module to a script; until then, nothing fails a build on a forbidden import.
 
-Every rule is written against the **resolved file**, never against the shape of the specifier
-that named it. `../inputs/input`, `../../components/inputs/input` and
-`@/components/inputs/input` all reduce to the same canonical identity, so a rule cannot be
-evaded by spelling an import differently. `.css` and `.json` files are nodes in the graph too —
-see [Non-TypeScript inputs](#non-typescript-inputs).
+The rules are written against the **resolved file**, never against the shape of the specifier
+that named it: `../Input/input` and `@/components/Input/input` are the same dependency, so a rule
+cannot be evaded by spelling an import differently. `.css` and `.json` files count too — see
+[Non-TypeScript inputs](#non-typescript-inputs).
 
 ---
 
@@ -35,8 +36,8 @@ must stay closed.
 | `internal` | `internal` · `hooks` · `lib` · `runtime` · `tokens` | `styles` · `contracts` · `manifests` · `providers` · `components` · `blocks` · `patterns` · `entry` |
 | `providers` | `providers` · `hooks` · `lib` · `runtime` · `contracts` · `tokens` | `styles` · `manifests` · `internal` · `components` · `blocks` · `patterns` · `entry` |
 | `components` | `components` · `internal` · `providers` · `hooks` · `lib` · `runtime` · `contracts` · `tokens` | `styles` · `manifests` · `blocks` · `patterns` · `entry` |
-| `blocks` | `entry` | `tokens` · `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` |
-| `patterns` | `entry` | `tokens` · `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` |
+| `blocks` | `entry` · `components` · `internal` · `providers` · `hooks` · `lib` · `runtime` · `manifests` · `contracts` · `tokens` | `styles` · `blocks` · `patterns` |
+| `patterns` | `entry` · `components` · `internal` · `providers` · `hooks` · `lib` · `runtime` · `manifests` · `contracts` · `tokens` | `styles` · `blocks` · `patterns` |
 | `entry` | `components` · `internal` · `providers` · `hooks` · `lib` · `runtime` · `manifests` · `contracts` · `tokens` | `styles` · `blocks` · `patterns` · `entry` |
 
 `tests` is absent from the table on purpose: test files are exempt (see
@@ -47,7 +48,7 @@ must stay closed.
 ## The forbidden edges that matter
 
 These follow from the table, but they are the ones worth knowing by heart. Each has a
-hand-written explanation in `LAYER_RULE_EXPLANATIONS` so the checker says *why*, not just
+hand-written explanation in `LAYER_RULE_EXPLANATIONS`, so a checker can say *why*, not just
 *no*.
 
 | Forbidden | Why |
@@ -58,41 +59,9 @@ hand-written explanation in `LAYER_RULE_EXPLANATIONS` so the checker says *why*,
 | `contracts → components` | contracts must stay readable by build scripts; keep them type-only |
 | `hooks → components` | a hook must not render or import components |
 | `providers → components` | providers wrap children; they must not import components |
-| `blocks → components` | a block is copied into apps: import from @qeetrix/ui, not its internals |
-| `patterns → components` | a pattern is copied into apps: import from @qeetrix/ui, not its internals |
 
-A violation is reported with its source, its dependency and the rule:
-
-```text
-Architecture violation
-
-Source:
-  src/components/actions/button.tsx
-
-Dependency:
-  src/blocks/dashboard-shell.tsx
-
-Rule:
-  components cannot depend on blocks — blocks compose components
-```
-
-When the illegal edge sits behind a legal one, the whole chain is named, so a violation three
-files deep is actionable instead of mysterious:
-
-```text
-Architecture violation (transitive)
-
-Source:
-  src/components/actions/icon-button.tsx
-
-Chain:
-  src/components/actions/icon-button.tsx
-  → src/components/actions/button.tsx
-  → src/blocks/dashboard-shell.tsx
-
-Rule:
-  components cannot reach blocks
-```
+The removed checker reported each violation with its source file, the dependency, the rule, and
+— when the illegal edge sat behind legal ones — the whole chain.
 
 ---
 
@@ -103,31 +72,24 @@ traversal collected `.ts` and `.tsx` and nothing else, so a component could `imp
 "@/styles/index.css"` or `import colors from "@/tokens/primitive/color.json"` and
 `check:architecture` would report a clean TypeScript tree.
 
-They are now nodes, with layers like any other file, governed by a second table —
+They are nodes, with layers like any other file, governed by a second table —
 `LAYER_ALLOWED_ASSET_DEPENDENCIES`. Deny by default, and **currently empty**: no shipped
-TypeScript module may import a `.css` or `.json` file.
+TypeScript module may import a `.css` or `.json` file (held in review, like the module rules).
 
 Two different reasons for two different tables:
 
 - `components` may depend on the `tokens` layer, because it reads *generated TypeScript* derived
   from it. Importing a raw token JSON is a different act — it bypasses the CSS bridge, ships the
-  whole token file into the bundle, and hides the component's colour source from
-  `check:token-usage`.
+  whole token file into the bundle, and hides where the component's colours come from.
 - A stylesheet is a side effect. A component that imports one has decided, on behalf of every
   consumer, that the styles load. That is the choice `styles.css` exists to make once, at the
   package boundary.
 
-```text
-src/components/actions/button.tsx
-  imports the styles asset src/styles/index.css — components may not import a
-  non-TypeScript input from styles; add the layer to LAYER_ALLOWED_ASSET_DEPENDENCIES if
-  this is intended
-```
 
 CSS `@import` between stylesheets is not in this graph — nothing here parses CSS, and claiming
-otherwise would be a guess. `src/__tests__/accessibility/environment.test.ts` follows the entry's
-relative `@import`s when it asserts the global accessibility guarantees, so moving a rule between
-stylesheets cannot make one disappear.
+otherwise would be a guess. The test that followed the entry's relative `@import`s to assert the
+global accessibility guarantees was removed in 01dce7a; `token-governance.test.ts` still asserts
+the host-global section of `styles.css` and that every published CSS entry exists.
 
 Test files are exempt, as they are for module dependencies: a harness legitimately reads the
 generated stylesheet to assert what it contains.
@@ -136,29 +98,20 @@ generated stylesheet to assert what it contains.
 
 ## Relative imports
 
-A module reaches a sibling with `./` and everything else with the `@/` alias.
+A module reaches a sibling with `./` and everything else with the `@/` alias. Any relative
+specifier in a shipped module that leaves its own directory hides a cross-family dependency, so
+it is not allowed: `../Input/input` from a Button file should be `@/components/Input/input`.
 
-This was enforced by matching one specifier shape, `../../components/<category>/`, which is the
-form somebody happened to think of. `../inputs/input` — a cross-category import one directory
-up — passed. So did `../../lib/utils` from a component, and every deeper spelling.
-
-It is now enforced on the resolved path: any relative specifier in a shipped module that leaves
-its own directory is a violation, and the message names the canonical destination.
-
-```text
-src/components/actions/button.tsx
-  imports "../inputs/input" → src/components/inputs/input.tsx — reaches category "inputs"
-  with a relative path — use "@/components/inputs/…" so the dependency is visible
-```
-
-Test files are exempt from this one specifically: a harness legitimately reaches outside `src/`
-for a checker script or the built manifest.
+The removed checker enforced this on the resolved path, so every spelling was caught; today it is
+held in review. Blocks and patterns are the exception that *is* enforced: Biome rejects `../`, `@/`
+and per-icon imports in `src/blocks/` and `src/patterns/`.
 
 ---
 
 ## Rules about the rules
 
-The rule set is validated independently of any code, by `findRuleSetProblems`:
+The rule set can be validated independently of any code, by `findRuleSetProblems` in
+`scripts/lib/layers.mjs` (nothing runs it automatically since 01dce7a; the table passes it):
 
 - **acyclic** — no two *different* layers may each depend on the other. Self-edges are how "a
   component may import a component" is expressed and are always fine.
@@ -167,8 +120,8 @@ The rule set is validated independently of any code, by `findRuleSetProblems`:
 
 The second invariant is what makes checking direct edges sufficient. Without it, a chain of
 individually legal imports could add up to a dependency the architecture forbids; with it,
-that is impossible by construction. Adding an edge that breaks closure fails the check with the
-chain spelled out:
+that is impossible by construction. An edge that breaks closure is reported with the chain
+spelled out:
 
 ```text
 Architecture rule-set problem
@@ -179,23 +132,20 @@ Architecture rule-set problem
 
 ---
 
-## Other rules `check:architecture` enforces
+## Other structural rules
 
-Beyond layers:
+Beyond layers — enforced by the architecture checker until 01dce7a, held in review now:
 
-1. `scripts/config/category-map.json` and the filesystem agree — no orphans, no phantoms
-2. every component is re-exported by its category barrel, unless the file is `@barrel-exclude`
-3. no module inside `src/` imports a barrel (`@/components`, `@/components/<category>`, the
-   root entry) — barrel imports create cycles and defeat tree-shaking
-4. relative imports do not leave their own directory, checked against the resolved file — see
-   [Relative imports](#relative-imports)
+1. `scripts/config/component-map.json` and the filesystem agree — no orphans, no phantoms (the
+   build's subpath-shim step still fails on a compiled module the map does not name)
+2. every component is re-exported by its family barrel, unless the file is `@barrel-exclude`
+3. no module inside `src/` imports a barrel (`@/components`, `@/components/<Family>`, the root
+   entry) — barrel imports create cycles and defeat tree-shaking
+4. relative imports do not leave their own directory — see [Relative imports](#relative-imports)
 5. filenames are kebab-case, and every test sits in a `__tests__/` folder beside a component of
    the same name
-6. a `"use client"` directive, where one exists, is the first statement in the file — parsed as
-   a statement, so the phrase in a doc comment is correctly not a directive
-7. every source file is claimed by a layer, and every internal specifier resolves to a real
-   file — including the `./thing.js` → `./thing.tsx` rewrite the brand subtree re-exports
-   through, which used to resolve to nothing and drop that whole subtree out of the graph
+6. a `"use client"` directive, where one exists, is the first statement in the file
+7. every source file is claimed by a layer, and every internal specifier resolves to a real file
 8. no shipped module imports a `.css` or `.json` file — see
    [Non-TypeScript inputs](#non-typescript-inputs)
 
@@ -205,19 +155,10 @@ Beyond layers:
 
 **Test files.** Any file under a `__tests__/` folder or named `*.test.ts(x)` is exempt from
 layer rules, wherever it lives — including the colocated suites in
-`src/components/<category>/__tests__/`. A test is not part of the shipped module graph, and a
+`src/components/<Family>/__tests__/`. A test is not part of the shipped module graph, and a
 harness legitimately renders a component, wraps it in a provider and asserts on a lib helper in
 the same file. Every other architecture rule still applies to tests.
 
 **Nothing else.** There is no per-file escape hatch and no ignore list. If an import is illegal,
 either the design is wrong or the rule is — and both are worth a conversation rather than a
 suppression comment.
-
----
-
-## Layers that do not exist yet
-
-`runtime` is declared with full rules but holds no files. This
-is intentional: the rules are live from the first file that lands there, so the migration cannot
-start by accident in the wrong direction. See
-[overview.md § Migration](./overview.md#migration).

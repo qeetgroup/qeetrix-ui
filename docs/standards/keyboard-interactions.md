@@ -33,7 +33,8 @@ active-descendant models exist to prevent. See
 
 ## Per pattern
 
-Verified in [`src/__tests__/accessibility/audit.test.tsx`](../../src/__tests__/accessibility/audit.test.tsx).
+Verified in each component's own suite, `src/components/<Family>/__tests__/`. (The cross-component
+audit suite that also covered these was removed in 01dce7a.)
 
 ### Button · IconButton · CloseButton · Toggle
 

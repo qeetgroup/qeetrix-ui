@@ -129,7 +129,7 @@ const matchesAny = (source, patterns) => patterns.some((pattern) => pattern.test
  * transitions and animations, and cannot touch a `requestAnimationFrame` loop, a
  * `scrollIntoView({ behavior: "smooth" })` or a carousel autoplay plugin. So this is the line
  * between "the global mechanism covers this component" and "this component has to handle it
- * itself, and prove that it does" — see scripts/config/a11y-evidence.json.
+ * itself, and prove that it does".
  *
  * Comments are stripped by the caller: a doc comment mentioning `requestAnimationFrame` is
  * documentation, not an animation.
@@ -182,7 +182,7 @@ export function deriveDarkModeSupport(source) {
  *
  * `unknown` is what the source actually knows: this component does not participate today, and
  * nobody has said whether it should. A reviewed answer — `not-applicable` or `unsupported` — is
- * declared in src/manifests/component-registry.ts, where `check:contract` requires it to be.
+ * declared in src/manifests/component-registry.ts.
  *
  * One thing this function cannot see, by construction: composition. `IconButton` renders
  * `Button size="icon"`, whose height *is* density-resolved, but the variable never appears in

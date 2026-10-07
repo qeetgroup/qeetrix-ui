@@ -41,7 +41,7 @@ export const DENSITY_TOKEN_PREFIX = "--qx-density-" as const;
  *   unknown        — not yet reviewed. The honest default for a component whose source does not
  *                    read a density metric and whose registry entry says nothing.
  *
- * The rule the checker enforces (scripts/check/component-contract.mjs): `not-applicable` and
+ * The rule (enforced by the contract check until 01dce7a removed it; by review now): `not-applicable` and
  * `unsupported` may only come from an explicit `src/manifests/component-registry.ts` entry.
  * Derivation may emit `supported` or `unknown` and nothing else — and a derivable value is
  * deliberately *not* declared, because a registry override wins over derivation, so writing

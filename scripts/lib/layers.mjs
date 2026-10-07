@@ -203,7 +203,7 @@ export function buildModuleGraph({
 
     // An asset is a sink: nothing in this graph parses CSS or JSON for further dependencies,
     // and claiming otherwise would be a guess. `src/styles/index.css` composes the other
-    // stylesheets through CSS `@import`, which is governed by scripts/check/package.mjs.
+    // stylesheets through CSS `@import`, which this graph does not follow.
     if (!asset) {
       // De-duplicated: `import type { X } from "./m"` alongside `export { Y } from "./m"` is
       // one dependency, and reporting it twice would double every finding about it.
@@ -345,7 +345,7 @@ export function findDeepLayerViolations({ modules, allowed, limit = 25 }) {
  * This is deliberately stricter than `LAYER_ALLOWED_DEPENDENCIES`: `components` may depend on
  * the `tokens` layer (it reads generated TypeScript from it), but importing a raw token JSON
  * from a component bypasses the CSS bridge, ships the whole token file into the bundle, and
- * makes the component's colour source invisible to `check:token-usage`. Those are different
+ * hides where the component's colours come from. Those are different
  * decisions, so they get different tables.
  */
 export function findAssetDependencyViolations({ modules, allowedAssets = {} }) {

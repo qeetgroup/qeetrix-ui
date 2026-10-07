@@ -4,12 +4,10 @@ The baseline is **WCAG 2.2 AA**. WCAG 3 is a working draft and is not a conforma
 
 Accessibility here is not "axe is green". Axe checks part of the semantic layer and nothing at
 all about keyboard behaviour, focus movement, or what a screen reader is actually told. All 137
-components pass axe; **78 are audited**. Those are different claims, and the library reports both.
-
-```bash
-bun run check:a11y            # coverage, the audit matrix, and the ratchet
-bun run check:a11y --verbose  # …plus the un-audited list
-```
+components pass axe; **18 are audited**. Those are different claims, and the library reports both:
+`bun run test` runs every component's axe check, and `component-manifest.json` carries the audit
+roll-up (`accessibilityAudit`). The `check:a11y` gate that also verified each `pass` against a test
+was removed in 01dce7a — see [accessibility-evidence.md](../governance/accessibility-evidence.md).
 
 ---
 
@@ -35,10 +33,10 @@ Each is `pass` · `partial` · `exception` · `not-applicable` · `not-audited`.
 
 **The roll-up is computed, never declared.** There is no field that means "accessible: true". A
 component is `audited` only when every applicable dimension resolves, and `pass` is only recorded
-when a test in [`src/__tests__/accessibility/`](../../src/__tests__/accessibility/) covers it.
+when a test asserts it — in the component's own suite.
 
-`partial` and `exception` **must** carry a reason in `accessibility.exceptions`; `check:a11y`
-fails otherwise. An undocumented exception is a defect wearing a label.
+`partial` and `exception` **must** carry a reason in `accessibility.exceptions` (held in review
+since the a11y check was removed). An undocumented exception is a defect wearing a label.
 
 ---
 
@@ -170,8 +168,10 @@ Do not force `role="alert"` onto every notification. A `Toast` confirming a save
 
 ## Motion, direction, forced colors
 
-These are library-wide guarantees rather than per-component work, verified in
-[`src/__tests__/accessibility/environment.test.ts`](../../src/__tests__/accessibility/environment.test.ts):
+These are library-wide guarantees rather than per-component work. The test that verified them
+(`src/__tests__/accessibility/environment.test.ts`) was removed in 01dce7a;
+`token-governance.test.ts` still asserts that the host-global section of `styles.css` is exactly
+the reviewed list:
 
 - **Reduced motion** — one rule in `src/styles/index.css` collapses every CSS transition and
   animation to the reduced-motion token, document-wide. A component only needs its own handling
@@ -214,11 +214,10 @@ keyboard       the keys the pattern calls for, driven with user-event.
 focus          entry, movement, containment, restoration.
 ```
 
-Helpers live in
-[`src/__tests__/accessibility/index.ts`](../../src/__tests__/accessibility/index.ts) —
-`expectAccessibleName`, `expectFocusRestored`, `expectAriaRelationship`, `pressEscape`,
-`tabThrough`. They are thin on purpose: a failure should point at the component, not at the
-helper.
+Write them with `vitest-axe` (`axe`, `toHaveNoViolations`), Testing Library queries
+(`getByRole(…, { name })`), `@testing-library/user-event` for keys, and jest-dom matchers
+(`toHaveFocus`, `toHaveAccessibleName`). The house helpers that used to wrap these went with the
+audit suites in 01dce7a, so a failure points straight at the component.
 
 **Every accessibility defect found gets a regression test.** The `AlertDialog` role and the
 un-remapped chart colours both have one.

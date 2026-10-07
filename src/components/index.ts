@@ -1,8 +1,7 @@
 /**
  * Component families — component-first organization.
  *
- * The published surface is locked by src/__tests__/public-api.json — see
- * scripts/check/exports.mjs.
+ * Each line is public API: adding a family is a minor, removing one a major.
  */
 
 export * from "./Accordion";

@@ -1,9 +1,11 @@
 /**
  * The architecture layers of @qeetrix/ui, and the dependency rules between them.
  *
- * This module is the single source of truth for the layering. `scripts/check/architecture.mjs`
- * reads these declarations statically and enforces them against the real module graph, and
- * docs/architecture/dependency-rules.md is written from the same table.
+ * This module is the single source of truth for the layering, and
+ * docs/architecture/dependency-rules.md is written from the same table. scripts/lib/layers.mjs
+ * reads it statically; the checker that enforced it against the module graph
+ * (scripts/check/architecture.mjs) was removed in 01dce7a, so until it returns the rules are held
+ * in review.
  *
  * The direction of flow is:
  *
@@ -50,9 +52,7 @@ export type ComponentLayer = (typeof COMPONENT_LAYERS)[number];
 
 /**
  * Where each layer lives, as a path relative to the package root.
- *
- * `runtime` is declared but not yet populated: the target architecture reserves it, and its
- * rules are enforced from the first file onwards.
+
  */
 export const LAYER_DIRECTORIES = {
   tokens: "src/tokens",
@@ -109,10 +109,33 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
   ],
 
   // Copy-paste source built on the package and never published (tsconfig.build.json excludes
-  // them): an app copies the file, so it may import only what an app can — the package entry,
-  // `@qeetrix/ui`.
-  blocks: ["entry"],
-  patterns: ["entry"],
+  // them). They sit above everything, so the table allows every layer the entry reaches and stays
+  // transitively closed. Which *specifier* they may use — only the package, `@qeetrix/ui` — is a
+  // lint rule (biome.json), because an app that copies the file has the package, not `@/…`.
+  blocks: [
+    "entry",
+    "components",
+    "internal",
+    "providers",
+    "hooks",
+    "lib",
+    "runtime",
+    "manifests",
+    "contracts",
+    "tokens",
+  ],
+  patterns: [
+    "entry",
+    "components",
+    "internal",
+    "providers",
+    "hooks",
+    "lib",
+    "runtime",
+    "manifests",
+    "contracts",
+    "tokens",
+  ],
 
   // src/index.ts — the published barrel. It composes the surface, so it may reach anywhere
   // except the test harness.
@@ -138,8 +161,8 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
  *
  *   - `components` may depend on the `tokens` layer, because it reads *generated TypeScript*
  *     derived from it. Importing a raw token JSON is a different act: it bypasses the CSS
- *     bridge, ships the whole token file into the bundle, and hides the component's colour
- *     source from `check:token-usage`.
+ *     bridge, ships the whole token file into the bundle, and hides where the component's
+ *     colours come from.
  *   - a stylesheet is a side effect. A component that imports one has decided, on behalf of
  *     every consumer, that the styles load — which is the choice `styles.css` exists to make
  *     once, at the package boundary.
@@ -180,7 +203,4 @@ export const LAYER_RULE_EXPLANATIONS = {
   "contracts->components": "contracts must stay readable by build scripts; keep them type-only",
   "hooks->components": "a hook must not render or import components",
   "providers->components": "providers wrap children; they must not import components",
-  "blocks->components": "a block is copied into apps: import from @qeetrix/ui, not its internals",
-  "patterns->components":
-    "a pattern is copied into apps: import from @qeetrix/ui, not its internals",
 } as const;

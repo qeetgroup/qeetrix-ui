@@ -5,12 +5,12 @@
  * (`@qeetrix/ui/manifest.json`). It is **generated** by scripts/build/manifest.mjs from three
  * inputs and nothing else:
  *
- *   1. the filesystem + scripts/config/category-map.json — identity, category, layer
+ *   1. the filesystem + scripts/config/component-map.json — identity, family, layer
  *   2. the component source — capabilities, states, variants, client boundary
  *   3. src/manifests/component-registry.ts — the declared facts that cannot be derived
  *
- * Never hand-edit the JSON. `scripts/check/component-contract.mjs` validates it against these
- * types' vocabularies on every `bun run verify`.
+ * Never hand-edit the JSON: `bun run build:manifest` writes it. TypeScript holds the registry to
+ * these types' vocabularies; the check that also validated the JSON was removed in 01dce7a.
  *
  * @see docs/standards/component-manifest.md
  */
@@ -113,7 +113,7 @@ export type ComponentManifest = {
 };
 
 /**
- * The field list, as data — the local, versioned schema `check:contract` enforces.
+ * The field list, as data — the local, versioned schema of every manifest entry.
  *
  * MAN-001: the types above are erased at build time, so nothing stopped the generator from
  * emitting a field the shape does not declare (`accessibilityAudit` was emitted for a whole
