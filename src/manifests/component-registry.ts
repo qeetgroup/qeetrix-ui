@@ -585,7 +585,7 @@ export const COMPONENT_REGISTRY = {
       axisSources: {
         variant: {
           source: "data-attribute",
-          note: "Written to data-variant: card | list. AuditLog forwards the same prop.",
+          note: "Written to data-variant: card | list. The audit-event block's AuditLog forwards the same prop.",
         },
       },
     },
@@ -1479,12 +1479,6 @@ export const COMPONENT_REGISTRY = {
 
   // ── APG patterns, reviewed in Phase 2 ───────────────────────────────────────────
   // Evidenced by the component's rendered role or the library it is built on.
-  "access-review": {
-    status: "beta",
-    accessibility: { required: true, pattern: "table" },
-    // Row selection (with an indeterminate select-all), pending decisions and locked rows.
-    states: ["selected", "checked", "indeterminate", "loading", "disabled"],
-  },
   "app-shell": {
     status: "beta",
     accessibility: { required: true, pattern: "landmarks" },
@@ -1581,10 +1575,6 @@ export const COMPONENT_REGISTRY = {
     },
   },
   "navigation-menu": { status: "beta", accessibility: { required: true, pattern: "disclosure" } },
-  "notification-preference-matrix": {
-    status: "beta",
-    accessibility: { required: true, pattern: "table" },
-  },
   resizable: {
     status: "beta",
     description:
@@ -1630,33 +1620,6 @@ export const COMPONENT_REGISTRY = {
   },
   // ── accessibility contract, no APG pattern ──────────────────────────────────────
   // Labelling, native semantics or focus management that a change may not break.
-  "audit-event": {
-    status: "stable",
-    capabilities: { density: "unsupported" },
-    accessibility: {
-      required: true,
-      pattern: "none",
-      dimensions: {
-        semantic: "pass",
-        name: "pass",
-        keyboard: "not-applicable",
-        focus: "not-applicable",
-        screenReader: "pass",
-        rtl: "not-applicable",
-        reducedMotion: "not-applicable",
-        forcedColors: "pass",
-        contrast: "pass",
-      },
-    },
-    api: {
-      axisSources: {
-        severity: {
-          source: "forwarded",
-          note: "Mapped through SEVERITY_KIND onto StatusPill's kind, which maps onto Badge's variant. The value set is the AuditSeverity domain vocabulary.",
-        },
-      },
-    },
-  },
   // AG-7: now a real role="grid" with row/columnheader/rowheader/gridcell children and a roving
   // tab stop. The pattern is a description of what the component is, not an audit claim.
   "availability-grid": {
@@ -1891,13 +1854,6 @@ export const COMPONENT_REGISTRY = {
       focus: { model: "roving", contained: false, restored: false },
     },
   },
-  "logo-uploader": {
-    status: "beta",
-    // Density by composition: the drop target is FileUpload's Dropzone and the actions are
-    // default-size Buttons, both density-resolved.
-    capabilities: { density: "supported" },
-    accessibility: { required: true, pattern: "none" },
-  },
   "mask-input": {
     status: "beta",
     capabilities: { density: "supported" },
@@ -1908,11 +1864,6 @@ export const COMPONENT_REGISTRY = {
     capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "none" },
     api: { variantAliases: { error: "destructive" } },
-  },
-  "notification-center": {
-    status: "beta",
-    capabilities: { density: "unsupported" },
-    accessibility: { required: true, pattern: "none" },
   },
   "org-chart": {
     status: "beta",
@@ -2257,13 +2208,6 @@ export const COMPONENT_REGISTRY = {
       },
     },
   },
-  "comment-thread": {
-    status: "beta",
-    // Its requestAnimationFrame calls move focus (to the composer, back to the thread), not
-    // pixels, so the scripted-motion signal is a false positive — as for CommandPalette.
-    capabilities: { density: "unsupported", reducedMotion: "supported" },
-    accessibility: { required: false, pattern: "none" },
-  },
   "description-list": {
     status: "stable",
     accessibility: {
@@ -2360,21 +2304,6 @@ export const COMPONENT_REGISTRY = {
     capabilities: { density: "not-applicable" },
     accessibility: { required: false, pattern: "none", dimensions: { reducedMotion: "pass" } },
   },
-  "master-detail": {
-    status: "beta",
-    capabilities: { density: "not-applicable" },
-    accessibility: {
-      required: false,
-      // RTL-001: the mobile detail sheet opens from the inline-end edge, which mirrors.
-      pattern: "none",
-      dimensions: { rtl: "pass" },
-    },
-    api: {
-      controlled: [
-        { value: "detailOpen", default: "defaultDetailOpen", change: "onDetailOpenChange" },
-      ],
-    },
-  },
   "number-formatter": {
     status: "stable",
     capabilities: { density: "not-applicable" },
@@ -2434,25 +2363,6 @@ export const COMPONENT_REGISTRY = {
     status: "beta",
     capabilities: { density: "not-applicable" },
     accessibility: { required: false, pattern: "none", dimensions: { reducedMotion: "pass" } },
-  },
-  "security-item": {
-    status: "stable",
-    capabilities: { density: "unsupported" },
-    accessibility: {
-      required: false,
-      pattern: "none",
-      dimensions: {
-        semantic: "pass",
-        name: "pass",
-        keyboard: "not-applicable",
-        focus: "not-applicable",
-        screenReader: "not-audited",
-        rtl: "not-applicable",
-        reducedMotion: "not-applicable",
-        forcedColors: "pass",
-        contrast: "pass",
-      },
-    },
   },
   stat: {
     status: "stable",

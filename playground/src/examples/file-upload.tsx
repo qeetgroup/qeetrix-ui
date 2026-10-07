@@ -9,9 +9,8 @@ import {
   FileUploadItem,
   FileList as FileUploadList,
   type FileUploadStatus,
-  LogoUploader,
 } from "@qeetrix/ui";
-import { type ComponentProps, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, text } from "../registry/types";
 
@@ -275,32 +274,12 @@ function DropzonePlayground({
   );
 }
 
-function LogoDemo({
-  initial,
-  ...props
-}: { initial: string } & Omit<ComponentProps<typeof LogoUploader>, "value" | "onChange">) {
-  const [logo, setLogo] = useState(initial);
-  return (
-    <div className="w-80">
-      <LogoUploader value={logo} onChange={setLogo} {...props} />
-    </div>
-  );
-}
-
 const dropzoneControls = {
   accept: text(".pdf,.csv", "accept"),
   maxSizeMB: num(10, { min: 0, max: 100, label: "maxSize (MB, 0 = none)" }),
   maxFiles: num(5, { min: 0, max: 20, label: "maxFiles (0 = none)" }),
   multiple: bool(true),
   hint: text("", "hint (empty = from accept / maxSize)"),
-  disabled: bool(false),
-};
-
-const logoControls = {
-  withLogo: bool(false, "Logo set"),
-  maxSizeMB: num(2, { min: 1, max: 10, label: "maxSizeMB" }),
-  accept: text("image/*", "accept"),
-  hint: text("Shown on the hosted sign-in page and on invoice PDFs.", "Hint"),
   disabled: bool(false),
 };
 
@@ -359,61 +338,6 @@ export const examples: FamilyExamples = {
           disabled: v.disabled,
           "aria-label": "Upload invoices",
           onDrop: expr("(accepted, rejected) => queueUploads(accepted, rejected)"),
-        }),
-    }),
-  },
-
-  "logo-uploader": {
-    minHeight: 260,
-    demos: [
-      {
-        name: "Empty",
-        description: "Drop or pick a file (read locally as a data URL), or paste a hosted URL.",
-        render: () => (
-          <LogoDemo
-            initial=""
-            maxSizeMB={1}
-            accept="image/png,image/svg+xml,image/webp"
-            hint="Square, at least 256 × 256 px. Shown on sign-in and invoice PDFs."
-            messages={{ formatHint: (mb) => `PNG, SVG or WEBP up to ${mb} MB` }}
-          />
-        ),
-      },
-      {
-        name: "Logo set",
-        render: () => <LogoDemo initial={acmeLogo} hint="Acme India · hosted sign-in page" />,
-      },
-      {
-        name: "Invalid source",
-        description:
-          "Only https, relative and data:image sources are previewed; anything else is flagged.",
-        render: () => <LogoDemo initial="ftp://assets.acme.in/brand/logo.png" />,
-      },
-      {
-        name: "Disabled",
-        render: () => <LogoDemo initial={acmeLogo} disabled hint="Saving branding…" />,
-      },
-    ],
-    playground: definePlayground({
-      controls: logoControls,
-      render: (v) => (
-        <LogoDemo
-          key={String(v.withLogo)}
-          initial={v.withLogo ? acmeLogo : ""}
-          maxSizeMB={v.maxSizeMB}
-          accept={v.accept}
-          hint={v.hint || undefined}
-          disabled={v.disabled}
-        />
-      ),
-      code: (v) =>
-        jsx("LogoUploader", {
-          value: expr("logo"),
-          onChange: expr("setLogo"),
-          maxSizeMB: v.maxSizeMB === 2 ? undefined : v.maxSizeMB,
-          accept: v.accept === "image/*" ? undefined : v.accept,
-          hint: v.hint || undefined,
-          disabled: v.disabled,
         }),
     }),
   },

@@ -61,8 +61,8 @@ const FeedItemContext = React.createContext<{
 /**
  * Names the enclosing feed article by elements inside it. The APG feed pattern requires each
  * article to have an accessible name; an auto-wrapped child cannot pass one up, so it registers
- * its title (and summary) here instead. A no-op outside a `Feed`. `AuditEvent` uses it, and a
- * product's own feed entries can too.
+ * its title (and summary) here instead. A no-op outside a `Feed`. The audit-event block uses it,
+ * and a product's own feed entries can too.
  *
  * Registered after mount, so server HTML and the first client render agree; an explicit
  * `aria-labelledby` / `aria-describedby` on a `FeedItem` wins.
@@ -136,8 +136,8 @@ function FeedArticle({
  * audit timelines, notification feeds). Each direct child is wrapped in a focusable
  * `role=article` with `aria-posinset` / `aria-setsize`; a `FeedItem` child becomes the article
  * itself, carrying its own attributes. Articles are named through `FeedItem`'s
- * `aria-labelledby` or, from inside, `useFeedItemLabel`. The generic primitive under
- * `NotificationCenter` and `AuditLog`.
+ * `aria-labelledby` or, from inside, `useFeedItemLabel`. The generic primitive under the
+ * notification-center and audit-event blocks.
  *
  * Keyboard (APG): `PageDown` / `PageUp` move between articles; `Control+End` /
  * `Control+Home` leave the feed forwards / backwards. Tab still walks the controls inside

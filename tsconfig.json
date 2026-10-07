@@ -23,11 +23,12 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@qeetrix/ui": ["./src/index.ts"],
       "@scripts/*": ["./scripts/*"],
       "@root/*": ["./*"]
     },
     "tsBuildInfoFile": "./node_modules/.cache/qeetrix/tsconfig.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["src", "playground/src/types/culori.d.ts"],
   "exclude": ["dist"]
 }

@@ -1,23 +1,15 @@
 import {
+  BuildingComplexIcon,
   KeyRoundIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   ReceiptIndianRupeeIcon,
+  ScrollTextIcon,
   SearchIcon,
   UserPlusIcon,
   UsersIcon,
 } from "@qeetrix/icons";
-import {
-  Button,
-  CommandPalette,
-  type CommandPaletteItem,
-  IconApiKey,
-  IconAuditLog,
-  IconTenant,
-  Kbd,
-  KbdGroup,
-  toast,
-} from "@qeetrix/ui";
+import { Button, CommandPalette, type CommandPaletteItem, Kbd, KbdGroup, toast } from "@qeetrix/ui";
 import { useState } from "react";
 import { tenants } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";
@@ -46,7 +38,7 @@ const qeetCommands: CommandPaletteItem[] = [
     id: "nav-api-keys",
     title: "API keys",
     group: "Navigate",
-    icon: <IconApiKey className={icon} aria-hidden />,
+    icon: <KeyRoundIcon className={icon} aria-hidden />,
     keywords: ["tokens", "secrets", "qk_live"],
     shortcut: ["G", "K"],
   },
@@ -54,7 +46,7 @@ const qeetCommands: CommandPaletteItem[] = [
     id: "nav-audit",
     title: "Audit log",
     group: "Navigate",
-    icon: <IconAuditLog className={icon} aria-hidden />,
+    icon: <ScrollTextIcon className={icon} aria-hidden />,
     keywords: ["events", "history", "compliance"],
     shortcut: ["G", "A"],
   },
@@ -70,7 +62,7 @@ const qeetCommands: CommandPaletteItem[] = [
     id: `tenant-${tenant.id}`,
     title: `${tenant.name} · ${tenant.domain}`,
     group: "Tenants",
-    icon: <IconTenant className={icon} aria-hidden />,
+    icon: <BuildingComplexIcon className={icon} aria-hidden />,
     keywords: [tenant.id, tenant.plan, tenant.region],
   })),
   {

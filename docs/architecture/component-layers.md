@@ -61,31 +61,13 @@ declarations along with it.
 
 ---
 
-## foundations — `src/foundations/`
-
-**What it is.** The typed values derived from tokens — `DURATION`, `EASING`, `Z_INDEX`,
-`ICON_SIZE`, `SHADOW`, `COMPONENT`, `STATE_OPACITY`, `CHART_COLOR`. Framework-free, no React,
-no dependencies.
-
-**Generated.** `src/foundations/token-values.ts` is written by `bun run build:tokens` from
-`src/tokens/**` and is gitignored, like the token CSS. It is the only place these values exist
-in code; [`src/lib/token-values.ts`](../../src/lib/token-values.ts) re-exports it so the
-published `@qeetrix/ui/lib/token-values` path keeps resolving.
-
-**What it may import.** `foundations`, `tokens`. In practice: nothing.
-
-**Still filed under `lib`.** `lib/motion.ts` and `lib/responsive.ts` are token-derived helpers
-that belong here; moving them is a later phase.
-
----
-
 ## runtime — `src/runtime/`
 
 **What it is.** Framework-level behaviour with no markup: focus management, collection and
 selection handling, keyboard navigation, stable id generation. Headless, and testable without
 rendering anything.
 
-**What it may import.** `runtime`, `foundations`, `tokens`.
+**What it may import.** `runtime`, `tokens`.
 
 **What it may never import.** `components`, `blocks`, `primitives`. Runtime is
 component-agnostic — behaviour is passed *into* it, not looked up.
@@ -97,10 +79,10 @@ component-agnostic — behaviour is passed *into* it, not looked up.
 **What it is.** Framework-free helpers: `cn()`, the motion helpers, the responsive query
 builders, the generated token values.
 
-**What it may import.** `lib`, `runtime`, `foundations`, `tokens`.
+**What it may import.** `lib`, `runtime`, `tokens`.
 
-**Note.** `lib` is where `foundations` and `runtime` currently live in fact. As those layers are
-populated, `lib` shrinks to genuinely miscellaneous helpers.
+**Note.** `lib` is where `runtime` currently lives in fact, and it holds the generated
+`token-values.ts`: the token values code reads as JavaScript.
 
 ---
 
@@ -109,7 +91,7 @@ populated, `lib` shrinks to genuinely miscellaneous helpers.
 **What it is.** React hooks over `lib` and browser APIs: `useMediaQuery`, `useIsMobile`,
 `useMotion`, `usePrefersReducedMotion`.
 
-**What it may import.** `hooks`, `lib`, `runtime`, `foundations`, `tokens`.
+**What it may import.** `hooks`, `lib`, `runtime`, `tokens`.
 
 **What it may never import.** `components`, `blocks`. A hook that needs to render is a
 component.
@@ -122,7 +104,7 @@ component.
 polymorphic element, a portal, a visually-hidden wrapper. They render; they do not decide how
 anything looks.
 
-**What it may import.** `primitives`, `hooks`, `lib`, `runtime`, `foundations`, `tokens`.
+**What it may import.** `primitives`, `hooks`, `lib`, `runtime`, `tokens`.
 
 **What it may never import.** `components`, `blocks`, `providers`.
 
@@ -136,7 +118,7 @@ anything looks.
 **What it is.** The cross-cutting React contexts: `ThemeProvider` (light/dark/system),
 `DensityProvider` (comfortable/compact), `DirectionProvider` (ltr/rtl).
 
-**What it may import.** `providers`, `hooks`, `lib`, `runtime`, `foundations`, `contracts`,
+**What it may import.** `providers`, `hooks`, `lib`, `runtime`, `contracts`,
 `tokens`.
 
 **What it may never import.** `components`, `blocks`. A provider wraps `children`; it renders no
@@ -144,25 +126,15 @@ interface of its own.
 
 ---
 
-## brand — `src/brand/`
-
-**What it is.** The Qeet logos (theme-adaptive wrappers over `@qeetrix/icons`, the single source
-of the artwork) and the custom Qeet icon set.
-
-**What it may import.** `brand`, `lib`, `runtime`, `foundations`, `tokens`. In practice it
-imports nothing internal — it is an asset leaf.
-
----
-
 ## components — `src/components/<category>/`
 
-**What it is.** The library: 145 modules across ten categories (`actions`, `inputs`,
+**What it is.** The library: 137 modules across ten categories (`actions`, `inputs`,
 `selection`, `pickers`, `navigation`, `feedback`, `surfaces`, `data-display`, `layout`,
 `utility`). Category ownership is declared in
 [`scripts/config/category-map.json`](../../scripts/config/category-map.json).
 
-**What it may import.** `components`, `primitives`, `providers`, `brand`, `hooks`, `lib`,
-`runtime`, `foundations`, `contracts`, `tokens`.
+**What it may import.** `components`, `primitives`, `providers`, `hooks`, `lib`,
+`runtime`, `contracts`, `tokens`.
 
 **What it may never import.** `blocks`.
 
@@ -184,17 +156,23 @@ is the target, not yet the layout.)
 
 ---
 
-## blocks — `src/blocks/`
+## blocks and patterns — `src/blocks/`, `src/patterns/`
 
-**What it is.** Page-level compositions: `AuthShell`, `DashboardShell`, `SettingsLayout`,
-`OnboardingWizard`, `PricingTable`, `PageState`. They exist so several products do not each
-rebuild the same screen.
+**What they are.** Compositions built *from* the library and never published with it. A
+**block** is a ready-made section of a product screen with a product idea baked in (an access
+review, an audit record, a notification inbox). A **pattern** is a proven arrangement of
+components for a recurring layout or flow (list + detail). Neither is a component:
+`tsconfig.build.json` leaves both folders out of `dist/`, so `@qeetrix/ui` stays the component
+library and nothing else. Apps copy a block or pattern file and adapt it.
 
-**What it may import.** Everything below it — `components`, `primitives`, `providers`, `brand`,
-`hooks`, `lib`, `runtime`, `foundations`, `contracts`, `tokens` — plus other blocks.
+**What they may import.** Only the package entry — `@qeetrix/ui` — plus `@qeetrix/icons` (root
+import) and React: exactly what an app that copies the file has. `LAYER_ALLOWED_DEPENDENCIES`
+gives both layers `entry` and nothing else, and `biome check` rejects `@/…` and per-icon imports
+there.
 
-**What imports it.** Only `@qeetrix/ui/blocks`. Nothing inside `src/` may import a block except
-another block.
+**What imports them.** Nothing in the package. The playground's pattern pages import them, as an
+app would after copying them. Each keeps its tests in `__tests__/`, run by `bun run test` and
+type-checked by `bun run typecheck`.
 
 ---
 

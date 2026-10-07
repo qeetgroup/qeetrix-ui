@@ -13,7 +13,7 @@ things in.
 
 - [ ] **Purpose** is one sentence. If it takes two, it is probably two components.
 - [ ] **Not already covered.** Check [`component-manifest.json`](../../component-manifest.json) —
-      145 components is enough that the thing may exist under another name.
+      137 components is enough that the thing may exist under another name.
 - [ ] **Category** chosen from the ten families, and added to
       [`scripts/config/category-map.json`](../../scripts/config/category-map.json).
 - [ ] **Anatomy** decided: which parts exist, and which of them a consumer would target.

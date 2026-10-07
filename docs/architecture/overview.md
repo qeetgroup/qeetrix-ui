@@ -1,7 +1,7 @@
 # Architecture overview
 
 `@qeetrix/ui` is the Qeet Group design system: one package that ships design tokens, brand
-assets and 145 React components, consumed by every Qeet product. It has exactly one job — make
+assets and 137 React components, consumed by every Qeet product. It has exactly one job — make
 the same interface decisions available everywhere, and keep them from drifting.
 
 That only works if the structure is enforced rather than described. This document is the map;
@@ -17,20 +17,18 @@ src/
 ├── styles/        the CSS entry + generated token CSS/JSON               — generated
 ├── contracts/     types + vocabularies that describe a component         — governance
 ├── manifests/     the manifest's type, and the declarations it is built from
-├── foundations/   token values, typed — generated from src/tokens/          — generated
-├── lib/           framework-free helpers (cn, motion, responsive)
+├── lib/           framework-free helpers (cn, motion, responsive) + generated token values
 ├── hooks/         React hooks over lib + browser APIs
 ├── providers/     theme · density · direction
-├── brand/         Qeet logos + custom icons
 ├── components/    10 category folders, each with index.ts + __tests__/
-├── blocks/        page-level compositions of components
+├── blocks/        copy-paste sections of product screens — never published
+├── patterns/      copy-paste layout solutions — never published
 ├── __tests__/     global harness: setup, a11y smoke, hydration, API lock, governance
 └── index.ts       the published barrel
 ```
 
-`foundations/` is populated: it holds the typed token values, generated from the token source.
-Two directories in the target architecture — `runtime/` and `primitives/` — are still **declared
-but not populated**. See [Migration](#migration) below.
+The typed token values JavaScript reads are generated into `lib/token-values.ts`. One directory
+in the target architecture — `runtime/` — is still **declared but not populated**. See [Migration](#migration) below.
 
 ---
 
@@ -39,10 +37,10 @@ but not populated**. See [Migration](#migration) below.
 Code flows one way:
 
 ```text
-tokens → foundations → runtime / primitives → components → blocks
+tokens → runtime / internal → components
 ```
 
-with `lib`, `hooks`, `providers` and `brand` as supporting layers that may never reach forward
+with `lib`, `hooks` and `providers` as supporting layers that may never reach forward
 into `components` or `blocks`.
 
 Layer membership and the permitted edges are declared in
@@ -73,8 +71,8 @@ The published surface is **only** what the entry points export:
 | `@qeetrix/ui` | `src/index.ts` — the full barrel |
 | `@qeetrix/ui/components/<slug>` | one component, stable regardless of its category |
 | `@qeetrix/ui/components/<category>` | a category group |
-| `@qeetrix/ui/brand` · `/blocks` · `/providers` | `src/brand` · `src/blocks` · `src/providers` |
-| `@qeetrix/ui/blocks/<name>` · `/providers/<name>` | one block · one provider |
+| `@qeetrix/ui/providers` | `src/providers` |
+| `@qeetrix/ui/providers/<name>` | one provider |
 | `@qeetrix/ui/hooks/<name>` | the four public hooks — `use-media-query`, `use-mobile`, `use-motion`, `use-prefers-reduced-motion` |
 | `@qeetrix/ui/lib/<name>` | the four public helpers — `utils` (`cn`), `motion`, `responsive`, `token-values` |
 | `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | the stylesheet (one entry, host-global rules included) + the generated token files |
@@ -143,18 +141,17 @@ components (`focus-trap`, `portal`, `visually-hidden`) and in `lib`/`hooks`.
 
 ---
 
-## Tokens versus foundations
+## Tokens versus token values
 
 - **tokens** are *data*: W3C DTCG JSON under `src/tokens/`, compiled by Style Dictionary into
   CSS custom properties and JSON. They import nothing and are imported by nothing —
   `scripts/build/tokens.mjs` reads them.
-- **foundations** are the *typed values* derived from tokens: the duration scale, the easing
-  curves, the z-index ladder, the breakpoints. Code imports foundations, never token JSON.
+- **token values** are the few tokens JavaScript has to read as values — durations and easings
+  for animation, icon sizes and strokes, the geometry Sidebar and Tour position with. Code
+  imports those, never token JSON; everything else is a `--qx-*` CSS variable.
 
-Those typed values live in `src/foundations/token-values.ts`, **generated** from the token
-source by `bun run build:tokens`. [`src/lib/token-values.ts`](../../src/lib/token-values.ts)
-re-exports it so `@qeetrix/ui/lib/token-values` keeps resolving. `lib/motion.ts` and
-`lib/responsive.ts` are the remaining token-derived helpers still filed under `lib`.
+They live in [`src/lib/token-values.ts`](../../src/lib/token-values.ts), **generated** from the
+token source by `bun run build:tokens` and published as `@qeetrix/ui/lib/token-values`.
 
 The primitive layer is deliberately **not published to the stylesheet components render
 against** — `src/styles/tokens.css` carries the semantic and component layers only. That turns
@@ -241,8 +238,8 @@ registry entry.
 
 ## Migration
 
-`foundations/` was populated in Phase 2 — it holds the generated typed token values, and
-`src/lib/token-values.ts` is a re-export so no consumer noticed.
+The generated token values, briefly a `foundations/` layer of their own, are written straight
+to `src/lib/token-values.ts`, holding only what code reads.
 
 `runtime/` and `primitives/` are still declared in
 [`src/contracts/layers.ts`](../../src/contracts/layers.ts) with their dependency rules, but no

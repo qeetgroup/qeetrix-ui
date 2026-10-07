@@ -138,24 +138,6 @@ type ToggleTipMessages = typeof toggleTipMessages;
 
 /* ── data display ─────────────────────────────────────────────────────────────────────────── */
 
-/** `AuditEvent` — the expandable sections of one audit record. */
-const auditEventMessages = {
-  /** Summary text of the collapsed details disclosure. */
-  details: "Event details",
-  /** Accessible name of the metadata section. */
-  metadata: "Metadata",
-  /** Accessible name of the field-diff section. */
-  changes: "Changes",
-  /** Accessible name of the raw-payload section. */
-  raw: "Raw event",
-  /** The status label of a severity, visible for warning/danger and read out for all four. */
-  severity: (severity: "info" | "success" | "warning" | "danger") =>
-    ({ info: "Info", success: "Success", warning: "Warning", danger: "Danger" })[severity],
-  /** Accessible name of the event identifier. */
-  eventId: "Event ID",
-};
-type AuditEventMessages = typeof auditEventMessages;
-
 /** `Carousel` and its slides and arrows. */
 const carouselMessages = {
   /** Accessible name of the carousel region, when the caller gives no `aria-label`. */
@@ -191,45 +173,6 @@ const codeBlockMessages = {
   copied: "Copied",
 };
 type CodeBlockMessages = typeof codeBlockMessages;
-
-/** `CommentThread` — the reply composer. */
-const commentThreadMessages = {
-  /** Accessible name of the composer textarea. */
-  label: "Comment",
-  /** Placeholder while composing a top-level comment. */
-  placeholder: "Add a comment…",
-  /** Placeholder while composing a reply. */
-  replyPlaceholder: "Write a reply…",
-  /** The composer's submit button, for a top-level comment and for a reply alike. */
-  submit: "Comment",
-  /** The control that opens a reply composer under an existing comment. */
-  reply: "Reply",
-  /** A comment's edit action. */
-  edit: "Edit",
-  /** A comment's delete action. */
-  delete: "Delete",
-  /** Saves an edit. */
-  save: "Save",
-  /** Abandons an edit or a delete. */
-  cancel: "Cancel",
-  /** Accessible name of a comment's overflow-menu trigger. */
-  actions: (author: string) => `Comment actions for ${author}`,
-  /** Marker after the time of an edited comment. */
-  edited: "edited",
-  /** Accessible name of the editor textarea. */
-  editLabel: "Edit comment",
-  /** The inline confirmation shown before a delete is emitted. */
-  deleteConfirm: "Delete this comment?",
-  /** Tombstone body of a deleted comment. */
-  deleted: "This comment was deleted.",
-  /** Expands a clamped comment body. */
-  showMore: "Show more",
-  /** Collapses it again. */
-  showLess: "Show less",
-  /** Accessible name of a comment's replies. */
-  repliesTo: (author: string) => `Replies to ${author}`,
-};
-type CommentThreadMessages = typeof commentThreadMessages;
 
 /** `DataTable` — the toolbar, the row controls, the column menu and the pager. */
 const dataTableMessages = {
@@ -359,59 +302,6 @@ const reactionBarMessages = {
 };
 type ReactionBarMessages = typeof reactionBarMessages;
 
-/** `AccessReview` — the access-certification table and its bulk-review bar. */
-const accessReviewMessages = {
-  /** Accessible name of the table, when no `aria-label` is given. */
-  label: "Access review",
-  /** Shown when there are no items, when no `emptyMessage` is given. */
-  empty: "No access assignments.",
-  subjectHeader: "Subject",
-  accessHeader: "Access",
-  scopeHeader: "Scope",
-  stateHeader: "State",
-  riskHeader: "Risk",
-  evidenceHeader: "Evidence",
-  decisionHeader: "Decision",
-  actionsHeader: "Actions",
-  /** The scope cell when an item has no `scope`. */
-  allScopes: "All scopes",
-  state: (state: "granted" | "denied" | "mixed" | "pending") =>
-    ({ granted: "Granted", denied: "Denied", mixed: "Mixed", pending: "Pending" })[state],
-  inherited: "Inherited",
-  locked: "Locked",
-  risk: (risk: "low" | "medium" | "high" | "critical") =>
-    ({ low: "Low", medium: "Medium", high: "High", critical: "Critical" })[risk],
-  /** Accessible name of the risk indicator, which shows the level as a word and a bar meter. */
-  riskLevel: (risk: string) => `${risk} risk`,
-  recommendation: (verdict: "approved" | "revoked") =>
-    verdict === "approved" ? "Suggested: approve" : "Suggested: revoke",
-  approve: "Approve",
-  revoke: "Revoke",
-  undo: "Undo",
-  approved: "Approved",
-  revoked: "Revoked",
-  /** Row-level accessible names; `subject` is empty when the item has none. */
-  approveItem: (access: string, subject: string) =>
-    subject ? `Approve ${access} for ${subject}` : `Approve ${access}`,
-  revokeItem: (access: string, subject: string) =>
-    subject ? `Revoke ${access} for ${subject}` : `Revoke ${access}`,
-  undoItem: (access: string, subject: string) =>
-    subject ? `Undo decision on ${access} for ${subject}` : `Undo decision on ${access}`,
-  selectItem: (access: string, subject: string) =>
-    subject ? `Select ${access} for ${subject}` : `Select ${access}`,
-  selectAll: "Select all",
-  /** Announced while a decision is being saved. */
-  saving: "Saving decision",
-  /** Accessible name of the bulk-review bar. */
-  bulkLabel: "Bulk review",
-  bulkHint: "Select entries to approve or revoke them together.",
-  selectedCount: (count: number) => `${count} selected`,
-  approveSelected: (count: number) => `Approve ${count}`,
-  revokeSelected: (count: number) => `Revoke ${count}`,
-  clearSelection: "Clear selection",
-};
-type AccessReviewMessages = typeof accessReviewMessages;
-
 /** `FileCard` — a file's card or row, with its transfer progress. */
 const fileCardMessages = {
   /** Accessible name of the progress bar while the file uploads. */
@@ -463,32 +353,6 @@ const notificationMessages = {
   dismiss: "Dismiss",
 };
 type NotificationMessages = typeof notificationMessages;
-
-/** `NotificationCenter` — the bell, the inbox and its tabs. */
-const notificationCenterMessages = {
-  /**
-   * Accessible name of the bell trigger. `unreadCount` is `0` when everything has been read,
-   * which is the case the default renders without a count.
-   */
-  trigger: (unreadCount: number) => `Notifications${unreadCount ? `, ${unreadCount} unread` : ""}`,
-  /** Visible heading of the inbox popover. */
-  heading: "Notifications",
-  /** Accessible name of the notification feed. */
-  feed: "Notifications",
-  /** The mark-everything-read action. */
-  markAllRead: "Mark all read",
-  /** Label of the "everything" tab. */
-  allTab: "All",
-  /** Label of the unread tab. `count` is `0` when there is nothing unread. */
-  unreadTab: (count: number) => `Unread${count > 0 ? ` (${count})` : ""}`,
-  /** Accessible name of the dot marking an item as unread. */
-  unread: "Unread",
-  /** Accessible name of the per-item dismiss button. */
-  dismiss: "Dismiss",
-  /** Shown when the list is empty. */
-  empty: "You're all caught up.",
-};
-type NotificationCenterMessages = typeof notificationCenterMessages;
 
 /** `Spinner` — the indeterminate busy indicator. */
 const spinnerMessages = {
@@ -604,41 +468,6 @@ const formMessages = {
   errorSummaryTitle: "There is a problem",
 };
 type FormMessages = typeof formMessages;
-
-/** `LogoUploader` — the drop target, the preview, the URL fallback and its errors. */
-const logoUploaderMessages = {
-  /** Accessible name of the file input. */
-  file: "Upload a logo file",
-  /** Accessible name of the URL input. */
-  url: "Logo URL",
-  /** Placeholder of the URL input. */
-  urlPlaceholder: "…or paste a logo URL",
-  /** Instruction on the empty drop target. */
-  dropZone: "Drop a logo here",
-  /** Format and size hint under the instruction. */
-  formatHint: (maxSizeMB: number) => `PNG, JPG, SVG, or WEBP up to ${maxSizeMB} MB`,
-  /** `alt` text of the preview image. */
-  previewAlt: "Logo preview",
-  /** Heading of the filled state. */
-  logoSet: "Logo set",
-  /** Stands in for the source when the value is an inline data URL. */
-  uploadedFile: "Uploaded file (preview)",
-  /** The control that picks a different file. */
-  replace: "Replace",
-  /** The control that clears the current logo. */
-  remove: "Remove",
-  /** Error shown when the chosen file's type is not accepted. */
-  rejectedType: "That file type isn't allowed here.",
-  /** Error shown when the chosen file is too large. */
-  rejectedSize: (maxSizeMB: number) => `File is larger than ${maxSizeMB} MB.`,
-  /** Error shown when the file could not be read at all. */
-  readError: "Couldn't read that file.",
-  /** Error shown when the preview image failed to load. */
-  renderError: "Couldn't render that source as an image.",
-  /** Error shown when a pasted URL is not a source this component will render. */
-  unusableSource: "That source can't be used as an image.",
-};
-type LogoUploaderMessages = typeof logoUploaderMessages;
 
 /** `MentionInput` — the suggestion popover. */
 const mentionInputMessages = {
@@ -839,13 +668,6 @@ const overflowListMessages = {
 };
 type OverflowListMessages = typeof overflowListMessages;
 
-/** `MasterDetail` — the collapsed detail sheet. */
-const masterDetailMessages = {
-  /** The detail sheet's (visually hidden) title, when no `detailTitle` is given. */
-  detailTitle: "Details",
-};
-type MasterDetailMessages = typeof masterDetailMessages;
-
 /* ── navigation ───────────────────────────────────────────────────────────────────────────── */
 
 /** `Breadcrumb` — the trail and its ellipsis. */
@@ -1006,21 +828,6 @@ const comboboxMessages = {
   limit: "Keep typing to narrow the results.",
 };
 type ComboboxMessages = typeof comboboxMessages;
-
-/** `NotificationPreferenceMatrix` — the channel/category grid. */
-const notificationPreferenceMatrixMessages = {
-  /** Caption of the preference table. */
-  caption: "Notification preferences by channel",
-  /** Header of the leading category column. */
-  categoryHeader: "Notification",
-  /** Accessible name of one checkbox, naming the category and the channel it belongs to. */
-  cell: (category: string, channel: string) => `${category} via ${channel}`,
-  /** Screen-reader text of a cell whose channel does not apply to the category. */
-  notAvailable: "Not available",
-  /** Description of a locked cell's control. */
-  locked: "Managed by your organization",
-};
-type NotificationPreferenceMatrixMessages = typeof notificationPreferenceMatrixMessages;
 
 /** `Rating` — the star control and its read-only display. */
 const ratingMessages = {
@@ -1274,10 +1081,8 @@ type TimerMessages = typeof timerMessages;
  * be a bug rather than a feature.
  */
 interface QeetrixMessages {
-  accessReview: AccessReviewMessages;
   actionBar: ActionBarMessages;
   angleSlider: AngleSliderMessages;
-  auditEvent: AuditEventMessages;
   autocomplete: AutocompleteMessages;
   availabilityGrid: AvailabilityGridMessages;
   banner: BannerMessages;
@@ -1290,7 +1095,6 @@ interface QeetrixMessages {
   colorPicker: ColorPickerMessages;
   combobox: ComboboxMessages;
   commandPalette: CommandPaletteMessages;
-  commentThread: CommentThreadMessages;
   copyableSecret: CopyableSecretMessages;
   countryPicker: CountryPickerMessages;
   dataState: DataStateMessages;
@@ -1307,12 +1111,8 @@ interface QeetrixMessages {
   jsonTree: JsonTreeMessages;
   label: LabelMessages;
   link: LinkMessages;
-  logoUploader: LogoUploaderMessages;
-  masterDetail: MasterDetailMessages;
   mentionInput: MentionInputMessages;
   notification: NotificationMessages;
-  notificationCenter: NotificationCenterMessages;
-  notificationPreferenceMatrix: NotificationPreferenceMatrixMessages;
   numberField: NumberFieldMessages;
   otpInput: OtpInputMessages;
   overflowList: OverflowListMessages;
@@ -1355,10 +1155,8 @@ interface QeetrixMessages {
  * read-only; mutating it mutates the defaults of every component in the process.
  */
 const QEETRIX_MESSAGES: QeetrixMessages = {
-  accessReview: accessReviewMessages,
   actionBar: actionBarMessages,
   angleSlider: angleSliderMessages,
-  auditEvent: auditEventMessages,
   autocomplete: autocompleteMessages,
   availabilityGrid: availabilityGridMessages,
   banner: bannerMessages,
@@ -1371,7 +1169,6 @@ const QEETRIX_MESSAGES: QeetrixMessages = {
   colorPicker: colorPickerMessages,
   combobox: comboboxMessages,
   commandPalette: commandPaletteMessages,
-  commentThread: commentThreadMessages,
   copyableSecret: copyableSecretMessages,
   countryPicker: countryPickerMessages,
   dataState: dataStateMessages,
@@ -1388,12 +1185,8 @@ const QEETRIX_MESSAGES: QeetrixMessages = {
   jsonTree: jsonTreeMessages,
   label: labelMessages,
   link: linkMessages,
-  logoUploader: logoUploaderMessages,
-  masterDetail: masterDetailMessages,
   mentionInput: mentionInputMessages,
   notification: notificationMessages,
-  notificationCenter: notificationCenterMessages,
-  notificationPreferenceMatrix: notificationPreferenceMatrixMessages,
   numberField: numberFieldMessages,
   otpInput: otpInputMessages,
   overflowList: overflowListMessages,
@@ -1425,10 +1218,8 @@ const QEETRIX_MESSAGES: QeetrixMessages = {
 
 export type {
   // Per-group types, for a consumer building a translation one component at a time.
-  AccessReviewMessages,
   ActionBarMessages,
   AngleSliderMessages,
-  AuditEventMessages,
   AutocompleteMessages,
   AvailabilityGridMessages,
   BannerMessages,
@@ -1441,7 +1232,6 @@ export type {
   ColorPickerMessages,
   ComboboxMessages,
   CommandPaletteMessages,
-  CommentThreadMessages,
   CopyableSecretMessages,
   CountryPickerMessages,
   DataStateMessages,
@@ -1458,15 +1248,11 @@ export type {
   JsonTreeMessages,
   LabelMessages,
   LinkMessages,
-  LogoUploaderMessages,
-  MasterDetailMessages,
   MentionInputMessages,
   MessageCatalogue,
   MessageOverrides,
   MessagesFor,
-  NotificationCenterMessages,
   NotificationMessages,
-  NotificationPreferenceMatrixMessages,
   NumberFieldMessages,
   OtpInputMessages,
   OverflowListMessages,
@@ -1497,10 +1283,8 @@ export type {
   TourMessages,
 };
 export {
-  accessReviewMessages,
   actionBarMessages,
   angleSliderMessages,
-  auditEventMessages,
   autocompleteMessages,
   availabilityGridMessages,
   bannerMessages,
@@ -1513,7 +1297,6 @@ export {
   colorPickerMessages,
   comboboxMessages,
   commandPaletteMessages,
-  commentThreadMessages,
   copyableSecretMessages,
   countryPickerMessages,
   dataStateMessages,
@@ -1530,13 +1313,9 @@ export {
   jsonTreeMessages,
   labelMessages,
   linkMessages,
-  logoUploaderMessages,
-  masterDetailMessages,
   mentionInputMessages,
   mergeMessageCatalogues,
-  notificationCenterMessages,
   notificationMessages,
-  notificationPreferenceMatrixMessages,
   numberFieldMessages,
   otpInputMessages,
   overflowListMessages,

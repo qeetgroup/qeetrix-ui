@@ -20,7 +20,6 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  QeetLogo,
   Separator,
   Sidebar,
   SidebarContent,
@@ -39,6 +38,7 @@ import {
   SidebarTrigger,
 } from "@qeetrix/ui";
 import { type ComponentType, Fragment, type ReactNode } from "react";
+import { ThemedQeetLogo } from "../../lib/qeet-brand";
 
 export interface ConsoleNavGroup {
   label: string;
@@ -77,7 +77,7 @@ export function ConsoleFrame({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" tooltip={`${product} · ${tenant}`}>
-                <QeetLogo className="size-8 shrink-0 rounded-md" aria-hidden />
+                <ThemedQeetLogo className="size-8 shrink-0 rounded-md" />
                 <span className="flex min-w-0 flex-col leading-tight">
                   <span className="truncate font-semibold">{product}</span>
                   <span className="truncate text-xs text-muted-foreground">{tenant}</span>

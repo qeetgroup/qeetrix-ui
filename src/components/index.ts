@@ -5,13 +5,11 @@
  * scripts/check/exports.mjs.
  */
 
-export * from "./AccessReview";
 export * from "./Accordion";
 export * from "./ActionBar";
 export * from "./Alert";
 export * from "./AppShell";
 export * from "./AspectRatio";
-export * from "./AuditEvent";
 export * from "./AvailabilityGrid";
 export * from "./Avatar";
 export * from "./Badge";
@@ -28,7 +26,6 @@ export * from "./CodeBlock";
 export * from "./ColorPicker";
 export * from "./Combobox";
 export * from "./CommandPalette";
-export * from "./CommentThread";
 export * from "./Container";
 export * from "./CountryPicker";
 export * from "./CurrencyInput";
@@ -58,11 +55,9 @@ export * from "./Link";
 export * from "./Listbox";
 export * from "./Marquee";
 export * from "./MaskInput";
-export * from "./MasterDetail";
 export * from "./MentionInput";
 export * from "./NavigationMenu";
 export * from "./Notification";
-export * from "./NotificationPreferenceMatrix";
 export * from "./NumberField";
 export * from "./NumberFormatter";
 export * from "./OrgChart";
@@ -83,7 +78,6 @@ export * from "./Resizable";
 export * from "./RichTextEditor";
 export * from "./RollingNumber";
 export * from "./ScrollArea";
-export * from "./SecurityItem";
 export * from "./Select";
 export * from "./Separator";
 export * from "./Sidebar";

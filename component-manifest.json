@@ -7,15 +7,13 @@
   "generated": "2026-10-07",
   "styles": "@qeetrix/ui/styles.css",
   "tokens": "@qeetrix/ui/tokens.json",
-  "count": 145,
+  "count": 137,
   "categories": {
-    "AccessReview": 1,
     "Accordion": 2,
     "ActionBar": 1,
     "Alert": 3,
     "AppShell": 1,
     "AspectRatio": 1,
-    "AuditEvent": 1,
     "AvailabilityGrid": 1,
     "Avatar": 1,
     "Badge": 3,
@@ -32,7 +30,6 @@
     "ColorPicker": 2,
     "Combobox": 2,
     "CommandPalette": 1,
-    "CommentThread": 1,
     "Container": 1,
     "CountryPicker": 1,
     "CurrencyInput": 1,
@@ -47,7 +44,7 @@
     "EmptyState": 2,
     "Feed": 2,
     "FileCard": 2,
-    "FileUpload": 2,
+    "FileUpload": 1,
     "FilterBar": 1,
     "FloatingWindow": 1,
     "FocusTrap": 1,
@@ -62,11 +59,9 @@
     "Listbox": 1,
     "Marquee": 1,
     "MaskInput": 1,
-    "MasterDetail": 1,
     "MentionInput": 1,
     "NavigationMenu": 1,
-    "Notification": 2,
-    "NotificationPreferenceMatrix": 1,
+    "Notification": 1,
     "NumberField": 1,
     "NumberFormatter": 1,
     "OTPInput": 1,
@@ -87,7 +82,6 @@
     "RichTextEditor": 1,
     "RollingNumber": 1,
     "ScrollArea": 1,
-    "SecurityItem": 1,
     "Select": 2,
     "Separator": 1,
     "Sidebar": 1,
@@ -115,86 +109,17 @@
   },
   "statuses": {
     "experimental": 0,
-    "beta": 68,
-    "stable": 76,
+    "beta": 62,
+    "stable": 74,
     "deprecated": 1
   },
   "accessibilityAudit": {
-    "not-audited": 125,
+    "not-audited": 118,
     "partial": 1,
-    "audited": 19,
+    "audited": 18,
     "exception": 0
   },
   "components": [
-    {
-      "slug": "access-review",
-      "name": "AccessReview",
-      "description": "Product-neutral access surface for identity and security consoles, in two modes: - **Assignment** (default): each row's checkbox is the grant itself, and `onStateChange` emits grant / deny intent.",
-      "category": "AccessReview",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/access-review",
-      "groupImport": "@qeetrix/ui/components/AccessReview",
-      "status": "beta",
-      "capabilities": {
-        "rtl": "supported",
-        "darkMode": "supported",
-        "density": "supported",
-        "ssr": "client-boundary",
-        "reducedMotion": "supported"
-      },
-      "states": [
-        "hover",
-        "active",
-        "disabled",
-        "loading",
-        "checked",
-        "indeterminate",
-        "selected",
-        "busy",
-        "empty"
-      ],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": null
-      },
-      "accessibility": {
-        "required": true,
-        "pattern": "table",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
-          "rtl": "not-audited",
-          "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
-          "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
     {
       "slug": "accordion",
       "name": "Accordion",
@@ -678,73 +603,6 @@
         "unit": true,
         "accessibility": true,
         "interaction": false,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
-      "slug": "audit-event",
-      "name": "AuditEvent",
-      "description": "Typed, product-neutral audit-event anatomy.",
-      "category": "AuditEvent",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/audit-event",
-      "groupImport": "@qeetrix/ui/components/AuditEvent",
-      "status": "stable",
-      "capabilities": {
-        "rtl": "supported",
-        "darkMode": "supported",
-        "density": "unsupported",
-        "ssr": "client-boundary",
-        "reducedMotion": "supported"
-      },
-      "states": [
-        "hover",
-        "focus-visible"
-      ],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": {
-          "severity": {
-            "source": "forwarded",
-            "note": "Mapped through SEVERITY_KIND onto StatusPill's kind, which maps onto Badge's variant. The value set is the AuditSeverity domain vocabulary."
-          }
-        },
-        "controlled": null
-      },
-      "accessibility": {
-        "required": true,
-        "pattern": "none",
-        "audit": "audited",
-        "dimensions": {
-          "semantic": "pass",
-          "name": "pass",
-          "keyboard": "not-applicable",
-          "focus": "not-applicable",
-          "screenReader": "pass",
-          "rtl": "not-applicable",
-          "reducedMotion": "not-applicable",
-          "forcedColors": "pass",
-          "contrast": "pass"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
         "visual": true,
         "hydration": false
       },
@@ -2595,70 +2453,6 @@
       "deprecated": false
     },
     {
-      "slug": "comment-thread",
-      "name": "CommentThread",
-      "description": "Threaded comments for review, approval and incident workflows: avatars, relative timestamps, an \"edited\" marker, reactions, replies, edit and delete, and a composer.",
-      "category": "CommentThread",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/comment-thread",
-      "groupImport": "@qeetrix/ui/components/CommentThread",
-      "status": "beta",
-      "capabilities": {
-        "rtl": "supported",
-        "darkMode": "supported",
-        "density": "unsupported",
-        "ssr": "client-boundary",
-        "reducedMotion": "supported"
-      },
-      "states": [
-        "hover",
-        "focus-visible",
-        "read-only",
-        "expanded"
-      ],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": null
-      },
-      "accessibility": {
-        "required": false,
-        "pattern": "none",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
-          "rtl": "not-audited",
-          "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
-          "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
       "slug": "container",
       "name": "Container",
       "description": "Centered responsive content shell.",
@@ -3820,7 +3614,7 @@
         "axisSources": {
           "variant": {
             "source": "data-attribute",
-            "note": "Written to data-variant: card | list. AuditLog forwards the same prop."
+            "note": "Written to data-variant: card | list. The audit-event block's AuditLog forwards the same prop."
           }
         },
         "controlled": null
@@ -5160,68 +4954,6 @@
       "deprecated": false
     },
     {
-      "slug": "logo-uploader",
-      "name": "LogoUploader",
-      "description": "LogoUploader is a drop-zone + URL fallback for picking a brand logo.",
-      "category": "FileUpload",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/logo-uploader",
-      "groupImport": "@qeetrix/ui/components/FileUpload",
-      "status": "beta",
-      "capabilities": {
-        "rtl": "not-applicable",
-        "darkMode": "supported",
-        "density": "supported",
-        "ssr": "client-boundary",
-        "reducedMotion": "supported"
-      },
-      "states": [
-        "disabled",
-        "invalid"
-      ],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": null
-      },
-      "accessibility": {
-        "required": true,
-        "pattern": "none",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
-          "rtl": "not-audited",
-          "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
-          "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
       "slug": "marquee",
       "name": "Marquee",
       "description": "Continuous scrolling ticker — logo walls, status tickers.",
@@ -5320,71 +5052,6 @@
           "focus": "not-audited",
           "screenReader": "not-audited",
           "rtl": "not-audited",
-          "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
-          "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
-      "slug": "master-detail",
-      "name": "MasterDetail",
-      "description": "Responsive list + detail layout: a resizable two-pane split on wide screens, and a list with the detail in a slide-over `Sheet` below `collapseBelow` (Mail, Contacts, Tasks, Logs, People directories, payment ledgers).",
-      "category": "MasterDetail",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/master-detail",
-      "groupImport": "@qeetrix/ui/components/MasterDetail",
-      "status": "beta",
-      "capabilities": {
-        "rtl": "not-applicable",
-        "darkMode": "supported",
-        "density": "not-applicable",
-        "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
-      },
-      "states": [],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": [
-          {
-            "value": "detailOpen",
-            "default": "defaultDetailOpen",
-            "change": "onDetailOpenChange"
-          }
-        ]
-      },
-      "accessibility": {
-        "required": false,
-        "pattern": "none",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
-          "rtl": "pass",
           "reducedMotion": "not-audited",
           "forcedColors": "not-audited",
           "contrast": "not-audited"
@@ -5806,129 +5473,6 @@
       "accessibility": {
         "required": true,
         "pattern": "none",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
-          "rtl": "not-audited",
-          "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
-          "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
-      "slug": "notification-center",
-      "name": "NotificationCenter",
-      "description": "In-app notification inbox: a bell trigger with an unread badge opening a feed of notifications (all / unread tabs, mark-all-read, per-item dismiss).",
-      "category": "Notification",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/notification-center",
-      "groupImport": "@qeetrix/ui/components/Notification",
-      "status": "beta",
-      "capabilities": {
-        "rtl": "supported",
-        "darkMode": "supported",
-        "density": "unsupported",
-        "ssr": "client-boundary",
-        "reducedMotion": "supported"
-      },
-      "states": [
-        "hover",
-        "focus-visible"
-      ],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": null
-      },
-      "accessibility": {
-        "required": true,
-        "pattern": "none",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "not-audited",
-          "name": "not-audited",
-          "keyboard": "not-audited",
-          "focus": "not-audited",
-          "screenReader": "not-audited",
-          "rtl": "not-audited",
-          "reducedMotion": "not-audited",
-          "forcedColors": "not-audited",
-          "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": true,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
-      "slug": "notification-preference-matrix",
-      "name": "NotificationPreferenceMatrix",
-      "description": "Channel × category notification preferences — a grid of switches (or checkboxes).",
-      "category": "NotificationPreferenceMatrix",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/notification-preference-matrix",
-      "groupImport": "@qeetrix/ui/components/NotificationPreferenceMatrix",
-      "status": "beta",
-      "capabilities": {
-        "rtl": "supported",
-        "darkMode": "supported",
-        "density": "supported",
-        "ssr": "client-boundary",
-        "reducedMotion": "not-applicable"
-      },
-      "states": [
-        "disabled"
-      ],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": null
-      },
-      "accessibility": {
-        "required": true,
-        "pattern": "table",
         "audit": "not-audited",
         "dimensions": {
           "semantic": "not-audited",
@@ -7667,65 +7211,6 @@
           "reducedMotion": "not-audited",
           "forcedColors": "pass",
           "contrast": "not-audited"
-        },
-        "keyboard": null,
-        "focus": null,
-        "liveRegion": null,
-        "exceptions": null
-      },
-      "testing": {
-        "unit": true,
-        "accessibility": true,
-        "interaction": false,
-        "visual": true,
-        "hydration": false
-      },
-      "deprecation": null,
-      "story": true,
-      "tested": true,
-      "deprecated": false
-    },
-    {
-      "slug": "security-item",
-      "name": "SecurityItem",
-      "description": "Product-neutral security-resource row for sessions, devices, credentials, passkeys, integrations, and API keys.",
-      "category": "SecurityItem",
-      "layer": "components",
-      "import": "@qeetrix/ui",
-      "deepImport": "@qeetrix/ui/components/security-item",
-      "groupImport": "@qeetrix/ui/components/SecurityItem",
-      "status": "stable",
-      "capabilities": {
-        "rtl": "not-applicable",
-        "darkMode": "supported",
-        "density": "unsupported",
-        "ssr": "server-safe",
-        "reducedMotion": "not-applicable"
-      },
-      "states": [],
-      "api": {
-        "variants": null,
-        "sizes": null,
-        "variantGroups": null,
-        "variantAliases": null,
-        "domainAxes": null,
-        "axisSources": null,
-        "controlled": null
-      },
-      "accessibility": {
-        "required": false,
-        "pattern": "none",
-        "audit": "not-audited",
-        "dimensions": {
-          "semantic": "pass",
-          "name": "pass",
-          "keyboard": "not-applicable",
-          "focus": "not-applicable",
-          "screenReader": "not-audited",
-          "rtl": "not-applicable",
-          "reducedMotion": "not-applicable",
-          "forcedColors": "pass",
-          "contrast": "pass"
         },
         "keyboard": null,
         "focus": null,

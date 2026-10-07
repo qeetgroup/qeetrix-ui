@@ -2,14 +2,71 @@
 
 ## Unreleased
 
+### Major Changes
+
+- **`@qeetrix/ui` is the component library, and only that.** Eight modules that were not
+  components have left the package's exports for copy-paste source in this repository, built on
+  the package's public API and never published:
+  - [`src/blocks/`](./src/blocks) — sections of a product screen: `AccessReview`, `AuditEvent` (with
+    `AuditLog`), `CommentThread`, `LogoUploader`, `NotificationCenter`,
+    `NotificationPreferenceMatrix`, `SecurityItem`.
+  - [`src/patterns/`](./src/patterns) — a layout solution: `MasterDetail`.
+
+  They are no longer exported from `@qeetrix/ui` or its subpaths
+  (`@qeetrix/ui/components/access-review`, …), and the manifest lists 137 components across 97
+  families. Their message groups (`accessReview`, `auditEvent`, `commentThread`, `logoUploader`,
+  `masterDetail`, `notificationCenter`, `notificationPreferenceMatrix`) left the catalogue, and
+  the component tokens only they used (`--qx-component-access-review-*`,
+  `--qx-component-notification-center-*`, `--qx-component-notification-preference-matrix-*`) are
+  gone. Each file now imports only `@qeetrix/ui` and `@qeetrix/icons`, keeps its English strings
+  with a `messages` prop to override them, and keeps its tests.
+- **No more brand folder: logos and icons come from `@qeetrix/icons`.** `@qeetrix/ui/brand` and
+  its exports are gone: the logo wrappers (`QeetLogo`, `QeetLogoMark`, `QeetLogoOnLight`,
+  `QeetLogoOnDark`), which only re-drew `@qeetrix/icons`' logo, and the ten custom icons, which
+  duplicated icons `@qeetrix/icons` already has.
+- **Typed token values are only the ones code reads.** `Z_INDEX`, `SHADOW`, `STATE_OPACITY` and
+  `CHART_COLOR` are no longer exported (from `@qeetrix/ui` or `@qeetrix/ui/lib/token-values`): no
+  component read them. `COMPONENT`, `DURATION`, `EASING`, `ICON_SIZE` and `ICON_STROKE` stay, and
+  `src/lib/token-values.ts` is now generated directly, replacing the `src/foundations/` folder and
+  its layer.
+
+**Check when upgrading:**
+
+- No Qeet product imports any of the eight blocks and patterns. To keep using one, copy its file
+  from `src/blocks/` or `src/patterns/` into your app and import it from there.
+  `MessagesProvider` translations for those groups no longer reach them; pass `messages` instead.
+- Brand imports move to `@qeetrix/icons`. The logo is decorative by default (pass `aria-label`
+  to name it) and takes `height` rather than `size`:
+
+  | Was (`@qeetrix/ui`) | Now (`@qeetrix/icons`) |
+  |:--|:--|
+  | `QeetLogo`, `QeetLogoMark`, `QeetLogoOnLight` | `QeetLogo` |
+  | `QeetLogoOnDark` | `QeetLogo variant="dark"` |
+  | `QeetLogo` following the theme | both, with `className="dark:hidden"` and `variant="dark" className="hidden dark:block"` |
+  | `IconPasskey` | `FingerprintPatternIcon` |
+  | `IconMfaShield` | `ShieldCheckIcon` |
+  | `IconSamlConnector`, `IconOidcConnector` | `PlugIcon` |
+  | `IconScimSync` | `RefreshCwIcon` |
+  | `IconWebhook` | `WebhookIcon` |
+  | `IconApiKey` | `KeyRoundIcon` |
+  | `IconAuditLog` | `ScrollTextIcon` |
+  | `IconTenant` | `BuildingComplexIcon` |
+  | `IconCrossDevice` | `MonitorSmartphoneIcon` |
+- The removed token values are CSS variables: `Z_INDEX.modal` is `var(--qx-z-modal)`,
+  `CHART_COLOR.series1` is `var(--chart-1)`, `SHADOW` and `STATE_OPACITY` are the
+  `--qx-elevation-*` and `--qx-state-opacity-*` roles. Tooling that needs the numbers reads
+  `@qeetrix/ui/tokens.json`. No Qeet product imports them; qeetrix-story's token pages do.
+
 ### Minor Changes
 
 - **Every manifest entry has a `description`.** `component-manifest.json` gains a `description`
   field: one sentence on what each component is for. It is the first sentence of the doc comment
   on the component's declaration, or, for a module of several exports such as `Toast` (`Toaster`
-  and `toast()`) or `Chart`, a `description` declared in the component registry. All 145
-  components have one; 23 components gained a doc comment for it, which also shows in editor
-  hovers. Adding the field is additive, so `schemaVersion` stays 3.
+  and `toast()`) or `Chart`, a `description` declared in the component registry. Every component
+  has one; 23 components gained a doc comment for it, which also shows in editor hovers. Adding
+  the field is additive, so `schemaVersion` stays 3.
+- **`useControllableState` is public.** The controlled/uncontrolled hook every component uses,
+  for building your own components, blocks and patterns on the same contract.
 
 ## 2.1.2
 

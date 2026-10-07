@@ -41,7 +41,7 @@ Two gates sit outside `verify`, because they answer different questions:
 | Category barrel | `src/components/<category>/index.ts` |
 | Which category owns which slug | `scripts/config/category-map.json` |
 | Design tokens | `src/tokens/{primitive,semantic,component,theme}/**` |
-| Generated token artifacts | `src/styles/tokens*` · `src/foundations/token-values.ts` — never edit |
+| Generated token artifacts | `src/styles/tokens*` · `src/lib/token-values.ts` — never edit |
 | Contract types + vocabularies | `src/contracts/**` |
 | A component's declared metadata | `src/manifests/component-registry.ts` |
 | The generated catalog | `component-manifest.json` (never edit — `bun run build:manifest`) |
@@ -116,8 +116,8 @@ The short version:
 
 ## Layers
 
-Code flows one way: `tokens → foundations → runtime/primitives → components →
-blocks`, with `lib`, `hooks`, `providers` and `brand` as supporting layers.
+Code flows one way: `tokens → runtime / internal → components`, with blocks and
+patterns built on the package entry, and with `lib`, `hooks` and `providers` as supporting layers.
 Dependencies are **deny by default** — the allow-list lives in
 `src/contracts/layers.ts` and `bun run check:architecture` enforces it against
 the real module graph. A component may never import a block.
@@ -154,7 +154,7 @@ reproducible: CI regenerates them and fails on any diff. Two consequences worth 
   hand-fixing generated output, fix the template instead.
 - The manifest carries no wall-clock stamp. `generated` is the date the catalog last *changed*,
   and story coverage is carried forward from the committed manifest when the sibling
-  `qeetrix-story` repo is not checked out, so your topology cannot rewrite 145 entries.
+  `qeetrix-story` repo is not checked out, so your topology cannot rewrite 137 entries.
 
 ## Adding a public import path
 

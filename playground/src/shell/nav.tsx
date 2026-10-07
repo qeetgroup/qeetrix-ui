@@ -8,7 +8,6 @@ import {
   StampIcon,
 } from "@qeetrix/icons";
 import {
-  QeetLogo,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -29,6 +28,7 @@ import {
 import { type ComponentType, useEffect } from "react";
 import { components, families, manifest } from "../lib/manifest";
 import { NavIcon } from "../lib/nav-icon";
+import { ThemedQeetLogo } from "../lib/qeet-brand";
 import { href, type Route } from "../lib/router";
 import { patterns } from "../pages/patterns/catalogue";
 
@@ -75,7 +75,7 @@ export function ShellNav({ route }: { route: Route }) {
           href="#/"
           className="flex items-center gap-2.5 rounded-md p-1.5 outline-none focus-visible:focus-ring-inset group-data-[collapsible=icon]:p-0.5"
         >
-          <QeetLogo className="size-7 shrink-0 rounded-md" aria-hidden />
+          <ThemedQeetLogo className="size-7 shrink-0 rounded-md" />
           <span className="flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden">
             <span className="font-heading text-sm font-semibold">Qeetrix UI</span>
             <span className="text-caption text-muted-foreground">Component playground</span>

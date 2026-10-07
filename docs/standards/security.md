@@ -37,7 +37,7 @@ These are not gaps to be fixed later. They are obligations that cannot be met in
 
 ### Uploads: validate again on the server
 
-`FileUpload` and `LogoUploader` check the extension and the browser-reported MIME type. Both are
+`FileUpload` and the logo-uploader block check the extension and the browser-reported MIME type. Both are
 attacker-controlled. The client check exists to give fast feedback, not to enforce anything.
 
 Your server must independently: sniff the file signature rather than trust `Content-Type`; enforce

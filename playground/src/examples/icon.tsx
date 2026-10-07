@@ -8,7 +8,7 @@ import {
   TriangleAlertIcon,
   WebhookIcon,
 } from "@qeetrix/icons";
-import { ICON_SIZE, Icon, IconApiKey, IconPasskey, IconScimSync, IconWebhook } from "@qeetrix/ui";
+import { ICON_SIZE, Icon } from "@qeetrix/ui";
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { definePlayground, type FamilyExamples, select, text } from "../registry/types";
@@ -153,19 +153,6 @@ export const examples: FamilyExamples = {
                 className="text-destructive-text"
               />
             </AccessibilityReadout>
-          </div>
-        ),
-      },
-      {
-        name: "Qeet brand icons",
-        description:
-          "Concepts @qeetrix/icons lacks ship with the library and take the same size and stroke scale.",
-        render: () => (
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <Icon icon={IconPasskey} size="lg" title="Passkey" />
-            <Icon icon={IconApiKey} size="lg" title="API key" />
-            <Icon icon={IconScimSync} size="lg" title="SCIM sync" />
-            <Icon icon={IconWebhook} size="lg" title="Webhook" />
           </div>
         ),
       },

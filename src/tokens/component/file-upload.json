@@ -1,7 +1,7 @@
 {
   "component": {
     "file-upload": {
-      "$description": "Dropzone, FileUploadItem and LogoUploader. Component tokens reference SEMANTIC tokens through their CSS variables, so one declaration covers both themes. The drop target is a calm graphite well at rest; Qeet appears only while something is being dragged over it (the active state), and the danger roles only when it is invalid.",
+      "$description": "Dropzone and FileUploadItem (the logo-uploader block draws its drop target with them too). Component tokens reference SEMANTIC tokens through their CSS variables, so one declaration covers both themes. The drop target is a calm graphite well at rest; Qeet appears only while something is being dragged over it (the active state), and the danger roles only when it is invalid.",
       "corner": {
         "$value": "{corner.surface}",
         "$type": "dimension",

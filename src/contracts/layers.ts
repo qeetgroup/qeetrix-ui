@@ -7,7 +7,7 @@
  *
  * The direction of flow is:
  *
- *     tokens → foundations → runtime / internal → components
+ *     tokens → runtime / internal → components
  *
  * with `lib`, `hooks` and `providers` as supporting layers that may never reach forward into
  * `components`.
@@ -28,14 +28,14 @@ export const ARCHITECTURE_LAYERS = [
   "styles",
   "contracts",
   "manifests",
-  "foundations",
   "runtime",
   "lib",
   "hooks",
   "internal",
   "providers",
-  "brand",
   "components",
+  "blocks",
+  "patterns",
   "entry",
   "tests",
 ] as const;
@@ -51,22 +51,22 @@ export type ComponentLayer = (typeof COMPONENT_LAYERS)[number];
 /**
  * Where each layer lives, as a path relative to the package root.
  *
- * `foundations` and `runtime` are declared but not yet populated: the target architecture
- * reserves them, and their rules are enforced from the first file onwards.
+ * `runtime` is declared but not yet populated: the target architecture reserves it, and its
+ * rules are enforced from the first file onwards.
  */
 export const LAYER_DIRECTORIES = {
   tokens: "src/tokens",
   styles: "src/styles",
   contracts: "src/contracts",
   manifests: "src/manifests",
-  foundations: "src/foundations",
   runtime: "src/runtime",
   lib: "src/lib",
   hooks: "src/hooks",
   internal: "src/internal",
   providers: "src/providers",
-  brand: "src/brand",
   components: "src/components",
+  blocks: "src/blocks",
+  patterns: "src/patterns",
   entry: "src/index.ts",
   tests: "src/__tests__",
 } as const satisfies Record<ArchitectureLayer, string>;
@@ -89,28 +89,30 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
   contracts: ["contracts"],
   manifests: ["contracts", "manifests"],
 
-  // Token-derived values and framework-free helpers.
-  foundations: ["foundations", "tokens"],
-  runtime: ["runtime", "foundations", "tokens"],
-  lib: ["lib", "runtime", "foundations", "tokens"],
-  hooks: ["hooks", "lib", "runtime", "foundations", "tokens"],
+  // Framework-free helpers.
+  runtime: ["runtime", "tokens"],
+  lib: ["lib", "runtime", "tokens"],
+  hooks: ["hooks", "lib", "runtime", "tokens"],
 
   // Renderable code.
-  internal: ["internal", "hooks", "lib", "runtime", "foundations", "tokens"],
-  providers: ["providers", "hooks", "lib", "runtime", "foundations", "contracts", "tokens"],
-  brand: ["brand", "lib", "runtime", "foundations", "tokens"],
+  internal: ["internal", "hooks", "lib", "runtime", "tokens"],
+  providers: ["providers", "hooks", "lib", "runtime", "contracts", "tokens"],
   components: [
     "components",
     "internal",
     "providers",
-    "brand",
     "hooks",
     "lib",
     "runtime",
-    "foundations",
     "contracts",
     "tokens",
   ],
+
+  // Copy-paste source built on the package and never published (tsconfig.build.json excludes
+  // them): an app copies the file, so it may import only what an app can — the package entry,
+  // `@qeetrix/ui`.
+  blocks: ["entry"],
+  patterns: ["entry"],
 
   // src/index.ts — the published barrel. It composes the surface, so it may reach anywhere
   // except the test harness.
@@ -118,11 +120,9 @@ export const LAYER_ALLOWED_DEPENDENCIES = {
     "components",
     "internal",
     "providers",
-    "brand",
     "hooks",
     "lib",
     "runtime",
-    "foundations",
     "manifests",
     "contracts",
     "tokens",
@@ -175,10 +175,12 @@ export type LayeredSource = Exclude<ArchitectureLayer, (typeof LAYER_RULE_EXEMPT
  */
 export const LAYER_RULE_EXPLANATIONS = {
   "tokens->components": "tokens are data and must not reach into component code",
-  "foundations->components": "foundations sit below components; invert the dependency",
   "runtime->components": "runtime is component-agnostic; pass behaviour in instead",
   "internal->components": "an internal primitive must not depend on a composed component",
   "contracts->components": "contracts must stay readable by build scripts; keep them type-only",
   "hooks->components": "a hook must not render or import components",
   "providers->components": "providers wrap children; they must not import components",
+  "blocks->components": "a block is copied into apps: import from @qeetrix/ui, not its internals",
+  "patterns->components":
+    "a pattern is copied into apps: import from @qeetrix/ui, not its internals",
 } as const;

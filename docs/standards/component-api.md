@@ -445,7 +445,7 @@ See [tokens.md](./tokens.md) § Component tokens.
   requires a non-optional `"aria-label": string`; copy that approach rather than documenting a
   requirement nobody reads.
 - Every component ships an `axe` test in its category's `__tests__/`. This is checked by
-  `bun run check:a11y`, at 145/145.
+  `bun run check:a11y`, at 137/137.
 
 ---
 

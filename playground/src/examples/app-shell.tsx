@@ -23,7 +23,6 @@ import {
   IconButton,
   Input,
   PageHeader,
-  QeetLogo,
   Separator,
   Sidebar,
   SidebarContent,
@@ -61,6 +60,7 @@ import {
 } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
 import { NavIcon } from "../lib/nav-icon";
+import { ThemedQeetLogo } from "../lib/qeet-brand";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
 
 /* ── Qeet Pay console sample ──────────────────────────────────────────────────────────────── */
@@ -110,7 +110,7 @@ function PaySidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" className="pointer-events-none">
-              <QeetLogo title={null} className="size-8! shrink-0" />
+              <ThemedQeetLogo className="size-8! shrink-0" />
               <span className="grid min-w-0 flex-1 leading-tight">
                 <span className="truncate text-sm font-semibold">Qeet Pay</span>
                 <span className="truncate text-caption text-muted-foreground">Live mode</span>
@@ -334,7 +334,7 @@ function TopNavShell() {
       <AppShell className="h-full min-h-0">
         <AppShellMain>
           <AppShellHeader>
-            <QeetLogo title={null} className="size-6 shrink-0" />
+            <ThemedQeetLogo className="size-6 shrink-0" />
             <span className="text-sm font-semibold">Qeet Notify</span>
             <nav aria-label="Account" className="ms-4 hidden items-center gap-1 sm:flex">
               <Button variant="ghost" size="sm" aria-current="page">

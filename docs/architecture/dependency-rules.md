@@ -25,20 +25,19 @@ must stay closed.
 
 | Layer | May import | May not import |
 |:--|:--|:--|
-| `tokens` | — | `styles` · `contracts` · `manifests` · `foundations` · `runtime` · `lib` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `styles` | — | `tokens` · `contracts` · `manifests` · `foundations` · `runtime` · `lib` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `contracts` | `contracts` | `tokens` · `styles` · `manifests` · `foundations` · `runtime` · `lib` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `manifests` | `contracts` · `manifests` | `tokens` · `styles` · `foundations` · `runtime` · `lib` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `foundations` | `foundations` · `tokens` | `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `runtime` | `runtime` · `foundations` · `tokens` | `styles` · `contracts` · `manifests` · `lib` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `lib` | `lib` · `runtime` · `foundations` · `tokens` | `styles` · `contracts` · `manifests` · `hooks` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `hooks` | `hooks` · `lib` · `runtime` · `foundations` · `tokens` | `styles` · `contracts` · `manifests` · `primitives` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `primitives` | `primitives` · `hooks` · `lib` · `runtime` · `foundations` · `tokens` | `styles` · `contracts` · `manifests` · `providers` · `brand` · `components` · `blocks` · `entry` |
-| `providers` | `providers` · `hooks` · `lib` · `runtime` · `foundations` · `contracts` · `tokens` | `styles` · `manifests` · `primitives` · `brand` · `components` · `blocks` · `entry` |
-| `brand` | `brand` · `lib` · `runtime` · `foundations` · `tokens` | `styles` · `contracts` · `manifests` · `hooks` · `primitives` · `providers` · `components` · `blocks` · `entry` |
-| `components` | `components` · `primitives` · `providers` · `brand` · `hooks` · `lib` · `runtime` · `foundations` · `contracts` · `tokens` | `styles` · `manifests` · `blocks` · `entry` |
-| `blocks` | `blocks` · `components` · `primitives` · `providers` · `brand` · `hooks` · `lib` · `runtime` · `foundations` · `contracts` · `tokens` | `styles` · `manifests` · `entry` |
-| `entry` | `blocks` · `components` · `primitives` · `providers` · `brand` · `hooks` · `lib` · `runtime` · `foundations` · `manifests` · `contracts` · `tokens` | `styles` |
+| `tokens` | — | `tokens` · `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `styles` | — | `tokens` · `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `contracts` | `contracts` | `tokens` · `styles` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `manifests` | `contracts` · `manifests` | `tokens` · `styles` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `runtime` | `runtime` · `tokens` | `styles` · `contracts` · `manifests` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `lib` | `lib` · `runtime` · `tokens` | `styles` · `contracts` · `manifests` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `hooks` | `hooks` · `lib` · `runtime` · `tokens` | `styles` · `contracts` · `manifests` · `internal` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `internal` | `internal` · `hooks` · `lib` · `runtime` · `tokens` | `styles` · `contracts` · `manifests` · `providers` · `components` · `blocks` · `patterns` · `entry` |
+| `providers` | `providers` · `hooks` · `lib` · `runtime` · `contracts` · `tokens` | `styles` · `manifests` · `internal` · `components` · `blocks` · `patterns` · `entry` |
+| `components` | `components` · `internal` · `providers` · `hooks` · `lib` · `runtime` · `contracts` · `tokens` | `styles` · `manifests` · `blocks` · `patterns` · `entry` |
+| `blocks` | `entry` | `tokens` · `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` |
+| `patterns` | `entry` | `tokens` · `styles` · `contracts` · `manifests` · `runtime` · `lib` · `hooks` · `internal` · `providers` · `components` · `blocks` · `patterns` |
+| `entry` | `components` · `internal` · `providers` · `hooks` · `lib` · `runtime` · `manifests` · `contracts` · `tokens` | `styles` · `blocks` · `patterns` · `entry` |
 
 `tests` is absent from the table on purpose: test files are exempt (see
 [Exemptions](#exemptions)).
@@ -53,18 +52,14 @@ hand-written explanation in `LAYER_RULE_EXPLANATIONS` so the checker says *why*,
 
 | Forbidden | Why |
 |:--|:--|
-| `tokens → components` | tokens are data; data must not know its consumers |
-| `tokens → blocks` | same |
-| `foundations → components` | foundations sit below components; invert the dependency |
-| `foundations → blocks` | same |
-| `runtime → components` | runtime is component-agnostic — pass behaviour in |
-| `runtime → blocks` | same |
-| `primitives → components` | a primitive must not depend on a composed component |
-| `primitives → blocks` | a primitive must not depend on a block |
-| `components → blocks` | blocks compose components, never the reverse |
-| `contracts → components` | contracts must stay statically readable by build scripts |
-| `hooks → components` | a hook that needs to render is a component |
-| `providers → components` | a provider wraps `children`; it renders no interface |
+| `tokens → components` | tokens are data and must not reach into component code |
+| `runtime → components` | runtime is component-agnostic; pass behaviour in instead |
+| `internal → components` | an internal primitive must not depend on a composed component |
+| `contracts → components` | contracts must stay readable by build scripts; keep them type-only |
+| `hooks → components` | a hook must not render or import components |
+| `providers → components` | providers wrap children; they must not import components |
+| `blocks → components` | a block is copied into apps: import from @qeetrix/ui, not its internals |
+| `patterns → components` | a pattern is copied into apps: import from @qeetrix/ui, not its internals |
 
 A violation is reported with its source, its dependency and the rule:
 
@@ -222,7 +217,7 @@ suppression comment.
 
 ## Layers that do not exist yet
 
-`foundations`, `runtime` and `primitives` are declared with full rules but hold no files. This
+`runtime` is declared with full rules but holds no files. This
 is intentional: the rules are live from the first file that lands there, so the migration cannot
 start by accident in the wrong direction. See
 [overview.md § Migration](./overview.md#migration).
