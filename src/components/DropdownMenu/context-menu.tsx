@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils";
 
 // Same item anatomy as DropdownMenu — see the note at the top of dropdown-menu.tsx.
 
+/**
+ * A menu that opens at the pointer on right-click or long-press, with the same item types as
+ * `DropdownMenu`.
+ */
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
 }

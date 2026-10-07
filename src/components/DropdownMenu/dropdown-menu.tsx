@@ -21,6 +21,10 @@ import { cn } from "@/lib/utils";
 /** The menu root's props, including the `open` / `defaultOpen` / `onOpenChange` triple. */
 type DropdownMenuProps = MenuPrimitive.Root.Props;
 
+/**
+ * A menu of actions or options that opens from a trigger, with groups, labels, checkbox and
+ * radio items, keyboard shortcuts and submenus.
+ */
 function DropdownMenu({ ...props }: DropdownMenuProps) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }

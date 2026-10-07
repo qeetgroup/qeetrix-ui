@@ -42,6 +42,12 @@ export type ComponentManifestEntry = {
   // ── identity ────────────────────────────────────────────────────────────────────────
   slug: string;
   name: string;
+  /**
+   * One sentence on what the component is for: the first sentence of the doc comment on its
+   * declaration, or the registry's `description` for a module of several exports. `null` when
+   * neither exists.
+   */
+  description: string | null;
   category: ComponentCategory;
   layer: ComponentLayer;
 
@@ -137,6 +143,7 @@ export const MANIFEST_DOCUMENT_FIELDS = [
 export const MANIFEST_ENTRY_FIELDS = [
   "slug",
   "name",
+  "description",
   "category",
   "layer",
   "import",

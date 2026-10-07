@@ -4,6 +4,17 @@
 
 ### Minor Changes
 
+- **Every manifest entry has a `description`.** `component-manifest.json` gains a `description`
+  field: one sentence on what each component is for. It is the first sentence of the doc comment
+  on the component's declaration, or, for a module of several exports such as `Toast` (`Toaster`
+  and `toast()`) or `Chart`, a `description` declared in the component registry. All 145
+  components have one; 23 components gained a doc comment for it, which also shows in editor
+  hovers. Adding the field is additive, so `schemaVersion` stays 3.
+
+## 2.1.2
+
+### Minor Changes
+
 - **Icons come from `@qeetrix/icons`.** Every component draws its icons from
   [`@qeetrix/icons`](https://www.npmjs.com/package/@qeetrix/icons) (Lucide 1.52 artwork, with
   filled and sharp drawings) instead of `lucide-react`, which is no longer a dependency. The

@@ -181,6 +181,10 @@ function loadingContent(
   );
 }
 
+/**
+ * The Qeet action control: one primary action per view, with secondary, outline, ghost,
+ * destructive and link variants, icon-only sizes, and a `loading` state that keeps focus.
+ */
 function Button({
   className,
   variant = "default",

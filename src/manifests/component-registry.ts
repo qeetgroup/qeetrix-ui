@@ -72,6 +72,12 @@ import type { AxisPropName, AxisSourceRecord, ControlledStateContract } from "@/
 export type ComponentDeclaration = {
   status: ComponentStatus;
   /**
+   * One-sentence description, for a component whose doc comment cannot be read off a
+   * declaration of the same name — a module of several exports (`Toast` is `Toaster` and
+   * `toast()`), an alias or a re-export. Everything else derives it from its doc comment.
+   */
+  description?: string;
+  /**
    * Everything except `audit`, which is computed from `dimensions` by the manifest build —
    * there is deliberately no way to declare a component audited.
    */
@@ -1243,6 +1249,7 @@ export const COMPONENT_REGISTRY = {
   },
   "visually-hidden": {
     status: "stable",
+    description: "Hides content visually while keeping it available to screen readers.",
     capabilities: { density: "not-applicable" },
     accessibility: {
       required: true,
@@ -1489,6 +1496,8 @@ export const COMPONENT_REGISTRY = {
   },
   clipboard: {
     status: "stable",
+    description:
+      "Copy to the clipboard: `CopyButton`, which confirms the copy, and the `useCopyToClipboard` hook.",
     capabilities: { density: "unsupported" },
     accessibility: {
       required: true,
@@ -1578,6 +1587,8 @@ export const COMPONENT_REGISTRY = {
   },
   resizable: {
     status: "beta",
+    description:
+      "Panels separated by draggable handles, built from `ResizablePanelGroup`, `ResizablePanel` and `ResizableHandle`.",
     capabilities: { density: "not-applicable" },
     accessibility: { required: true, pattern: "window-splitter" },
   },
@@ -1612,6 +1623,8 @@ export const COMPONENT_REGISTRY = {
   },
   toast: {
     status: "beta",
+    description:
+      "Brief notifications: mount `Toaster` once and call `toast()` from anywhere; toasts stack, pause on hover and announce politely.",
     capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "alert" },
   },
@@ -1697,6 +1710,8 @@ export const COMPONENT_REGISTRY = {
   },
   chart: {
     status: "beta",
+    description:
+      "Chart containers built on Recharts and themed with the Qeetrix series colours, with `ChartDataTable` as the non-colour alternative every chart should offer.",
     capabilities: { density: "unsupported" },
     accessibility: { required: true, pattern: "none" },
   },
@@ -1804,6 +1819,8 @@ export const COMPONENT_REGISTRY = {
   },
   "file-upload": {
     status: "beta",
+    description:
+      "Upload files by dropping or browsing: a `Dropzone`, with `FileList` and `FileUploadItem` to show each file's progress, status and errors.",
     accessibility: {
       required: true,
       pattern: "none",
@@ -2228,6 +2245,7 @@ export const COMPONENT_REGISTRY = {
   },
   "chart-presets": {
     status: "beta",
+    description: "Ready-made area, bar, line and donut charts with Qeetrix defaults.",
     capabilities: { density: "not-applicable" },
     accessibility: { required: false, pattern: "none" },
     api: {
@@ -2402,6 +2420,8 @@ export const COMPONENT_REGISTRY = {
   },
   portal: {
     status: "beta",
+    description:
+      "Renders its children into `document.body` or another container, mounting on the client only, so overlays escape clipping and stacking contexts.",
     capabilities: { density: "not-applicable" },
     accessibility: { required: false, pattern: "none" },
   },
@@ -2500,6 +2520,7 @@ export const COMPONENT_REGISTRY = {
   // ── deprecated ──────────────────────────────────────────────────────────────────────
   "pagination-bar": {
     status: "deprecated",
+    description: "The former name of `Pagination`, kept as an alias.",
     capabilities: { density: "unsupported" },
     accessibility: { required: false, pattern: "none" },
     deprecation: {

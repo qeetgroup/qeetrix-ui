@@ -122,6 +122,10 @@ function renderPart<State>(
   return React.createElement(fallback, props);
 }
 
+/**
+ * A surface that groups related content, with an optional header (title, description and an
+ * action slot), content and footer, in default, outline and elevated styles.
+ */
 function Card({
   className,
   size = "default",

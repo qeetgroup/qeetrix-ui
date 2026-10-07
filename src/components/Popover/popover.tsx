@@ -5,6 +5,10 @@ import { usePhysicalSide } from "@/internal/use-physical-side";
 import { cn } from "@/lib/utils";
 import { useDirection } from "@/providers/direction-provider";
 
+/**
+ * A floating panel anchored to a trigger, for content or controls that don't need a full
+ * dialog.
+ */
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }

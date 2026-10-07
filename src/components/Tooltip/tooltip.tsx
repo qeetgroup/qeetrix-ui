@@ -14,6 +14,9 @@ function TooltipProvider({ delay = 400, ...props }: TooltipPrimitive.Provider.Pr
   return <TooltipPrimitive.Provider data-slot="tooltip-provider" delay={delay} {...props} />;
 }
 
+/**
+ * A short label that appears on hover or keyboard focus to name or describe a control.
+ */
 function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }

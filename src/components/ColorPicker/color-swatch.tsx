@@ -83,6 +83,10 @@ function SwatchCheck({ color }: { color: string }) {
   );
 }
 
+/**
+ * A colour sample that can be selected. A selected swatch shows a check glyph and an outline,
+ * so the state never relies on colour alone.
+ */
 function ColorSwatch({
   color,
   size = "md",

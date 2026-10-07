@@ -19,6 +19,10 @@ import { useMessages } from "@/providers/messages-provider";
  */
 type SheetSide = "top" | "right" | "bottom" | "left" | "inline-start" | "inline-end";
 
+/**
+ * A panel that slides in from an edge of the screen, a physical side or the reading direction's
+ * start or end, for details, filters or forms.
+ */
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }

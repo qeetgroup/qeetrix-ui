@@ -44,6 +44,10 @@ export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
+/**
+ * A small label for a count, a status or a category: one solid Qeet fill for emphasis, quiet
+ * tints for the brand and status tones, and neutral styles for everything else.
+ */
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (
     <span data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />

@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils";
 /** The tab set's props, including the `value` / `defaultValue` / `onValueChange` triple. */
 type TabsProps = TabsPrimitive.Root.Props;
 
+/**
+ * Switches between panels of related content in one place, in the contained default style or
+ * the `line` style for page navigation.
+ */
 function Tabs({ className, ...props }: TabsProps) {
   return (
     <TabsPrimitive.Root

@@ -194,6 +194,11 @@ interface ChipProps
   messages?: MessagesFor<"chip">;
 }
 
+/**
+ * A selectable pill for filters and choices. In a `ChipGroup`, chips are a single choice, or
+ * several with `multiple`; a selected chip shows a check mark, so the state never relies on
+ * colour alone.
+ */
 function Chip({
   className,
   size,

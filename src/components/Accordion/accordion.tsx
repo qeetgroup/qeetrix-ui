@@ -22,6 +22,9 @@ import { cn } from "@/lib/utils";
 const panelMotion =
   "flow-root [clip-path:inset(calc(-1*var(--qx-component-accordion-focus-bleed))_calc(-1*var(--qx-component-accordion-focus-bleed))_0)] transition-[height] duration-(--qx-component-accordion-duration) ease-standard data-ending-style:h-0 data-starting-style:h-0";
 
+/**
+ * A stack of sections whose headers show and hide their panels.
+ */
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (
     <AccordionPrimitive.Root data-slot="accordion" className={cn("w-full", className)} {...props} />
