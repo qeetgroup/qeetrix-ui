@@ -108,7 +108,7 @@ component carries its own ring:
 | `focus-visible:focus-ring-inset` | items inside a clipping container — menu items, list options, table rows and cells, sidebar and tree items | the same outline, drawn inside the element |
 | `focus-visible:focus-ring-field` | bordered text-entry controls | the border turns `--ring` and a 1px outline thickens it to 2px |
 
-Outline, not `box-shadow`: forced-colors mode strips shadows, while `base.css` re-points
+Outline, not `box-shadow`: forced-colors mode strips shadows, while the stylesheet's host-global section re-points
 `:focus-visible` outlines at `Highlight`, so the same rule survives both. The offset puts the ring
 against the *surrounding* surface rather than the control's own fill, which is why one colour
 reaches 3:1 on a primary button and on a ghost button alike. The colour is a longhand, so an

@@ -1,7 +1,7 @@
 {
   "component": {
     "skeleton": {
-      "$description": "Skeleton placeholder (Spinner family). The shimmer sweep itself lives in src/styles/base.css; this is the resting block it sweeps over.",
+      "$description": "Skeleton placeholder (Spinner family). The shimmer sweep itself lives in src/styles/index.css; this is the resting block it sweeps over.",
       "background": {
         "$value": "color-mix(in oklab, var(--qx-color-text-primary) 10%, transparent)",
         "$type": "color",

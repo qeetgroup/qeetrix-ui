@@ -31,7 +31,6 @@
       "default": "./dist/index.js"
     },
     "./styles.css": "./dist/styles/index.css",
-    "./base.css": "./dist/styles/base.css",
     "./qeetrix.css": "./dist/styles/tokens.css",
     "./tokens.css": "./dist/styles/tokens.raw.css",
     "./tokens.json": "./dist/styles/tokens.json",

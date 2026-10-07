@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
  * `sm`), h2 a section (20 → 24px), h3 a group (18 → 20px), h4 a block heading (16px). There is
  * no display or hero variant on purpose; those belong to marketing surfaces, not to Typography.
  *
- * Each family is set explicitly so the roles hold under `@qeetrix/ui/core.css`, which omits the
- * host-global heading rule. Where a semantic type role exists (`text-title`, `text-heading`,
+ * Each family is set explicitly so the roles hold even where a host page restyles headings over
+ * the stylesheet's host-global heading rule. Where a semantic type role exists (`text-title`, `text-heading`,
  * `text-body`, `text-label`, `text-code`) it is used by name; the steps in between (24px, 18px,
  * 16px) have no role and come from the ramp with a role's line height.
  *

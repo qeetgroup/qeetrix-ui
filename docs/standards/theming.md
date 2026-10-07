@@ -133,7 +133,7 @@ runtime stylesheet, so it will not resolve. Change the semantic token that point
 
 ## Forced colors
 
-`src/styles/base.css` maps the bridge onto system colours under
+The host-global section of `src/styles/index.css` maps the bridge onto system colours under
 `@media (forced-colors: active)`: `Canvas`, `CanvasText`, `ButtonFace`, `Highlight`, `Mark`.
 Shadows and the skeleton shimmer are suppressed, focus falls back to a `Highlight` outline at
 the token's outline width, and overlays become opaque `Canvas`.
@@ -169,7 +169,7 @@ it. The utility is defined once, in `src/styles/index.css`.
 
 ### Opting a control out
 
-`base.css` re-asserts `forced-color-adjust: auto` on native controls and on the control roles
+The stylesheet re-asserts `forced-color-adjust: auto` on native controls and on the control roles
 (`button`, `[role=option]`, `[role=tab]`, …), so a control nested in a subtree that opted out — a
 chart, a rating — still takes part in forced colours. That rule is a **layered default** (`@layer
 base`): a component's own `forced-colors:forced-color-adjust-none` beats it without `!`. It used
@@ -269,7 +269,7 @@ registered. It holds three things, per theme:
   eleven surfaces, the sidebar indicator, the field border on its own fill, and the chart series
   and chart chrome;
 - **theme-scoped values** — elevation and the surface-fade gradient must be authored per theme,
-  and `base.css` must declare each theme's `color-scheme`.
+  and the stylesheet must declare each theme's `color-scheme`.
 
 Because the bridge references semantic tokens, those pairs are the pairs that render.
 
@@ -303,11 +303,12 @@ Still below 3:1, deliberately:
 
 ## CSS entry points
 
-Four are published. They are not alternatives to each other:
+Four are published. Only `styles.css` is a stylesheet to import; the other three are generated
+token files:
 
 | Entry | File | What it is |
 |:--|:--|:--|
-| `@qeetrix/ui/styles.css` | `src/styles/index.css` | **The one to import.** Tailwind + tokens + fonts + the `@theme` mapping + the host-global base layer. |
+| `@qeetrix/ui/styles.css` | `src/styles/index.css` | **The one to import.** Tailwind + tokens + fonts + the `@theme` mapping + the host-global section. |
 | `@qeetrix/ui/qeetrix.css` | `src/styles/tokens.css` | Generated. The semantic + component + bridge variables, no primitives, no utilities. For a consumer theming against the variables without Tailwind. |
 | `@qeetrix/ui/tokens.css` | `src/styles/tokens.raw.css` | Generated. The same, **plus** the primitive ramps, all `--qx-` prefixed. For design tooling that wants the palette. |
 | `@qeetrix/ui/tokens.json` | `src/styles/tokens.json` | Generated. Resolved values per theme, for anything that is not CSS. |
@@ -321,8 +322,8 @@ resolve; `tokens.css` additionally contains what it deliberately cannot.**
 ## What styles.css does to your document
 
 `styles.css` is a **host-global side effect**, and this is the full extent of it. Every rule lives
-in [`src/styles/base.css`](../../src/styles/base.css), which the entry imports; the set is locked
-by `src/__tests__/token-governance.test.ts`, so adding one is a reviewed change.
+in the host-global section at the end of [`src/styles/index.css`](../../src/styles/index.css); the
+set is locked by `src/__tests__/token-governance.test.ts`, so adding one is a reviewed change.
 
 Inside `@layer base` (so any host rule of equal specificity that is unlayered wins):
 
@@ -354,6 +355,7 @@ which brings **Tailwind Preflight** — a full element reset — with it.
 
 There is deliberately **no scoped variant**. Making `styles.css` apply only inside a Qeetrix
 subtree would change what an existing import does, which is a major-version decision and a
-visual-regression exercise, not a refactor. Splitting the globals into `base.css` is the
-non-breaking half: the blast radius now has a name, a boundary, and a test. If your application
-cannot accept the table above, that is the conversation to have — not a flag to add.
+visual-regression exercise, not a refactor. Nor is there a variant without these rules: the
+reduced-motion collapse and the forced-colors mapping are accessibility guarantees, and one
+stylesheet means every Qeet product gets them. If your application cannot accept the table above,
+that is the conversation to have — not a second entry to add.

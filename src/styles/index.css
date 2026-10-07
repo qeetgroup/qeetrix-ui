@@ -1,26 +1,17 @@
 /**
- * Qeetrix core stylesheet — everything a Qeetrix component needs, and nothing that touches the
- * host document. Published as `@qeetrix/ui/core.css`.
+ * Qeetrix stylesheet — published as `@qeetrix/ui/styles.css`, the one CSS entry a consumer
+ * imports.
  *
- * Two entries, one body:
+ * Tailwind, the semantic tokens, the Qeet fonts, the `@theme` mapping and the Qeetrix utilities
+ * come first. The **host-global section** comes last: the few rules that apply to the consumer's
+ * *document* rather than to a Qeetrix component — type on `html`/`body`, every heading and native
+ * control, defaults on `*`, the skeleton shimmer, the reduced-motion collapse and the
+ * forced-colors mapping. That section is enumerated in docs/standards/theming.md § What
+ * styles.css does to your document and locked by src/__tests__/token-governance.test.ts, so a
+ * new host-global rule is a reviewed change rather than a line that slips in.
  *
- *   - `@qeetrix/ui/styles.css` (./styles.css) — this file **plus** ./base.css. Unchanged
- *     behaviour, and still the default: it is what every existing consumer imports.
- *   - `@qeetrix/ui/core.css`  (this file) — the same tokens, theme mapping, fonts and utility
- *     scanning with the host-global layer left out. Nothing here selects `html`, `body`, `*`,
- *     a heading or a bare `button`; the only rules a consumer gets are Tailwind's own preflight
- *     (inseparable from `@import "tailwindcss"`) and shadcn's base layer.
- *
- * What you give up by choosing core.css: the document does not get Qeetrix's type, background or
- * `font-feature-settings`; headings and native buttons keep the host's fonts; the skeleton
- * shimmer, the document-wide reduced-motion collapse and the forced-colors remapping are all
- * absent. Those last two are accessibility guarantees — see docs/standards/theming.md — so a
- * consumer opting out is taking responsibility for them. Component-level styling is unaffected,
- * because components paint with utilities and bridge variables, never with the base layer.
- *
- * The split is a *file* split only. `styles.css` compiles to the same bytes it did when the two
- * were one file — src/__tests__/tokens.test.ts asserts the composition, and the equivalence was
- * proved by compiling both with the Tailwind compiler.
+ * The section stays at the end on purpose: its `@layer base` rules have to follow Tailwind's
+ * preflight and shadcn's base layer, which the imports below bring in, so they win.
  */
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -397,8 +388,8 @@
  *
  * A solid --ring outline, separated from the control by --qx-focus-offset so it reads against
  * the surrounding surface (≥3:1 on every surface in both themes) rather than against the
- * control's own fill. Outline, not box-shadow: forced-colors strips shadows, and base.css
- * already re-points :focus-visible outlines at Highlight there.
+ * control's own fill. Outline, not box-shadow: forced-colors strips shadows, and the host-global
+ * section below already re-points :focus-visible outlines at Highlight there.
  *
  *   focus-visible:focus-ring         buttons, tabs, toggles, checkboxes, switches, links, thumbs
  *   focus-visible:focus-ring-inset   items inside a clipping container: menu, list, table, sidebar
@@ -467,7 +458,251 @@
 /* :root and .dark semantic variables come from ./styles/tokens.css (generated;
  * imported above). Edit token source in packages/ui/tokens, not here. */
 
-/* The host-global base layer and the forced-colors mapping live in ./base.css, which this file
- * deliberately does not import — ./styles.css imports both, in that order. They are not inlined
- * anywhere so the published entry's blast radius on a consumer's document is one named,
- * enumerated file that a consumer can also decline. */
+/* ─── Host-global section ──────────────────────────────────────────────────────────────────
+ *
+ * Everything below applies to the consumer's document, not to a Qeetrix component. Components
+ * paint with utilities and bridge variables, never with these rules. */
+
+@layer base {
+  /* Native colour scheme, so browser-drawn UI (form controls, scrollbars, autofill, the date
+   * picker popup) matches the theme. Host-global by nature, which is why it lives in this section. The values mirror `colorScheme` in scripts/config/themes.json. */
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans antialiased;
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+  ::selection {
+    background-color: var(--qx-color-selection-background);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+  }
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  label,
+  [data-slot="dropdown-menu-item"],
+  [data-slot="dropdown-menu-label"],
+  [data-slot="sidebar-menu-button"],
+  [data-slot="sidebar-menu-sub-button"],
+  [data-slot="sidebar-group-label"],
+  [data-slot="breadcrumb-list"] {
+    font-family: var(--font-ui);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Skeleton shimmer — a moving highlight sweep over the muted base, instead of
+   * a flat pulse. Honors reduced-motion (see the base rule below). */
+  [data-slot="skeleton"] {
+    position: relative;
+    overflow: hidden;
+  }
+  [data-slot="skeleton"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--foreground) 8%, transparent),
+      transparent
+    );
+    animation: qx-shimmer 1.6s var(--ease-standard) infinite;
+  }
+  @keyframes qx-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  /* Reduced motion, once, for everything.
+   *
+   * The user asked for less movement, so transitions and animations collapse to the
+   * reduced-motion duration token rather than each component carrying its own media query —
+   * which is how a library ends up with half of it honouring the preference. A transition's
+   * duration is near-zero rather than zero so `transitionend` still fires: Base UI waits for it
+   * before unmounting an overlay, and a transition that never ends would leave the overlay
+   * mounted.
+   *
+   * An animation's duration is the token itself (0ms), with no floor: Base UI waits for
+   * animations through `getAnimations().finished`, which a zero-length animation satisfies at
+   * once. A floor here also broke Base UI's own suppression: it sets an inline
+   * `animation-duration: 0s` on a Collapsible/Accordion panel that opens on mount, this
+   * `!important` rule overrode it, and the panel then reported both a transition and an
+   * animation ("CSS transitions and CSS animations both detected").
+   *
+   * A component only needs its own handling when it drives motion from JavaScript, where CSS
+   * cannot reach it — see `usePrefersReducedMotion`. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: var(--qx-motion-reduced-duration) !important;
+      animation-delay: var(--qx-motion-reduced-duration) !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: max(var(--qx-motion-reduced-duration), 0.01ms) !important;
+      transition-delay: var(--qx-motion-reduced-duration) !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Native controls take part in forced colours even inside a subtree that opted out (a chart,
+   * a rating): `forced-color-adjust` is inherited, so this re-asserts the default on them.
+   *
+   * Layered, as a default — not unlayered, as it used to be. Unlayered, it outranked every
+   * component utility, so a component that deliberately opts a control out (a colour swatch
+   * whose fill is the information, a selected item painting the system selection) needed `!`,
+   * and the ones written without it were silently dead. A component's own
+   * `forced-colors:forced-color-adjust-none` now wins, which is the reviewed decision; the
+   * selection recipe is the `forced-colors-selected` utility above. */
+  @media (forced-colors: active) {
+    button,
+    [role="button"],
+    input,
+    select,
+    textarea,
+    [role="checkbox"],
+    [role="radio"],
+    [role="switch"],
+    [role="tab"],
+    [role="option"] {
+      forced-color-adjust: auto;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  :root,
+  .dark {
+    --background: Canvas;
+    --foreground: CanvasText;
+    --card: Canvas;
+    --card-foreground: CanvasText;
+    --popover: Canvas;
+    --popover-foreground: CanvasText;
+    --primary: ButtonFace;
+    --primary-foreground: ButtonText;
+    --secondary: ButtonFace;
+    --secondary-foreground: ButtonText;
+    --muted: Canvas;
+    --muted-foreground: CanvasText;
+    /* Hover fills carry no meaning, so they paint nothing here. They used to map to
+     * Highlight / HighlightText, which Chromium renders white on white: under
+     * `forced-color-adjust: auto` it draws a Canvas backplate behind every glyph. A state that
+     * means something — highlighted, selected, current, pressed — paints the system selection
+     * itself with `forced-colors-selected` (above), which opts out of the backplate. */
+    --accent: Canvas;
+    --accent-foreground: CanvasText;
+    --destructive: Mark;
+    --destructive-foreground: MarkText;
+    --destructive-border: Mark;
+    --success: CanvasText;
+    --success-foreground: Canvas;
+    --success-border: CanvasText;
+    --warning: CanvasText;
+    --warning-foreground: Canvas;
+    --warning-border: CanvasText;
+    --info: CanvasText;
+    --info-foreground: Canvas;
+    --info-border: CanvasText;
+    --border: CanvasText;
+    --input: CanvasText;
+    --ring: Highlight;
+    --sidebar: Canvas;
+    --sidebar-foreground: CanvasText;
+    --sidebar-primary: ButtonFace;
+    --sidebar-primary-foreground: ButtonText;
+    /* As --accent: the sidebar's hover and selected tints are fills behind text, so they resolve
+     * to Canvas and the selected item paints itself (forced-colors-selected). The indicator bar
+     * carries no text, so it keeps Highlight. */
+    --sidebar-accent: Canvas;
+    --sidebar-accent-foreground: CanvasText;
+    --sidebar-border: CanvasText;
+    --sidebar-ring: Highlight;
+    --sidebar-selected: Canvas;
+    --sidebar-selected-foreground: CanvasText;
+    --sidebar-indicator: Highlight;
+
+    /* Chart chrome becomes system-coloured so axes, gridlines and reference lines stay legible
+     * against whatever background the user chose. */
+    --chart-grid: GrayText;
+    --chart-axis: CanvasText;
+    --chart-reference: GrayText;
+
+    /* Code syntax collapses to one legible colour, unlike the chart series. Highlighting is a
+     * redundant channel — the grammar already says what a token is, quotes mean string and
+     * digits mean number — so there is nothing to preserve, and the system palette has no four
+     * colours that would mean the right things. Legibility wins. */
+    --syntax-key: CanvasText;
+    --syntax-string: CanvasText;
+    --syntax-number: CanvasText;
+    --syntax-literal: CanvasText;
+    --syntax-punctuation: CanvasText;
+    --syntax-comment: CanvasText;
+  }
+
+  /* The categorical series are the one place authored colour is deliberately preserved.
+   * Remapping eight series to system colours would make them identical, which destroys the
+   * chart rather than making it accessible; `forced-color-adjust: none` is the mechanism the
+   * spec provides for colour that carries meaning. The non-colour alternative is
+   * ChartDataTable, which every chart is expected to render — see
+   * docs/standards/accessibility.md § Data visualisation. */
+  [data-slot="chart"],
+  [data-slot="chart"] * {
+    forced-color-adjust: none;
+  }
+
+  /* Rating: the *proportion* of each icon that is filled is the information. Left to the forced
+   * palette, filled and empty both resolve to CanvasText and the value disappears, so the widget
+   * opts out and names system colours explicitly. The accessible name still states it
+   * numerically, so colour is never the only channel. */
+  [data-slot="rating"] {
+    forced-color-adjust: none;
+    --rating-filled: Highlight;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Colour and width are forced; the offset is not. A component's own offset is part of its
+   * recipe — focus-ring-inset draws inside a clipping container (menus, lists, tabs, the sidebar)
+   * precisely so the ring is not cut off, and forcing the outset value here would undo that. */
+  :focus-visible {
+    outline: var(--qx-focus-outline-width) solid Highlight !important;
+  }
+
+  [data-slot="dialog-overlay"],
+  [data-slot="alert-dialog-overlay"],
+  [data-slot="sheet-overlay"],
+  [data-slot="tour-backdrop"] {
+    background: Canvas !important;
+    opacity: 0.75;
+  }
+
+  [data-slot="skeleton"]::after {
+    display: none;
+  }
+}
