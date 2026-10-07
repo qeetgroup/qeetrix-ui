@@ -51,6 +51,10 @@ const toggleVariants = cva(
   },
 );
 
+/**
+ * A two-state button. Pressed takes the Qeet selected style, with a brand hairline, so the
+ * state never relies on telling two pale colours apart.
+ */
 function Toggle({
   className,
   variant = "default",

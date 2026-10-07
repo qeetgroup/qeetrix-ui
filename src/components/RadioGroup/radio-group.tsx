@@ -5,6 +5,10 @@ import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * A set of mutually exclusive options. A checked radio is a filled Ember disc, the same
+ * selection style as `Checkbox`.
+ */
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
     <RadioGroupPrimitive

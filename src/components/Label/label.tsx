@@ -17,6 +17,10 @@ interface LabelProps extends React.ComponentProps<"label"> {
   optional?: boolean | React.ReactNode;
 }
 
+/**
+ * Names a form control. Its required indicator is visual only: the control itself carries
+ * `required`, which is what assistive technology announces.
+ */
 function Label({ className, htmlFor, children, required, optional, ...props }: LabelProps) {
   const optionalText = optional === true ? labelMessages.optional : optional;
   return (

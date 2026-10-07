@@ -26,6 +26,10 @@ interface TableProps extends React.ComponentProps<"table"> {
   containerClassName?: string;
 }
 
+/**
+ * The parts of a semantic table (header, body, rows and cells) in Qeetrix styling, with a
+ * scrolling container and an optional sticky header.
+ */
 function Table({ className, containerClassName, ...props }: TableProps) {
   return (
     <div

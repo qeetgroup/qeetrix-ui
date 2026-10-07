@@ -15,6 +15,9 @@ import { cn } from "@/lib/utils";
 
 type PreviewCardProps = ComponentProps<typeof HoverCard>;
 
+/**
+ * A card that previews a link's destination when the link is hovered or focused.
+ */
 function PreviewCard(props: PreviewCardProps) {
   return <HoverCard {...props} />;
 }

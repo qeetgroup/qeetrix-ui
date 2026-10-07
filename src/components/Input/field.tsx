@@ -191,6 +191,10 @@ type FieldProps = React.ComponentProps<"fieldset"> &
     "data-invalid"?: boolean | "true" | "false";
   };
 
+/**
+ * Groups a form control with its label, description and validation message, and wires them
+ * together for assistive technology.
+ */
 function Field({
   className,
   orientation = "vertical",

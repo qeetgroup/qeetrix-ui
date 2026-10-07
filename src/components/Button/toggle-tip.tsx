@@ -19,6 +19,10 @@ import { useMessages } from "@/providers/messages-provider";
 
 type ToggleTipProps = ComponentProps<typeof Popover>;
 
+/**
+ * A small button that shows a hint in a popover when pressed, so the hint also works on touch
+ * screens and from the keyboard.
+ */
 function ToggleTip(props: ToggleTipProps) {
   return <Popover {...props} />;
 }

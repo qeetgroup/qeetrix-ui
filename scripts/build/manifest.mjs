@@ -9,10 +9,12 @@
  * The manifest is generated from exactly three inputs, and nothing is invented:
  *
  *   1. the filesystem + scripts/config/component-map.json — identity, category, layer
- *   2. the component source — capabilities, interaction states, `cva` variants, client
- *      boundary, test coverage (scripts/lib/component-source.mjs)
+ *   2. the component source — description (the doc comment on the component's declaration),
+ *      capabilities, interaction states, `cva` variants, client boundary, test coverage
+ *      (scripts/lib/component-source.mjs)
  *   3. src/manifests/component-registry.ts — the declared facts that cannot be derived:
- *      status, ARIA pattern, reviewed capability overrides, deprecations
+ *      status, ARIA pattern, reviewed capability overrides, deprecations, and the description
+ *      of a module of several exports
  *
  * Anything neither derivable nor declared is emitted as `"unknown"` / `null`. A missing fact
  * and a negative fact are different things.
@@ -84,6 +86,36 @@ const pascal = (slug) =>
  * `JSONTree`), so a consumer can import what the manifest names. A module of several parts with
  * no export of its own name (`chart`, `clipboard`, `resizable`) keeps the module's name.
  */
+const ABBREVIATIONS = new Set(["a.k.a.", "e.g.", "i.e.", "etc.", "vs.", "cf."]);
+
+/**
+ * The entry's `description`: the first sentence of the doc comment directly above the
+ * declaration of `name`, or `null`. Sentences end at a full stop outside a code span that is not
+ * part of an abbreviation such as "e.g.".
+ */
+const docDescription = (source, name) => {
+  const doc = new RegExp(
+    String.raw`/\*\*((?:(?!\*/)[\s\S])*)\*/\s*(?:export\s+)?(?:function|const)\s+${name}\b`,
+  ).exec(source)?.[1];
+  if (!doc) return null;
+  const text = doc
+    .split("\n")
+    .map((line) => line.replace(/^\s*\*\s?/, "").trim())
+    .join(" ")
+    .replace(/\{@link\s+([^}\s]+)[^}]*\}/g, "$1")
+    .replace(/\s*\(Gap \d+\)/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  let inCode = false;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === "`") inCode = !inCode;
+    if (inCode || text[i] !== "." || (i < text.length - 1 && text[i + 1] !== " ")) continue;
+    const word = text.slice(text.lastIndexOf(" ", i) + 1, i + 1).replace(/^\(/, "");
+    if (!ABBREVIATIONS.has(word.toLowerCase())) return text.slice(0, i + 1);
+  }
+  return text || null;
+};
+
 const componentName = (slug, source) => {
   const base = pascal(slug);
   const exported = new Set();
@@ -226,9 +258,12 @@ const components = entries
 
     const status = declared.status ?? REGISTRY_DEFAULTS.status;
 
+    const name = componentName(slug, source);
     return {
       slug,
-      name: componentName(slug, source),
+      name,
+      // Declared for a module of several exports, else read off the component's doc comment.
+      description: declared.description ?? docDescription(source, name),
       category,
       layer: layerOf(relativePath, contracts.LAYER_DIRECTORIES),
 

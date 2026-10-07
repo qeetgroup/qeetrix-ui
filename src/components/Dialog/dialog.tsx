@@ -13,6 +13,10 @@ import { useMessages } from "@/providers/messages-provider";
 /** The dialog root's props, including the `open` / `defaultOpen` / `onOpenChange` triple. */
 type DialogProps = DialogPrimitive.Root.Props;
 
+/**
+ * A modal window over the page for a focused task. Focus moves into it, Escape closes it, and
+ * its `DialogTitle` names it.
+ */
 function Dialog({ ...props }: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }

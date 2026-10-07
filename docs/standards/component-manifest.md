@@ -62,6 +62,7 @@ them disagrees with `components` — a stale manifest is a detectable manifest.
 {
   "slug": "button",
   "name": "Button",
+  "description": "The Qeet action control: one primary action per view, …",
   "category": "actions",
   "layer": "components",
 
@@ -101,6 +102,7 @@ them disagrees with `components` — a stale manifest is a detectable manifest.
 |:--|:--|
 | `slug` | kebab-case module name. Unique across the library. |
 | `name` | PascalCase form of the slug. Validated, not stored twice. |
+| `description` | One sentence on what the component is for: the first sentence of the doc comment on its declaration, or the registry's `description` for a module of several exports (`toast`, `chart`, `clipboard`, …). `null` when neither exists. |
 | `category` | One of the ten families. Must agree with `category-map.json`. |
 | `layer` | The architecture layer — `components` today. See [component-layers.md](../architecture/component-layers.md). |
 

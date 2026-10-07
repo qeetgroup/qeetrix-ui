@@ -38,6 +38,10 @@ interface NumberFieldProps extends NumberFieldPrimitive.Root.Props {
 const stepper =
   "flex w-(--qx-component-input-height) shrink-0 items-center justify-center border-border text-muted-foreground outline-none transition-colors duration-fast ease-standard hover:bg-surface-interactive-hover hover:text-foreground active:bg-surface-interactive-active disabled:pointer-events-none disabled:text-(--qx-color-text-disabled) data-disabled:pointer-events-none data-disabled:text-(--qx-color-text-disabled) data-readonly:pointer-events-none data-readonly:text-(--qx-color-text-disabled) [&_svg]:size-4";
 
+/**
+ * A numeric input with stepper buttons, scrubbing and locale-aware formatting, such as
+ * currency.
+ */
 function NumberField({
   className,
   id,

@@ -80,6 +80,10 @@ export interface EditableInputProps
 // Editable (root compound)
 // ---------------------------------------------------------------------------
 
+/**
+ * Text that edits in place: the preview becomes an input, Enter or leaving the field saves, and
+ * Escape cancels.
+ */
 function Editable({
   value: valueProp,
   defaultValue = "",

@@ -4,6 +4,10 @@ import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
 
 import { cn } from "@/lib/utils";
 
+/**
+ * A single section that shows and hides its content. Unstyled on purpose: compose the trigger
+ * you need, such as a ghost `Button`.
+ */
 function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
 }
