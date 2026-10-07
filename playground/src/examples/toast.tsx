@@ -1,5 +1,5 @@
+import { ArchiveIcon, RefreshCwIcon, SendIcon } from "@qeetrix/icons";
 import { Button, type ToastInput, type ToastType, toast } from "@qeetrix/ui";
-import { ArchiveIcon, RefreshCwIcon, SendIcon } from "lucide-react";
 import { invoices, logEvents } from "../data/qeet";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
 

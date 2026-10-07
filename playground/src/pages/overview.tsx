@@ -1,4 +1,13 @@
 import {
+  AccessibilityIcon,
+  ArrowRightIcon,
+  BlocksIcon,
+  FlaskConicalIcon,
+  PaletteIcon,
+  ShieldCheckIcon,
+  TriangleAlertIcon,
+} from "@qeetrix/icons";
+import {
   Badge,
   Button,
   Callout,
@@ -16,15 +25,6 @@ import {
   Stat,
   StatusPill,
 } from "@qeetrix/ui";
-import {
-  AccessibilityIcon,
-  ArrowRightIcon,
-  BlocksIcon,
-  FlaskConicalIcon,
-  PaletteIcon,
-  ShieldCheckIcon,
-  TriangleAlertIcon,
-} from "lucide-react";
 import {
   type Audit,
   auditLabel,

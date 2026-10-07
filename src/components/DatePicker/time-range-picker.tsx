@@ -1,6 +1,7 @@
 "use client";
 
-import { CheckIcon, ClockIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { ClockIcon } from "@qeetrix/icons/icons/clock";
 import * as React from "react";
 import type { DateRange, Matcher } from "react-day-picker";
 import { Button } from "@/components/Button/button";

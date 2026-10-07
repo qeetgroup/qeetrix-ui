@@ -1,3 +1,4 @@
+import { CheckIcon } from "@qeetrix/icons";
 import {
   Avatar,
   AvatarBadge,
@@ -6,7 +7,6 @@ import {
   AvatarGroupCount,
   AvatarImage,
 } from "@qeetrix/ui";
-import { CheckIcon } from "lucide-react";
 import { tenants, users } from "../data/qeet";
 import { jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";

@@ -1,3 +1,4 @@
+import { DownloadIcon, EllipsisIcon, PlusIcon, UploadIcon } from "@qeetrix/icons";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +11,6 @@ import {
   PageHeader,
   StatusPill,
 } from "@qeetrix/ui";
-import { DownloadIcon, MoreHorizontalIcon, PlusIcon, UploadIcon } from "lucide-react";
 import { Fragment, type MouseEvent } from "react";
 import { dateFormat, formatInr, invoices, invoiceTotals, tenants } from "../data/qeet";
 import { expr, fragment, jsx } from "../lib/code";
@@ -120,7 +120,7 @@ export const examples: FamilyExamples = {
                   Download PDF
                 </Button>
                 <Button>Record payment</Button>
-                <IconButton icon={MoreHorizontalIcon} variant="ghost" aria-label="More actions" />
+                <IconButton icon={EllipsisIcon} variant="ghost" aria-label="More actions" />
               </>
             }
           />

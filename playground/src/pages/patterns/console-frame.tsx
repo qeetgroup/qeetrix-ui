@@ -1,3 +1,4 @@
+import { BellIcon, ChevronsUpDownIcon, LogOutIcon, SearchIcon, SettingsIcon } from "@qeetrix/icons";
 import {
   AppShellHeader,
   Avatar,
@@ -37,7 +38,6 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@qeetrix/ui";
-import { BellIcon, ChevronsUpDownIcon, LogOutIcon, SearchIcon, SettingsIcon } from "lucide-react";
 import { type ComponentType, Fragment, type ReactNode } from "react";
 
 export interface ConsoleNavGroup {

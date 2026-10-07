@@ -1,5 +1,5 @@
+import { HeartIcon } from "@qeetrix/icons";
 import { Field, FieldDescription, FieldError, FieldLabel, Rating } from "@qeetrix/ui";
-import { HeartIcon } from "lucide-react";
 import { useState } from "react";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, select } from "../registry/types";

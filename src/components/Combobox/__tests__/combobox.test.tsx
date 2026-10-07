@@ -1,8 +1,9 @@
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
-
+import { findIcon } from "@/__tests__/icon-match";
 import { Combobox, MultiSelect } from "@/components/Combobox/combobox";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/Input/field";
 
@@ -254,7 +255,7 @@ describe("Combobox enterprise behaviour", () => {
     const banana = screen.getByRole("option", { name: "Banana" });
     expect(banana).toHaveAttribute("aria-selected", "true");
     expect(banana).toHaveAttribute("data-selected");
-    expect(banana.querySelector(".lucide-check")).not.toBeNull();
+    expect(findIcon(banana, CheckIcon)).not.toBeNull();
     // `data-selected:` (shadcn's custom variant) matches only ="true"; Base UI writes "".
     expect(banana.className).toContain("data-[selected]:bg-brand-subtle");
     expect(banana.className).not.toMatch(/(^|\s)data-selected:/);

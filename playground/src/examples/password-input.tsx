@@ -1,3 +1,4 @@
+import { CheckIcon, XIcon } from "@qeetrix/icons";
 import {
   Field,
   FieldControl,
@@ -8,7 +9,6 @@ import {
   PasswordStrengthMeter,
   type PasswordStrengthScore,
 } from "@qeetrix/ui";
-import { CheckIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";

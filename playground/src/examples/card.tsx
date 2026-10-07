@@ -1,4 +1,12 @@
 import {
+  CheckIcon,
+  DownloadIcon,
+  EllipsisIcon,
+  FingerprintPatternIcon,
+  MapPinIcon,
+  ServerIcon,
+} from "@qeetrix/icons";
+import {
   Badge,
   Button,
   Card,
@@ -13,14 +21,6 @@ import {
   Separator,
   StatusPill,
 } from "@qeetrix/ui";
-import {
-  CheckIcon,
-  DownloadIcon,
-  FingerprintIcon,
-  MapPinIcon,
-  MoreHorizontalIcon,
-  ServerIcon,
-} from "lucide-react";
 import { type MouseEvent, useState } from "react";
 import { dateFormat, formatInr, invoices, invoiceTotals, tenants } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";
@@ -105,7 +105,7 @@ function TenantPlanCard() {
             Data residency: {acme.region} (Mumbai)
           </li>
           <li className="flex items-center gap-2">
-            <FingerprintIcon aria-hidden className="size-4" />
+            <FingerprintPatternIcon aria-hidden className="size-4" />
             Passkeys enforced for admins
           </li>
           <li className="flex items-center gap-2">
@@ -278,7 +278,7 @@ function PlaygroundCard(v: {
             {v.interactive ? (
               <Badge variant="secondary">89%</Badge>
             ) : (
-              <IconButton icon={MoreHorizontalIcon} size="icon-sm" aria-label="Report options" />
+              <IconButton icon={EllipsisIcon} size="icon-sm" aria-label="Report options" />
             )}
           </CardAction>
         )}
@@ -317,7 +317,7 @@ export const examples: FamilyExamples = {
                 1,642 of 1,842 users can sign in without a password.
               </CardDescription>
               <CardAction>
-                <IconButton icon={MoreHorizontalIcon} size="icon-sm" aria-label="Report options" />
+                <IconButton icon={EllipsisIcon} size="icon-sm" aria-label="Report options" />
               </CardAction>
             </CardHeader>
             <CardContent>
@@ -420,7 +420,7 @@ export const examples: FamilyExamples = {
                 ? jsx("CardAction", {}, [
                     v.interactive
                       ? '<Badge variant="secondary">89%</Badge>'
-                      : '<IconButton icon={MoreHorizontalIcon} size="icon-sm" aria-label="Report options" />',
+                      : '<IconButton icon={EllipsisIcon} size="icon-sm" aria-label="Report options" />',
                   ])
                 : "",
             ]),

@@ -1,5 +1,20 @@
 "use client";
 
+import { ArrowDownIcon } from "@qeetrix/icons/icons/arrow-down";
+import { ArrowUpIcon } from "@qeetrix/icons/icons/arrow-up";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
+import { ChevronLeftIcon } from "@qeetrix/icons/icons/chevron-left";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
+import { ChevronsUpDownIcon } from "@qeetrix/icons/icons/chevrons-up-down";
+import { CirclePlusIcon } from "@qeetrix/icons/icons/circle-plus";
+import { DownloadIcon } from "@qeetrix/icons/icons/download";
+import { InboxIcon } from "@qeetrix/icons/icons/inbox";
+import { PinIcon } from "@qeetrix/icons/icons/pin";
+import { Rows2Icon } from "@qeetrix/icons/icons/rows-2";
+import { Rows3Icon } from "@qeetrix/icons/icons/rows-3";
+import { SearchIcon } from "@qeetrix/icons/icons/search";
+import { SlidersHorizontalIcon } from "@qeetrix/icons/icons/sliders-horizontal";
 import {
   type Column,
   type ColumnDef,
@@ -25,23 +40,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronsUpDownIcon,
-  DownloadIcon,
-  InboxIcon,
-  PinIcon,
-  PlusCircleIcon,
-  Rows2Icon,
-  Rows3Icon,
-  SearchIcon,
-  SlidersHorizontalIcon,
-} from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/Badge/badge";
 import { Button } from "@/components/Button/button";
@@ -396,7 +394,7 @@ function FacetedFilter<TData>({
       <PopoverTrigger
         render={
           <Button variant="outline" size="sm" className="border-dashed">
-            <PlusCircleIcon aria-hidden /> {title}
+            <CirclePlusIcon aria-hidden /> {title}
             {selected.size > 0 && (
               <>
                 <Separator orientation="vertical" className="mx-1 h-4" />
@@ -1384,6 +1382,8 @@ function DataTable<TData, TValue>({
                                     >
                                       <PinIcon
                                         aria-hidden
+                                        // Filled while the column is pinned: an on state.
+                                        variant={header.column.getIsPinned() ? "filled" : "outline"}
                                         className={cn(
                                           header.column.getIsPinned()
                                             ? "text-foreground"

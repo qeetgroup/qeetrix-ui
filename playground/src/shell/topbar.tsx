@@ -1,4 +1,13 @@
 import {
+  LanguagesIcon,
+  MonitorIcon,
+  MoonIcon,
+  Rows3Icon,
+  Rows4Icon,
+  SearchIcon,
+  SunIcon,
+} from "@qeetrix/icons";
+import {
   AppShellHeader,
   Breadcrumb,
   BreadcrumbItem,
@@ -18,15 +27,6 @@ import {
   TooltipTrigger,
   useTheme,
 } from "@qeetrix/ui";
-import {
-  LanguagesIcon,
-  MonitorIcon,
-  MoonIcon,
-  Rows3Icon,
-  Rows4Icon,
-  SearchIcon,
-  SunIcon,
-} from "lucide-react";
 import { Fragment, type ReactNode } from "react";
 import { componentBySlug } from "../lib/manifest";
 import { modKey } from "../lib/prefs";

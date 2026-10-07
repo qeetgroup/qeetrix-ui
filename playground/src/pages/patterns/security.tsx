@@ -1,4 +1,17 @@
 import {
+  FingerprintPatternIcon,
+  KeyRoundIcon,
+  LaptopIcon,
+  LayoutDashboardIcon,
+  MonitorSmartphoneIcon,
+  ScrollTextIcon,
+  ServerIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+  SmartphoneIcon,
+  UsersIcon,
+} from "@qeetrix/icons";
+import {
   AccessReview,
   type AccessReviewItem,
   Alert,
@@ -28,19 +41,6 @@ import {
   TimeSince,
   toast,
 } from "@qeetrix/ui";
-import {
-  FingerprintIcon,
-  KeyRoundIcon,
-  LaptopIcon,
-  LayoutDashboardIcon,
-  MonitorSmartphoneIcon,
-  ScrollTextIcon,
-  ServerIcon,
-  ShieldAlertIcon,
-  ShieldCheckIcon,
-  SmartphoneIcon,
-  UsersIcon,
-} from "lucide-react";
 import { useState } from "react";
 import { auditRecords, dateFormat, dateTimeFormat, sessions } from "../../data/qeet";
 import { ConsoleFrame } from "./console-frame";
@@ -119,7 +119,7 @@ export function SecurityPattern() {
           label: "Security",
           items: [
             { label: "Account security", icon: ShieldCheckIcon, active: true },
-            { label: "Passkeys", icon: FingerprintIcon },
+            { label: "Passkeys", icon: FingerprintPatternIcon },
             { label: "Audit log", icon: ScrollTextIcon },
           ],
         },
@@ -164,7 +164,7 @@ export function SecurityPattern() {
             <div className="flex flex-col gap-3">
               <h2 className="font-heading text-sm font-semibold">Passkeys</h2>
               <SecurityItem
-                icon={<FingerprintIcon />}
+                icon={<FingerprintPatternIcon />}
                 title="MacBook Pro Touch ID"
                 description="iCloud Keychain · synced passkey"
                 status="active"

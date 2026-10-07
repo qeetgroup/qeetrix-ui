@@ -1,7 +1,7 @@
 "use client";
 
+import { CalendarIcon } from "@qeetrix/icons/icons/calendar";
 import { cva } from "class-variance-authority";
-import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import type { DateRange, Matcher } from "react-day-picker";
 import { Button } from "@/components/Button/button";

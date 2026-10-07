@@ -1,13 +1,11 @@
 "use client";
 
-import {
-  BanIcon,
-  CheckIcon,
-  CircleCheckIcon,
-  LightbulbIcon,
-  LockIcon,
-  Undo2Icon,
-} from "lucide-react";
+import { BanIcon } from "@qeetrix/icons/icons/ban";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { LightbulbIcon } from "@qeetrix/icons/icons/lightbulb";
+import { LockIcon } from "@qeetrix/icons/icons/lock";
+import { Undo2Icon } from "@qeetrix/icons/icons/undo-2";
 import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/Avatar/avatar";
 import { StatusPill } from "@/components/Badge/status-pill";
@@ -704,10 +702,11 @@ function DecisionControl({
             approved ? "text-success-text" : "text-destructive-text",
           )}
         >
+          {/* Filled: the recorded outcome, distinct from the outline glyphs on the action buttons. */}
           {approved ? (
-            <CircleCheckIcon aria-hidden className="size-4" />
+            <CircleCheckIcon aria-hidden variant="filled" className="size-4" />
           ) : (
-            <BanIcon aria-hidden className="size-4" />
+            <BanIcon aria-hidden variant="filled" className="size-4" />
           )}
           {approved ? messages.approved : messages.revoked}
         </span>

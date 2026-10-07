@@ -1,4 +1,14 @@
 import {
+  BanIcon,
+  BellRingIcon,
+  CopyIcon,
+  DownloadIcon,
+  KeyRoundIcon,
+  LogOutIcon,
+  ShieldCheckIcon,
+  TrashIcon,
+} from "@qeetrix/icons";
+import {
   ActionBar,
   ActionBarItem,
   ActionBarSeparator,
@@ -14,16 +24,6 @@ import {
   TableRow,
   toast,
 } from "@qeetrix/ui";
-import {
-  BanIcon,
-  BellRingIcon,
-  CopyIcon,
-  DownloadIcon,
-  KeyRoundIcon,
-  LogOutIcon,
-  ShieldCheckIcon,
-  Trash2Icon,
-} from "lucide-react";
 import { useState } from "react";
 import { formatInr, type InvoiceStatus, invoices, invoiceTotals, users } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
@@ -193,7 +193,7 @@ function InvoiceBulkActions() {
         </ActionBarItem>
         <ActionBarSeparator />
         <ActionBarItem variant="destructive">
-          <Trash2Icon data-icon="inline-start" aria-hidden />
+          <TrashIcon data-icon="inline-start" aria-hidden />
           Void
         </ActionBarItem>
       </ActionBar>
@@ -308,7 +308,7 @@ export const examples: FamilyExamples = {
             {v.destructive && <ActionBarSeparator />}
             {v.destructive && (
               <ActionBarItem variant="destructive">
-                <Trash2Icon data-icon="inline-start" aria-hidden />
+                <TrashIcon data-icon="inline-start" aria-hidden />
                 Delete
               </ActionBarItem>
             )}
@@ -337,7 +337,7 @@ export const examples: FamilyExamples = {
             v.destructive ? "<ActionBarSeparator />" : "",
             v.destructive
               ? jsx("ActionBarItem", { variant: "destructive" }, [
-                  '<Trash2Icon data-icon="inline-start" aria-hidden />',
+                  '<TrashIcon data-icon="inline-start" aria-hidden />',
                   "Delete",
                 ])
               : "",

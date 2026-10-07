@@ -1,5 +1,5 @@
+import { BellIcon } from "@qeetrix/icons/icons/bell";
 import { render, screen } from "@testing-library/react";
-import { BellIcon } from "lucide-react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 

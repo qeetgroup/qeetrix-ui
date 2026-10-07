@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
 import * as React from "react";
 
 import { useControllableState } from "@/hooks/use-controllable-state";

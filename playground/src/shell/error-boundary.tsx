@@ -1,5 +1,5 @@
+import { TriangleAlertIcon } from "@qeetrix/icons";
 import { Alert, AlertDescription, AlertTitle } from "@qeetrix/ui";
-import { TriangleAlertIcon } from "lucide-react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
 /**

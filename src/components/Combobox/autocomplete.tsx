@@ -1,7 +1,8 @@
 "use client";
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-import { LoaderCircleIcon, XIcon } from "lucide-react";
+import { LoaderCircleIcon } from "@qeetrix/icons/icons/loader-circle";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import type * as React from "react";
 
 import { useFieldControl } from "@/components/Input/field";

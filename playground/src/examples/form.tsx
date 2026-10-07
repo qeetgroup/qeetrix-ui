@@ -1,3 +1,4 @@
+import { SendIcon } from "@qeetrix/icons";
 import {
   Button,
   CurrencyInput,
@@ -31,7 +32,6 @@ import {
   Switch,
   toast,
 } from "@qeetrix/ui";
-import { SendIcon } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import type { UserRole } from "../data/qeet";
 import { expr, jsx } from "../lib/code";

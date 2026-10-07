@@ -1,4 +1,4 @@
-import { CircleAlertIcon } from "lucide-react";
+import { CircleAlertIcon } from "@qeetrix/icons/icons/circle-alert";
 import type * as React from "react";
 
 import type { MessagesFor } from "@/lib/messages";

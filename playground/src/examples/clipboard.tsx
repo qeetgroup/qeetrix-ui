@@ -1,5 +1,5 @@
+import { CheckIcon, CopyIcon, KeyRoundIcon } from "@qeetrix/icons";
 import { Button, CopyableSecret, CopyButton, toast, useCopyToClipboard } from "@qeetrix/ui";
-import { CheckIcon, CopyIcon, KeyRoundIcon } from "lucide-react";
 import { apiKeys, logEvents } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, select, text } from "../registry/types";

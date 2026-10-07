@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
-import { UserRoundIcon } from "lucide-react";
+import { UserRoundIcon } from "@qeetrix/icons/icons/user-round";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";

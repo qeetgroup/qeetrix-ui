@@ -1,4 +1,13 @@
 import {
+  BlocksIcon,
+  type IconProps,
+  LayoutDashboardIcon,
+  LayoutTemplateIcon,
+  PaletteIcon,
+  ScanEyeIcon,
+  StampIcon,
+} from "@qeetrix/icons";
+import {
   QeetLogo,
   Sidebar,
   SidebarContent,
@@ -17,16 +26,9 @@ import {
   SidebarRail,
   useSidebar,
 } from "@qeetrix/ui";
-import {
-  BlocksIcon,
-  LayoutDashboardIcon,
-  LayoutTemplateIcon,
-  PaletteIcon,
-  ScanEyeIcon,
-  StampIcon,
-} from "lucide-react";
 import { type ComponentType, useEffect } from "react";
 import { components, families, manifest } from "../lib/manifest";
+import { NavIcon } from "../lib/nav-icon";
 import { href, type Route } from "../lib/router";
 import { patterns } from "../pages/patterns/catalogue";
 
@@ -34,7 +36,7 @@ interface NavEntry {
   page: Route["page"];
   label: string;
   path: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: ComponentType<IconProps<"outline">>;
   badge?: string;
 }
 
@@ -98,7 +100,7 @@ export function ShellNav({ route }: { route: Route }) {
                         <a href={`#${entry.path}`} aria-current={active ? "page" : undefined} />
                       }
                     >
-                      <entry.icon aria-hidden />
+                      <NavIcon icon={entry.icon} active={active} />
                       <span>{entry.label}</span>
                     </SidebarMenuButton>
                     {entry.badge && <SidebarMenuBadge>{entry.badge}</SidebarMenuBadge>}

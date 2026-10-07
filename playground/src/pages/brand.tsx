@@ -1,3 +1,4 @@
+import { KeyRoundIcon, ShieldCheckIcon, UsersIcon, WebhookIcon } from "@qeetrix/icons";
 import {
   Badge,
   Button,
@@ -14,7 +15,6 @@ import {
   Input,
   Separator,
 } from "@qeetrix/ui";
-import { KeyRoundIcon, ShieldCheckIcon, UsersIcon, WebhookIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import type { FrameTheme } from "../lib/frame";
 import { QeetWordmarkLogo, ThemedQeetLogo, ThemedQeetWordmark } from "../lib/qeet-brand";

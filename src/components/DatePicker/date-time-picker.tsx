@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarClockIcon } from "lucide-react";
+import { CalendarClockIcon } from "@qeetrix/icons/icons/calendar-clock";
 import * as React from "react";
 import type { Matcher } from "react-day-picker";
 import { Button } from "@/components/Button/button";

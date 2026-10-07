@@ -1,4 +1,12 @@
 import {
+  CircleAlertIcon,
+  FileTextIcon,
+  KeyRoundIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  UsersIcon,
+} from "@qeetrix/icons";
+import {
   Alert,
   AlertDescription,
   AlertTitle,
@@ -17,14 +25,6 @@ import {
   Skeleton,
   StatusPill,
 } from "@qeetrix/ui";
-import {
-  CircleAlertIcon,
-  FileTextIcon,
-  KeyRoundIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  UsersIcon,
-} from "lucide-react";
 import { useState } from "react";
 import { type User, users } from "../data/qeet";
 import { expr, jsx } from "../lib/code";

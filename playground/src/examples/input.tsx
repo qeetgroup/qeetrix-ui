@@ -1,3 +1,4 @@
+import { CopyIcon, SearchIcon, XIcon } from "@qeetrix/icons";
 import {
   Checkbox,
   Field,
@@ -20,7 +21,6 @@ import {
   Textarea,
   toast,
 } from "@qeetrix/ui";
-import { CopyIcon, SearchIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { apiKeys } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";

@@ -1,8 +1,10 @@
 "use client";
 
 import { useRender } from "@base-ui/react/use-render";
+import { CircleAlertIcon } from "@qeetrix/icons/icons/circle-alert";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
 import { cva, type VariantProps } from "class-variance-authority";
-import { CircleAlertIcon, CircleCheckIcon, TriangleAlertIcon } from "lucide-react";
 import * as React from "react";
 import { Label } from "@/components/Label/label";
 import { Separator } from "@/components/Separator/separator";

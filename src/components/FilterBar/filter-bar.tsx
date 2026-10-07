@@ -1,13 +1,11 @@
 "use client";
 
-import {
-  BookmarkIcon,
-  ChevronDownIcon,
-  ListFilterIcon,
-  SaveIcon,
-  SearchIcon,
-  XIcon,
-} from "lucide-react";
+import { BookmarkIcon } from "@qeetrix/icons/icons/bookmark";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
+import { ListFilterIcon } from "@qeetrix/icons/icons/list-filter";
+import { SaveIcon } from "@qeetrix/icons/icons/save";
+import { SearchIcon } from "@qeetrix/icons/icons/search";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
 import { Combobox } from "@/components/Combobox/combobox";
@@ -439,7 +437,12 @@ function FilterBar({
             disabled={disabled}
             render={
               <Button variant="outline" className="max-w-56 gap-1.5">
-                <BookmarkIcon aria-hidden className="text-muted-foreground" />
+                {/* Filled while a saved view is applied: an on state. */}
+                <BookmarkIcon
+                  aria-hidden
+                  variant={activeView ? "filled" : "outline"}
+                  className="text-muted-foreground"
+                />
                 <span className="truncate">{activeView?.label ?? messages.views}</span>
                 {modified && (
                   <>

@@ -1,5 +1,5 @@
+import { BookOpenIcon, ScrollTextIcon, SquareTerminalIcon, StickyNoteIcon } from "@qeetrix/icons";
 import { Badge, Button, cn, FloatingWindow } from "@qeetrix/ui";
-import { BookOpenIcon, ScrollTextIcon, SquareTerminalIcon, StickyNoteIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { type LogLevel, logEvents } from "../data/qeet";
 import { expr, jsx } from "../lib/code";

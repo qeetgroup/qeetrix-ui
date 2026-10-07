@@ -1,3 +1,4 @@
+import { ChevronRightIcon, CopyIcon } from "@qeetrix/icons";
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,6 @@ import {
   Label,
   Switch,
 } from "@qeetrix/ui";
-import { ChevronRightIcon, CopyIcon } from "lucide-react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
 

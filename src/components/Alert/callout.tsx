@@ -1,5 +1,8 @@
+import { CircleAlertIcon } from "@qeetrix/icons/icons/circle-alert";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { InfoIcon } from "@qeetrix/icons/icons/info";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
 import { cva, type VariantProps } from "class-variance-authority";
-import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon } from "lucide-react";
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -54,12 +57,12 @@ const ICON_TONE: Record<CalloutVariant, string> = {
 function resolveDefaultIcon(variant: string): React.ReactNode {
   switch (variant) {
     case "success":
-      return <CheckCircle2Icon aria-hidden />;
+      return <CircleCheckIcon aria-hidden />;
     case "warning":
-      return <AlertTriangleIcon aria-hidden />;
+      return <TriangleAlertIcon aria-hidden />;
     case "destructive":
     case "error":
-      return <AlertCircleIcon aria-hidden />;
+      return <CircleAlertIcon aria-hidden />;
     default:
       return <InfoIcon aria-hidden />;
   }

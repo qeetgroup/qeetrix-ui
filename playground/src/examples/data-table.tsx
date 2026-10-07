@@ -1,4 +1,13 @@
 import {
+  type IconProps,
+  KeyRoundIcon,
+  MessageSquareIcon,
+  ShieldAlertIcon,
+  SmartphoneIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "@qeetrix/icons";
+import {
   Avatar,
   AvatarFallback,
   Button,
@@ -15,15 +24,7 @@ import {
   StatusPill,
   toast,
 } from "@qeetrix/ui";
-import {
-  KeyRoundIcon,
-  type LucideIcon,
-  MessageSquareIcon,
-  ShieldAlertIcon,
-  SmartphoneIcon,
-  UserPlusIcon,
-  UsersIcon,
-} from "lucide-react";
+import type { ComponentType } from "react";
 import {
   formatInr,
   type Invoice,
@@ -74,7 +75,7 @@ const ALIGN_END_HEADERS = "[&_th:has([data-align=end])>div]:justify-end";
 
 const roles: readonly UserRole[] = ["Owner", "Admin", "Developer", "Billing", "Auditor", "Member"];
 
-const mfa: Record<MfaMethod, { label: string; icon: LucideIcon }> = {
+const mfa: Record<MfaMethod, { label: string; icon: ComponentType<IconProps<"outline">> }> = {
   passkey: { label: "Passkey", icon: KeyRoundIcon },
   totp: { label: "Authenticator app", icon: SmartphoneIcon },
   sms: { label: "SMS OTP", icon: MessageSquareIcon },

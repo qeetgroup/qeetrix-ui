@@ -1,23 +1,21 @@
 "use client";
 
+import { BoldIcon } from "@qeetrix/icons/icons/bold";
+import { CodeIcon } from "@qeetrix/icons/icons/code";
+import { Heading1Icon } from "@qeetrix/icons/icons/heading-1";
+import { Heading2Icon } from "@qeetrix/icons/icons/heading-2";
+import { Heading3Icon } from "@qeetrix/icons/icons/heading-3";
+import { ItalicIcon } from "@qeetrix/icons/icons/italic";
+import { LinkIcon } from "@qeetrix/icons/icons/link";
+import { ListIcon } from "@qeetrix/icons/icons/list";
+import { ListOrderedIcon } from "@qeetrix/icons/icons/list-ordered";
+import { QuoteIcon } from "@qeetrix/icons/icons/quote";
+import { Redo2Icon } from "@qeetrix/icons/icons/redo-2";
+import { SquareCodeIcon } from "@qeetrix/icons/icons/square-code";
+import { StrikethroughIcon } from "@qeetrix/icons/icons/strikethrough";
+import { Undo2Icon } from "@qeetrix/icons/icons/undo-2";
 import { type Editor, EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import {
-  BoldIcon,
-  CodeIcon,
-  Heading1Icon,
-  Heading2Icon,
-  Heading3Icon,
-  ItalicIcon,
-  LinkIcon,
-  ListIcon,
-  ListOrderedIcon,
-  QuoteIcon,
-  Redo2Icon,
-  SquareCodeIcon,
-  StrikethroughIcon,
-  Undo2Icon,
-} from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
 import { Toggle } from "@/components/Button/toggle";

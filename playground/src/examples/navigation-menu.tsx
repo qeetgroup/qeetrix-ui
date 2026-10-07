@@ -1,4 +1,11 @@
 import {
+  BellRingIcon,
+  FileClockIcon,
+  FingerprintPatternIcon,
+  IndianRupeeIcon,
+  ScrollTextIcon,
+} from "@qeetrix/icons";
+import {
   cn,
   NavigationMenu,
   NavigationMenuContent,
@@ -8,13 +15,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@qeetrix/ui";
-import {
-  BellRingIcon,
-  FileClockIcon,
-  FingerprintIcon,
-  IndianRupeeIcon,
-  ScrollTextIcon,
-} from "lucide-react";
 import type { MouseEvent, ReactNode } from "react";
 import { expr, jsx } from "../lib/code";
 import { definePlayground, type FamilyExamples, num, select } from "../registry/types";
@@ -38,7 +38,7 @@ const products = [
     name: "Qeet ID",
     href: "https://qeet.in/id",
     description: "Passkeys-first sign-in, SSO and SCIM for every tenant.",
-    icon: FingerprintIcon,
+    icon: FingerprintPatternIcon,
   },
   {
     name: "Qeet Pay",

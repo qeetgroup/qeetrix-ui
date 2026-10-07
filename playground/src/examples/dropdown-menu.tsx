@@ -1,4 +1,19 @@
 import {
+  BellOffIcon,
+  ChevronDownIcon,
+  Columns3Icon,
+  CopyIcon,
+  EllipsisIcon,
+  FunnelIcon,
+  KeyRoundIcon,
+  LogOutIcon,
+  PencilIcon,
+  RouteIcon,
+  Settings2Icon,
+  UserIcon,
+  UserXIcon,
+} from "@qeetrix/icons";
+import {
   Avatar,
   AvatarFallback,
   Button,
@@ -48,21 +63,6 @@ import {
   MenubarTrigger,
   toast,
 } from "@qeetrix/ui";
-import {
-  BellOffIcon,
-  ChevronDownIcon,
-  Columns3Icon,
-  CopyIcon,
-  FilterIcon,
-  KeyRoundIcon,
-  LogOutIcon,
-  MoreHorizontalIcon,
-  PencilIcon,
-  RouteIcon,
-  Settings2Icon,
-  UserIcon,
-  UserXIcon,
-} from "lucide-react";
 import { type LogLevel, logEvents, tenants, users } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, select } from "../registry/types";
@@ -95,7 +95,7 @@ function RowActionsMenu({
       <DropdownMenuTrigger
         render={<Button variant="ghost" size="icon" aria-label={`Actions for ${priya.name}`} />}
       >
-        <MoreHorizontalIcon aria-hidden />
+        <EllipsisIcon aria-hidden />
       </DropdownMenuTrigger>
       <DropdownMenuContent align={align} side={side} sideOffset={sideOffset} className="w-64">
         <DropdownMenuGroup>
@@ -228,7 +228,7 @@ function LogLineMenu({
         {submenu && (
           <ContextMenuSub>
             <ContextMenuSubTrigger>
-              <FilterIcon aria-hidden />
+              <FunnelIcon aria-hidden />
               Filter by
             </ContextMenuSubTrigger>
             <ContextMenuSubContent>
@@ -592,7 +592,7 @@ export const examples: FamilyExamples = {
                 `<Button variant="ghost" size="icon" aria-label="Actions for ${priya.name}" />`,
               ),
             },
-            "<MoreHorizontalIcon aria-hidden />",
+            "<EllipsisIcon aria-hidden />",
           ),
           jsx(
             "DropdownMenuContent",

@@ -1,7 +1,9 @@
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
+import { drawsIcon } from "@/__tests__/icon-match";
 import {
   Carousel,
   type CarouselApi,
@@ -172,7 +174,7 @@ describe("Carousel", () => {
   it("chooses chevrons rather than marketing arrows for the controls", () => {
     render(<CarouselExample />);
     const next = screen.getByRole("button", { name: "Next slide" });
-    expect(next.querySelector("svg")).toHaveClass("lucide-chevron-right");
+    expect(drawsIcon(next.querySelector("svg"), ChevronRightIcon)).toBe(true);
   });
 
   it("moves the real Embla carousel with the arrow keys", () => {

@@ -1,5 +1,5 @@
+import { DownloadIcon } from "@qeetrix/icons";
 import { Button, Meter, Progress, ProgressCircle } from "@qeetrix/ui";
-import { DownloadIcon } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, select, text } from "../registry/types";

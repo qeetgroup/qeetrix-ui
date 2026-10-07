@@ -1,5 +1,5 @@
+import { DownloadIcon, RefreshCwIcon, XIcon } from "@qeetrix/icons";
 import { FileCard, FileTypeIcon, IconButton, toast } from "@qeetrix/ui";
-import { DownloadIcon, RefreshCwIcon, XIcon } from "lucide-react";
 import { type MouseEvent, type ReactNode, useEffect, useState } from "react";
 import { formatInr, invoices, invoiceTotals } from "../data/qeet";
 import { expr, jsx } from "../lib/code";

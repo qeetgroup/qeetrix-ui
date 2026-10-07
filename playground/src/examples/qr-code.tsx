@@ -1,5 +1,5 @@
+import { QrCodeIcon } from "@qeetrix/icons";
 import { CopyableSecret, QRCode } from "@qeetrix/ui";
-import { QrCodeIcon } from "lucide-react";
 import { useId } from "react";
 import { formatInr, logEvents } from "../data/qeet";
 import { jsx } from "../lib/code";

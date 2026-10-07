@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  CircleAlertIcon,
-  CircleCheckIcon,
-  CloudUploadIcon,
-  RotateCwIcon,
-  XIcon,
-} from "lucide-react";
+import { CircleAlertIcon } from "@qeetrix/icons/icons/circle-alert";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { CloudUploadIcon } from "@qeetrix/icons/icons/cloud-upload";
+import { RotateCwIcon } from "@qeetrix/icons/icons/rotate-cw";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";

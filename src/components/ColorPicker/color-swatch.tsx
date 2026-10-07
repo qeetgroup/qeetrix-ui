@@ -1,7 +1,7 @@
 "use client";
 
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import { cva } from "class-variance-authority";
-import { CheckIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { swatchTone } from "@/internal/swatch-tone";

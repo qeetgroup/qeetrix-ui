@@ -1,6 +1,8 @@
 "use client";
 
-import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { EllipsisIcon } from "@qeetrix/icons/icons/ellipsis";
+import { PencilIcon } from "@qeetrix/icons/icons/pencil";
+import { TrashIcon } from "@qeetrix/icons/icons/trash";
 import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/Avatar/avatar";
 import { Badge } from "@/components/Badge/badge";
@@ -475,7 +477,7 @@ function CommentItem({
                   requestAnimationFrame(ctx.focusThread);
                 }}
               >
-                <Trash2Icon aria-hidden />
+                <TrashIcon aria-hidden />
                 {messages.delete}
               </Button>
             </div>
@@ -537,7 +539,7 @@ function CommentItem({
                         variant="destructive"
                         onClick={() => setMode("confirm-delete")}
                       >
-                        <Trash2Icon aria-hidden />
+                        <TrashIcon aria-hidden />
                         {messages.delete}
                       </DropdownMenuItem>
                     )}

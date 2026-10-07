@@ -1,4 +1,3 @@
-import { Button, Input, Tour, TourStep, type TourStepDef, toast, useTour } from "@qeetrix/ui";
 import {
   CompassIcon,
   FileClockIcon,
@@ -7,7 +6,8 @@ import {
   ShieldIcon,
   UserPlusIcon,
   UsersIcon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { Button, Input, Tour, TourStep, type TourStepDef, toast, useTour } from "@qeetrix/ui";
 import { useId, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { definePlayground, type FamilyExamples, num, select } from "../registry/types";

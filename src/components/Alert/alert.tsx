@@ -107,7 +107,7 @@ const alertVariants = cva(
 type AlertProps = React.ComponentProps<"div"> & VariantProps<typeof alertVariants>;
 
 /**
- * An inline, assertive status message (`role="alert"`). Put a lucide icon first for the status
+ * An inline, assertive status message (`role="alert"`). Put an `@qeetrix/icons` icon first for the status
  * glyph, then `AlertTitle` / `AlertDescription`, and optionally an `AlertAction`.
  *
  * `role="alert"` interrupts. For a message that is present when the page loads, or one that is

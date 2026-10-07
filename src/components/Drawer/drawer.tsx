@@ -1,7 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
-import { XIcon } from "lucide-react";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import { Button } from "@/components/Button/button";
 import {
   SheetBody,

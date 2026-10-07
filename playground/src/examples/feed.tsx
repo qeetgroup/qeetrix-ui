@@ -1,4 +1,18 @@
 import {
+  BanknoteIcon,
+  CheckIcon,
+  FileTextIcon,
+  type IconProps,
+  MailIcon,
+  MessageCircleIcon,
+  MessageSquareIcon,
+  SendIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+  SmartphoneIcon,
+  XIcon,
+} from "@qeetrix/icons";
+import {
   Avatar,
   AvatarFallback,
   Button,
@@ -17,21 +31,7 @@ import {
   type TimelineTone,
   useFeedItemLabel,
 } from "@qeetrix/ui";
-import {
-  BanknoteIcon,
-  CheckIcon,
-  FileTextIcon,
-  type LucideIcon,
-  MailIcon,
-  MessageCircleIcon,
-  MessageSquareIcon,
-  SendIcon,
-  ShieldAlertIcon,
-  ShieldCheckIcon,
-  SmartphoneIcon,
-  XIcon,
-} from "lucide-react";
-import { useId } from "react";
+import { type ComponentType, useId } from "react";
 import {
   type AuditRecord,
   auditRecords,
@@ -95,7 +95,7 @@ function AuditArticle({ record }: { record: AuditRecord }) {
 interface Delivery {
   id: string;
   channel: string;
-  icon: LucideIcon;
+  icon: ComponentType<IconProps<"outline">>;
   title: string;
   detail: string;
   status: "delivered" | "failed" | "pending";
@@ -214,7 +214,7 @@ const incident: {
   title: string;
   description: string;
   at: string;
-  icon: LucideIcon;
+  icon: ComponentType<IconProps<"outline">>;
   tone: TimelineTone;
   label: string;
 }[] = [

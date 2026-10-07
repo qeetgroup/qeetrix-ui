@@ -148,10 +148,10 @@ const deepImports: Record<string, string> = {
   PaginationBar: "@qeetrix/ui/components/pagination-bar",
 };
 
-/** The library's own components whose names end in "Icon" (everything else is Lucide). */
+/** The library's own components whose names end in "Icon" (everything else is @qeetrix/icons). */
 const libraryIcons = new Set(["Icon", "FileTypeIcon"]);
 
-/** The import statement(s) a snippet needs: Qeetrix components, Lucide icons, Recharts parts. */
+/** The import statement(s) a snippet needs: Qeetrix components, Qeetrix icons, Recharts parts. */
 export function importsFor(code: string): string {
   const tags = new Set<string>();
   for (const match of code.matchAll(/<([A-Z][A-Za-z0-9]*)/g)) tags.add(match[1]);
@@ -173,7 +173,7 @@ export function importsFor(code: string): string {
   ].sort();
   const lines: string[] = [];
   if (hooks.length) lines.push(`import { ${hooks.join(", ")} } from "react";`);
-  if (icons.length) lines.push(`import { ${icons.join(", ")} } from "lucide-react";`);
+  if (icons.length) lines.push(`import { ${icons.join(", ")} } from "@qeetrix/icons";`);
   if (charts.length) lines.push(`import { ${charts.join(", ")} } from "recharts";`);
   if (library.length) lines.push(`import { ${library.join(", ")} } from "@qeetrix/ui";`);
   for (const tag of [...tags].filter((name) => name in deepImports).sort()) {

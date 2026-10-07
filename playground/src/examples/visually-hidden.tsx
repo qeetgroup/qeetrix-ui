@@ -1,5 +1,5 @@
+import { CopyIcon, KeyRoundIcon, RotateCwIcon, TrashIcon } from "@qeetrix/icons";
 import { Button, VisuallyHidden } from "@qeetrix/ui";
-import { CopyIcon, KeyRoundIcon, RotateCwIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { apiKeys, users } from "../data/qeet";
 import { jsx } from "../lib/code";
@@ -61,11 +61,11 @@ const services = [
   { id: "sms", name: "SMS OTP", status: "Outage", dot: "bg-destructive" },
 ];
 
-const glyphs = { Trash2Icon, RotateCwIcon, CopyIcon, KeyRoundIcon } as const;
+const glyphs = { TrashIcon, RotateCwIcon, CopyIcon, KeyRoundIcon } as const;
 
 const hiddenControls = {
   label: text(`Revoke API key “${stagingKey.name}”`, "Hidden text"),
-  icon: select(Object.keys(glyphs) as (keyof typeof glyphs)[], "Trash2Icon"),
+  icon: select(Object.keys(glyphs) as (keyof typeof glyphs)[], "TrashIcon"),
   reveal: bool(false, "Reveal the hidden text (debug)"),
 };
 
@@ -80,7 +80,7 @@ export const examples: FamilyExamples = {
         render: () => (
           <NameReadout>
             <Button variant="outline" size="icon">
-              <Trash2Icon aria-hidden />
+              <TrashIcon aria-hidden />
               <VisuallyHidden>Revoke API key “{stagingKey.name}”</VisuallyHidden>
             </Button>
           </NameReadout>

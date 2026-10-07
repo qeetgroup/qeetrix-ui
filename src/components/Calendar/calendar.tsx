@@ -1,6 +1,8 @@
 "use client";
 
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
+import { ChevronLeftIcon } from "@qeetrix/icons/icons/chevron-left";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
 import * as React from "react";
 import {
   type ChevronProps,

@@ -1,5 +1,5 @@
+import { MinusIcon, PlusIcon } from "@qeetrix/icons";
 import { Button, RollingNumber } from "@qeetrix/ui";
-import { MinusIcon, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { invoices, invoiceTotals, paymentMethods } from "../data/qeet";
 import { jsx } from "../lib/code";

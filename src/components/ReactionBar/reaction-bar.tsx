@@ -1,6 +1,6 @@
 "use client";
 
-import { SmilePlusIcon } from "lucide-react";
+import { FaceSlightlySmilingPlusIcon } from "@qeetrix/icons/icons/face-slightly-smiling-plus";
 import * as React from "react";
 import {
   Popover,
@@ -185,7 +185,7 @@ function ReactionBar({
                 aria-label={messages.addReaction}
                 className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors duration-fast ease-standard outline-none hover:bg-surface-interactive-hover hover:text-foreground focus-visible:focus-ring disabled:cursor-not-allowed disabled:opacity-disabled aria-expanded:bg-surface-interactive-hover aria-expanded:text-foreground motion-reduce:transition-none"
               >
-                <SmilePlusIcon aria-hidden className="size-3.5" />
+                <FaceSlightlySmilingPlusIcon aria-hidden className="size-3.5" />
               </button>
             }
           />

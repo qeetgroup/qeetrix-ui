@@ -1,3 +1,4 @@
+import { CircleCheckIcon, KeyRoundIcon, LogOutIcon, TrashIcon, UserPlusIcon } from "@qeetrix/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +28,6 @@ import {
   NativeSelect,
   toast,
 } from "@qeetrix/ui";
-import { CheckCircle2Icon, KeyRoundIcon, LogOutIcon, Trash2Icon, UserPlusIcon } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { apiKeys, policyAfter, policyBefore, tenants, users } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";
@@ -395,7 +395,7 @@ export const examples: FamilyExamples = {
         render: () => (
           <AlertDialog>
             <AlertDialogTrigger render={<Button variant="destructive" />}>
-              <Trash2Icon data-icon="inline-start" aria-hidden />
+              <TrashIcon data-icon="inline-start" aria-hidden />
               Revoke key
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -544,7 +544,7 @@ export const examples: FamilyExamples = {
             </DialogTrigger>
             <DialogContent showCloseButton={false} className="max-w-sm">
               <div className="flex flex-col items-center gap-3 text-center">
-                <CheckCircle2Icon className="size-10 text-success-text" aria-hidden />
+                <CircleCheckIcon className="size-10 text-success-text" aria-hidden />
                 <DialogHeader className="items-center text-center">
                   <DialogTitle>Passkey added</DialogTitle>
                   <DialogDescription>

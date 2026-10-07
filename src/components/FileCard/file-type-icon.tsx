@@ -1,18 +1,17 @@
-import {
-  File,
-  FileArchive,
-  FileBraces,
-  FileChartPie,
-  FileCode,
-  FileImage,
-  FileKey,
-  FileMusic,
-  FileSpreadsheet,
-  FileText,
-  FileType,
-  FileVideoCamera,
-  type LucideIcon,
-} from "lucide-react";
+import type { IconProps } from "@qeetrix/icons";
+import { FileIcon } from "@qeetrix/icons/icons/file";
+import { FileArchiveIcon } from "@qeetrix/icons/icons/file-archive";
+import { FileBracesIcon } from "@qeetrix/icons/icons/file-braces";
+import { FileChartPieIcon } from "@qeetrix/icons/icons/file-chart-pie";
+import { FileCodeIcon } from "@qeetrix/icons/icons/file-code";
+import { FileImageIcon } from "@qeetrix/icons/icons/file-image";
+import { FileKeyIcon } from "@qeetrix/icons/icons/file-key";
+import { FileMusicIcon } from "@qeetrix/icons/icons/file-music";
+import { FileSpreadsheetIcon } from "@qeetrix/icons/icons/file-spreadsheet";
+import { FileTextIcon } from "@qeetrix/icons/icons/file-text";
+// `FileTypeIcon` is this module's own export; the glyph marks font files.
+import { FileTypeIcon as FileFontIcon } from "@qeetrix/icons/icons/file-type";
+import { FileVideoCameraIcon } from "@qeetrix/icons/icons/file-video-camera";
 
 import { cn } from "@/lib/utils";
 
@@ -31,19 +30,19 @@ type FileTypeCategory =
   | "font"
   | "file";
 
-const ICONS: Record<FileTypeCategory, LucideIcon> = {
-  image: FileImage,
-  video: FileVideoCamera,
-  audio: FileMusic,
-  archive: FileArchive,
-  spreadsheet: FileSpreadsheet,
-  presentation: FileChartPie,
-  data: FileBraces,
-  code: FileCode,
-  document: FileText,
-  certificate: FileKey,
-  font: FileType,
-  file: File,
+const ICONS: Record<FileTypeCategory, React.ComponentType<IconProps<"outline">>> = {
+  image: FileImageIcon,
+  video: FileVideoCameraIcon,
+  audio: FileMusicIcon,
+  archive: FileArchiveIcon,
+  spreadsheet: FileSpreadsheetIcon,
+  presentation: FileChartPieIcon,
+  data: FileBracesIcon,
+  code: FileCodeIcon,
+  document: FileTextIcon,
+  certificate: FileKeyIcon,
+  font: FileFontIcon,
+  file: FileIcon,
 };
 
 /** By extension. Order matters only where an extension could read two ways. */

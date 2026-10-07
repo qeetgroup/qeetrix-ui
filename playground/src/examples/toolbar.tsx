@@ -1,4 +1,24 @@
 import {
+  BoldIcon,
+  BracesIcon,
+  Columns2Icon,
+  DownloadIcon,
+  FunnelIcon,
+  type IconProps,
+  ItalicIcon,
+  LinkIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  SearchIcon,
+  SendIcon,
+  TextAlignCenterIcon,
+  TextAlignEndIcon,
+  TextAlignStartIcon,
+  UnderlineIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+} from "@qeetrix/icons";
+import {
   Input,
   Toggle,
   Toolbar,
@@ -8,41 +28,25 @@ import {
   ToolbarSeparator,
   ToolbarSpacer,
 } from "@qeetrix/ui";
-import {
-  AlignCenterIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
-  BoldIcon,
-  BracesIcon,
-  ColumnsIcon,
-  DownloadIcon,
-  FilterIcon,
-  ItalicIcon,
-  LinkIcon,
-  type LucideIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SearchIcon,
-  SendIcon,
-  UnderlineIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { type ComponentType, useState } from "react";
 import { users } from "../data/qeet";
 import { changedProps, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select } from "../registry/types";
 
-const marks: readonly { id: string; label: string; icon: LucideIcon }[] = [
+const marks: readonly { id: string; label: string; icon: ComponentType<IconProps<"outline">> }[] = [
   { id: "bold", label: "Bold", icon: BoldIcon },
   { id: "italic", label: "Italic", icon: ItalicIcon },
   { id: "underline", label: "Underline", icon: UnderlineIcon },
 ];
 
-const alignments: readonly { id: string; label: string; icon: LucideIcon }[] = [
-  { id: "left", label: "Align left", icon: AlignLeftIcon },
-  { id: "center", label: "Align centre", icon: AlignCenterIcon },
-  { id: "right", label: "Align right", icon: AlignRightIcon },
+const alignments: readonly {
+  id: string;
+  label: string;
+  icon: ComponentType<IconProps<"outline">>;
+}[] = [
+  { id: "left", label: "Align left", icon: TextAlignStartIcon },
+  { id: "center", label: "Align centre", icon: TextAlignCenterIcon },
+  { id: "right", label: "Align right", icon: TextAlignEndIcon },
 ];
 
 /** The Qeet Notify email-template editor's formatting bar. */
@@ -136,7 +140,7 @@ function UsersTableHeader() {
           />
         </div>
         <ToolbarButton>
-          <FilterIcon data-icon="inline-start" aria-hidden />
+          <FunnelIcon data-icon="inline-start" aria-hidden />
           Role: Admin
         </ToolbarButton>
         <ToolbarSpacer />
@@ -197,11 +201,11 @@ export const examples: FamilyExamples = {
         render: () => (
           <Toolbar aria-label="Log table actions" className="w-fit">
             <ToolbarButton>
-              <FilterIcon data-icon="inline-start" aria-hidden />
+              <FunnelIcon data-icon="inline-start" aria-hidden />
               Filter
             </ToolbarButton>
             <ToolbarButton>
-              <ColumnsIcon data-icon="inline-start" aria-hidden />
+              <Columns2Icon data-icon="inline-start" aria-hidden />
               Columns
             </ToolbarButton>
             <ToolbarButton size="icon" aria-label="Refresh">
@@ -262,11 +266,11 @@ export const examples: FamilyExamples = {
             aria-label="Log table actions"
           >
             <ToolbarButton>
-              <FilterIcon data-icon="inline-start" aria-hidden />
+              <FunnelIcon data-icon="inline-start" aria-hidden />
               Filter
             </ToolbarButton>
             <ToolbarButton>
-              <ColumnsIcon data-icon="inline-start" aria-hidden />
+              <Columns2Icon data-icon="inline-start" aria-hidden />
               Columns
             </ToolbarButton>
             {v.spacer ? <ToolbarSpacer /> : <ToolbarSeparator />}
@@ -291,11 +295,11 @@ export const examples: FamilyExamples = {
           },
           [
             jsx("ToolbarButton", {}, [
-              '<FilterIcon data-icon="inline-start" aria-hidden />',
+              '<FunnelIcon data-icon="inline-start" aria-hidden />',
               "Filter",
             ]),
             jsx("ToolbarButton", {}, [
-              '<ColumnsIcon data-icon="inline-start" aria-hidden />',
+              '<Columns2Icon data-icon="inline-start" aria-hidden />',
               "Columns",
             ]),
             v.spacer ? "<ToolbarSpacer />" : "<ToolbarSeparator />",

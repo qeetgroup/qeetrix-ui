@@ -1,4 +1,12 @@
 import {
+  CheckIcon,
+  FingerprintPatternIcon,
+  type IconProps,
+  RefreshCwIcon,
+  ScrollTextIcon,
+  ShieldCheckIcon,
+} from "@qeetrix/icons";
+import {
   Badge,
   Button,
   Carousel,
@@ -13,21 +21,13 @@ import {
   type StatusKind,
   StatusPill,
 } from "@qeetrix/ui";
-import {
-  CheckIcon,
-  FingerprintIcon,
-  type LucideIcon,
-  RefreshCwIcon,
-  ScrollTextIcon,
-  ShieldCheckIcon,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { type ComponentType, useEffect, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select } from "../registry/types";
 
 interface Step {
   id: string;
-  icon: LucideIcon;
+  icon: ComponentType<IconProps<"outline">>;
   title: string;
   body: string;
 }
@@ -35,7 +35,7 @@ interface Step {
 const onboarding: readonly Step[] = [
   {
     id: "passkeys",
-    icon: FingerprintIcon,
+    icon: FingerprintPatternIcon,
     title: "Sign in with a passkey",
     body: "Touch ID, Windows Hello or a security key replaces the password — nothing to phish, nothing to reuse.",
   },

@@ -60,9 +60,9 @@ installing `@qeetrix/ui` installs every feature library whether or not the featu
 
 | Package | on disk |
 |:--|--:|
-| `lucide-react` | 45.1 MiB |
 | `date-fns` (via react-day-picker) | 26.5 MiB |
 | `@base-ui` | 19.2 MiB |
+| `@qeetrix/icons` | 16.5 MiB |
 | `recharts` | 9.3 MiB |
 | `@tiptap/*` + `prosemirror-*` | ~10.5 MiB |
 | `react-day-picker` | 5.0 MiB |

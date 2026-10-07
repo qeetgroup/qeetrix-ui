@@ -4,7 +4,7 @@ import { Button } from "@/components/Button/button";
 
 type IconButtonProps = Omit<ComponentProps<typeof Button>, "children" | "aria-label" | "size"> & {
   /**
-   * A Lucide or Qeet icon component. Sized by the button: 12px at `icon-xs`, 16px otherwise —
+   * An `@qeetrix/icons` or Qeet brand icon component. Sized by the button: 12px at `icon-xs`, 16px otherwise —
    * unless the icon brings its own `size-*` class.
    */
   icon: ComponentType<{ className?: string }>;
@@ -15,7 +15,7 @@ type IconButtonProps = Omit<ComponentProps<typeof Button>, "children" | "aria-la
 
 /**
  * Icon-only button that enforces an accessible label at the TypeScript level.
- * Accepts any Lucide or Qeet icon component via the `icon` prop.
+ * Accepts any `@qeetrix/icons` or Qeet brand icon component via the `icon` prop.
  *
  * `loading` swaps the icon for the spinner in the same square, so an icon toolbar never
  * reflows while one of its actions is busy.

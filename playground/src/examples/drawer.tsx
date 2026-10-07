@@ -1,4 +1,13 @@
 import {
+  BanknoteIcon,
+  CreditCardIcon,
+  DownloadIcon,
+  LogOutIcon,
+  PencilIcon,
+  ShieldCheckIcon,
+  SmartphoneIcon,
+} from "@qeetrix/icons";
+import {
   Badge,
   Button,
   DescriptionDetails,
@@ -31,15 +40,6 @@ import {
   Switch,
   toast,
 } from "@qeetrix/ui";
-import {
-  BanknoteIcon,
-  CreditCardIcon,
-  DownloadIcon,
-  LogOutIcon,
-  PencilIcon,
-  ShieldCheckIcon,
-  SmartphoneIcon,
-} from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import {
   dateFormat,

@@ -1,5 +1,5 @@
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import { render, screen } from "@testing-library/react";
-import { CheckIcon } from "lucide-react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 

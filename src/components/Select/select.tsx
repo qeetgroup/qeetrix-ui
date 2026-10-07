@@ -1,7 +1,9 @@
 "use client";
 
 import { Select as SelectPrimitive } from "@base-ui/react/select";
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
+import { ChevronUpIcon } from "@qeetrix/icons/icons/chevron-up";
 import * as React from "react";
 
 import { fieldText, fieldTrigger } from "@/internal/field-styles";

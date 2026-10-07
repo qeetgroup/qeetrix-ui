@@ -1,6 +1,7 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { CopyIcon } from "@qeetrix/icons/icons/copy";
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";

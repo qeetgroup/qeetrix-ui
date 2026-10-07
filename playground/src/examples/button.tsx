@@ -1,4 +1,21 @@
 import {
+  BoldIcon,
+  ChevronDownIcon,
+  CircleQuestionMarkIcon,
+  DownloadIcon,
+  EllipsisIcon,
+  ItalicIcon,
+  KeyRoundIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  Settings2Icon,
+  TextAlignCenterIcon,
+  TextAlignEndIcon,
+  TextAlignStartIcon,
+  TrashIcon,
+  UnderlineIcon,
+} from "@qeetrix/icons";
+import {
   Button,
   ButtonGroup,
   ButtonGroupItem,
@@ -13,23 +30,6 @@ import {
   ToggleTipContent,
   ToggleTipTrigger,
 } from "@qeetrix/ui";
-import {
-  AlignCenterIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
-  BoldIcon,
-  ChevronDownIcon,
-  CircleHelpIcon,
-  DownloadIcon,
-  ItalicIcon,
-  KeyRoundIcon,
-  MoreHorizontalIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  Settings2Icon,
-  Trash2Icon,
-  UnderlineIcon,
-} from "lucide-react";
 import { useEffect, useState } from "react";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
@@ -110,7 +110,7 @@ export const examples: FamilyExamples = {
             <Button variant="outline">Cancel</Button>
             <Button variant="ghost">Skip for now</Button>
             <Button variant="destructive">
-              <Trash2Icon data-icon="inline-start" aria-hidden />
+              <TrashIcon data-icon="inline-start" aria-hidden />
               Revoke key
             </Button>
             <Button variant="link">View audit log</Button>
@@ -317,8 +317,8 @@ export const examples: FamilyExamples = {
           <div className="flex items-center gap-2">
             <IconButton icon={Settings2Icon} aria-label="Workspace settings" />
             <IconButton icon={RefreshCwIcon} variant="outline" aria-label="Refresh sessions" />
-            <IconButton icon={MoreHorizontalIcon} variant="secondary" aria-label="More actions" />
-            <IconButton icon={Trash2Icon} variant="destructive" aria-label="Delete tenant" />
+            <IconButton icon={EllipsisIcon} variant="secondary" aria-label="More actions" />
+            <IconButton icon={TrashIcon} variant="destructive" aria-label="Delete tenant" />
           </div>
         ),
       },
@@ -363,7 +363,7 @@ export const examples: FamilyExamples = {
       {
         name: "Disabled",
         render: () => (
-          <IconButton icon={Trash2Icon} variant="outline" aria-label="Delete" disabled />
+          <IconButton icon={TrashIcon} variant="outline" aria-label="Delete" disabled />
         ),
       },
     ],
@@ -408,13 +408,13 @@ export const examples: FamilyExamples = {
         render: () => (
           <SegmentedControl size="sm" defaultValue="left" aria-label="Alignment">
             <SegmentedControlItem value="left" aria-label="Align left">
-              <AlignLeftIcon className="size-4" aria-hidden />
+              <TextAlignStartIcon className="size-4" aria-hidden />
             </SegmentedControlItem>
             <SegmentedControlItem value="center" aria-label="Align centre">
-              <AlignCenterIcon className="size-4" aria-hidden />
+              <TextAlignCenterIcon className="size-4" aria-hidden />
             </SegmentedControlItem>
             <SegmentedControlItem value="right" aria-label="Align right">
-              <AlignRightIcon className="size-4" aria-hidden />
+              <TextAlignEndIcon className="size-4" aria-hidden />
             </SegmentedControlItem>
           </SegmentedControl>
         ),
@@ -581,7 +581,7 @@ export const examples: FamilyExamples = {
             <ToggleTip>
               <ToggleTipTrigger
                 label="What is a GSTIN?"
-                icon={<CircleHelpIcon className="size-4" aria-hidden />}
+                icon={<CircleQuestionMarkIcon className="size-4" aria-hidden />}
               />
               <ToggleTipContent side="right">
                 The 15-character GST identification number printed on every tax invoice.

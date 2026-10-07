@@ -1,6 +1,6 @@
 "use client";
 
-import { LockIcon } from "lucide-react";
+import { LockIcon } from "@qeetrix/icons/icons/lock";
 import * as React from "react";
 
 import { Checkbox } from "@/components/Checkbox/checkbox";

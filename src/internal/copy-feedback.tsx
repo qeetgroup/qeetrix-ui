@@ -1,4 +1,5 @@
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { CopyIcon } from "@qeetrix/icons/icons/copy";
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";

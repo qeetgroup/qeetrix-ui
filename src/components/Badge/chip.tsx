@@ -1,7 +1,8 @@
 "use client";
 
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import { cva, type VariantProps } from "class-variance-authority";
-import { CheckIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { useControllableState } from "@/hooks/use-controllable-state";
 import type { MessagesFor } from "@/lib/messages";

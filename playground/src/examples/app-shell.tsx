@@ -1,4 +1,18 @@
 import {
+  BellIcon,
+  DownloadIcon,
+  type IconProps,
+  LandmarkIcon,
+  LayoutDashboardIcon,
+  PlusIcon,
+  ReceiptIndianRupeeIcon,
+  SearchIcon,
+  SettingsIcon,
+  Undo2Icon,
+  UsersIcon,
+  WalletIcon,
+} from "@qeetrix/icons";
+import {
   AppShell,
   AppShellContent,
   AppShellHeader,
@@ -35,21 +49,7 @@ import {
   TableHeader,
   TableRow,
 } from "@qeetrix/ui";
-import {
-  BellIcon,
-  DownloadIcon,
-  LandmarkIcon,
-  LayoutDashboardIcon,
-  type LucideIcon,
-  PlusIcon,
-  ReceiptIndianRupeeIcon,
-  SearchIcon,
-  SettingsIcon,
-  Undo2Icon,
-  UsersIcon,
-  WalletIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { type ComponentType, useState } from "react";
 import {
   dateFormat,
   formatInr,
@@ -60,6 +60,7 @@ import {
   logEvents,
 } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
+import { NavIcon } from "../lib/nav-icon";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
 
 /* ── Qeet Pay console sample ──────────────────────────────────────────────────────────────── */
@@ -67,7 +68,7 @@ import { bool, definePlayground, type FamilyExamples, select, text } from "../re
 interface NavItem {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: ComponentType<IconProps<"outline">>;
   badge?: string;
 }
 
@@ -132,7 +133,7 @@ function PaySidebar({
                       isActive={active === item.id}
                       onClick={() => onSelect(item.id)}
                     >
-                      <Icon aria-hidden />
+                      <NavIcon icon={Icon} active={active === item.id} />
                       <span>{item.label}</span>
                     </SidebarMenuButton>
                     {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}

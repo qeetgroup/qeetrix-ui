@@ -1,3 +1,4 @@
+import { KeyRoundIcon } from "@qeetrix/icons";
 import {
   Button,
   ColorPicker,
@@ -8,7 +9,6 @@ import {
   FieldError,
   FieldLabel,
 } from "@qeetrix/ui";
-import { KeyRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";

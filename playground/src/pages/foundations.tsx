@@ -1,3 +1,4 @@
+import { PlayIcon, RotateCcwIcon } from "@qeetrix/icons";
 import {
   Badge,
   Button,
@@ -17,7 +18,6 @@ import {
   TableOfContents,
   TableRow,
 } from "@qeetrix/ui";
-import { PlayIcon, RotateCcwIcon } from "lucide-react";
 import { type MouseEvent, useEffect, useMemo, useState } from "react";
 import { contrastOf, formatRatio, hexOf, thresholds } from "../lib/color";
 import type { FrameTheme } from "../lib/frame";

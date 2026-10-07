@@ -1,4 +1,13 @@
 import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+  MinusIcon,
+  RotateCcwIcon,
+  SearchXIcon,
+} from "@qeetrix/icons";
+import {
   Badge,
   Button,
   buttonVariants,
@@ -30,15 +39,6 @@ import {
   Toggle,
   ToggleGroup,
 } from "@qeetrix/ui";
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  CheckIcon,
-  ExternalLinkIcon,
-  MinusIcon,
-  RotateCcwIcon,
-  SearchXIcon,
-} from "lucide-react";
 import { Suspense } from "react";
 import { importsFor } from "../lib/code";
 import {

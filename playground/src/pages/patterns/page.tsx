@@ -1,5 +1,5 @@
+import { ExternalLinkIcon } from "@qeetrix/icons";
 import { Button, Tabs, TabsList, TabsTrigger, Toggle, ToggleGroup } from "@qeetrix/ui";
-import { ExternalLinkIcon } from "lucide-react";
 import { type FrameTheme, frameHash } from "../../lib/frame";
 import { navigate, oneOf, type Route, setQuery } from "../../lib/router";
 import { useShellFrameEnv } from "../../shell/environment";

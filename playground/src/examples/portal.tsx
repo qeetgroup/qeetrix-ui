@@ -1,5 +1,5 @@
+import { BellIcon, XIcon } from "@qeetrix/icons";
 import { Button, Portal } from "@qeetrix/ui";
-import { BellIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
