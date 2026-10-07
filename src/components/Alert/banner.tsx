@@ -1,13 +1,11 @@
 "use client";
 
+import { CircleAlertIcon } from "@qeetrix/icons/icons/circle-alert";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { InfoIcon } from "@qeetrix/icons/icons/info";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  CheckCircle2Icon,
-  InfoIcon,
-  XIcon,
-} from "lucide-react";
 import type * as React from "react";
 
 import type { MessagesFor } from "@/lib/messages";
@@ -46,10 +44,10 @@ type BannerVariant = NonNullable<VariantProps<typeof bannerVariants>["variant"]>
 
 const DEFAULT_ICON: Partial<Record<BannerVariant, React.ElementType>> = {
   info: InfoIcon,
-  success: CheckCircle2Icon,
-  warning: AlertTriangleIcon,
-  destructive: AlertCircleIcon,
-  danger: AlertCircleIcon,
+  success: CircleCheckIcon,
+  warning: TriangleAlertIcon,
+  destructive: CircleAlertIcon,
+  danger: CircleAlertIcon,
 };
 
 const ICON_TONE: Record<BannerVariant, string> = {

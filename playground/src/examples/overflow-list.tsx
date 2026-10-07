@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "@qeetrix/icons";
 import {
   Badge,
   OverflowList,
@@ -6,7 +7,6 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@qeetrix/ui";
-import { ChevronRightIcon } from "lucide-react";
 import { users } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";
 import { definePlayground, type FamilyExamples, num, select } from "../registry/types";

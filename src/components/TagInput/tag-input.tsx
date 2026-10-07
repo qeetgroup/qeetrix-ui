@@ -1,6 +1,6 @@
 "use client";
 
-import { XIcon } from "lucide-react";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 
 import { Badge } from "@/components/Badge/badge";

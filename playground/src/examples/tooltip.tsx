@@ -1,4 +1,3 @@
-import { Button, Kbd, KbdGroup, Tooltip, TooltipContent, TooltipTrigger } from "@qeetrix/ui";
 import {
   CopyIcon,
   DownloadIcon,
@@ -6,7 +5,8 @@ import {
   RefreshCwIcon,
   SearchIcon,
   Settings2Icon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { Button, Kbd, KbdGroup, Tooltip, TooltipContent, TooltipTrigger } from "@qeetrix/ui";
 import { logEvents } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, select, text } from "../registry/types";

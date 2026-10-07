@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcon } from "lucide-react";
+import { StarIcon } from "@qeetrix/icons/icons/star";
 import * as React from "react";
 import { FieldHiddenInput, useFieldControl } from "@/components/Input/field";
 import { useControllableState } from "@/hooks/use-controllable-state";
@@ -24,7 +24,7 @@ interface RatingProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   readOnly?: boolean;
   disabled?: boolean;
   size?: "sm" | "default" | "lg";
-  /** Swap the star for any lucide-style icon (e.g. `HeartIcon`). */
+  /** Swap the star for any `@qeetrix/icons` icon (e.g. `HeartIcon`). */
   icon?: React.ComponentType<{ className?: string }>;
   /** Submits the numeric rating under this name. Omit and nothing is serialised. */
   name?: string;

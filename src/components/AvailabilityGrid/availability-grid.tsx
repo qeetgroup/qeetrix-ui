@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import * as React from "react";
 
 import { logicalDirectionForKey } from "@/lib/direction";

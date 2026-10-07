@@ -1,3 +1,4 @@
+import { ArrowLeftIcon, FingerprintPatternIcon, MailIcon, ShieldCheckIcon } from "@qeetrix/icons";
 import {
   Alert,
   AlertDescription,
@@ -24,7 +25,6 @@ import {
   QeetLogo,
   useTimer,
 } from "@qeetrix/ui";
-import { ArrowLeftIcon, FingerprintIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const noNavigation = (event: { preventDefault: () => void }) => event.preventDefault();
@@ -86,7 +86,7 @@ export function SignInPattern() {
                   window.setTimeout(() => setPasskeyBusy(false), 1800);
                 }}
               >
-                <FingerprintIcon data-icon="inline-start" aria-hidden />
+                <FingerprintPatternIcon data-icon="inline-start" aria-hidden />
                 Sign in with a passkey
               </Button>
               <FieldSeparator>or continue with email</FieldSeparator>

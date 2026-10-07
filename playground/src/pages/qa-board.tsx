@@ -1,4 +1,22 @@
 import {
+  BadgeCheckIcon,
+  CircleAlertIcon,
+  CopyIcon,
+  EllipsisIcon,
+  FileTextIcon,
+  FingerprintPatternIcon,
+  InboxIcon,
+  InfoIcon,
+  KeyRoundIcon,
+  PencilIcon,
+  ShieldCheckIcon,
+  TrashIcon,
+  TriangleAlertIcon,
+  UserPlusIcon,
+  UsersIcon,
+  WebhookIcon,
+} from "@qeetrix/icons";
+import {
   Alert,
   AlertDescription,
   AlertTitle,
@@ -92,24 +110,6 @@ import {
   TooltipTrigger,
   toast,
 } from "@qeetrix/ui";
-import {
-  BadgeCheckIcon,
-  CircleAlertIcon,
-  CopyIcon,
-  FileTextIcon,
-  FingerprintIcon,
-  InboxIcon,
-  InfoIcon,
-  KeyRoundIcon,
-  MoreHorizontalIcon,
-  PencilIcon,
-  ShieldCheckIcon,
-  Trash2Icon,
-  TriangleAlertIcon,
-  UserPlusIcon,
-  UsersIcon,
-  WebhookIcon,
-} from "lucide-react";
 import { type ReactNode, useEffect, useRef } from "react";
 import {
   formatInr,
@@ -153,7 +153,7 @@ function Item({
 function ShellSample() {
   const nav = [
     { label: "Users", icon: UsersIcon, active: true, badge: "1,842" },
-    { label: "Passkeys", icon: FingerprintIcon },
+    { label: "Passkeys", icon: FingerprintPatternIcon },
     { label: "API keys", icon: KeyRoundIcon },
     { label: "Webhooks", icon: WebhookIcon },
   ];
@@ -600,7 +600,7 @@ function DialogSample() {
           <DialogFooter>
             <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <Button variant="destructive">
-              <Trash2Icon data-icon="inline-start" aria-hidden />
+              <TrashIcon data-icon="inline-start" aria-hidden />
               Revoke key
             </Button>
           </DialogFooter>
@@ -643,7 +643,7 @@ function DropdownSample() {
         <DropdownMenuTrigger
           render={
             <Button variant="outline" size="icon" aria-label="Actions for Rohan Mehta">
-              <MoreHorizontalIcon aria-hidden />
+              <EllipsisIcon aria-hidden />
             </Button>
           }
         />
@@ -667,7 +667,7 @@ function DropdownSample() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive">
-            <Trash2Icon aria-hidden />
+            <TrashIcon aria-hidden />
             Suspend user
           </DropdownMenuItem>
         </DropdownMenuContent>

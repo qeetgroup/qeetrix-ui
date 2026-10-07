@@ -1,6 +1,7 @@
 "use client";
 
-import { MoveIcon, XIcon } from "lucide-react";
+import { MoveIcon } from "@qeetrix/icons/icons/move";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";

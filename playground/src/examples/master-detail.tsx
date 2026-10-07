@@ -1,3 +1,4 @@
+import { DownloadIcon, MonitorSmartphoneIcon } from "@qeetrix/icons";
 import {
   Button,
   cn,
@@ -7,7 +8,6 @@ import {
   type StatusKind,
   StatusPill,
 } from "@qeetrix/ui";
-import { DownloadIcon, MonitorSmartphoneIcon } from "lucide-react";
 import { useState } from "react";
 import {
   dateFormat,

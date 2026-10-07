@@ -5,8 +5,7 @@
     "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["../src/*"],
-      "@qeetrix/ui": ["../src/index.ts"],
-      "@qeetrix-icons/*": ["../../qeetrix-icons/src/*", "./src/brand-fallback/*"]
+      "@qeetrix/ui": ["../src/index.ts"]
     },
     "tsBuildInfoFile": "../node_modules/.cache/qeetrix/playground.tsbuildinfo"
   },

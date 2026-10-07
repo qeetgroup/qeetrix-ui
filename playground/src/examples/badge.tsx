@@ -1,4 +1,3 @@
-import { Badge, Button, Chip, ChipGroup, type StatusKind, StatusPill } from "@qeetrix/ui";
 import {
   BellRingIcon,
   CrownIcon,
@@ -8,7 +7,8 @@ import {
   MessageSquareIcon,
   ServerIcon,
   ShieldCheckIcon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { Badge, Button, Chip, ChipGroup, type StatusKind, StatusPill } from "@qeetrix/ui";
 import { useId, useState } from "react";
 import { formatInr, type InvoiceStatus, invoices, invoiceTotals, tenants } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";

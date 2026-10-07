@@ -1,5 +1,5 @@
+import { InboxIcon } from "@qeetrix/icons/icons/inbox";
 import { render, screen } from "@testing-library/react";
-import { InboxIcon } from "lucide-react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 

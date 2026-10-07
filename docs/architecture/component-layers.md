@@ -146,8 +146,8 @@ interface of its own.
 
 ## brand — `src/brand/`
 
-**What it is.** The Qeet logos (theme-adaptive) and the custom Qeet icon set. Generated from raw
-SVG by `scripts/build/logos.mjs`.
+**What it is.** The Qeet logos (theme-adaptive wrappers over `@qeetrix/icons`, the single source
+of the artwork) and the custom Qeet icon set.
 
 **What it may import.** `brand`, `lib`, `runtime`, `foundations`, `tokens`. In practice it
 imports nothing internal — it is an asset leaf.

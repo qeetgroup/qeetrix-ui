@@ -1,6 +1,7 @@
 "use client";
 
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon } from "@qeetrix/icons/icons/eye";
+import { EyeOffIcon } from "@qeetrix/icons/icons/eye-off";
 import * as React from "react";
 import { Input } from "@/components/Input/input";
 import { fieldAction } from "@/internal/field-styles";

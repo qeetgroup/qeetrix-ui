@@ -1,11 +1,9 @@
 /**
- * The Qeet brand logos, as an application uses them. In an app these come straight from the
- * package — `import { QeetLogo, QeetWordmarkLogo } from "@qeetrix/icons"` — and the playground
- * resolves the same generated components through `@qeetrix-icons/*` (see vite.config.ts).
+ * The Qeet brand logos, as an application uses them: straight from `@qeetrix/icons`.
  */
+
+import { QeetLogo, QeetWordmarkLogo } from "@qeetrix/icons";
 import { cn } from "@qeetrix/ui";
-import { QeetLogo } from "@qeetrix-icons/generated/logos/qeet";
-import { QeetWordmarkLogo } from "@qeetrix-icons/generated/logos/qeet-wordmark";
 import type { ComponentProps } from "react";
 
 export { QeetLogo, QeetWordmarkLogo };

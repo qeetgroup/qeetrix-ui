@@ -1,3 +1,4 @@
+import { FileTextIcon } from "@qeetrix/icons";
 import {
   Dropzone,
   Field,
@@ -10,7 +11,6 @@ import {
   type FileUploadStatus,
   LogoUploader,
 } from "@qeetrix/ui";
-import { FileTextIcon } from "lucide-react";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, num, text } from "../registry/types";

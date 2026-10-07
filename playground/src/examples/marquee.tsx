@@ -1,5 +1,5 @@
+import { BuildingComplexIcon, PauseIcon, PlayIcon } from "@qeetrix/icons";
 import { Button, Marquee, type StatusKind, StatusPill } from "@qeetrix/ui";
-import { Building2Icon, PauseIcon, PlayIcon } from "lucide-react";
 import { useState } from "react";
 import { formatInrCompact, tenants } from "../data/qeet";
 import { changedProps, jsx } from "../lib/code";
@@ -18,7 +18,7 @@ function CustomerNames() {
       key={name}
       className="flex shrink-0 items-center gap-2 text-sm font-medium whitespace-nowrap text-muted-foreground"
     >
-      <Building2Icon aria-hidden className="size-4" />
+      <BuildingComplexIcon aria-hidden className="size-4" />
       {name}
     </span>
   ));

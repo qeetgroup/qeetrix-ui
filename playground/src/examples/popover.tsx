@@ -1,3 +1,4 @@
+import { CopyIcon, KeyRoundIcon, ListFilterIcon, MapPinIcon, Share2Icon } from "@qeetrix/icons";
 import {
   Avatar,
   AvatarFallback,
@@ -27,7 +28,6 @@ import {
   Switch,
   toast,
 } from "@qeetrix/ui";
-import { CopyIcon, KeyRoundIcon, ListFilterIcon, MapPinIcon, Share2Icon } from "lucide-react";
 import { type MouseEvent, useId, useState } from "react";
 import {
   dateFormat,

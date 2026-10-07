@@ -1,7 +1,9 @@
 "use client";
 
+import { ChevronLeftIcon } from "@qeetrix/icons/icons/chevron-left";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import { cva } from "class-variance-authority";
-import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
 import { useFocusTrap } from "@/components/FocusTrap/focus-trap";

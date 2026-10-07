@@ -1,5 +1,5 @@
+import { QuoteIcon } from "@qeetrix/icons";
 import { Avatar, AvatarFallback, Blockquote } from "@qeetrix/ui";
-import { QuoteIcon } from "lucide-react";
 import { changedProps, expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
 

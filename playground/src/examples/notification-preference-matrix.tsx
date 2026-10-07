@@ -1,3 +1,4 @@
+import { MailIcon, MessageCircleIcon, MessageSquareIcon, SmartphoneIcon } from "@qeetrix/icons";
 import {
   Button,
   NotificationPreferenceMatrix,
@@ -6,7 +7,6 @@ import {
   type PreferenceMatrix,
   toast,
 } from "@qeetrix/ui";
-import { MailIcon, MessageCircleIcon, MessageSquareIcon, SmartphoneIcon } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";

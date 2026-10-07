@@ -2,7 +2,7 @@
 
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar";
-import { XIcon } from "lucide-react";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 import { Button } from "@/components/Button/button";
 import type { ActionBarMessages, MessagesFor } from "@/lib/messages";

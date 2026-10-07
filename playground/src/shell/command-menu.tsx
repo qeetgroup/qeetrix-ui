@@ -1,4 +1,3 @@
-import { CommandPalette, type CommandPaletteItem, useTheme } from "@qeetrix/ui";
 import {
   BlocksIcon,
   ComponentIcon,
@@ -13,7 +12,8 @@ import {
   ScanEyeIcon,
   StampIcon,
   SunIcon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { CommandPalette, type CommandPaletteItem, useTheme } from "@qeetrix/ui";
 import { useMemo } from "react";
 import { components } from "../lib/manifest";
 import { navigate } from "../lib/router";
@@ -113,7 +113,7 @@ export function CommandMenu({
         id: "theme-light",
         group: "Actions",
         title: `Theme: light${theme === "light" ? " (current)" : ""}`,
-        icon: <SunIcon />,
+        icon: <SunIcon variant={theme === "light" ? "filled" : "outline"} />,
         keywords: ["appearance", "mode"],
         payload: run(() => setTheme("light")),
       },
@@ -121,7 +121,7 @@ export function CommandMenu({
         id: "theme-dark",
         group: "Actions",
         title: `Theme: dark${theme === "dark" ? " (current)" : ""}`,
-        icon: <MoonIcon />,
+        icon: <MoonIcon variant={theme === "dark" ? "filled" : "outline"} />,
         keywords: ["appearance", "mode"],
         payload: run(() => setTheme("dark")),
       },
@@ -129,7 +129,7 @@ export function CommandMenu({
         id: "theme-system",
         group: "Actions",
         title: `Theme: match system${theme === "system" ? " (current)" : ""}`,
-        icon: <MonitorIcon />,
+        icon: <MonitorIcon variant={theme === "system" ? "filled" : "outline"} />,
         keywords: ["appearance", "mode", "auto"],
         payload: run(() => setTheme("system")),
       },

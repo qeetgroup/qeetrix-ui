@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
 import type * as React from "react";
 
 import { fieldText, fieldTrigger } from "@/internal/field-styles";

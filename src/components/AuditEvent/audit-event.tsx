@@ -1,11 +1,9 @@
 "use client";
 
-import {
-  ChevronRightIcon,
-  CircleCheckIcon,
-  OctagonAlertIcon,
-  TriangleAlertIcon,
-} from "lucide-react";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { OctagonAlertIcon } from "@qeetrix/icons/icons/octagon-alert";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
 import * as React from "react";
 import { type StatusKind, StatusPill } from "@/components/Badge/status-pill";
 import { Feed, type FeedProps, useFeedItemLabel } from "@/components/Feed/feed";

@@ -1,3 +1,4 @@
+import { BellIcon, MailIcon, MessageCircleIcon, MessageSquareTextIcon } from "@qeetrix/icons";
 import {
   Field,
   FieldControl,
@@ -14,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@qeetrix/ui";
-import { BellIcon, MailIcon, MessageCircleIcon, MessageSquareTextIcon } from "lucide-react";
 import { type UserRole, users } from "../data/qeet";
 import { changedProps, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";

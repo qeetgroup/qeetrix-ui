@@ -1,6 +1,5 @@
-import { Badge, Button, SecurityItem, type StatusKind, toast } from "@qeetrix/ui";
 import {
-  FingerprintIcon,
+  FingerprintPatternIcon,
   KeyRoundIcon,
   KeySquareIcon,
   LaptopIcon,
@@ -9,7 +8,8 @@ import {
   MonitorSmartphoneIcon,
   ServerIcon,
   SmartphoneIcon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { Badge, Button, SecurityItem, type StatusKind, toast } from "@qeetrix/ui";
 import { apiKeys, dateFormat, minutesAgo, NOW, type Session, sessions } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
@@ -69,7 +69,7 @@ export const examples: FamilyExamples = {
               description="Passkey synced with iCloud Keychain"
               badge={<Badge variant="secondary">Primary</Badge>}
               status="active"
-              icon={<FingerprintIcon className="size-4" />}
+              icon={<FingerprintPatternIcon className="size-4" />}
               details={[
                 { label: "Added", value: "12 Aug 2026 from Bengaluru, IN" },
                 { label: "Last used", value: sinceNow(minutesAgo(4)) },
@@ -241,7 +241,7 @@ export const examples: FamilyExamples = {
           description={v.description || undefined}
           status={v.status === "none" ? undefined : v.status}
           badge={v.badge ? <Badge variant="secondary">Primary</Badge> : undefined}
-          icon={v.icon ? <FingerprintIcon className="size-4" /> : undefined}
+          icon={v.icon ? <FingerprintPatternIcon className="size-4" /> : undefined}
           details={
             v.details
               ? [
@@ -265,7 +265,7 @@ export const examples: FamilyExamples = {
           description: v.description || undefined,
           status: v.status === "none" ? undefined : v.status,
           badge: v.badge ? expr('<Badge variant="secondary">Primary</Badge>') : undefined,
-          icon: v.icon ? expr('<FingerprintIcon className="size-4" />') : undefined,
+          icon: v.icon ? expr('<FingerprintPatternIcon className="size-4" />') : undefined,
           details: v.details
             ? expr(
                 '[\n  { label: "Added", value: "12 Aug 2026 from Bengaluru, IN" },\n  { label: "Last used", value: "4 minutes ago" },\n]',

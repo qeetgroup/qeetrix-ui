@@ -1,5 +1,5 @@
+import { LockIcon, LockOpenIcon } from "@qeetrix/icons";
 import { Button, Checkbox, cn, FocusTrap, Input, Kbd, Label } from "@qeetrix/ui";
-import { LockIcon, LockOpenIcon } from "lucide-react";
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select } from "../registry/types";

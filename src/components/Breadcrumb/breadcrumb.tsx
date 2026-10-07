@@ -2,7 +2,8 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
+import { EllipsisIcon } from "@qeetrix/icons/icons/ellipsis";
 import type * as React from "react";
 import { breadcrumbMessages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
@@ -104,7 +105,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span"
       className={cn("flex size-5 shrink-0 items-center justify-center [&>svg]:size-4", className)}
       {...props}
     >
-      <MoreHorizontalIcon aria-hidden />
+      <EllipsisIcon aria-hidden />
       <span className="sr-only">{messages.more}</span>
     </span>
   );

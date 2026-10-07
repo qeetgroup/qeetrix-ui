@@ -1,3 +1,4 @@
+import { BellIcon, MailIcon, MessageCircleIcon, MessageSquareTextIcon } from "@qeetrix/icons";
 import {
   Badge,
   Checkbox,
@@ -12,7 +13,6 @@ import {
   FieldLabel,
   Label,
 } from "@qeetrix/ui";
-import { BellIcon, MailIcon, MessageCircleIcon, MessageSquareTextIcon } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { changedProps, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, text } from "../registry/types";

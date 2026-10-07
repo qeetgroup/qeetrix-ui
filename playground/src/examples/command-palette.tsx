@@ -1,4 +1,13 @@
 import {
+  KeyRoundIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  ReceiptIndianRupeeIcon,
+  SearchIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "@qeetrix/icons";
+import {
   Button,
   CommandPalette,
   type CommandPaletteItem,
@@ -9,15 +18,6 @@ import {
   KbdGroup,
   toast,
 } from "@qeetrix/ui";
-import {
-  KeyRoundIcon,
-  LayoutDashboardIcon,
-  LogOutIcon,
-  ReceiptIndianRupeeIcon,
-  SearchIcon,
-  UserPlusIcon,
-  UsersIcon,
-} from "lucide-react";
 import { useState } from "react";
 import { tenants } from "../data/qeet";
 import { changedProps, expr, jsx } from "../lib/code";

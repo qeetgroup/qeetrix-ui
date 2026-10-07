@@ -1,6 +1,6 @@
 "use client";
 
-import { InfoIcon } from "lucide-react";
+import { InfoIcon } from "@qeetrix/icons/icons/info";
 import type { ComponentProps, ReactNode } from "react";
 
 import { buttonVariants } from "@/components/Button/button";

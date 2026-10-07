@@ -1,7 +1,9 @@
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { MinusIcon } from "@qeetrix/icons/icons/minus";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
-
+import { findIcon } from "@/__tests__/icon-match";
 import { Checkbox } from "@/components/Checkbox/checkbox";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
@@ -37,13 +39,15 @@ describe("Checkbox states", () => {
     const box = screen.getByRole("checkbox", { name: "Select all" });
     expect(box).toHaveAttribute("aria-checked", "mixed");
     expect(box).toHaveAttribute("data-indeterminate");
-    expect(container.querySelector(".lucide-minus")).not.toBeNull();
-    expect(container.querySelector(".lucide-check")).toBeNull();
+    expect(findIcon(container, MinusIcon)).not.toBeNull();
+    expect(findIcon(container, CheckIcon)).toBeNull();
   });
 
   it("keeps the check glyph as the checked indicator", () => {
     const { container } = render(<Checkbox aria-label="On" defaultChecked />);
-    expect(container.querySelector("[data-slot=checkbox-indicator] .lucide-check")).not.toBeNull();
+    expect(
+      findIcon(container.querySelector("[data-slot=checkbox-indicator]"), CheckIcon),
+    ).not.toBeNull();
   });
 
   it("forwards aria-invalid", () => {
@@ -123,8 +127,8 @@ describe("Checkbox group parent (integration pass)", () => {
     const parent = screen.getByRole("checkbox", { name: "All scopes" });
     expect(parent).toHaveAttribute("aria-checked", "mixed");
     const indicator = parent.querySelector("[data-slot=checkbox-indicator]");
-    expect(indicator?.querySelector(".lucide-minus")).not.toBeNull();
-    expect(indicator?.querySelector(".lucide-check")).toBeNull();
+    expect(findIcon(indicator, MinusIcon)).not.toBeNull();
+    expect(findIcon(indicator, CheckIcon)).toBeNull();
     expect(container).toBeTruthy();
   });
 });

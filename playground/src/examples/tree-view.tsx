@@ -1,6 +1,5 @@
-import { Button, type TreeNode, TreeView } from "@qeetrix/ui";
 import {
-  Building2Icon,
+  BuildingComplexIcon,
   DatabaseIcon,
   FolderIcon,
   KeyRoundIcon,
@@ -8,7 +7,8 @@ import {
   ShieldCheckIcon,
   UsersIcon,
   WaypointsIcon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { Button, type TreeNode, TreeView } from "@qeetrix/ui";
 import { type ReactNode, useState } from "react";
 import { tenants } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
@@ -37,7 +37,7 @@ function directory({
     {
       id: acme.id,
       label: counted(acme.name, `${acme.users.toLocaleString("en-IN")} users`),
-      icon: icon(Building2Icon),
+      icon: icon(BuildingComplexIcon),
       defaultOpen: open,
       children: [
         {
@@ -321,7 +321,7 @@ export const examples: FamilyExamples = {
           "  {",
           `    id: "${acme.id}",`,
           `    label: "${acme.name}",`,
-          ...(v.icons ? ["    icon: Building2Icon,"] : []),
+          ...(v.icons ? ["    icon: BuildingComplexIcon,"] : []),
           ...(v.defaultOpen ? ["    defaultOpen: true,"] : []),
           "    children: [",
           `      { id: "ou_platform", label: "Platform"${icon("UsersIcon")} },`,

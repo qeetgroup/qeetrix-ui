@@ -1,4 +1,17 @@
 import {
+  AppWindowIcon,
+  DownloadIcon,
+  FingerprintPatternIcon,
+  KeyRoundIcon,
+  LayoutDashboardIcon,
+  ScrollTextIcon,
+  ShieldCheckIcon,
+  UserCheckIcon,
+  UserPlusIcon,
+  UsersIcon,
+  WebhookIcon,
+} from "@qeetrix/icons";
+import {
   type ActiveFilter,
   Avatar,
   AvatarFallback,
@@ -31,19 +44,6 @@ import {
   TimeSince,
   toast,
 } from "@qeetrix/ui";
-import {
-  AppWindowIcon,
-  DownloadIcon,
-  FingerprintIcon,
-  KeyRoundIcon,
-  LayoutDashboardIcon,
-  ScrollTextIcon,
-  ShieldCheckIcon,
-  UserCheckIcon,
-  UserPlusIcon,
-  UsersIcon,
-  WebhookIcon,
-} from "lucide-react";
 import { useMemo, useState } from "react";
 import { dateFormat, type MfaMethod, type User, users } from "../../data/qeet";
 import { matchesAny } from "../../lib/table";
@@ -172,7 +172,7 @@ export function QeetIdUsersPattern() {
         {
           label: "Security",
           items: [
-            { label: "Passkeys", icon: FingerprintIcon },
+            { label: "Passkeys", icon: FingerprintPatternIcon },
             { label: "Audit log", icon: ScrollTextIcon },
           ],
         },

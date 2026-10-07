@@ -1,5 +1,5 @@
+import { FingerprintPatternIcon, MapPinIcon, PlayIcon } from "@qeetrix/icons";
 import { AspectRatio, Button, QRCode } from "@qeetrix/ui";
-import { FingerprintIcon, MapPinIcon, PlayIcon } from "lucide-react";
 import { expr, jsx } from "../lib/code";
 import { definePlayground, type FamilyExamples, num, select } from "../registry/types";
 
@@ -70,7 +70,12 @@ export const examples: FamilyExamples = {
             {[
               { id: "mumbai", city: "Mumbai", region: "ap-south-1", icon: MapPinIcon },
               { id: "hyderabad", city: "Hyderabad", region: "ap-south-2", icon: MapPinIcon },
-              { id: "passkeys", city: "Passkeys", region: "1,642 enrolled", icon: FingerprintIcon },
+              {
+                id: "passkeys",
+                city: "Passkeys",
+                region: "1,642 enrolled",
+                icon: FingerprintPatternIcon,
+              },
               { id: "frankfurt", city: "Frankfurt", region: "eu-central-1", icon: MapPinIcon },
             ].map((tile) => {
               const Icon = tile.icon;

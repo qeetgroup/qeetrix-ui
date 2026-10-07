@@ -1,6 +1,6 @@
 "use client";
 
-import { PencilIcon } from "lucide-react";
+import { PencilIcon } from "@qeetrix/icons/icons/pencil";
 import * as React from "react";
 
 import { Input } from "@/components/Input/input";

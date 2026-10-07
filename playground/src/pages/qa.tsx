@@ -1,5 +1,5 @@
+import { ExternalLinkIcon, FocusIcon } from "@qeetrix/icons";
 import { Button, Toggle, ToggleGroup } from "@qeetrix/ui";
-import { ExternalLinkIcon, FocusIcon } from "lucide-react";
 import { useRef } from "react";
 import {
   defaultFrameEnv,

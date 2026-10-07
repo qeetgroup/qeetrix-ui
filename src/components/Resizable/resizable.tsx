@@ -1,6 +1,6 @@
 "use client";
 
-import { GripVerticalIcon } from "lucide-react";
+import { GripVerticalIcon } from "@qeetrix/icons/icons/grip-vertical";
 import * as React from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 

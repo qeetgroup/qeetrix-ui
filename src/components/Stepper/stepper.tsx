@@ -1,4 +1,4 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import type * as React from "react";
 
 import type { MessagesFor, StepperMessages } from "@/lib/messages";

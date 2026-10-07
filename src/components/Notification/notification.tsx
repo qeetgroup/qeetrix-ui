@@ -1,14 +1,12 @@
 "use client";
 
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { CircleXIcon } from "@qeetrix/icons/icons/circle-x";
+import { InfoIcon } from "@qeetrix/icons/icons/info";
+import { LoaderCircleIcon } from "@qeetrix/icons/icons/loader-circle";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckCircle2Icon,
-  InfoIcon,
-  Loader2Icon,
-  TriangleAlertIcon,
-  XCircleIcon,
-  XIcon,
-} from "lucide-react";
 import type * as React from "react";
 
 import type { MessagesFor } from "@/lib/messages";
@@ -63,10 +61,10 @@ const notificationIconVariants = cva("flex shrink-0 items-center justify-center 
 
 const DEFAULT_ICONS = {
   info: InfoIcon,
-  success: CheckCircle2Icon,
+  success: CircleCheckIcon,
   warning: TriangleAlertIcon,
-  destructive: XCircleIcon,
-  error: XCircleIcon,
+  destructive: CircleXIcon,
+  error: CircleXIcon,
 } as const;
 
 interface NotificationProps
@@ -143,7 +141,7 @@ function Notification({
           aria-hidden
           className={notificationIconVariants({ variant: resolvedVariant, size })}
         >
-          {icon ?? (loading ? <Loader2Icon className="animate-spin" /> : <Icon />)}
+          {icon ?? (loading ? <LoaderCircleIcon className="animate-spin" /> : <Icon />)}
         </span>
       )}
       <div

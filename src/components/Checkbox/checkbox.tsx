@@ -2,7 +2,8 @@
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
 import { CheckboxGroup as CheckboxGroupPrimitive } from "@base-ui/react/checkbox-group";
-import { CheckIcon, MinusIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { MinusIcon } from "@qeetrix/icons/icons/minus";
 
 import { cn } from "@/lib/utils";
 

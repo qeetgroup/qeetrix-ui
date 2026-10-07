@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchIcon } from "lucide-react";
+import { SearchIcon } from "@qeetrix/icons/icons/search";
 import * as React from "react";
 import { Kbd, KbdGroup } from "@/components/Kbd/kbd";
 import { VisuallyHidden } from "@/internal/visually-hidden";

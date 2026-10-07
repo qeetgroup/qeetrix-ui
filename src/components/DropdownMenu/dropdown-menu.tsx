@@ -1,7 +1,8 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 

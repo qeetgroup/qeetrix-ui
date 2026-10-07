@@ -1,4 +1,22 @@
 import {
+  AppWindowIcon,
+  BuildingComplexIcon,
+  ChevronRightIcon,
+  ChevronsUpDownIcon,
+  FingerprintPatternIcon,
+  type IconProps,
+  KeyRoundIcon,
+  LogOutIcon,
+  MonitorSmartphoneIcon,
+  PlusIcon,
+  ScrollTextIcon,
+  SettingsIcon,
+  ShieldCheckIcon,
+  UsersIcon,
+  UsersRoundIcon,
+  WebhookIcon,
+} from "@qeetrix/icons";
+import {
   Avatar,
   AvatarFallback,
   Breadcrumb,
@@ -43,27 +61,10 @@ import {
   StatusPill,
   useSidebar,
 } from "@qeetrix/ui";
-import {
-  AppWindowIcon,
-  Building2Icon,
-  ChevronRightIcon,
-  ChevronsUpDownIcon,
-  FingerprintIcon,
-  KeyRoundIcon,
-  LogOutIcon,
-  type LucideIcon,
-  MonitorSmartphoneIcon,
-  PlusIcon,
-  ScrollTextIcon,
-  SettingsIcon,
-  ShieldCheckIcon,
-  UsersIcon,
-  UsersRoundIcon,
-  WebhookIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { type ComponentType, useState } from "react";
 import { apiKeys, auditRecords, sessions, tenants, users } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
+import { NavIcon } from "../lib/nav-icon";
 import { bool, definePlayground, type FamilyExamples, select } from "../registry/types";
 
 /* ── Sample console: Qeet ID admin for Acme India ─────────────────────────────────────────── */
@@ -74,7 +75,7 @@ const count = new Intl.NumberFormat("en-IN");
 interface NavItem {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: ComponentType<IconProps<"outline">>;
   /** The icon's export name, for the generated snippet. */
   iconName: string;
   badge?: string;
@@ -117,7 +118,12 @@ const navGroups: readonly NavGroup[] = [
         iconName: "MonitorSmartphoneIcon",
         badge: String(sessions.length),
       },
-      { id: "passkeys", label: "Passkeys", icon: FingerprintIcon, iconName: "FingerprintIcon" },
+      {
+        id: "passkeys",
+        label: "Passkeys",
+        icon: FingerprintPatternIcon,
+        iconName: "FingerprintPatternIcon",
+      },
       { id: "audit", label: "Audit log", icon: ScrollTextIcon, iconName: "ScrollTextIcon" },
     ],
   },
@@ -349,7 +355,7 @@ function TenantSwitcher() {
               <DropdownMenuLabel>Switch tenant</DropdownMenuLabel>
               {tenants.slice(0, 4).map((tenant) => (
                 <DropdownMenuItem key={tenant.id}>
-                  <Building2Icon aria-hidden />
+                  <BuildingComplexIcon aria-hidden />
                   {tenant.name}
                 </DropdownMenuItem>
               ))}
@@ -394,7 +400,7 @@ function UserMenu() {
                 Account settings
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <FingerprintIcon aria-hidden />
+                <FingerprintPatternIcon aria-hidden />
                 Manage passkeys
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -430,7 +436,7 @@ function NavItemRow({ item, active, onSelect, size, showBadges }: NavProps & { i
         isActive={active === item.id}
         onClick={() => onSelect(item.id)}
       >
-        <Icon aria-hidden />
+        <NavIcon icon={Icon} active={active === item.id} />
         <span>{item.label}</span>
       </SidebarMenuButton>
       {showBadges && item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
@@ -453,7 +459,8 @@ function NavSubmenu({
   return (
     <Collapsible open={open} onOpenChange={setOpen} render={<SidebarMenuItem />}>
       <CollapsibleTrigger render={<SidebarMenuButton size={size} tooltip={item.label} />}>
-        <Icon aria-hidden />
+        {/* Filled while the current page is one of its children: the section you are in. */}
+        <NavIcon icon={Icon} active={children.some((child) => child.id === active)} />
         <span>{item.label}</span>
         <ChevronRightIcon
           aria-hidden
@@ -658,7 +665,11 @@ function sidebarCode(v: {
               isActive: index === 0,
               tooltip: item.label,
             },
-            [`<${item.iconName} aria-hidden />`, `<span>${item.label}</span>`],
+            [
+              // The active item draws its filled icon (the first item's icon has one).
+              `<${item.iconName} aria-hidden${index === 0 ? ' variant="filled"' : ""} />`,
+              `<span>${item.label}</span>`,
+            ],
           ),
           v.showBadges && item.badge ? jsx("SidebarMenuBadge", {}, item.badge) : "",
         ]),

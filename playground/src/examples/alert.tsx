@@ -1,4 +1,15 @@
 import {
+  CircleAlertIcon,
+  CircleCheckIcon,
+  InfoIcon,
+  KeyRoundIcon,
+  RefreshCwIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  TriangleAlertIcon,
+  WrenchIcon,
+} from "@qeetrix/icons";
+import {
   Alert,
   AlertAction,
   AlertDescription,
@@ -7,17 +18,6 @@ import {
   Button,
   Callout,
 } from "@qeetrix/ui";
-import {
-  AlertTriangleIcon,
-  CheckCircle2Icon,
-  CircleAlertIcon,
-  InfoIcon,
-  KeyRoundIcon,
-  RefreshCwIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-  WrenchIcon,
-} from "lucide-react";
 import { type ComponentType, useState } from "react";
 import { formatInr } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
@@ -35,8 +35,8 @@ const alertIcons: Record<
 > = {
   default: { icon: KeyRoundIcon, name: "KeyRoundIcon" },
   info: { icon: InfoIcon, name: "InfoIcon" },
-  success: { icon: CheckCircle2Icon, name: "CheckCircle2Icon" },
-  warning: { icon: AlertTriangleIcon, name: "AlertTriangleIcon" },
+  success: { icon: CircleCheckIcon, name: "CircleCheckIcon" },
+  warning: { icon: TriangleAlertIcon, name: "TriangleAlertIcon" },
   destructive: { icon: CircleAlertIcon, name: "CircleAlertIcon" },
   danger: { icon: CircleAlertIcon, name: "CircleAlertIcon" },
 };
@@ -206,7 +206,7 @@ export const examples: FamilyExamples = {
       {
         name: "Variants",
         description:
-          "Every tone side by side. Alert has no built-in icon — pass a Lucide icon as the first child.",
+          "Every tone side by side. Alert has no built-in icon — pass an @qeetrix/icons icon as the first child.",
         render: () => (
           <div className="flex w-full max-w-2xl flex-col gap-3">
             <Alert>
@@ -226,14 +226,14 @@ export const examples: FamilyExamples = {
               </AlertDescription>
             </Alert>
             <Alert variant="success">
-              <CheckCircle2Icon aria-hidden />
+              <CircleCheckIcon aria-hidden />
               <AlertTitle>Settlement credited</AlertTitle>
               <AlertDescription>
                 {formatInr(1386500)} for QP-INV-2026-00411 reached HDFC Bank ••4821 via NACH.
               </AlertDescription>
             </Alert>
             <Alert variant="warning">
-              <AlertTriangleIcon aria-hidden />
+              <TriangleAlertIcon aria-hidden />
               <AlertTitle>Settlement delayed — HDFC NEFT window</AlertTitle>
               <AlertDescription>
                 Today’s payout of {formatInr(482310.5)} will be credited after the 14:00 IST NEFT
@@ -315,7 +315,7 @@ export const examples: FamilyExamples = {
         render: () => (
           <div className="w-full max-w-2xl">
             <Alert variant="success" role="status">
-              <CheckCircle2Icon aria-hidden />
+              <CircleCheckIcon aria-hidden />
               <AlertTitle>Invoice QP-INV-2026-00410 marked as paid.</AlertTitle>
             </Alert>
           </div>

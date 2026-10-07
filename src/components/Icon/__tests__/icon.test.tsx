@@ -1,5 +1,5 @@
+import { SearchIcon } from "@qeetrix/icons/icons/search";
 import { render, screen } from "@testing-library/react";
-import { SearchIcon } from "lucide-react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 

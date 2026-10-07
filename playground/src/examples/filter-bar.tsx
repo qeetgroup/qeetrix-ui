@@ -1,3 +1,4 @@
+import { DownloadIcon } from "@qeetrix/icons";
 import {
   type ActiveFilter,
   Badge,
@@ -7,7 +8,6 @@ import {
   type FilterField,
   toast,
 } from "@qeetrix/ui";
-import { DownloadIcon } from "lucide-react";
 import { useState } from "react";
 import { type LogEvent, logEvents, type User, users } from "../data/qeet";
 import { expr, jsx } from "../lib/code";

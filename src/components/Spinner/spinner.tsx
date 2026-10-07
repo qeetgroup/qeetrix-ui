@@ -1,5 +1,5 @@
+import { LoaderCircleIcon } from "@qeetrix/icons/icons/loader-circle";
 import { cva, type VariantProps } from "class-variance-authority";
-import { LoaderCircleIcon } from "lucide-react";
 import type * as React from "react";
 
 import type { MessagesFor } from "@/lib/messages";

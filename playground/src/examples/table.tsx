@@ -1,3 +1,4 @@
+import { KeyRoundIcon } from "@qeetrix/icons";
 import {
   Checkbox,
   EmptyState,
@@ -12,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@qeetrix/ui";
-import { KeyRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { formatInr, type LogLevel, logEvents, type Session, sessions } from "../data/qeet";
 import { jsx } from "../lib/code";

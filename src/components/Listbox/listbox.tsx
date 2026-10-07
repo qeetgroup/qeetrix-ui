@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import * as React from "react";
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { fieldTrigger } from "@/internal/field-styles";

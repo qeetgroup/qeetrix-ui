@@ -1,13 +1,11 @@
 "use client";
 
-import {
-  BellIcon,
-  CheckCircle2Icon,
-  InfoIcon,
-  TriangleAlertIcon,
-  XCircleIcon,
-  XIcon,
-} from "lucide-react";
+import { BellIcon } from "@qeetrix/icons/icons/bell";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { CircleXIcon } from "@qeetrix/icons/icons/circle-x";
+import { InfoIcon } from "@qeetrix/icons/icons/info";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 import { Badge } from "@/components/Badge/badge";
 import { Button } from "@/components/Button/button";
@@ -57,9 +55,9 @@ interface NotificationCenterProps {
 
 const ICONS = {
   info: InfoIcon,
-  success: CheckCircle2Icon,
+  success: CircleCheckIcon,
   warning: TriangleAlertIcon,
-  error: XCircleIcon,
+  error: CircleXIcon,
 } as const;
 const ACCENT = {
   info: "text-info-text",

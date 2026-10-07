@@ -1,5 +1,7 @@
+import { LockIcon } from "@qeetrix/icons/icons/lock";
+import { SearchXIcon } from "@qeetrix/icons/icons/search-x";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
 import { cva, type VariantProps } from "class-variance-authority";
-import { LockIcon, SearchXIcon, TriangleAlertIcon } from "lucide-react";
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -17,7 +19,7 @@ import { cn } from "@/lib/utils";
  * - `error` — loading failed. The destructive tint on the icon tile only; the copy stays neutral
  *   so a failure reads as recoverable rather than alarming.
  *
- * No illustrations: a 20px lucide glyph on a tinted tile, so the component works in a table cell,
+ * No illustrations: a 20px icon on a tinted tile, so the component works in a table cell,
  * a side panel or a full page without an asset pipeline.
  */
 const emptyStateVariants = cva("flex flex-col items-center justify-center text-center", {

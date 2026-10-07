@@ -1,7 +1,8 @@
+import { CheckIcon } from "@qeetrix/icons/icons/check";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
-
+import { findIcon } from "@/__tests__/icon-match";
 import { Listbox } from "@/components/Listbox/listbox";
 
 const a11y = (c: Element) => axe(c, { rules: { "color-contrast": { enabled: false } } });
@@ -325,8 +326,8 @@ describe("Listbox semantics and disabled state", () => {
     render(<Listbox options={OPTIONS} aria-label="Colour" defaultValue="g" />);
     const green = screen.getByRole("option", { name: "Green" });
     expect(green).toHaveAttribute("aria-selected", "true");
-    expect(green.querySelector(".lucide-check")).not.toBeNull();
-    expect(screen.getByRole("option", { name: "Red" }).querySelector(".lucide-check")).toBeNull();
+    expect(findIcon(green, CheckIcon)).not.toBeNull();
+    expect(findIcon(screen.getByRole("option", { name: "Red" }), CheckIcon)).toBeNull();
   });
 
   it("forwards aria-invalid", () => {

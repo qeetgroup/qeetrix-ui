@@ -1,5 +1,5 @@
+import { SearchIcon } from "@qeetrix/icons";
 import { Button, Kbd, KbdGroup } from "@qeetrix/ui";
-import { SearchIcon } from "lucide-react";
 import { jsx } from "../lib/code";
 import { definePlayground, type FamilyExamples, select, text } from "../registry/types";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
 import * as React from "react";
 
 import type { DisclosureMessages, JsonTreeMessages, MessagesFor } from "@/lib/messages";

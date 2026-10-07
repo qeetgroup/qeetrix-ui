@@ -1,3 +1,4 @@
+import { BanknoteIcon, CreditCardIcon, SmartphoneIcon } from "@qeetrix/icons";
 import {
   Badge,
   Field,
@@ -14,7 +15,6 @@ import {
   RadioCardGroup,
   RadioGroup,
 } from "@qeetrix/ui";
-import { BanknoteIcon, CreditCardIcon, SmartphoneIcon } from "lucide-react";
 import { useId, useState } from "react";
 import { formatInr } from "../data/qeet";
 import { changedProps, jsx } from "../lib/code";

@@ -144,16 +144,14 @@ Full table: [docs/architecture/dependency-rules.md](./docs/architecture/dependen
 ```bash
 bun run build:tokens               # src/styles/tokens.{css,raw.css,json}
 bun run build:manifest             # component-manifest.json
-bun run build:logos                # src/brand/logos/*.tsx from the raw SVGs
 bun run check:generated            # …and prove the committed output matches the generators
 ```
 
-The manifest and the logo components are **tracked** generated files, so they have to be
+The manifest is a **tracked** generated file, so it has to be
 reproducible: CI regenerates them and fails on any diff. Two consequences worth knowing:
 
 - The generators emit exactly what Biome accepts, directives included. If you find yourself
-  hand-fixing generated output, fix the template instead — that drift is how the logo components
-  came to differ from the script that writes them.
+  hand-fixing generated output, fix the template instead.
 - The manifest carries no wall-clock stamp. `generated` is the date the catalog last *changed*,
   and story coverage is carried forward from the committed manifest when the sibling
   `qeetrix-story` repo is not checked out, so your topology cannot rewrite 145 entries.

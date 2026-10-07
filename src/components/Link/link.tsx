@@ -2,8 +2,8 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ArrowUpRightIcon } from "@qeetrix/icons/icons/arrow-up-right";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ArrowUpRightIcon } from "lucide-react";
 import type * as React from "react";
 
 import { linkMessages } from "@/lib/messages";

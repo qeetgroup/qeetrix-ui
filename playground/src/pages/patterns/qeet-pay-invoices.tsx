@@ -1,4 +1,16 @@
 import {
+  BanknoteIcon,
+  CalendarClockIcon,
+  FileTextIcon,
+  LandmarkIcon,
+  LayoutDashboardIcon,
+  PlusIcon,
+  ReceiptIndianRupeeIcon,
+  RepeatIcon,
+  UsersIcon,
+  WalletIcon,
+} from "@qeetrix/icons";
+import {
   AreaChart,
   Banner,
   Button,
@@ -21,18 +33,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@qeetrix/ui";
-import {
-  BanknoteIcon,
-  CalendarClockIcon,
-  FileTextIcon,
-  LandmarkIcon,
-  LayoutDashboardIcon,
-  PlusIcon,
-  ReceiptIndianRupeeIcon,
-  RepeatIcon,
-  UsersIcon,
-  WalletIcon,
-} from "lucide-react";
 import {
   dateFormat,
   formatInr,

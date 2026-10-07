@@ -2,6 +2,39 @@
 
 ## Unreleased
 
+### Minor Changes
+
+- **Icons come from `@qeetrix/icons`.** Every component draws its icons from
+  [`@qeetrix/icons`](https://www.npmjs.com/package/@qeetrix/icons) (Lucide 1.52 artwork, with
+  filled and sharp drawings) instead of `lucide-react`, which is no longer a dependency. The
+  library imports each icon from its own path (`@qeetrix/icons/icons/<id>`), so apps and their
+  test runners load only the icons it uses.
+- **Filled drawings where a state is on.** A pinned DataTable column's pin, the FilterBar bookmark
+  while a saved view is applied, AccessReview's recorded outcome, and the success, warning and
+  error marks of a Toast now use their filled drawing. Actions, chevrons and glyphs inside
+  controls stay outline; Rating keeps its outline star with a gold fill and a darker edge, for
+  contrast.
+- **`Icon` takes `shape` and `variant`.** `<Icon icon={StarIcon} variant="filled" shape="sharp" />`.
+  `variant` is typed to the drawings the icon has, so `variant="filled"` on an outline-only icon is
+  a type error. Both are passed to the icon only when given, so Qeet brand icons are unaffected.
+- **`QeetLogo` comes from `@qeetrix/icons`.** `QeetLogo`, `QeetLogoMark`, `QeetLogoOnLight` and
+  `QeetLogoOnDark` keep their props (`size`, `title`, and `variant` on `QeetLogo`) and artwork,
+  which was already identical, but render the mark through `@qeetrix/icons` as an `<img>` instead
+  of inline SVG. The generator `scripts/build/logos.mjs`, its raw SVG copies, and the
+  `build:logos` script are gone.
+
+**Check when upgrading:**
+
+- Rendered icons no longer carry Lucide's `lucide` and `lucide-*` classes. CSS or tests that
+  select them (`.lucide-check`) need another hook; this repository's tests compare the drawing
+  instead (`src/__tests__/icon-match.ts`).
+- `QeetLogoVariantProps` now extends `<img>` props rather than `<svg>` props, and a `ref` on a
+  logo is an `HTMLImageElement`.
+- Apps that imported `lucide-react` through `@qeetrix/ui` without declaring it must add it, or
+  move to `@qeetrix/icons`. Every Qeet app in this workspace already declares its own.
+
+## 2.1.1
+
 ### Patch Changes
 
 - **`@qeetrix/ui/styles.css` includes the base layer again.** Since 2.0.0 the base layer lived in

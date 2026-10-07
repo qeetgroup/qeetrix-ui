@@ -1,3 +1,4 @@
+import { DotIcon, HouseIcon, SlashIcon } from "@qeetrix/icons";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -11,7 +12,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@qeetrix/ui";
-import { DotIcon, HomeIcon, SlashIcon } from "lucide-react";
 import { Fragment, type MouseEvent, type ReactNode } from "react";
 import { invoices, tenants } from "../data/qeet";
 import { jsx } from "../lib/code";
@@ -71,7 +71,7 @@ function ConsoleBreadcrumb({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink href={root.href} aria-label={homeIcon ? root.label : undefined}>
-              {homeIcon ? <HomeIcon className="size-4" aria-hidden /> : root.label}
+              {homeIcon ? <HouseIcon className="size-4" aria-hidden /> : root.label}
             </BreadcrumbLink>
           </BreadcrumbItem>
           {sep}
@@ -201,7 +201,7 @@ export const examples: FamilyExamples = {
         const sep = separatorCode[v.separator];
         const item = (inner: string) => jsx("BreadcrumbItem", {}, inner);
         const root = v.homeIcon
-          ? jsx("BreadcrumbLink", { href: "/console", "aria-label": "Qeet ID" }, "<HomeIcon />")
+          ? jsx("BreadcrumbLink", { href: "/console", "aria-label": "Qeet ID" }, "<HouseIcon />")
           : jsx("BreadcrumbLink", { href: "/console" }, "Qeet ID");
         const middle = v.collapsed
           ? [

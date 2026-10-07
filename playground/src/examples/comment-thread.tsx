@@ -1,3 +1,4 @@
+import { MessagesSquareIcon } from "@qeetrix/icons";
 import {
   type CommentAuthor,
   CommentMention,
@@ -5,7 +6,6 @@ import {
   CommentThread,
   type Reaction,
 } from "@qeetrix/ui";
-import { MessagesSquareIcon } from "lucide-react";
 import { useState } from "react";
 import { daysAgo } from "../data/qeet";
 import { expr, jsx } from "../lib/code";

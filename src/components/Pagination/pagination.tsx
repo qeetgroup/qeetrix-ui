@@ -1,6 +1,8 @@
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon } from "lucide-react";
+import { ChevronLeftIcon } from "@qeetrix/icons/icons/chevron-left";
+import { ChevronRightIcon } from "@qeetrix/icons/icons/chevron-right";
+import { ChevronsLeftIcon } from "@qeetrix/icons/icons/chevrons-left";
 
 import { Button } from "@/components/Button/button";
 import { Spinner } from "@/components/Spinner/spinner";

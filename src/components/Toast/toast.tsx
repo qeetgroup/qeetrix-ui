@@ -1,14 +1,12 @@
 "use client";
 
 import { Toast as ToastPrimitive } from "@base-ui/react/toast";
-import {
-  CheckCircle2Icon,
-  InfoIcon,
-  Loader2Icon,
-  TriangleAlertIcon,
-  XCircleIcon,
-  XIcon,
-} from "lucide-react";
+import { CircleCheckIcon } from "@qeetrix/icons/icons/circle-check";
+import { CircleXIcon } from "@qeetrix/icons/icons/circle-x";
+import { InfoIcon } from "@qeetrix/icons/icons/info";
+import { LoaderCircleIcon } from "@qeetrix/icons/icons/loader-circle";
+import { TriangleAlertIcon } from "@qeetrix/icons/icons/triangle-alert";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 
 import { toastMessages } from "@/lib/messages";
@@ -75,12 +73,18 @@ const toast = Object.assign(
 /** `loading` is the type `toast.promise` gives its pending toast. */
 type RenderedType = ToastType | "loading";
 
+/**
+ * Outcomes draw their filled status mark: on a neutral surface the icon is the toast's status cue.
+ * `info` stays the neutral outline message, and the loading spinner has no filled drawing.
+ */
+const FILLED_TYPES: ReadonlySet<RenderedType> = new Set(["success", "warning", "error"]);
+
 const TYPE_ICON: Record<RenderedType, React.ElementType> = {
   info: InfoIcon,
-  success: CheckCircle2Icon,
+  success: CircleCheckIcon,
   warning: TriangleAlertIcon,
-  error: XCircleIcon,
-  loading: Loader2Icon,
+  error: CircleXIcon,
+  loading: LoaderCircleIcon,
 };
 
 /** The status hue sits on the icon only; the surface stays a neutral overlay. */
@@ -147,6 +151,7 @@ function ToastList({ direction }: { direction: "ltr" | "rtl" }) {
           >
             <Icon
               aria-hidden
+              variant={FILLED_TYPES.has(type) ? "filled" : undefined}
               data-slot="toast-icon"
               className={cn("mt-0.5 size-4 shrink-0", TYPE_TONE[type] ?? "text-muted-foreground")}
             />

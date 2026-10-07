@@ -1,5 +1,7 @@
+import { ArrowDownRightIcon } from "@qeetrix/icons/icons/arrow-down-right";
+import { ArrowUpRightIcon } from "@qeetrix/icons/icons/arrow-up-right";
+import { MinusIcon } from "@qeetrix/icons/icons/minus";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ArrowDownRightIcon, ArrowUpRightIcon, MinusIcon } from "lucide-react";
 import * as React from "react";
 
 import { Skeleton } from "@/components/Spinner/skeleton";

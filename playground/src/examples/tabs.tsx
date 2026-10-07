@@ -1,4 +1,12 @@
 import {
+  BellIcon,
+  FileClockIcon,
+  MonitorSmartphoneIcon,
+  ReceiptIcon,
+  ShieldIcon,
+  UserIcon,
+} from "@qeetrix/icons";
+import {
   Badge,
   DescriptionDetails,
   DescriptionList,
@@ -8,14 +16,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@qeetrix/ui";
-import {
-  BellIcon,
-  FileClockIcon,
-  MonitorSmartphoneIcon,
-  ReceiptIcon,
-  ShieldIcon,
-  UserIcon,
-} from "lucide-react";
 import { auditRecords, dateFormat, NOW, sessions, users } from "../data/qeet";
 import { changedProps, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select } from "../registry/types";

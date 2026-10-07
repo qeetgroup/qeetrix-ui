@@ -1,5 +1,5 @@
+import { ArrowRightIcon } from "@qeetrix/icons";
 import { Link } from "@qeetrix/ui";
-import { ArrowRightIcon } from "lucide-react";
 import type { MouseEvent, ReactNode } from "react";
 import { changedProps, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";

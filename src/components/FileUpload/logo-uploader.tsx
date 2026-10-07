@@ -1,6 +1,9 @@
 "use client";
 
-import { CircleAlertIcon, ImageIcon, Trash2Icon, UploadIcon } from "lucide-react";
+import { CircleAlertIcon } from "@qeetrix/icons/icons/circle-alert";
+import { ImageIcon } from "@qeetrix/icons/icons/image";
+import { TrashIcon } from "@qeetrix/icons/icons/trash";
+import { UploadIcon } from "@qeetrix/icons/icons/upload";
 import * as React from "react";
 
 import { Button } from "@/components/Button/button";
@@ -301,7 +304,7 @@ function LogoUploader({
                 disabled={disabled}
                 onClick={clearLogo}
               >
-                <Trash2Icon aria-hidden /> {messages.remove}
+                <TrashIcon aria-hidden /> {messages.remove}
               </Button>
             </div>
           </div>

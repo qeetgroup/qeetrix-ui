@@ -1,14 +1,15 @@
-import { Sparkline, Stat } from "@qeetrix/ui";
 import {
+  type IconProps,
   IndianRupeeIcon,
   KeyRoundIcon,
-  type LucideIcon,
   ReceiptTextIcon,
   ServerCrashIcon,
   TimerIcon,
   UsersIcon,
   WebhookIcon,
-} from "lucide-react";
+} from "@qeetrix/icons";
+import { Sparkline, Stat } from "@qeetrix/ui";
+import type { ComponentType } from "react";
 import { formatInrCompact, invoices, invoiceTotals, monthlyRevenue, tenants } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
@@ -32,7 +33,7 @@ const kpis: {
   trend: Trend;
   tone?: Tone;
   hint: string;
-  icon: LucideIcon;
+  icon: ComponentType<IconProps<"outline">>;
 }[] = [
   {
     label: "Collections (Sep)",

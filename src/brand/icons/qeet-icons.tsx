@@ -1,7 +1,7 @@
 /**
- * Custom Qeet icons for concepts Lucide doesn't cover (Foundations doc §12.3).
- * 24×24 viewBox, 1.5px stroke, currentColor, round caps — matches the Lucide
- * rhythm so these sit beside lucide-react icons without looking out of place.
+ * Custom Qeet icons for concepts @qeetrix/icons doesn't cover (Foundations doc §12.3).
+ * 24×24 viewBox, 1.5px stroke, currentColor, round caps — matches the Lucide-based
+ * rhythm so these sit beside @qeetrix/icons without looking out of place.
  */
 import type { ReactNode, SVGProps } from "react";
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { MinusIcon } from "@qeetrix/icons/icons/minus";
+import { PlusIcon } from "@qeetrix/icons/icons/plus";
 
 import { useFieldControl } from "@/components/Input/field";
 import { fieldGroupInput, fieldGroupSurface } from "@/internal/field-styles";

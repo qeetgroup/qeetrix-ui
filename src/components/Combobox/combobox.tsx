@@ -1,7 +1,10 @@
 "use client";
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
-import { CheckIcon, ChevronDownIcon, LoaderCircleIcon, XIcon } from "lucide-react";
+import { CheckIcon } from "@qeetrix/icons/icons/check";
+import { ChevronDownIcon } from "@qeetrix/icons/icons/chevron-down";
+import { LoaderCircleIcon } from "@qeetrix/icons/icons/loader-circle";
+import { XIcon } from "@qeetrix/icons/icons/x";
 import * as React from "react";
 
 import { useFieldControl } from "@/components/Input/field";
