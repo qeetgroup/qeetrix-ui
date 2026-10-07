@@ -62,9 +62,8 @@ This is why the manifest records `rtl` as three-valued rather than boolean:
 | `unknown` | uses physical utilities and has not been reviewed |
 | `not-applicable` | no directional styling at all |
 
-`unknown` is a review queue, not a defect list. 49 components are `supported`, 85
-`not-applicable`, and 11 are `unknown` — `bun run check:contract --verbose` names them. `table`
-is a genuine finding in that set: it uses `text-left` where `text-start` belongs.
+`unknown` is a review queue, not a defect list. Today 75 components are `supported` and 62
+`not-applicable`; none is `unknown`. The manifest's `capabilities.rtl` lists each one.
 
 ---
 
@@ -74,8 +73,9 @@ The token layer has no `margin.left.4` and never will:
 
 - **spacing and sizing tokens are scalars.** `space.l` is 16px on whichever axis a component
   applies it to.
-- **`check:tokens` rejects a physical direction in a token path.** `left`, `right`, `ltr-only`
-  and `rtl-only` fail the naming rule.
+- **The token rules reject a physical direction in a token path.** `left`, `right`, `ltr-only`
+  and `rtl-only` fail the naming rule in `scripts/lib/tokens.mjs`, which
+  `token-governance.test.ts` runs.
 
 Where a token has to express an axis, it uses the logical vocabulary — `start`, `end`, `inline`,
 `block`.
@@ -215,13 +215,10 @@ from their own `messages` prop only — the provider does not reach them.
 
 ## Checking your work
 
-```bash
-bun run check:contract --verbose   # lists every component whose rtl support is unreviewed
-bun run check:a11y --verbose       # the rtl audit dimension, and whether a test backs it
-```
-
-An `rtl` dimension recorded as `pass` needs a test that asserts *direction* — `check:a11y` looks
-for `DirectionProvider` or `dir="rtl"` in the test body and refuses an unbacked claim.
+`capabilities.rtl` and the `rtl` audit dimension are in `component-manifest.json` after
+`bun run build:manifest`. An `rtl` dimension recorded as `pass` needs a test that asserts
+*direction* — an RTL render plus an outcome direction decides — and review checks that it exists
+(the `check:a11y` gate that refused an unbacked claim was removed in 01dce7a).
 
 **jsdom does no layout.** Mirroring cannot be observed in a unit test: `getBoundingClientRect` is
 all zeros and no CSS is applied. What a unit test can pin is what the component *emits* — the

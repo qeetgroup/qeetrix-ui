@@ -15,7 +15,7 @@
  *
  * Everything here is a pure function over plain data, so the rules are unit-testable against
  * synthetic graphs rather than only against a repository that currently happens to be clean.
- * scripts/check/tokens.mjs is the CLI over it.
+ * src/__tests__/token-governance.test.ts runs them on every `bun run test`.
  *
  * References come in two shapes and both are followed:
  *   {token.path}            — a DTCG alias

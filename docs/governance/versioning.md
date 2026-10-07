@@ -98,7 +98,8 @@ A design system that treated every visual change as breaking could never improve
 It becomes breaking when the *contract* changes, not the pixels:
 
 - a documented dimension changes (a control's height, which consumers align other things to)
-- a WCAG-AA contrast pair regresses — held by `bun run check:contrast`, in both themes
+- a WCAG-AA contrast pair regresses — held by `token-governance.test.ts` (`bun run test`), in both
+  themes
 - a `data-slot` attribute is renamed or removed. `data-slot` is a public styling and testing
   hook; treat it like a prop name.
 - a component changes its rendered element (`<div>` → `<span>`), which can break a consumer's
@@ -126,20 +127,18 @@ This is the entire practical purpose of the status field. Publishing a component
 A public API change is not just a version number:
 
 1. **Make the change.**
-2. **Re-snapshot the surface** — `bun run check:exports -- --update`. This lands
-   [`src/__tests__/public-api.json`](../../src/__tests__/public-api.json) and
-   [`src/__tests__/public-props.json`](../../src/__tests__/public-props.json) in the same diff, so
-   every added or removed symbol is a reviewable line — and so is every *signature*: the
-   snapshots record each export's kind and each declared prop's optionality, declared type,
-   generics and base types. A prop that becomes required, a union that narrows and a props type
-   that stops extending its DOM attributes all fail the check, which is the point: each is a
-   breaking change that a list of names cannot see.
+2. **Read the surface diff.** Every added or removed symbol is a line in a family `index.ts`,
+   `src/index.ts` or the `exports` map. The export and signature locks that used to make this
+   mechanical (`public-api.json`, `public-props.json`) were removed in 01dce7a, so check by hand
+   what they caught: a prop that becomes required, a union that narrows and a props type that
+   stops extending its DOM attributes are all breaking, and a list of names cannot show them.
 3. **Update the registry** if a status, accessibility contract or deprecation changed, and
    regenerate the manifest (`bun run build:manifest`).
 4. **Set the level and write the changelog.** `version.yml` bumps the patch on your PR; for a
    minor or major, set `version` in `package.json` yourself. Add the matching section to
    [CHANGELOG.md](../../CHANGELOG.md), written for the person doing the upgrade.
-5. **`bun run verify`.** If it passes, CI passes.
+5. **`bun run build && bun run typecheck && bun run lint && bun run test`** — exactly what CI
+   runs.
 
 Merging the PR to `main` publishes that version, then tags it — after build, typecheck, lint and
 test pass in the protected release workflow. See [release.md](./release.md) for the mechanics,
@@ -153,10 +152,11 @@ rollback, and the publishing setup.
 [`scripts/build/subpath-shims.mjs`](../../scripts/build/subpath-shims.mjs). Legacy specifiers
 cost a generated re-export file each; breaking a consumer's build costs a great deal more.
 
-Two path *classes* are withdrawn in the next **major**, both of them accidents of a wildcard
-export rather than decisions: `@qeetrix/ui/components/<category>/<slug>` (use the flat
-`@qeetrix/ui/components/<slug>`, which is what the documentation always said) and
-`@qeetrix/ui/hooks/use-controllable-state` (an internal hook, no replacement). Everything else
-that a wildcard used to expose — the four public hooks, the four `lib` helpers, the providers and
-the blocks — is now an explicit entry in the export map and keeps working.
+Two path *classes* were accidents of a wildcard export rather than decisions, and were slated for
+withdrawal in a major. `@qeetrix/ui/hooks/use-controllable-state` is withdrawn: the subpath is
+not exported, and the hook is on the root barrel since 3.0. `@qeetrix/ui/components/<Family>/<slug>`
+still resolves through the `components/*` wildcard; use the flat `@qeetrix/ui/components/<slug>`,
+which is what the documentation always said. Everything else that a wildcard used to expose —
+the four public hooks, the four `lib` helpers and the providers — is an explicit entry in the
+export map and keeps working.
 Keeping them is the cheap side of that trade.

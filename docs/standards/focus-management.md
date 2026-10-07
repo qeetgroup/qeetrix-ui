@@ -126,8 +126,8 @@ Rules:
   essential. Base UI and the Qeetrix classes use `focus-visible:` throughout.
 - **Hover styling is not focus styling.** A state that only appears on hover does not exist for a
   keyboard user.
-- The ring survives forced-colors mode as a `Highlight` outline at the token's width — asserted in
-  [`environment.test.ts`](../../src/__tests__/accessibility/environment.test.ts).
+- The ring survives forced-colors mode as a `Highlight` outline at the token's width — declared in
+  the host-global section of `styles.css` (the test that asserted it was removed in 01dce7a).
 
 ### Not obscured
 
@@ -141,14 +141,8 @@ manage their own scrolling.
 
 ## Testing focus
 
-Helpers in [`src/__tests__/accessibility/index.ts`](../../src/__tests__/accessibility/index.ts):
-
-```tsx
-expectFocus(element);                 // holds focus now
-await expectFocusRestored(trigger);   // came back, after the close animation
-await tabThrough(6);                  // the element focused after each Tab
-await pressEscape();
-```
+Use Testing Library and jest-dom directly (the house helpers went with the audit suites in
+01dce7a): `expect(el).toHaveFocus()`, `userEvent.tab()`, `userEvent.keyboard("{Escape}")`.
 
 A complete overlay focus test is four steps: **open · interact · close · restore.**
 
@@ -157,9 +151,9 @@ const trigger = screen.getByRole("button", { name: "Open dialog" });
 await userEvent.click(trigger);
 const dialog = await screen.findByRole("dialog");
 await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
-await pressEscape();
+await userEvent.keyboard("{Escape}");
 await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-await expectFocusRestored(trigger);
+await waitFor(() => expect(trigger).toHaveFocus());
 ```
 
 ### What jsdom cannot test

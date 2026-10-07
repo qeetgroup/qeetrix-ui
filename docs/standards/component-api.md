@@ -5,8 +5,9 @@ component can predict the next one — which is most of what a design system is 
 
 These are descriptive as well as prescriptive: each one is already the majority pattern in the
 library. Where a component departs, that is a documented exception, not a precedent — recorded in
-[`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts) and enforced by
-`bun run check:contract`.
+[`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts). TypeScript
+checks the registry's vocabularies; the rules beyond the types are held in review since the
+`check:contract` gate was removed in 01dce7a.
 
 New component? Work through [component-checklist.md](./component-checklist.md).
 
@@ -68,8 +69,8 @@ size      how large or dense it is            size="sm"
 state     what it is currently doing          disabled  loading  selected
 ```
 
-These are not interchangeable, and the validator enforces the distinction: a variant named after
-an interaction state fails `check:contract`.
+These are not interchangeable: a variant named after an interaction state is not allowed (the
+`check:contract` gate enforced that until 01dce7a; review does now).
 
 ```tsx
 <Button variant="disabled" />   // wrong — that is a state
@@ -131,8 +132,7 @@ override density.
   `SegmentedControl` and friends do not participate in density, so their scale is plainly
   `sm | md | lg`.
 
-A component may not declare **both**; `check:contract` rejects it, because a consumer would have
-to guess. (`Spinner` is the one component using `default` without density — it predates the
+A component may not declare **both**, because a consumer would have to guess. (`Spinner` is the one component using `default` without density — it predates the
 distinction and is left alone rather than renamed.)
 
 Layout components legitimately size on a different axis; they declare
@@ -194,8 +194,8 @@ Controlled state is part of the contract, so it is declared and validated:
 tabs: { api: { controlled: [{ value: "value", default: "defaultValue", change: "onValueChange" }] } },
 ```
 
-`check:contract` verifies the shape — `x` / `default<X>` / `on<X>Change` — so a component cannot
-ship `open` seeded by `initialOpen`.
+The shape is always `x` / `default<X>` / `on<X>Change`, so a component cannot ship `open` seeded
+by `initialOpen`. (Held in review since `check:contract`, which verified it, was removed.)
 
 ---
 
@@ -383,10 +383,9 @@ Export the props type and nothing else. Internal context values, discriminated u
 implementation and helper generics stay unexported; once a type is public, changing it is a
 semver event.
 
-The declared props of every exported `*Props` type are snapshotted in
-[`src/__tests__/public-props.json`](../../src/__tests__/public-props.json), so a removed or
-renamed prop fails `check:exports` — the export list alone cannot see that, since `ButtonProps`
-is still exported either way.
+A removed or renamed prop is a breaking change even though `ButtonProps` is still exported either
+way. The signature snapshot that caught that (`public-props.json`, `check:exports`) was removed in
+01dce7a, so review the props diff.
 
 ---
 
@@ -444,16 +443,16 @@ See [tokens.md](./tokens.md) § Component tokens.
 - Where a label is required and cannot be inferred, **enforce it in the type**. `IconButton`
   requires a non-optional `"aria-label": string`; copy that approach rather than documenting a
   requirement nobody reads.
-- Every component ships an `axe` test in its category's `__tests__/`. This is checked by
-  `bun run check:a11y`, at 137/137.
+- Every component ships an `axe` test in its family's `__tests__/` — 137/137 today, run by
+  `bun run test`.
 
 ---
 
 ## Styling
 
-- Every colour, shadow, radius, duration and z-index comes from a token. Raw values fail
-  `bun run check:token-usage`; documented exceptions live in
-  `scripts/config/raw-value-exemptions.json` with a reason.
+- Every colour, shadow, radius, duration and z-index comes from a token. A raw value is a review
+  finding (the token-usage scan was removed in 01dce7a); colours that are domain data say why in a
+  comment.
 - Variants are declared with `cva` and merged with `cn()`. The variant surface is read
   statically into the manifest, so `cva` is not merely a convention — it is what makes the API
   introspectable.

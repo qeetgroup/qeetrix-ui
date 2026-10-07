@@ -19,7 +19,7 @@ Three inputs, and nothing else:
 
 | Input | Provides |
 |:--|:--|
-| the filesystem + [`scripts/config/category-map.json`](../../scripts/config/category-map.json) | `slug`, `name`, `category`, `layer`, the import paths |
+| the filesystem + [`scripts/config/component-map.json`](../../scripts/config/component-map.json) | `slug`, `name`, `category`, `layer`, the import paths |
 | the component source | `capabilities`, `states`, `api`, `testing` |
 | [`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts) | `status`, `accessibility`, `deprecation`, reviewed capability overrides |
 
@@ -51,8 +51,8 @@ Anything neither derivable nor declared is emitted as `"unknown"` or `null`.
 }
 ```
 
-`count`, `categories` and `statuses` are tallies, and `bun run check:contract` fails if any of
-them disagrees with `components` — a stale manifest is a detectable manifest.
+`count`, `categories` and `statuses` are tallies computed from `components` by the generator, so
+they cannot disagree with it.
 
 ---
 
@@ -103,7 +103,7 @@ them disagrees with `components` — a stale manifest is a detectable manifest.
 | `slug` | kebab-case module name. Unique across the library. |
 | `name` | PascalCase form of the slug. Validated, not stored twice. |
 | `description` | One sentence on what the component is for: the first sentence of the doc comment on its declaration, or the registry's `description` for a module of several exports (`toast`, `chart`, `clipboard`, …). `null` when neither exists. |
-| `category` | One of the ten families. Must agree with `category-map.json`. |
+| `category` | The component's family folder (`Pagination`), read from `scripts/config/component-map.json`. |
 | `layer` | The architecture layer — `components` today. See [component-layers.md](../architecture/component-layers.md). |
 
 `name` is the PascalCase of `slug`, which is the *module* name — it is not always an exported
@@ -149,9 +149,10 @@ that gets a capability by composition declares it in the registry.
 Two of those need justifying.
 
 **`darkMode` from "paints anything".** Colour in a Qeetrix component can only come from a
-semantic token: `bun run check:token-usage` rejects raw values in component source, and
-`bun run check:contrast` holds every semantic text/surface pair to WCAG AA in *both* themes. So
-using colour at all *is* the evidence — the token discipline supplies the rest. A component that
+semantic token: a raw value in component source is a review finding (the scan that rejected
+them was removed in 01dce7a), and `token-governance.test.ts` holds every semantic text/surface pair
+to WCAG AA in *both* themes. So using colour at all *is* the evidence — the token discipline
+supplies the rest. A component that
 paints nothing has no theme surface to support.
 
 **Physical utilities give `unknown`, not `unsupported`.** `left-1/2 -translate-x-1/2` centres a
@@ -204,8 +205,8 @@ native-semantics contract (an `<input>` must be labelled), `required: false, pat
 "reviewed and presentational".
 
 Seeded patterns are evidenced by the component's Base UI primitive or its explicit ARIA role.
-59 of 145 components are reviewed; the rest are `null`, which is the backlog rather than a
-claim. `bun run check:contract --verbose` lists them.
+All 137 components record a pattern today (`"none"` where no APG pattern applies). A `null`
+would be the backlog rather than a claim.
 
 ### `testing`
 
@@ -247,31 +248,8 @@ Adding a field is a **minor**. Removing one, or changing what one means, is a **
 
 ## Validation
 
-```bash
-bun run check:contract              # validate
-bun run check:contract --verbose    # also print the review backlog
-```
-
-The gate is implemented as a pure function
-([`scripts/lib/contract.mjs`](../../scripts/lib/contract.mjs)) over plain data, so the negative
-cases are unit-tested in `src/__tests__/component-contract.test.ts` rather than only being
-exercised when something is already broken. Diagnostics name the component, the issue, the
-expectation and the file:
-
-```text
-Component Contract Error
-
-Component: Dialog
-
-Issue:
-  Missing accessibility.pattern
-
-Expected:
-  an APG pattern name, or "none" when no pattern applies
-
-Why:
-  a component with required: true has an accessibility contract to name
-
-Location:
-  src/manifests/component-registry.ts
-```
+TypeScript is the gate today: the registry is typed against the contract vocabularies, so an
+invalid status, category or ARIA pattern does not compile. The contract check that also validated
+the generated JSON (`bun run check:contract`, `scripts/lib/contract.mjs` and its tests) was removed
+in 01dce7a; what it caught beyond the types — a missing pattern on a `required` component, an
+unrecorded axis prop — is held in review.

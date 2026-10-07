@@ -2,7 +2,7 @@
 /**
  * Token governance — the rules the token source and its generated CSS have to keep.
  *
- * Three things are locked here:
+ * Five things are locked here:
  *
  *   1. the token graph (scripts/lib/tokens.mjs): layering, references, types, theme parity;
  *   2. the foundation's measurable promises: WCAG 2.2 AA for the pairs the semantic roles
@@ -11,7 +11,9 @@
  *      composited over the surface they sit on;
  *   3. the host-global section of styles.css, so a new rule on a consumer's document is a
  *      reviewed change to the list below rather than a line that slips in;
- *   4. the published CSS entries: one hand-authored stylesheet, exported as styles.css.
+ *   4. the published CSS entries: one hand-authored stylesheet, exported as styles.css;
+ *   5. nested theme scopes: every variable derived from a theme's colours is re-declared in that
+ *      theme's selector, so a `.dark` subtree below <html> renders dark.
  */
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -39,8 +41,8 @@ const themes: { name: string; selector: string; colorScheme: string }[] = JSON.p
 const rgb = converter("rgb");
 const oklab = converter("oklab");
 
-/** Every registered theme's variables, with the base theme's inherited underneath. */
-function readThemes(css: string): Map<string, Map<string, string>> {
+/** Every selector's declarations, blocks sharing a selector merged in source order. */
+function readSelectors(css: string): Map<string, Map<string, string>> {
   const bySelector = new Map<string, Map<string, string>>();
   for (const block of css.matchAll(/(?:^|\n)([^\n{}]+?)\s*\{([\s\S]*?)\n\}/g)) {
     const selector = block[1].trim();
@@ -48,6 +50,12 @@ function readThemes(css: string): Map<string, Map<string, string>> {
     for (const d of block[2].matchAll(/^\s*(--[a-z0-9-]+):\s*(.+?);\s*$/gm)) vars.set(d[1], d[2]);
     bySelector.set(selector, vars);
   }
+  return bySelector;
+}
+
+/** Every registered theme's variables, with the base theme's inherited underneath. */
+function readThemes(css: string): Map<string, Map<string, string>> {
+  const bySelector = readSelectors(css);
   const base = bySelector.get(themes[0].selector) ?? new Map();
   return new Map(
     themes.map((t) => [
@@ -291,6 +299,33 @@ describe("foundation contrast (WCAG 2.2 AA)", () => {
         .filter((r) => r.ratio < r.min)
         .map((r) => `${r.fg} on ${r.bg}: ${r.ratio.toFixed(2)}:1 < ${r.min}:1`);
       expect(failures).toEqual([]);
+    });
+  }
+});
+
+describe("nested theme scopes", () => {
+  /**
+   * A var() reference is substituted where its variable is declared, and descendants inherit the
+   * result. A :root variable that reads a theme colour — a component token such as
+   * `--qx-component-card-background: var(--qx-color-surface-default)` — therefore has to be
+   * re-declared in the theme's selector too, or a `.dark` scope below <html> inherits :root's light
+   * substitution. The build does this (themeDerivedCss in scripts/build/tokens.mjs); this pins the
+   * invariant: no base variable outside a theme's scope may reference one inside it.
+   */
+  for (const theme of themes.slice(1)) {
+    it(`${theme.name}: every variable derived from its colours is re-declared in ${theme.selector}`, () => {
+      const bySelector = readSelectors(readFileSync(tokensCss, "utf8"));
+      const scoped = bySelector.get(theme.selector) ?? new Map<string, string>();
+      const base = bySelector.get(themes[0].selector) ?? new Map<string, string>();
+      const unscoped = [...base]
+        .filter(
+          ([name, value]) =>
+            !scoped.has(name) &&
+            [...value.matchAll(/var\(\s*(--[a-z0-9-]+)/g)].some(([, ref]) => scoped.has(ref)),
+        )
+        .map(([name]) => name);
+      expect(scoped.size).toBeGreaterThan(0);
+      expect(unscoped).toEqual([]);
     });
   }
 });

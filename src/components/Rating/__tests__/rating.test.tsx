@@ -162,9 +162,9 @@ describe("Rating form participation", () => {
  * The keyboard half of RTL-001 lives here; the pointer half cannot. jsdom returns an all-zero
  * `getBoundingClientRect` and does not reorder a flex line for `direction: rtl`, so the mirrored
  * half-star split and the unmirrored one return the same number for every coordinate — a test
- * here would pass either way. It is asserted with real layout and real clicks in
- * `src/__tests__/browser/rating-pointer.test.tsx`, which also checks the two paths agree about
- * which direction raises the value.
+ * here would pass either way. A browser test asserted it with real layout and real clicks, and
+ * checked the two paths agree about which direction raises the value; it was removed in 01dce7a,
+ * so the pointer half has no automated test today.
  */
 describe("Rating direction", () => {
   it("mirrors the inline arrow keys in rtl", () => {

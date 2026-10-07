@@ -102,11 +102,10 @@ that leaves half the library honouring the preference and half ignoring it.
 
 ## Current state
 
-The manifest records what each component actually does:
-`bun run check:contract --verbose` lists `reducedMotion` as `unknown` for 72 components — they
-animate and nothing collapses it. That is the honest count, and it is the largest single item on
-the Phase 3 list. Four components handle it today (`marquee`, `rolling-number` and the two
-skeleton paths).
+The manifest records what each component actually does: `capabilities.reducedMotion` is
+`supported` for 91 components and `not-applicable` for 46, and none is left `unknown`. Most are
+covered by the document-wide reduced-motion rule; a component that drives motion from JavaScript
+(`marquee`, `rolling-number`, the skeleton paths) handles the media query itself.
 
 When adding motion to a component, wire the reduced-motion path in the same change. It is one
 variant.

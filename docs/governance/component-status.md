@@ -63,16 +63,17 @@ word. A component became a stability promise by being added to a table. The labe
 for some of them and aspirational for the rest, and nothing in the repository could tell which
 was which.
 
-So the type now insists: a registry entry without a `status` does not compile, and a component
-that somehow reaches the manifest on the placeholder default fails `bun run check:contract`.
+So the type now insists: a registry entry without a `status` does not compile. A component that
+somehow reaches the manifest on the placeholder default used to fail `check:contract`; since that
+check was removed in 01dce7a, it shows as `experimental` in the manifest and review sends it back.
 
 ---
 
 ## Promotion evidence
 
 `stable` means "a breaking change here costs a major release". That is a commitment about API,
-accessibility and support, so `check:contract` requires four things a machine can check before
-it will accept the label:
+accessibility and support, so the label needs four things a machine *could* check. The contract
+check that enforced them was removed in 01dce7a; review holds them now:
 
 | Evidence | Field | Why |
 | --- | --- | --- |
@@ -88,16 +89,14 @@ asserts anything about its roles, elements or ARIA state model. 56 of those 68 d
 never had audited.
 
 That is a re-labelling, not a regression. Nothing about those components changed; the label
-stopped over-promising. They are still governed by the public-API lock
-([`src/__tests__/public-api.json`](../../src/__tests__/public-api.json)), and a breaking change
-to one of them still needs a changelog entry that says so. What `beta` withdraws is the promise that
+stopped over-promising. A breaking change to one of them still needs a changelog entry that
+says so. What `beta` withdraws is the promise that
 breaking it would cost a major — a promise the library was making on 68 components' behalf
 without evidence.
 
-**Promoting one back is a small, well-defined job:** assert its roles and ARIA state — in one of
-the suites in `src/__tests__/accessibility/`, or in the component's own colocated suite, which
-counts as evidence for that component — then run
-`node scripts/check/a11y-coverage.mjs --update`, set `status: "stable"`. There is no committee.
+**Promoting one back is a small, well-defined job:** assert its roles and ARIA state in the
+component's own colocated suite, record the `semantic` dimension, set `status: "stable"` and
+regenerate the manifest. There is no committee.
 
 The three deliberately *unenforced* criteria, because no gate can settle them: whether the API
 would survive a code review, whether more than one product uses it, and whether the docs exist.
@@ -122,9 +121,10 @@ so it is worth being honest about.
 
 ---
 
-## What the gates enforce
+## What the rules require
 
-`bun run check:contract` holds the status honest:
+TypeScript enforces the first point. The rest were enforced by `check:contract` until 01dce7a
+removed it, and are held in review now:
 
 - the value must be one of the four (also a compile error in the registry)
 - the entry must **declare** a status; inheriting one is an error

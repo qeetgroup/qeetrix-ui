@@ -15,9 +15,9 @@
  * a theme that could be added at runtime could not resolve a primitive, so it could only
  * re-point semantic tokens the build already emitted — which a consumer can do today with a
  * stylesheet override. What the registry buys is that a new theme is *governed*: the build emits
- * it, `check:tokens` holds it to parity against the base theme, and `check:contrast` measures
- * every pair in it. An unregistered `src/tokens/theme/*` directory is a hard error in all three,
- * so a half-wired theme fails loudly instead of being silently skipped.
+ * it, and the token-governance test holds it to the token rules and measures every contrast pair
+ * in it. An unregistered `src/tokens/theme/*` directory is a hard error in both, so a half-wired
+ * theme fails loudly instead of being silently skipped.
  *
  * `THEME_MODES` below is the *colour-scheme* vocabulary — what `ThemeProvider` switches. It is
  * intentionally not the registry: `light` and `dark` are the two schemes a user agent has a

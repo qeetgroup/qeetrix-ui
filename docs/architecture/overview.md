@@ -4,8 +4,9 @@
 assets and 137 React components, consumed by every Qeet product. It has exactly one job — make
 the same interface decisions available everywhere, and keep them from drifting.
 
-That only works if the structure is enforced rather than described. This document is the map;
-the rules it describes are checked on every `bun run verify`.
+That only works if the structure is enforced rather than described. This document is the map.
+Some of its rules run in CI (`build`, `typecheck`, `lint`, `test`); the ones whose checkers were
+removed in 01dce7a are marked as held in review.
 
 ---
 
@@ -17,18 +18,20 @@ src/
 ├── styles/        the CSS entry + generated token CSS/JSON               — generated
 ├── contracts/     types + vocabularies that describe a component         — governance
 ├── manifests/     the manifest's type, and the declarations it is built from
+├── runtime/       headless behaviour: focus trap, overlay, collapse, storage
 ├── lib/           framework-free helpers (cn, motion, responsive) + generated token values
 ├── hooks/         React hooks over lib + browser APIs
-├── providers/     theme · density · direction
-├── components/    10 category folders, each with index.ts + __tests__/
+├── providers/     theme · density · direction · messages
+├── internal/      shared pieces the components wrap — never published
+├── components/    97 family folders, each with index.ts + __tests__/
 ├── blocks/        copy-paste sections of product screens — never published
 ├── patterns/      copy-paste layout solutions — never published
-├── __tests__/     global harness: setup, a11y smoke, hydration, API lock, governance
+├── __tests__/     global harness: setup, axe smoke, SSR, hydration, token governance
 └── index.ts       the published barrel
 ```
 
-The typed token values JavaScript reads are generated into `lib/token-values.ts`. One directory
-in the target architecture — `runtime/` — is still **declared but not populated**. See [Migration](#migration) below.
+The typed token values JavaScript reads are generated into `lib/token-values.ts`. Every
+directory above is populated. See [Migration](#migration) below.
 
 ---
 
@@ -44,10 +47,10 @@ with `lib`, `hooks` and `providers` as supporting layers that may never reach fo
 into `components` or `blocks`.
 
 Layer membership and the permitted edges are declared in
-[`src/contracts/layers.ts`](../../src/contracts/layers.ts) and enforced by
-[`scripts/check/architecture.mjs`](../../scripts/check/architecture.mjs). Dependencies are
-**deny by default**: an import is legal only if the target layer appears in the source layer's
-allow-list. The full table, and why each edge exists, is in
+[`src/contracts/layers.ts`](../../src/contracts/layers.ts). Dependencies are **deny by
+default**: an import is legal only if the target layer appears in the source layer's allow-list.
+The checker that enforced this (`scripts/check/architecture.mjs`) was removed in 01dce7a, so the
+table is held in review. The full table, and why each edge exists, is in
 [dependency-rules.md](./dependency-rules.md); what each layer is *for* is in
 [component-layers.md](./component-layers.md).
 
@@ -69,8 +72,8 @@ The published surface is **only** what the entry points export:
 | Specifier | Source |
 |:--|:--|
 | `@qeetrix/ui` | `src/index.ts` — the full barrel |
-| `@qeetrix/ui/components/<slug>` | one component, stable regardless of its category |
-| `@qeetrix/ui/components/<category>` | a category group |
+| `@qeetrix/ui/components/<slug>` | one component, stable regardless of its family folder |
+| `@qeetrix/ui/components/<Family>` | a family group (`Pagination`) |
 | `@qeetrix/ui/providers` | `src/providers` |
 | `@qeetrix/ui/providers/<name>` | one provider |
 | `@qeetrix/ui/hooks/<name>` | the four public hooks — `use-media-query`, `use-mobile`, `use-motion`, `use-prefers-reduced-motion` |
@@ -78,32 +81,30 @@ The published surface is **only** what the entry points export:
 | `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | the stylesheet (one entry, host-global rules included) + the generated token files |
 | `@qeetrix/ui/manifest.json` | the generated component manifest |
 
-Everything else is **denied**, not merely undocumented.
-`@qeetrix/ui/components/<category>/<slug>`, `@qeetrix/ui/components/index` and
-`@qeetrix/ui/hooks/use-controllable-state` resolve to nothing — `null` export targets, in Node,
-Bun and TypeScript alike. `src/contracts/` and `src/manifests/` were never reachable at all. The
+Paths outside the map resolve to nothing: `@qeetrix/ui/hooks/use-controllable-state` (it is on
+the barrel), `src/contracts/`, `src/manifests/`, `src/runtime/` and `src/internal/`. Two paths
+resolve through the `components/*` wildcard without being supported —
+`@qeetrix/ui/components/<Family>/<slug>` and `@qeetrix/ui/components/index`; consumers use the
+flat `components/<slug>` path or the barrel. The
 *governance data* is public as `@qeetrix/ui/manifest.json`; the TypeScript that produces it is
 not, so it can keep evolving without a semver event.
 
-Three inputs keep the surface honest, all in
-[`scripts/check/exports.mjs`](../../scripts/check/exports.mjs), across 21 entry points rather
-than the original three:
+The surface used to be held by an export check (`scripts/check/exports.mjs`) with a symbol lock
+(`public-api.json`) and a signature lock (`public-props.json`). All three were removed in 01dce7a.
+What holds it now:
 
-1. **the lock** — every exported symbol is snapshotted in
-   [`src/__tests__/public-api.json`](../../src/__tests__/public-api.json). Any addition or
-   removal fails `verify` until it is re-snapshotted deliberately, so an API change is always a
-   visible line in a diff and always ships with a version bump and a changelog entry.
-2. **the signature lock** — [`public-props.json`](../../src/__tests__/public-props.json) records
-   the declaration shape, not just the member names, so a required prop becoming optional or a
-   literal union losing a member is a visible change too.
-3. **intentionality** — every component module must contribute at least one symbol to the
-   published surface; a `@barrel-exclude` module must really be excluded; and no two
-   barrel-exported modules may export the same name (`export *` resolves a collision by
-   dropping the symbol, so an ambiguity is a public API that vanishes silently).
+1. **explicit exports** — every name is a line in a family `index.ts`, in `src/index.ts`, or an
+   entry in the `exports` map, so an addition or removal is a visible line in the diff, to ship
+   with a version bump and a changelog entry;
+2. **the build** — `scripts/build/subpath-shims.mjs` fails on a compiled component module that
+   `scripts/config/component-map.json` does not name, so nothing is published by accident;
+3. **review** — for what the locks used to catch mechanically: a required prop becoming optional,
+   a union losing a member, two barrel modules exporting the same name (`export *` drops a
+   colliding symbol silently).
 
 Internal structure is therefore free to move. The published deep-import paths are generated by
 [`scripts/build/subpath-shims.mjs`](../../scripts/build/subpath-shims.mjs), so a component can
-change category without a consumer noticing.
+change family without a consumer noticing.
 
 ---
 
@@ -113,31 +114,28 @@ A **component** is a single interface element with a prop-level API: `Button`, `
 `DataTable`. It composes tokens, other components and hooks, knows nothing about any product,
 and contains no copy that a product would want to change.
 
-A **block** is a page-level composition: `AuthShell`, `DashboardShell`, `PricingTable`. Blocks
-exist so five products do not each rebuild the same login screen. They are opinionated,
-compose components freely, and are versioned more loosely in practice because they are
-starting points rather than primitives.
+A **block** is a ready-made section of a product screen built from components — an access
+review, an audit record, a notification inbox — and a **pattern** is a proven arrangement of
+components for a recurring layout (list + detail). Both live in `src/blocks/` and `src/patterns/`
+as copy-paste source: they are never published, and an app copies the file and adapts it.
 
 The direction is absolute: **a component may never import a block.** A component that needs
 something a block has is describing a missing component.
 
 ---
 
-## Runtime versus primitives
+## Runtime versus internal
 
 Both layers are populated. `runtime` holds `focus-trap`, `overlay`, `overlay-position`,
-`collapse` and `storage`; `primitives` holds `Portal` and `VisuallyHidden`. The distinction is
-what each may contain: `runtime` is behaviour with no markup, `primitives` render but make no
-design decision.
+`collapse` and `storage`; `internal` holds the `portal` and `visually-hidden` primitives plus the
+helpers several families share. The distinction is what each may contain:
 
-- **runtime** — framework-level behaviour with no markup: focus management, collection
-  handling, keyboard navigation, id generation. Headless, testable without rendering.
-- **primitives** — the smallest renderable pieces that carry no design opinion: a slot, a
-  polymorphic element, a portal, a visually-hidden wrapper. They render, but they do not decide
-  how anything looks.
+- **runtime** — framework-level behaviour with no markup: focus management, overlay
+  positioning, collapse, storage. Headless, testable without rendering.
+- **internal** — renderable pieces and shared helpers that carry no design decision of their own,
+  which the public components wrap. Never published.
 
-Neither may import `components` or `blocks`. Today that behaviour lives inside individual
-components (`focus-trap`, `portal`, `visually-hidden`) and in `lib`/`hooks`.
+Neither may import `components`, `blocks` or `patterns`.
 
 ---
 
@@ -185,7 +183,7 @@ contract. It is generated by
 [`scripts/build/manifest.mjs`](../../scripts/build/manifest.mjs) from three inputs and nothing
 else:
 
-1. the filesystem + `scripts/config/category-map.json` — identity, category, layer
+1. the filesystem + `scripts/config/component-map.json` — identity, family, layer
 2. the component source — capabilities, states, `cva` variants, client boundary, test coverage
 3. [`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts) — the
    declared facts that cannot be derived: status, ARIA pattern, reviewed capability overrides,
@@ -199,22 +197,17 @@ is documented in [component-manifest.md](../standards/component-manifest.md).
 
 ## Validation
 
-`bun run verify` is the gate. If it passes, CI passes.
+CI runs `build`, `typecheck`, `lint` and `test`; if those pass locally, CI passes.
 
-| Check | Enforces |
+| Command | Enforces |
 |:--|:--|
-| `typecheck` | TypeScript, including the contract types on the registry |
-| `lint` | Biome |
-| `test` | Vitest + axe, hydration, client boundaries, governance |
-| `check:architecture` | category map ↔ filesystem, barrels, kebab-case, client directives, **layer boundaries** |
-| `check:contract` | the manifest satisfies the component contract |
-| `check:exports` | the published surface matches the lock, and is intentional |
-| `check:a11y` | every component has an axe test |
-| `check:tokens` | the token graph: layer direction, references, cycles, types, theme parity, deprecations |
-| `check:token-usage` | no raw colours, z-indexes, shadows or lengths in component source outside the documented backlog |
-| `check:contrast` | WCAG AA on every semantic text/surface pair, both themes |
+| `build` | the manifest generates; no compiled component module is missing from the component map |
+| `typecheck` | TypeScript across the package, every test, the blocks and patterns, and the playground — including the contract types on the registry |
+| `lint` | Biome; blocks and patterns import only the public packages |
+| `test` | every component's suite with axe, SSR and hydration, the token graph (layer direction, references, cycles, types, theme parity) and WCAG AA on every semantic text/surface pair in both themes, a playground example per manifest module |
 
-`bun run verify:package` additionally packs the tarball and compiles real consumers against it.
+Not enforced since 01dce7a removed `scripts/check/`: layer boundaries, the export and signature
+locks, the manifest contract check, the raw-value scan, the packed-tarball check.
 
 ---
 
@@ -230,9 +223,8 @@ is documented in [component-manifest.md](../standards/component-manifest.md).
 - **API conventions** — [docs/standards/component-api.md](../standards/component-api.md)
 
 Changes ship by merging to `main` ([release.md](../governance/release.md)). A public API change
-is not just a version bump: it is a re-snapshotted `public-api.json`, a version raised to the right
-level with its changelog entry, and — when a component's status or contract changes — an updated
-registry entry.
+is a version raised to the right level with its changelog entry and — when a component's status
+or contract changes — an updated registry entry.
 
 ---
 
@@ -241,11 +233,10 @@ registry entry.
 The generated token values, briefly a `foundations/` layer of their own, are written straight
 to `src/lib/token-values.ts`, holding only what code reads.
 
-`runtime/` and `primitives/` are still declared in
-[`src/contracts/layers.ts`](../../src/contracts/layers.ts) with their dependency rules, but no
-files have been moved into them. This is deliberate: the rules are live the moment the first
-file lands there, and moving 145 components to satisfy a diagram is churn, not architecture.
+Every layer declared in [`src/contracts/layers.ts`](../../src/contracts/layers.ts) now holds
+files: `runtime/` and `internal/` were populated by moving behaviour out of individual
+components, one module at a time, rather than moving 137 components to satisfy a diagram.
 
 Because the published deep-import paths are generated rather than mirrored from `src/`, a later
-move is invisible to consumers — the API lock proves it on every run. Phase 2 can migrate one
-layer at a time behind a green `verify`.
+move is invisible to consumers. With the API lock gone, confirm that by reading the barrel and
+`exports` diff; a migration can still go one layer at a time behind green CI.

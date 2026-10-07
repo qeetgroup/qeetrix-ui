@@ -57,8 +57,9 @@ export const SSR_SUPPORT_LEVELS = ["server-safe", "client-boundary", "unknown"] 
 export type SsrSupport = (typeof SSR_SUPPORT_LEVELS)[number];
 
 /**
- * The component families under `src/components/`. Kept in lockstep with
- * scripts/config/component-map.json by scripts/check/component-contract.mjs.
+ * The component families under `src/components/`. Kept in step with
+ * scripts/config/component-map.json by hand: the contract check that compared them was removed
+ * in 01dce7a.
  */
 export const COMPONENT_CATEGORIES = [
   "Accordion",

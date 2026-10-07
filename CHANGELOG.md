@@ -68,6 +68,18 @@
 - **`useControllableState` is public.** The controlled/uncontrolled hook every component uses,
   for building your own components, blocks and patterns on the same contract.
 
+### Patch Changes
+
+- **A `.dark` scope below `<html>` now renders dark.** Component tokens follow the theme through
+  the semantic variables (`--qx-component-card-background: var(--qx-color-surface-default)`) and
+  were declared only on `:root`, where a `var()` reference is substituted — so a nested `.dark`
+  element inherited the light substitution. A dark preview inside a light page showed white
+  cards, invisible select values and faded alert text. `tokens.css` (and the raw
+  `@qeetrix/ui/tokens.css` export) now re-declare every variable derived from a theme's colours
+  inside that theme's selector, the way density-derived variables are already re-declared per
+  density scope. Nothing changes where `.dark` sits on `<html>`; a token-governance test pins the
+  invariant.
+
 ## 2.1.2
 
 ### Minor Changes

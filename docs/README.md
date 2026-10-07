@@ -40,16 +40,18 @@ library itself is built and changed.
 
 ## The short version
 
-- Layers flow one way, dependencies are deny-by-default, and both are enforced —
-  `bun run check:architecture`.
+- Layers flow one way and dependencies are deny-by-default — declared in
+  `src/contracts/layers.ts`, held in review (the architecture checker was removed in 01dce7a).
 - Tokens flow one way too: primitive → semantic → component → component styles. The primitive
-  layer is not published to the runtime stylesheet, so a component cannot reach it —
-  `bun run check:tokens`.
+  layer is not published to the runtime stylesheet, so a component cannot reach it, and the token
+  graph's rules run in `bun run test` (`token-governance.test.ts`).
 - Every component has a contract (status, capabilities, states, variants, ARIA pattern, test
-  coverage) published in `component-manifest.json` — `bun run check:contract`.
-- Nothing becomes public by accident — `bun run check:exports`.
+  coverage) published in `component-manifest.json`. TypeScript checks the registry's
+  vocabularies; the rest is held in review.
+- Nothing becomes public by accident — every export is an explicit line in a barrel or the
+  `exports` map, reviewed in the diff (the export lock went with the checks).
 - Unknown is a value, not a guess. `"unknown"` in the manifest is a review backlog item, not a
   "no".
 - Accessibility is audited per dimension, and the roll-up is computed — there is no field that
-  means "accessible: true". All 137 components pass axe; 78 are audited —
-  `bun run check:a11y`.
+  means "accessible: true". All 137 components pass axe in `bun run test`; 18 are audited — see
+  [accessibility-evidence.md](./governance/accessibility-evidence.md).

@@ -50,7 +50,7 @@
 
 ## 🏗 Architecture
 
-A **standalone Bun package**. Tokens are the source of truth; everything downstream is generated or composed from them. Components live in `src/components/<category>/`, but the *published* import paths stay flat — `dist` carries a generated façade, so a component can move category without breaking a single consumer.
+A **standalone Bun package**. Tokens are the source of truth; everything downstream is generated or composed from them. Components live in `src/components/<Family>/`, but the *published* import paths stay flat — `dist` carries a generated façade, so a component can move family without breaking a single consumer.
 
 ```mermaid
 flowchart TB
@@ -58,7 +58,7 @@ flowchart TB
         direction LR
         tokens["Design tokens<br/>W3C DTCG JSON · OKLCH<br/>src/tokens/"]
         sd["Style Dictionary<br/>scripts/build/tokens.mjs<br/>→ semantic + raw --qx-* CSS + JSON"]
-        comps["137 UI modules · 10 categories<br/>custom + Base UI<br/>src/components/&lt;category&gt;/"]
+        comps["137 UI modules · 97 families<br/>custom + Base UI<br/>src/components/&lt;Family&gt;/"]
         tokens --> sd --> comps
     end
 
@@ -76,43 +76,44 @@ flowchart TB
 ```
 src/
 ├── tokens/            DTCG token source — primitive · semantic · component · theme overlays
-├── components/        10 category folders, each with index.ts + __tests__/
-│   ├── actions/ inputs/ selection/ pickers/ navigation/
-│   └── feedback/ surfaces/ data-display/ layout/ utility/
+├── components/        97 family folders (Accordion/, Button/, …), each with index.ts + __tests__/
+├── internal/          helpers several families share; never imported by consumers
 ├── contracts/         component contract: types + closed vocabularies + the layer table
 ├── manifests/         the manifest's type, and the declarations it is generated from
-├── providers/         theme · density · direction
+├── providers/         theme · density · direction · messages
 ├── blocks/ patterns/  copy-paste blocks and patterns built on the package — never published
-├── hooks/ lib/ fonts/ lib/token-values.ts is GENERATED from src/tokens/
+├── hooks/ lib/        public hooks and helpers; lib/token-values.ts is GENERATED from src/tokens/
+├── runtime/ fonts/
 ├── styles/            index.css (entry) + generated token CSS/JSON
-└── __tests__/         global harness: setup, a11y smoke, client boundaries, API lock, governance
+└── __tests__/         global harness: setup, axe smoke, SSR, hydration, token governance
 scripts/
-├── build/             tokens · manifest · subpath-shims · postbuild · logos
-├── check/             architecture · component-contract · exports · a11y-coverage · token-usage · contrast · package
-└── lib/               shared analysis: layer graph, contract validator, TS literal reader
+├── build/             tokens · manifest · subpath-shims · postbuild · clean
+├── config/            component-map (family → slugs) · themes
+└── lib/               shared analysis: layer graph, token graph, TS literal reader, component source
 docs/
 ├── architecture/      overview · component-layers · dependency-rules
-├── standards/         api-guidelines · component-manifest
-└── governance/        component-status · deprecations · versioning
+├── standards/         component API, manifest, tokens, accessibility, testing, …
+└── governance/        component status · deprecations · versioning · release
 ```
 
 Layers flow one way — `tokens → runtime / internal → components`, with blocks and patterns on top of the package entry — and
-dependencies are **deny by default**. The allow-list lives in [`src/contracts/layers.ts`](src/contracts/layers.ts);
-`bun run check:architecture` enforces it against the real module graph. See
+dependencies are **deny by default**. The allow-list lives in [`src/contracts/layers.ts`](src/contracts/layers.ts).
+No check enforces it at the moment (the architecture checker was removed with the other
+`scripts/check/` scripts), so it is a reviewed contract rather than a gate. See
 [docs/architecture/](docs/architecture/overview.md).
 
 ### Import paths
 
 Every published path is **enumerated** in the `exports` map — there are no wildcards over
 `hooks/`, `lib/`, `providers/` or `blocks/`, so a new module in one of those folders is internal
-until someone adds it to the map. `bun run check:package` proves each path below resolves in the
-packed tarball, and that everything under *Not published* does not.
+until someone adds it to the map. The build's subpath-shim step fails on a compiled component
+module the map does not name; nothing tests the packed tarball itself.
 
 | Specifier | Resolves to |
 |:--|:--|
 | `@qeetrix/ui` | the full barrel — every component, provider and helper |
-| `@qeetrix/ui/components/button` | one component — **stable regardless of its category** |
-| `@qeetrix/ui/components/actions` | a whole category |
+| `@qeetrix/ui/components/button` | one component — **stable regardless of its family folder** |
+| `@qeetrix/ui/components/Pagination` | a whole family (`Pagination`, `PaginationBar`) |
 | `@qeetrix/ui/providers` · `/providers/theme-provider` | the providers |
 | `@qeetrix/ui/hooks/use-media-query` · `/use-mobile` · `/use-motion` · `/use-prefers-reduced-motion` | the public hooks (also on the barrel) |
 | `@qeetrix/ui/lib/utils` · `/motion` · `/responsive` · `/token-values` | the public helpers (also on the barrel) |
@@ -121,10 +122,12 @@ packed tarball, and that everything under *Not published* does not.
 | `@qeetrix/ui/components/ui/button` | legacy pre-1.0 path, kept resolvable |
 
 **Not published** — these resolve to nothing, deliberately:
-`@qeetrix/ui/components/<category>/<slug>` (the category a component lives in is an
-implementation detail; use the flat path), `@qeetrix/ui/components/index` (use the barrel),
-`@qeetrix/ui/hooks/use-controllable-state` and anything under `primitives/`, `contracts/`,
-`manifests/` or `runtime/`.
+`@qeetrix/ui/hooks/use-controllable-state` (it is on the barrel) and anything under
+`contracts/`, `manifests/`, `runtime/` or `internal/`.
+
+**Resolvable but unsupported** — the `components/*` wildcard also reaches
+`@qeetrix/ui/components/<Family>/<slug>` and `@qeetrix/ui/components/index`. The family folder is
+an implementation detail: use the flat `components/<slug>` path, or the barrel.
 
 ---
 
@@ -170,7 +173,7 @@ Light/dark is driven by the `.dark` class (managed by `ThemeProvider`). Its keyb
 
 ## 🧩 What's inside
 
-> 137 React UI modules across ten categories; **every one** has a Vitest/axe test in its category's `__tests__/`, and stories cover the public catalog.
+> 137 React UI modules across 97 families; **every one** has a Vitest/axe test in its family's `__tests__/`, and stories cover the public catalog.
 
 - **Overlays** — Dialog · Sheet · Drawer · Popover · DropdownMenu · ContextMenu · Menubar · HoverCard · Tooltip · CommandPalette · NavigationMenu
 - **Inputs & controls** — Button · Input · Textarea · Select · Combobox · MultiSelect · Autocomplete · Checkbox · Radio · Switch · Toggle · Slider · AngleSlider · OTPInput · NumberField · Field / Form · Chip · SegmentedControl · ColorPicker · Date / Time / Timezone pickers
@@ -194,9 +197,9 @@ The single source of truth lives in [`src/tokens/`](src/tokens/) as **W3C DTCG J
 
 The **primitive layer is not published to the stylesheet components render against**, so a component physically cannot resolve a palette value — the ownership rule is a fact, not a convention. Full detail: [docs/standards/tokens.md](docs/standards/tokens.md).
 
-Colour is authored in **OKLCH**; elevation uses a **layered shadow ladder** (rest · hover · popover · modal). Every semantic text/surface pair is held to **WCAG-AA contrast** by a build gate (part of `bun run verify`).
+Colour is authored in **OKLCH**; elevation uses a **layered shadow ladder** (rest · hover · popover · modal). Every semantic text/surface pair is held to **WCAG-AA contrast** in both themes by the token-governance test (part of `bun run test`).
 
-Re-branding is one alias hop: re-point the nine `color.brand.*` aliases and every semantic token, component token and component follows. Retuning corners is one variable (`--radius`).
+Re-branding is one alias hop: re-point the thirteen `color.brand.*` aliases and every semantic token, component token and component follows. Retuning corners is one variable (`--radius`).
 
 ---
 
@@ -208,33 +211,28 @@ Re-branding is one alias hop: re-point the nine `color.brand.*` aliases and ever
 bun install
 bun run dev              # regenerate tokens, then tsc --watch
 bun run build            # tokens → manifest → tsc → aliases → subpath shims → assets
+bun run typecheck        # the package, all of src (tests, blocks, patterns) and the playground
+bun run lint             # Biome: format and lint
 bun run test             # Vitest + vitest-axe
-bun run verify           # typecheck · lint · test · architecture · API lock · a11y · tokens · contrast
-bun run verify:package   # build, pack, and compile real consumers against the tarball
-bun run check:generated  # the tracked generated artifacts match their generators
-bun run check:release    # the publication preflight (release gate, not a build gate)
+bun run playground       # the component workbench
 bun run format           # biome check --write
 ```
 
-`verify:package` fails closed. The Vite + Tailwind consumer passes are hermetic; the Next.js RSC
-pass needs `qeetrix-docs` installed next to this repo, and skipping it has to be asked for with
-`QEETRIX_SKIP_NEXT_CONSUMER=1` — a run that could not verify server components says so loudly
-instead of exiting green.
+CI ([`ci.yml`](.github/workflows/ci.yml)) runs `build`, `typecheck`, `lint` and `test` on pushes to
+`main` and on every pull request. What those hold:
 
-`verify` is the gate to run before pushing. Its eight structural checks are what keep the architecture honest:
-
-| Check | Enforces |
+| Command | Enforces |
 |:--|:--|
-| `check:architecture` | category map ↔ filesystem, complete barrels, no barrel imports, kebab-case, client directives, **layer boundaries** |
-| `check:contract` | every component satisfies the component contract — valid status, capabilities, states, ARIA pattern, deprecation record |
-| `check:exports` | the published surface of all 21 entry points matches `src/__tests__/public-api.json` **down to each export's kind and each declared prop's optionality, type, generics and base types**, and is *intentional* — no unreachable component, no leaking `@barrel-exclude`, no duplicate export |
-| `check:a11y` | every component has an axe test (currently **137/137**) |
-| `check:tokens` | the token graph — layer direction, references, cycles, types, theme parity, deprecations |
-| `check:token-usage` | no raw colours, z-indexes, shadows or bare lengths in component source |
-| `check:contrast` | WCAG-AA on every semantic text/surface pair, both themes |
-| `check:performance` | the scale baseline in `src/__tests__/performance/baseline.json` — budgets may only shrink |
+| `lint` | formatting and lint rules; blocks and patterns import only `@qeetrix/ui` and the `@qeetrix/icons` root |
+| `typecheck` | types across the package, every test, the blocks, the patterns and the playground |
+| `test` | each component's suite (behaviour plus an axe check), SSR and hydration, the token graph and WCAG-AA contrast in both themes (`token-governance.test.ts`), and a playground example for every manifest module |
+| `build` | the manifest generates, and no compiled component module is missing from `scripts/config/component-map.json` |
 
-**Adding a component?** Create `src/components/<category>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug in [`scripts/config/category-map.json`](scripts/config/category-map.json), export it from the category `index.ts`, add `__tests__/<slug>.test.tsx`, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), then run `bun run verify` — it will tell you exactly what is missing. Re-snapshot the API with `bun run check:exports -- --update`, raise the version and add the changelog entry. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/component-api.md](docs/standards/component-api.md).
+Not enforced by anything today: the layer boundaries, a public-API lock, a scan for raw values in
+component source, the packed-tarball contents, bundle budgets and coverage floors. Their scripts
+under `scripts/check/` were removed on 2026-08-23.
+
+**Adding a component?** Create `src/components/<Family>/<slug>.tsx` (`cva` + `cn()`, `data-slot`, Base UI for anything interactive), list the slug under its family in [`scripts/config/component-map.json`](scripts/config/component-map.json), export it from the family's `index.ts`, add `__tests__/<slug>.test.tsx` with an axe check, declare its status + ARIA pattern in [`src/manifests/component-registry.ts`](src/manifests/component-registry.ts), add a playground example, then run `bun run build && bun run typecheck && bun run lint && bun run test`. Raise the version and add the changelog entry. See [CONTRIBUTING.md](./CONTRIBUTING.md) and [docs/standards/component-api.md](docs/standards/component-api.md).
 
 ---
 

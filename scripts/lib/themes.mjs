@@ -71,7 +71,7 @@ export function loadThemeRegistry({ registryPath = REGISTRY_PATH, themeRoot = TH
         '", "selector": "[data-qx-theme=\\"' +
         unregistered[0] +
         '\\"]", "description": "…" }) so the ' +
-        "token build, check:tokens and check:contrast all cover it.",
+        "token build and the token-governance test cover it.",
     );
   }
   const missing = names.filter((name) => !directories.includes(name));

@@ -283,7 +283,7 @@
       }
     },
     "rating": {
-      "$description": "Rating indicator roles. A star rating conveys its value by the *proportion* of each icon that is filled, so the fill hue is an affordance rather than the information — see scripts/check/contrast.mjs for the recorded 1.4.11 exception.",
+      "$description": "Rating indicator roles. A star rating conveys its value by the *proportion* of each icon that is filled, so the fill hue is an affordance rather than the information — which is why the rating roles are left out of the contrast pairs src/__tests__/token-governance.test.ts measures (a recorded WCAG 1.4.11 exception).",
       "filled": {
         "$value": "{color.amber.400}",
         "$type": "color"

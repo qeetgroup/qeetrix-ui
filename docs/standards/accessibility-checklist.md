@@ -6,7 +6,7 @@ keyboard model, and claiming one would make the audit numbers meaningless.
 Record the result in `accessibility.dimensions` in
 [`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts). **A dimension
 may only be marked `pass` if a test covers it.** `partial` and `exception` must carry a reason in
-`accessibility.exceptions`, or `bun run check:a11y` fails.
+`accessibility.exceptions`; review holds both since the `check:a11y` gate was removed.
 
 Rules: [accessibility.md](./accessibility.md) ·
 [keyboard-interactions.md](./keyboard-interactions.md) ·
@@ -75,7 +75,7 @@ Rules: [accessibility.md](./accessibility.md) ·
 - [ ] **Forced colors** — paints only with bridge variables; no shadow-only affordance; a
       selected/highlighted/pressed fill uses `forced-colors-selected`, an indicator `Highlight`, a
       selected container a `Highlight` edge ([theming.md](./theming.md#forced-colors)).
-- [ ] **Contrast** — any new semantic pair added to `scripts/check/contrast.mjs`.
+- [ ] **Contrast** — any new semantic pair added to the pairs in `src/__tests__/token-governance.test.ts`.
 - [ ] **Target size** — adequate for the context, or the rationale recorded.
 
 ## Tests
@@ -91,7 +91,5 @@ Rules: [accessibility.md](./accessibility.md) ·
 - [ ] `accessibility.dimensions` updated, honestly.
 - [ ] `accessibility.keyboard`, `focus`, `liveRegion` declared where applicable.
 - [ ] Reasons recorded for anything `partial` or `exception`.
-- [ ] `bun run build:manifest && bun run check:a11y` — the roll-up is computed, so check the
-      number it produces.
-- [ ] Baseline raised in `scripts/config/contract-coverage-baseline.json` if the audited count
-      went up.
+- [ ] `bun run build:manifest` — the roll-up is computed, so check the `accessibilityAudit`
+      numbers it produces.

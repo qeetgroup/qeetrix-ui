@@ -4,7 +4,7 @@ A **design axis** is a prop with a closed set of values that changes how a compo
 large it is: `variant`, `size`, `tone`. This document is about one narrow problem: telling *"this
 component has no design axis"* apart from *"it has one and nobody wrote it down"*.
 
-Enforced by `bun run check:contract`. Vocabularies in
+Held in review: the `check:contract` gate that enforced it was removed in 01dce7a. Vocabularies in
 [`src/contracts/variants.ts`](../../src/contracts/variants.ts); declarations in
 [`src/manifests/component-registry.ts`](../../src/manifests/component-registry.ts).
 
@@ -30,10 +30,10 @@ apart. `Avatar` has three sizes; the manifest said it had none.
 
 ## The rule
 
-`AXIS_PROP_NAMES` lists the prop names that *are* an axis. `check:contract` reads each component's
+`AXIS_PROP_NAMES` lists the prop names that *are* an axis. The rule reads each component's
 public props from source — the exported `…Props` types **and** the inline props type on the
-component's parameter, which is the dominant shape in this library — and requires every axis-shaped
-prop it finds to be recorded, one of four ways:
+component's parameter, which is the dominant shape in this library — and every axis-shaped prop
+there has to be recorded, one of four ways:
 
 1. **`cva` members** — the canonical case. Already in `api.variants` / `api.sizes`.
 2. **`api.domainAxes`** — the axis exists and its value names are domain concepts rather than the
@@ -98,10 +98,9 @@ an internal change; leaving the manifest unable to describe the component's publ
 
 ## What this does not do yet
 
-`api.axisSources` is declared in the registry and enforced by `check:contract`, but the manifest
-generator does not copy the field into `component-manifest.json` yet, so a consumer reading the
-published artifact still sees `null` for these. The check falls back to the registry in the
-meantime; the one-line generator change is tracked with the release tooling.
+`api.axisSources` is declared in the registry and copied into `component-manifest.json` (26
+components record one), but nothing checks that every axis prop has a record since the contract
+check was removed.
 
 Nothing validates that a `note`'s value set matches the source. A note that lists the wrong
 variants is a stale comment, and comments are checked by review.

@@ -53,8 +53,8 @@ and published in the manifest:
 "Decision" means the field must be present and may be `null` — an explicit "there is no
 replacement" is information. A missing field is not.
 
-`bun run check:contract` fails on a deprecated component with no reason or no `since`, and on a
-deprecation record attached to a component that is not deprecated.
+A deprecated component needs a reason and a `since`, and a deprecation record must not sit on a
+component that is not deprecated. `check:contract` enforced both until 01dce7a; review does now.
 
 ---
 
@@ -76,20 +76,20 @@ actually true.
 ## Keeping a deprecated thing reachable
 
 The mechanism is `@barrel-exclude`. A file marked with it stays compiled and published, but is
-deliberately absent from the category barrel and therefore from `@qeetrix/ui`:
+deliberately absent from the family barrel and therefore from `@qeetrix/ui`:
 
 ```tsx
 // @deprecated — use Pagination and PaginationProps.
-// @barrel-exclude — deliberately absent from the category barrel and the root
+// @barrel-exclude — deliberately absent from the family barrel and the root
 // export, so it stays reachable only via @qeetrix/ui/components/pagination-bar.
 export type { PaginationProps as PaginationBarProps } from "./pagination";
 export { Pagination as PaginationBar } from "./pagination";
 ```
 
 The effect: existing deep imports keep working, and the deprecated name stops appearing in
-autocomplete for anyone importing from the root. `bun run check:exports` enforces both halves —
-the module must not leak its own names into the public surface, and the components that *are*
-barrel-exported must all be reachable.
+autocomplete for anyone importing from the root. Both halves are held in review now (the
+export check that enforced them was removed in 01dce7a): the module must not leak its own names
+into the public surface, and the components that *are* barrel-exported must all be reachable.
 
 ---
 
@@ -120,7 +120,7 @@ When a removal is actually happening:
 - [ ] the consuming Qeet products have been migrated (`qeet-id-console`, `qeet-id-login`,
       `qeet-id-website`, `qeet-docs` at minimum)
 - [ ] the removal ships in a **major** version, with the migration path in its changelog entry
-- [ ] `bun run check:exports -- --update` re-snapshots the surface in the same commit
+- [ ] the removed names are gone from the family `index.ts` and `src/index.ts` in the same commit
 
 ---
 
@@ -130,5 +130,5 @@ When a removal is actually happening:
   [versioning.md](./versioning.md).
 - **An internal rewrite.** Replacing a component's internals while keeping its API and its
   accessibility behaviour is a patch or a minor, and needs no deprecation.
-- **Moving a component between categories.** The published import path is flat and generated, so
-  a move is invisible. `bun run verify` proves the surface is unchanged.
+- **Moving a component between families.** The published import path is flat and generated, so
+  a move is invisible; read the barrel diff to confirm the surface is unchanged.

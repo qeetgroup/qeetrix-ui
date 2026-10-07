@@ -14,8 +14,9 @@ things in.
 - [ ] **Purpose** is one sentence. If it takes two, it is probably two components.
 - [ ] **Not already covered.** Check [`component-manifest.json`](../../component-manifest.json) —
       137 components is enough that the thing may exist under another name.
-- [ ] **Category** chosen from the ten families, and added to
-      [`scripts/config/category-map.json`](../../scripts/config/category-map.json).
+- [ ] **Family** chosen — an existing one if it is a close relative, otherwise a new folder —
+      and the slug added under it in
+      [`scripts/config/component-map.json`](../../scripts/config/component-map.json).
 - [ ] **Anatomy** decided: which parts exist, and which of them a consumer would target.
 
 ## API
@@ -60,13 +61,13 @@ things in.
   - [ ] `api.controlled` — the triples it supports
   - [ ] `api.variantAliases` / `api.domainAxes` — only if it needs them
 - [ ] **`bun run build:manifest`** to regenerate the catalogue.
-- [ ] Nothing invented. A capability that has not been reviewed stays `unknown`; the
-      contract-coverage ratchet exists so that is visible rather than quietly assumed.
+- [ ] Nothing invented. A capability that has not been reviewed stays `unknown`, so the backlog
+      is visible in the manifest rather than quietly assumed.
 
 ## Tests
 
 - [ ] **Renders** and exposes its `data-slot`.
-- [ ] **`axe`** passes ([`check:a11y`](../../scripts/check/a11y-coverage.mjs) requires it).
+- [ ] **`axe`** passes — every component suite runs it.
 - [ ] **Each variant and size** applies its distinguishing class.
 - [ ] **Controlled**: the prop stays authoritative when the parent ignores the callback.
 - [ ] **Uncontrolled**: `defaultValue` seeds it and the component owns it afterwards.
@@ -77,9 +78,8 @@ things in.
 
 ## Ship
 
-- [ ] **Export it** from the category `index.ts`.
-- [ ] **`bun run verify`** — it names anything missed.
-- [ ] **`bun run check:exports -- --update`** to re-snapshot the export list and the declared
-      props, in the same commit.
+- [ ] **Export it** from the family's `index.ts`.
+- [ ] **Add a playground example** — the playground's coverage test fails without one.
+- [ ] **`bun run build && bun run typecheck && bun run lint && bun run test`** — what CI runs.
 - [ ] **Raise the version to a minor** in `package.json` and add the `CHANGELOG.md` entry — a
       new component is a minor ([versioning.md](../governance/versioning.md)).

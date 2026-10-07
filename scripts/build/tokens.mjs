@@ -4,7 +4,9 @@
  * Single source (src/tokens/**) → three artifacts under src/styles/ (generated, gitignored):
  *   src/styles/tokens.css      — what the runtime needs: the shadcn / Base-UI bridge
  *                                (UNPREFIXED :root + .dark) plus the semantic and component
- *                                layers (--qx- prefixed) and the density mode selectors.
+ *                                layers (--qx- prefixed), the theme-derived re-declarations
+ *                                that let a nested .dark scope work, and the density mode
+ *                                selectors.
  *                                Primitives are deliberately excluded — a component physically
  *                                cannot resolve a palette value.
  *   src/styles/tokens.raw.css  — the complete export including primitives (--qx- prefixed),
@@ -204,6 +206,9 @@ const header =
   " * Do not edit by hand. Edit src/tokens/** and rebuild (`bun run build:tokens`).\n */\n";
 const read = (f) => readFileSync(join(BUILD, f), "utf8");
 const baseTokens = JSON.parse(read(`tokens-${baseTheme.name}.json`));
+/** `[name, value]` for every custom-property declaration in a generated fragment. */
+const declarationsOf = (css) =>
+  [...css.matchAll(/^\s*(--[a-z0-9-]+):\s*(.+);\s*$/gm)].map(([, name, value]) => [name, value]);
 
 function densityModeCss(tokens) {
   const density = tokens.density;
@@ -254,8 +259,6 @@ function densityModeCss(tokens) {
 /** Every emitted runtime variable whose value reaches a density variable through var(). */
 function densityDerivedDeclarations() {
   const aware = densityAwareVariables(loadTokenGraph({ root: PKG }));
-  const declarationsOf = (css) =>
-    [...css.matchAll(/^\s*(--[a-z0-9-]+):\s*(.+);\s*$/gm)].map(([, name, value]) => [name, value]);
   // A theme-varying variable cannot be re-declared here without overriding its theme value
   // (a density scope and `.dark` have equal specificity), so one would be a build error.
   const themeVarying = new Set(
@@ -276,13 +279,60 @@ function densityDerivedDeclarations() {
   return lines.join("\n");
 }
 
+/**
+ * The same substitution rule, for themes. A component token that follows a theme does so through
+ * the semantic variable — `--qx-component-card-background: var(--qx-color-surface-elevated)` —
+ * and is declared once, on :root. On <html> that is enough: :root and `.dark` are one element, so
+ * the reference substitutes the dark value. But a `.dark` scope *below* <html> — a preview, a
+ * specimen, a themed panel — would change the semantic colours and nothing derived from them; the
+ * subtree would inherit :root's light substitution. Re-declaring, inside each non-base theme's
+ * selector, every base variable that reaches a theme-varying variable through var() (and is not
+ * theme-varying itself) makes those re-resolve in the scope too. Same expression, so it changes
+ * nothing where the theme sits on <html>.
+ */
+function themeDerivedCss(platforms) {
+  const blocks = [];
+  for (const { name, selector } of registry.slice(1)) {
+    const themeVarying = new Set(
+      platforms.flatMap((platform) =>
+        declarationsOf(read(`${platform}-${name}.css`)).map(([n]) => n),
+      ),
+    );
+    const base = platforms
+      .flatMap((platform) => declarationsOf(read(`${platform}-${registry[0].name}.css`)))
+      .filter(([variable, value]) => !themeVarying.has(variable) && value.includes("var("));
+    // Fixed point: a variable is derived if it references a theme-varying or derived variable.
+    const derived = new Map();
+    for (let grew = true; grew; ) {
+      grew = false;
+      for (const [variable, value] of base) {
+        if (derived.has(variable)) continue;
+        const refs = [...value.matchAll(/var\(\s*(--[a-z0-9-]+)/g)].map(([, ref]) => ref);
+        if (refs.some((ref) => themeVarying.has(ref) || derived.has(ref))) {
+          derived.set(variable, value);
+          grew = true;
+        }
+      }
+    }
+    if (derived.size === 0) continue;
+    const lines = [...derived].map(([variable, value]) => `  ${variable}: ${value};`).join("\n");
+    blocks.push(
+      `/* Derived from ${name}'s colours: re-declared so a nested ${selector} scope re-resolves them. */\n${selector} {\n${lines}\n}\n`,
+    );
+  }
+  return blocks.join("\n");
+}
+
 const concat = (platform) => registry.map(({ name }) => read(`${platform}-${name}.css`)).join("\n");
 
 writeFileSync(
   join(OUT, "tokens.css"),
-  `${header}\n${concat("bridge")}\n${concat("consumable")}\n${densityModeCss(baseTokens)}\n`,
+  `${header}\n${concat("bridge")}\n${concat("consumable")}\n${themeDerivedCss(["bridge", "consumable"])}\n${densityModeCss(baseTokens)}\n`,
 );
-writeFileSync(join(OUT, "tokens.raw.css"), `${header}\n${concat("raw")}`);
+writeFileSync(
+  join(OUT, "tokens.raw.css"),
+  `${header}\n${concat("raw")}\n${themeDerivedCss(["raw"])}`,
+);
 writeFileSync(
   join(OUT, "tokens.json"),
   `${JSON.stringify(

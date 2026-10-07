@@ -31,6 +31,27 @@ bg-popover                    the utility a component writes
 Switching theme replaces one CSS custom property scope. No component re-renders to change
 colour, and nothing recomputes in JavaScript.
 
+### Nested theme scopes
+
+`.dark` works on any element, not only `<html>` — a dark preview in a light page, a themed panel,
+a docs specimen:
+
+```tsx
+<div className="dark bg-canvas text-foreground">
+  <Card>…</Card>
+</div>
+```
+
+That depends on a CSS rule worth knowing: a `var()` reference is substituted where its variable is
+*declared*, and descendants inherit the result. A component token that follows the theme reads the
+semantic variable — `--qx-component-card-background: var(--qx-color-surface-default)` — and is
+authored once, on `:root`. On its own that would resolve to the light surface for every element
+below `<html>`, whatever class sits in between. So the token build re-declares every variable
+derived from a theme's colours inside that theme's selector, and a nested `.dark` re-resolves them.
+It is the same mechanism that makes a nested `DensityProvider` work, and a token-governance test
+keeps it whole. The reverse — a light island inside a dark page — has no selector, because the light
+theme is the `:root` base.
+
 ---
 
 ## ThemeProvider
