@@ -12,13 +12,9 @@ import {
   UsersIcon,
 } from "@qeetrix/icons";
 import {
-  AccessReview,
-  type AccessReviewItem,
   Alert,
   AlertDescription,
   AlertTitle,
-  AuditEvent,
-  AuditLog,
   Badge,
   Button,
   Card,
@@ -33,7 +29,6 @@ import {
   DescriptionTerm,
   Meter,
   PageHeader,
-  SecurityItem,
   Tabs,
   TabsContent,
   TabsList,
@@ -42,6 +37,11 @@ import {
   toast,
 } from "@qeetrix/ui";
 import { useState } from "react";
+// Blocks are copy-paste source in the repo, not exports of @qeetrix/ui: an app copies the file
+// and imports it locally, as this page does.
+import { AccessReview, type AccessReviewItem } from "@/blocks/access-review/access-review";
+import { AuditEvent, AuditLog } from "@/blocks/audit-event/audit-event";
+import { SecurityItem } from "@/blocks/security-item/security-item";
 import { auditRecords, dateFormat, dateTimeFormat, sessions } from "../../data/qeet";
 import { ConsoleFrame } from "./console-frame";
 

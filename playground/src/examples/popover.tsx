@@ -23,7 +23,6 @@ import {
   PreviewCardTitle,
   PreviewCardTrigger,
   PreviewCardUrl,
-  QeetLogoMark,
   Separator,
   Switch,
   toast,
@@ -39,6 +38,7 @@ import {
   users,
 } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
+import { ThemedQeetLogo } from "../lib/qeet-brand";
 import { definePlayground, type FamilyExamples, num, select, text } from "../registry/types";
 
 /** Demo links point at real-looking console paths; the playground itself must not navigate. */
@@ -490,7 +490,7 @@ export const examples: FamilyExamples = {
                 status.qeet.in
               </PreviewCardTrigger>
               <PreviewCardContent className="flex w-72 gap-3">
-                <QeetLogoMark size={32} title={null} className="shrink-0" />
+                <ThemedQeetLogo height={32} className="shrink-0" />
                 <div className="flex min-w-0 flex-col gap-1">
                   <PreviewCardTitle>Qeet status</PreviewCardTitle>
                   <PreviewCardDescription>

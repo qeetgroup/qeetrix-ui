@@ -93,6 +93,30 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/blocks/**", "src/patterns/**", "!**/__tests__/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/*"],
+                    "message": "Blocks and patterns are copied into apps: import from \"@qeetrix/ui\" and \"@qeetrix/icons\", never the library's internals."
+                  },
+                  {
+                    "group": ["@qeetrix/icons/*"],
+                    "message": "Copied code uses the root import: import { NameIcon } from \"@qeetrix/icons\"."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

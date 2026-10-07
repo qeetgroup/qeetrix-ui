@@ -19,11 +19,11 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { converter, formatHex, parse, wcagContrast } from "culori";
 import { beforeAll, describe, expect, it } from "vitest";
-// @ts-expect-error — plain ESM build tooling, no declarations.
 import {
   loadTokenGraph,
   readThemeVariables,
   validateTokenGraph,
+  // @ts-expect-error — plain ESM build tooling, no declarations.
 } from "../../scripts/lib/tokens.mjs";
 
 type Color = { mode: string; alpha?: number; [channel: string]: number | string | undefined };
@@ -125,7 +125,7 @@ function surface(vars: Map<string, string>, spec: string): Color {
   let acc = layers.pop() as Color;
   // A translucent surface (the dark tints, the selection wash) is designed to sit on a surface;
   // with none named, measure it where it is designed to sit: the theme's default surface.
-  if ((rgb(acc).alpha ?? 1) < 1)
+  if ((rgb(acc)?.alpha ?? 1) < 1)
     acc = over(acc, toColor(resolve(vars, "var(--qx-color-surface-default)")));
   while (layers.length) acc = over(layers.pop() as Color, acc);
   return acc;

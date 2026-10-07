@@ -269,7 +269,7 @@ describe("Listbox keyboard: type-ahead, paging, multi-select", () => {
     const onValueChange = vi.fn();
     render(
       <Listbox
-        options={OPTIONS.concat({ label: "Grey", value: "x", disabled: true })}
+        options={[...OPTIONS, { label: "Grey", value: "x", disabled: true }]}
         aria-label="Colours"
         multiple
         onValueChange={onValueChange}

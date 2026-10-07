@@ -35,11 +35,6 @@
     "./tokens.css": "./dist/styles/tokens.raw.css",
     "./tokens.json": "./dist/styles/tokens.json",
     "./manifest.json": "./dist/component-manifest.json",
-    "./brand": {
-      "types": "./dist/brand/index.d.ts",
-      "import": "./dist/brand/index.js",
-      "default": "./dist/brand/index.js"
-    },
     "./providers": {
       "types": "./dist/providers/index.d.ts",
       "import": "./dist/providers/index.js",
@@ -121,7 +116,7 @@
   "scripts": {
     "dev": "node scripts/build/tokens.mjs && tsc -p tsconfig.build.json --watch --noEmit",
     "build": "bun run clean && node scripts/build/tokens.mjs && node scripts/build/manifest.mjs && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/build/subpath-shims.mjs && node scripts/build/postbuild.mjs",
-    "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p playground/tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p tsconfig.json --noEmit && tsc -p playground/tsconfig.json --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",

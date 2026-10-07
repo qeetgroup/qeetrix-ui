@@ -34,7 +34,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  QeetLogo,
   Separator,
   Sidebar,
   SidebarContent,
@@ -65,6 +64,7 @@ import { type ComponentType, useState } from "react";
 import { apiKeys, auditRecords, sessions, tenants, users } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
 import { NavIcon } from "../lib/nav-icon";
+import { ThemedQeetLogo } from "../lib/qeet-brand";
 import { bool, definePlayground, type FamilyExamples, select } from "../registry/types";
 
 /* ── Sample console: Qeet ID admin for Acme India ─────────────────────────────────────────── */
@@ -343,7 +343,7 @@ function TenantSwitcher() {
           <DropdownMenuTrigger
             render={<SidebarMenuButton size="lg" className="data-popup-open:bg-sidebar-accent" />}
           >
-            <QeetLogo title={null} className="size-8! shrink-0" />
+            <ThemedQeetLogo className="size-8! shrink-0" />
             <span className="grid min-w-0 flex-1 text-start leading-tight">
               <span className="truncate text-sm font-semibold">Qeet ID</span>
               <span className="truncate text-caption text-muted-foreground">{acme.name}</span>

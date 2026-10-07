@@ -3,7 +3,7 @@
 The baseline is **WCAG 2.2 AA**. WCAG 3 is a working draft and is not a conformance target.
 
 Accessibility here is not "axe is green". Axe checks part of the semantic layer and nothing at
-all about keyboard behaviour, focus movement, or what a screen reader is actually told. All 145
+all about keyboard behaviour, focus movement, or what a screen reader is actually told. All 137
 components pass axe; **78 are audited**. Those are different claims, and the library reports both.
 
 ```bash

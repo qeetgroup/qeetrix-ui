@@ -304,25 +304,26 @@ bun run build:tokens
 src/tokens/**  ──►  src/styles/tokens.css          bridge + semantic + component + density modes
                     src/styles/tokens.raw.css      everything, primitives included
                     src/styles/tokens.json         resolved per theme, for tooling and gates
-                    src/foundations/token-values.ts  the same values, typed
+                    src/lib/token-values.ts        the values JavaScript reads, typed
 ```
 
 All four are **gitignored and generated**. Editing one by hand is how a design system ends up
 with two truths — which is exactly what `src/lib/token-values.ts` used to be: a file whose own
 header claimed it was generated while it was maintained by hand.
 
-`src/lib/token-values.ts` is now a re-export of the generated foundations module, so
-`@qeetrix/ui/lib/token-values` and the root barrel keep working unchanged.
+It is generated now, and holds only what code reads as JavaScript: durations, easings, icon sizes
+and strokes, and the Sidebar and Tour geometry. Everything else — the z-index ladder, shadows,
+state opacities, chart colours — is read as a `--qx-*` CSS variable or from `tokens.json`.
 
 ### Reading tokens from TypeScript
 
 ```ts
-import { DURATION, EASING, Z_INDEX, SHADOW, CHART_COLOR } from "@qeetrix/ui";
+import { COMPONENT, DURATION, EASING, ICON_SIZE } from "@qeetrix/ui";
 ```
 
-Plain `as const` objects: tree-shakeable, no runtime resolution, no registry. Values that must
-follow the document theme (chart colours) are `var()` references rather than resolved colours,
-so a chart re-themes without re-rendering.
+Plain `as const` objects: tree-shakeable, no runtime resolution, no registry. Anything that must
+follow the document theme, such as chart colours, is a CSS variable (`var(--chart-1)`), so it
+re-themes without re-rendering.
 
 For anything styling-related, prefer the CSS variable — it is already theme-, density- and
 direction-aware. Reach for the TypeScript constants when a value has to reach JavaScript:

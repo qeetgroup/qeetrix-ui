@@ -14,7 +14,7 @@ import {
 } from "@/components/Dialog/dialog";
 import { Sheet, SheetContent, SheetTitle } from "@/components/Drawer/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover/popover";
-import { Z_INDEX } from "@/lib/token-values";
+import tokens from "@/styles/tokens.json";
 
 const a11y = (c: Element) =>
   axe(c, {
@@ -44,6 +44,11 @@ function DialogExample({
     </Dialog>
   );
 }
+
+/** The stacking ladder, from the generated token file (`--qx-z-*`). */
+const Z = Object.fromEntries(
+  Object.entries(tokens.light.z).map(([layer, value]) => [layer, Number(value)]),
+);
 
 describe("Dialog", () => {
   it("renders the trigger button", () => {
@@ -104,9 +109,9 @@ describe("Dialog", () => {
     // The mapping above is only correct while these hold: a Select, menu or Popover opened
     // from inside a dialog has to paint over it, and the backdrop has to stay behind its own
     // content. Asserted here because the classes alone cannot show it.
-    expect(Z_INDEX.popover).toBeGreaterThan(Z_INDEX.modal);
-    expect(Z_INDEX.modal).toBeGreaterThan(Z_INDEX.modalBackdrop);
-    expect(Z_INDEX.drawer).toBeGreaterThan(Z_INDEX.drawerBackdrop);
+    expect(Z.popover).toBeGreaterThan(Z.modal);
+    expect(Z.modal).toBeGreaterThan(Z["modal-backdrop"]);
+    expect(Z.drawer).toBeGreaterThan(Z["drawer-backdrop"]);
   });
 
   it("dismisses only the popover opened inside it, then only itself", async () => {
@@ -268,7 +273,7 @@ describe("Dialog", () => {
     const nested = screen.getByRole("dialog", { name: "Void this invoice?" });
     expect(nested).toHaveAttribute("data-nested");
     expect(nested.className).toContain("data-nested:z-(--qx-z-drawer)");
-    expect(Z_INDEX.drawer).toBeGreaterThan(Z_INDEX.modal);
+    expect(Z.drawer).toBeGreaterThan(Z.modal);
 
     const backdrop = document.querySelector('[data-slot="dialog-overlay"]');
     expect(backdrop).toBeInTheDocument();

@@ -9,7 +9,14 @@
     "tsBuildInfoFile": "./node_modules/.cache/qeetrix/tsconfig.build.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["dist", "**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
+  "exclude": [
+    "dist",
+    "src/blocks",
+    "src/patterns",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
   "tsc-alias": {
     "resolveFullPaths": true,
     "verbose": false

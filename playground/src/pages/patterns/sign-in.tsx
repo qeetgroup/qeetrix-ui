@@ -22,10 +22,10 @@ import {
   Link,
   OTPInput,
   PasswordInput,
-  QeetLogo,
   useTimer,
 } from "@qeetrix/ui";
 import { useEffect, useState } from "react";
+import { ThemedQeetLogo } from "../../lib/qeet-brand";
 
 const noNavigation = (event: { preventDefault: () => void }) => event.preventDefault();
 
@@ -63,7 +63,7 @@ export function SignInPattern() {
     <div className="flex min-h-svh flex-col bg-canvas">
       <header className="flex items-center justify-between px-6 py-4">
         <span className="flex items-center gap-2.5">
-          <QeetLogo className="size-7 rounded-md" aria-hidden />
+          <ThemedQeetLogo className="size-7 rounded-md" />
           <span className="font-heading text-sm font-semibold">Acme India</span>
         </span>
         <span className="text-caption text-muted-foreground">Secured by Qeet ID</span>

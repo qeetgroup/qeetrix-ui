@@ -23,7 +23,7 @@
 
 <div align="center">
 
-| 🧩 145 UI modules | 📦 1 install | 🎨 WCAG-AA tokens | 🌗 Light + dark | ⚛️ React 19 |
+| 🧩 137 UI modules | 📦 1 install | 🎨 WCAG-AA tokens | 🌗 Light + dark | ⚛️ React 19 |
 |:---:|:---:|:---:|:---:|:---:|
 | shadcn + Base UI | `@qeetrix/ui` | OKLCH · Style Dictionary | `.dark` class | Tailwind v4 |
 
@@ -58,10 +58,8 @@ flowchart TB
         direction LR
         tokens["Design tokens<br/>W3C DTCG JSON · OKLCH<br/>src/tokens/"]
         sd["Style Dictionary<br/>scripts/build/tokens.mjs<br/>→ semantic + raw --qx-* CSS + JSON"]
-        comps["145 UI modules · 10 categories<br/>custom + Base UI<br/>src/components/&lt;category&gt;/"]
-        brand["Brand<br/>QeetLogo + 10 icons<br/>src/brand/"]
+        comps["137 UI modules · 10 categories<br/>custom + Base UI<br/>src/components/&lt;category&gt;/"]
         tokens --> sd --> comps
-        brand --> comps
     end
 
     consumers["Qeet ID — console · login · website<br/>qeet-docs · future Qeet products"]
@@ -83,9 +81,9 @@ src/
 │   └── feedback/ surfaces/ data-display/ layout/ utility/
 ├── contracts/         component contract: types + closed vocabularies + the layer table
 ├── manifests/         the manifest's type, and the declarations it is generated from
-├── foundations/       typed token values — GENERATED from src/tokens/
 ├── providers/         theme · density · direction
-├── blocks/ brand/ hooks/ lib/ fonts/
+├── blocks/ patterns/  copy-paste blocks and patterns built on the package — never published
+├── hooks/ lib/ fonts/ lib/token-values.ts is GENERATED from src/tokens/
 ├── styles/            index.css (entry) + generated token CSS/JSON
 └── __tests__/         global harness: setup, a11y smoke, client boundaries, API lock, governance
 scripts/
@@ -98,7 +96,7 @@ docs/
 └── governance/        component-status · deprecations · versioning
 ```
 
-Layers flow one way — `tokens → foundations → runtime/primitives → components → blocks` — and
+Layers flow one way — `tokens → runtime / internal → components`, with blocks and patterns on top of the package entry — and
 dependencies are **deny by default**. The allow-list lives in [`src/contracts/layers.ts`](src/contracts/layers.ts);
 `bun run check:architecture` enforces it against the real module graph. See
 [docs/architecture/](docs/architecture/overview.md).
@@ -112,11 +110,10 @@ packed tarball, and that everything under *Not published* does not.
 
 | Specifier | Resolves to |
 |:--|:--|
-| `@qeetrix/ui` | the full barrel — every component, provider, brand asset and helper |
+| `@qeetrix/ui` | the full barrel — every component, provider and helper |
 | `@qeetrix/ui/components/button` | one component — **stable regardless of its category** |
 | `@qeetrix/ui/components/actions` | a whole category |
 | `@qeetrix/ui/providers` · `/providers/theme-provider` | the providers |
-| `@qeetrix/ui/brand` · `/blocks` · `/blocks/auth` | brand assets · page-level blocks |
 | `@qeetrix/ui/hooks/use-media-query` · `/use-mobile` · `/use-motion` · `/use-prefers-reduced-motion` | the public hooks (also on the barrel) |
 | `@qeetrix/ui/lib/utils` · `/motion` · `/responsive` · `/token-values` | the public helpers (also on the barrel) |
 | `@qeetrix/ui/styles.css` · `/qeetrix.css` · `/tokens.css` · `/tokens.json` | styles + tokens |
@@ -127,7 +124,7 @@ packed tarball, and that everything under *Not published* does not.
 `@qeetrix/ui/components/<category>/<slug>` (the category a component lives in is an
 implementation detail; use the flat path), `@qeetrix/ui/components/index` (use the barrel),
 `@qeetrix/ui/hooks/use-controllable-state` and anything under `primitives/`, `contracts/`,
-`manifests/`, `runtime/` or `foundations/`.
+`manifests/` or `runtime/`.
 
 ---
 
@@ -149,14 +146,14 @@ Then wrap the app and compose:
 
 ```tsx
 import { ThemeProvider, Button, Card, CardContent } from "@qeetrix/ui";
-import { QeetLogo } from "@qeetrix/ui/brand";
+import { QeetLogo } from "@qeetrix/icons";
 
 export function App() {
   return (
     <ThemeProvider defaultTheme="system">
       <Card>
         <CardContent className="flex items-center gap-3">
-          <QeetLogo size={28} />
+          <QeetLogo height={28} aria-label="Qeet" />
           <Button>Authenticate with Qeet</Button>
         </CardContent>
       </Card>
@@ -173,16 +170,16 @@ Light/dark is driven by the `.dark` class (managed by `ThemeProvider`). Its keyb
 
 ## 🧩 What's inside
 
-> 145 React UI modules across ten categories; **every one** has a Vitest/axe test in its category's `__tests__/`, and stories cover the public catalog.
+> 137 React UI modules across ten categories; **every one** has a Vitest/axe test in its category's `__tests__/`, and stories cover the public catalog.
 
 - **Overlays** — Dialog · Sheet · Drawer · Popover · DropdownMenu · ContextMenu · Menubar · HoverCard · Tooltip · CommandPalette · NavigationMenu
 - **Inputs & controls** — Button · Input · Textarea · Select · Combobox · MultiSelect · Autocomplete · Checkbox · Radio · Switch · Toggle · Slider · AngleSlider · OTPInput · NumberField · Field / Form · Chip · SegmentedControl · ColorPicker · Date / Time / Timezone pickers
 - **Data & navigation** — Table · DataTable · Tabs · Breadcrumb · Pagination · Sidebar · Tree · Timeline · Accordion · Collapsible · Listbox · TableOfContents · Carousel · Charts
-- **Enterprise operations** — AccessReview · AuditLog / AuditEvent · SecurityItem · accessible ChartDataTable fallbacks · responsive ScheduleCalendar agenda
+- **Enterprise operations** — accessible ChartDataTable fallbacks · responsive ScheduleCalendar agenda · CopyableSecret · DataState
 - **Feedback & surfaces** — Card · Alert · Banner · Notification · Toast · Stat · Badge · StatusPill · Skeleton · Progress · Meter · EmptyState · Feed · Spoiler · Marquee
 - **Content & typography** — Typography / Prose · Blockquote · Highlight · Kbd · CodeBlock · JSONTree · RichTextEditor · NumberFormatter · RollingNumber
-- **Brand** — `QeetLogo` (theme-adaptive) + 10 custom Qeet icons, at `@qeetrix/ui/brand`
-- **Blocks** — auth, dashboard shell, settings layout, onboarding wizard, pricing table
+- **Brand** — the Qeet logos come from [`@qeetrix/icons`](https://www.npmjs.com/package/@qeetrix/icons) (`QeetLogo`, `QeetWordmarkLogo`), like every other icon
+- **Blocks & patterns** — copy-paste source in [`src/blocks/`](./src/blocks) and [`src/patterns/`](./src/patterns), built from these components and not part of the package: access review, audit event, comment thread, logo uploader, notification center, notification preferences, security item; master–detail
 
 ---
 
@@ -193,7 +190,7 @@ The single source of truth lives in [`src/tokens/`](src/tokens/) as **W3C DTCG J
 - `@qeetrix/ui/styles.css` — the full entry (`:root` / `.dark`, `@theme` mappings, fonts, base layer)
 - `@qeetrix/ui/qeetrix.css` — the semantic + component layers, as `--qx-*` vars
 - `@qeetrix/ui/tokens.css` — everything including the primitive ramps · `@qeetrix/ui/tokens.json` — resolved per theme
-- `src/foundations/token-values.ts` — the same values, typed, re-exported from `@qeetrix/ui`
+- `src/lib/token-values.ts` — the few values JavaScript reads (durations, easings, icon sizes, component geometry), typed and generated; published as `@qeetrix/ui/lib/token-values`
 
 The **primitive layer is not published to the stylesheet components render against**, so a component physically cannot resolve a palette value — the ownership rule is a fact, not a convention. Full detail: [docs/standards/tokens.md](docs/standards/tokens.md).
 
@@ -231,7 +228,7 @@ instead of exiting green.
 | `check:architecture` | category map ↔ filesystem, complete barrels, no barrel imports, kebab-case, client directives, **layer boundaries** |
 | `check:contract` | every component satisfies the component contract — valid status, capabilities, states, ARIA pattern, deprecation record |
 | `check:exports` | the published surface of all 21 entry points matches `src/__tests__/public-api.json` **down to each export's kind and each declared prop's optionality, type, generics and base types**, and is *intentional* — no unreachable component, no leaking `@barrel-exclude`, no duplicate export |
-| `check:a11y` | every component has an axe test (currently **145/145**) |
+| `check:a11y` | every component has an axe test (currently **137/137**) |
 | `check:tokens` | the token graph — layer direction, references, cycles, types, theme parity, deprecations |
 | `check:token-usage` | no raw colours, z-indexes, shadows or bare lengths in component source |
 | `check:contrast` | WCAG-AA on every semantic text/surface pair, both themes |

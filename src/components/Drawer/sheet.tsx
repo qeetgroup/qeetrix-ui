@@ -13,7 +13,7 @@ import { useMessages } from "@/providers/messages-provider";
  * The edge a sheet is attached to.
  *
  * `top` / `right` / `bottom` / `left` are physical and stay put in every writing direction —
- * MasterDetail and Sidebar rely on that and choose the side themselves. `inline-start` /
+ * Sidebar and the master-detail pattern rely on that and choose the side themselves. `inline-start` /
  * `inline-end` follow the reading direction: an `inline-end` details panel is on the right in
  * English and on the left in Arabic, with its border and its entry motion mirrored to match.
  */

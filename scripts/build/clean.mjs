@@ -23,7 +23,7 @@ const TARGETS = [
   "src/styles/tokens.css",
   "src/styles/tokens.raw.css",
   "src/styles/tokens.json",
-  "src/foundations/token-values.ts",
+  "src/lib/token-values.ts",
 ];
 
 for (const target of TARGETS) {

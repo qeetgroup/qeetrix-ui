@@ -51,5 +51,5 @@ library itself is built and changed.
 - Unknown is a value, not a guess. `"unknown"` in the manifest is a review backlog item, not a
   "no".
 - Accessibility is audited per dimension, and the roll-up is computed — there is no field that
-  means "accessible: true". All 145 components pass axe; 78 are audited —
+  means "accessible: true". All 137 components pass axe; 78 are audited —
   `bun run check:a11y`.

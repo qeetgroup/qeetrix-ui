@@ -164,7 +164,7 @@ function useDragState(disabled: boolean | undefined) {
 /**
  * The drop-target surface: a calm dashed well at rest, the Qeet tint while files are dragged
  * over it, the danger roles when invalid. Every colour is a `--qx-component-file-upload-*`
- * token, which `LogoUploader` shares, so the two read as one control.
+ * token, which the logo-uploader block shares, so the two read as one control.
  */
 const dropTargetClassName = cn(
   "group/dropzone relative flex w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-(--qx-component-file-upload-corner) border border-dashed p-(--qx-component-file-upload-padding) text-center text-foreground",
@@ -196,7 +196,7 @@ function DropTargetIcon({ children }: { children: React.ReactNode }) {
 /**
  * Drag-and-drop (or click) file picker. Presentational + validation only —
  * the parent owns the resulting file list and any upload logic, keeping this
- * framework- and form-library-agnostic (mirrors {@link LogoUploader}).
+ * framework- and form-library-agnostic (the logo-uploader block follows the same contract).
  *
  * **Never drag-and-drop only.** The whole target is a native `<button>`: Tab reaches it, Enter
  * and Space open the file dialog, a tap opens it on touch devices, and the instruction says so.

@@ -73,7 +73,6 @@ import {
   PopoverDescription,
   PopoverTitle,
   PopoverTrigger,
-  QeetLogo,
   Select,
   SelectContent,
   SelectItem,
@@ -122,6 +121,7 @@ import {
   users,
 } from "../data/qeet";
 import { parseFrameHash } from "../lib/frame";
+import { ThemedQeetLogo } from "../lib/qeet-brand";
 import { PreviewFrame } from "../shell/preview-frame";
 
 /**
@@ -163,7 +163,7 @@ function ShellSample() {
         <Sidebar collapsible="none" className="border-e">
           <SidebarHeader>
             <div className="flex items-center gap-2 px-1.5 py-1">
-              <QeetLogo className="size-6 rounded-md" aria-hidden />
+              <ThemedQeetLogo className="size-6 rounded-md" />
               <span className="text-sm font-semibold">Acme India</span>
             </div>
           </SidebarHeader>

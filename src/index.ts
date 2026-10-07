@@ -2,7 +2,7 @@
  * @qeetrix/ui — the Qeet Group design system.
  *
  * Components are organized by family under src/components/<Family>/; this barrel
- * re-exports every family, the providers, brand assets, hooks and lib helpers.
+ * re-exports every family, the providers, hooks and lib helpers.
  *
  * The published surface is locked by src/__tests__/public-api.json — any addition or
  * removal must be re-snapshotted via `bun run check:exports -- --update` and land in
@@ -22,10 +22,10 @@ export type {
 export { createColumnHelper } from "@tanstack/react-table";
 export type { DateRange } from "react-day-picker";
 
-// Brand — Qeet logos + custom icons (also at the @qeetrix/ui/brand subpath).
-export * from "./brand";
-// Components — 145 modules across 102 families.
+// Components — 137 modules across 97 families.
 export * from "./components";
+// The controlled/uncontrolled contract every component follows, for building your own.
+export { useControllableState } from "./hooks/use-controllable-state";
 export { useMediaQuery } from "./hooks/use-media-query";
 export { useIsMobile } from "./hooks/use-mobile";
 export { useMotion } from "./hooks/use-motion";
@@ -38,7 +38,7 @@ export type { DurationToken, EasingToken, TransitionOptions } from "./lib/motion
 export { DURATION, EASING, transition } from "./lib/motion";
 export type { Breakpoint } from "./lib/responsive";
 export { BREAKPOINTS, belowWidthQuery, minWidthQuery } from "./lib/responsive";
-export { CHART_COLOR, COMPONENT, SHADOW, STATE_OPACITY, Z_INDEX } from "./lib/token-values";
+export { COMPONENT } from "./lib/token-values";
 export { cn } from "./lib/utils";
 // Providers — theme, density, direction, messages.
 export * from "./providers";

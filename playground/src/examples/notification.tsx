@@ -1,11 +1,6 @@
-import {
-  Button,
-  IconPasskey,
-  Notification,
-  NotificationCenter,
-  type NotificationItem,
-} from "@qeetrix/ui";
-import { type ReactNode, useState } from "react";
+import { FingerprintPatternIcon } from "@qeetrix/icons";
+import { Button, Notification } from "@qeetrix/ui";
+import { useState } from "react";
 import { formatInr } from "../data/qeet";
 import { expr, jsx } from "../lib/code";
 import { bool, definePlayground, type FamilyExamples, select, text } from "../registry/types";
@@ -216,139 +211,6 @@ function NotificationPlayground({
   );
 }
 
-/* ── NotificationCenter ───────────────────────────────────────────────────────────────────── */
-
-const inboxItems: readonly NotificationItem[] = [
-  {
-    id: "ntf_01",
-    variant: "error",
-    title: "Refresh token reuse detected",
-    description: "Kavya Sharma’s session family was revoked after a reuse from 185.220.101.7.",
-    time: "12 min ago",
-  },
-  {
-    id: "ntf_02",
-    variant: "warning",
-    title: "Ingest at 92% of quota",
-    description: "qeet-logs-ingest will start sampling debug logs at 100%.",
-    time: "38 min ago",
-  },
-  {
-    id: "ntf_03",
-    variant: "info",
-    title: "Priya Nair mentioned you",
-    description: "“@Rohan can you approve the scopes on the Staging CI key?”",
-    time: "1 h ago",
-  },
-  {
-    id: "ntf_04",
-    variant: "success",
-    title: "Invoice QP-INV-2026-00411 paid",
-    description: `${formatInr(1386500)} from Bharat FinServ via NACH.`,
-    time: "3 h ago",
-    read: true,
-  },
-  {
-    id: "ntf_05",
-    variant: "success",
-    title: "Okta SCIM sync complete",
-    description: "3 users created, 11 updated.",
-    time: "5 h ago",
-    read: true,
-  },
-  {
-    id: "ntf_06",
-    variant: "info",
-    title: "GSTR-1 for September is ready to file",
-    description: "214 invoices, taxable value ₹2.4 Cr. Due 11 Oct.",
-    time: "Yesterday",
-    read: true,
-  },
-];
-
-function withReplyAction(items: readonly NotificationItem[]): NotificationItem[] {
-  return items.map((item) =>
-    item.id === "ntf_03"
-      ? {
-          ...item,
-          action: (
-            <Button size="xs" variant="outline">
-              Reply
-            </Button>
-          ),
-        }
-      : { ...item },
-  );
-}
-
-function ConsoleHeader({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex w-full max-w-xl items-center justify-between gap-3 rounded-lg border bg-card px-4 py-2">
-      <div className="min-w-0">
-        <div className="truncate text-sm font-medium">Qeet ID console</div>
-        <div className="truncate text-caption text-muted-foreground">Acme India Pvt Ltd</div>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function InboxDemo({
-  initial = inboxItems,
-  align,
-  markAllRead = true,
-  dismissible = true,
-  emptyMessage,
-}: {
-  initial?: readonly NotificationItem[];
-  align?: "start" | "center" | "end";
-  markAllRead?: boolean;
-  dismissible?: boolean;
-  emptyMessage?: string;
-}) {
-  const [items, setItems] = useState(() => withReplyAction(initial));
-  return (
-    <ConsoleHeader>
-      <div className="flex items-center gap-1">
-        {items.length < initial.length && (
-          <Button size="xs" variant="ghost" onClick={() => setItems(withReplyAction(initial))}>
-            Reset
-          </Button>
-        )}
-        <NotificationCenter
-          items={items}
-          align={align}
-          emptyMessage={emptyMessage}
-          onMarkAllRead={
-            markAllRead
-              ? () => setItems((current) => current.map((item) => ({ ...item, read: true })))
-              : undefined
-          }
-          onDismiss={
-            dismissible
-              ? (id) => setItems((current) => current.filter((item) => item.id !== id))
-              : undefined
-          }
-        />
-      </div>
-    </ConsoleHeader>
-  );
-}
-
-const centerControls = {
-  inbox: select(["unread and read", "all read", "empty"] as const, "unread and read", "Items"),
-  align: select(["start", "center", "end"] as const, "end"),
-  markAllRead: bool(true, "Mark all read (onMarkAllRead)"),
-  dismissible: bool(true, "Dismissible (onDismiss)"),
-  emptyMessage: text("You’re all caught up.", "Empty message"),
-};
-
-const inboxPresets = {
-  "unread and read": inboxItems,
-  "all read": inboxItems.map((item) => ({ ...item, read: true })),
-  empty: [],
-} satisfies Record<string, readonly NotificationItem[]>;
-
 export const examples: FamilyExamples = {
   notification: {
     layout: "wide",
@@ -443,7 +305,7 @@ export const examples: FamilyExamples = {
           <div className="flex w-full max-w-md flex-col gap-3">
             <Notification
               variant="success"
-              icon={<IconPasskey />}
+              icon={<FingerprintPatternIcon aria-hidden />}
               title="Passkey added"
               description="“MacBook Pro 14″ — Chrome” can now sign in to Acme India."
             />
@@ -473,49 +335,6 @@ export const examples: FamilyExamples = {
           action: v.action
             ? expr('<Button size="sm" variant="outline">View payout</Button>')
             : undefined,
-        }),
-    }),
-  },
-
-  "notification-center": {
-    layout: "wide",
-    minHeight: 300,
-    demos: [
-      {
-        name: "Inbox",
-        description:
-          "Open the bell: All/Unread tabs, mark all read, per-item dismiss. The caller owns `read`.",
-        render: () => <InboxDemo />,
-      },
-      {
-        name: "All read",
-        description: "No unread badge on the bell when everything has been read.",
-        render: () => <InboxDemo initial={inboxPresets["all read"]} />,
-      },
-      {
-        name: "Empty",
-        render: () => <InboxDemo initial={[]} emptyMessage="You’re all caught up." />,
-      },
-    ],
-    playground: definePlayground({
-      controls: centerControls,
-      render: (v) => (
-        <InboxDemo
-          key={`${v.inbox}|${v.markAllRead}|${v.dismissible}`}
-          initial={inboxPresets[v.inbox]}
-          align={v.align}
-          markAllRead={v.markAllRead}
-          dismissible={v.dismissible}
-          emptyMessage={v.emptyMessage || undefined}
-        />
-      ),
-      code: (v) =>
-        jsx("NotificationCenter", {
-          items: expr("notifications"),
-          align: v.align === "end" ? undefined : v.align,
-          emptyMessage: v.emptyMessage || undefined,
-          onMarkAllRead: v.markAllRead ? expr("markAllRead") : undefined,
-          onDismiss: v.dismissible ? expr("(id) => dismiss(id)") : undefined,
         }),
     }),
   },

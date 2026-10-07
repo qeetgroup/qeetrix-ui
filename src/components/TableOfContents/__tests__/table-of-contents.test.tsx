@@ -39,7 +39,9 @@ const observers: { callback: (entries: Entry[]) => void; observed: Element[] }[]
 
 class RecordingObserver {
   observed: Element[] = [];
-  constructor(public callback: (entries: Entry[]) => void) {
+  callback: (entries: Entry[]) => void;
+  constructor(callback: (entries: Entry[]) => void) {
+    this.callback = callback;
     observers.push(this);
   }
   observe(element: Element) {

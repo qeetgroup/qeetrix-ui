@@ -44,7 +44,7 @@ Anything neither derivable nor declared is emitted as `"unknown"` or `null`.
   "generated": "2026-08-22",
   "styles": "@qeetrix/ui/styles.css",
   "tokens": "@qeetrix/ui/tokens.json",
-  "count": 145,
+  "count": 137,
   "categories": { "actions": 7, "…": 0 },
   "statuses": { "experimental": 0, "beta": 68, "stable": 76, "deprecated": 1 },
   "components": [ … ]
