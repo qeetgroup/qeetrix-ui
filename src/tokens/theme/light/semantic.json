@@ -31,6 +31,11 @@
         "$type": "color",
         "$description": "Readable Qeet orange for text and icons: the AA step of the ramp, not the 500 fill."
       },
+      "brand-display": {
+        "$value": "{color.qeet.600}",
+        "$type": "color",
+        "$description": "Brand-coloured large type — headlines at 24px and up, and brand marks — in Qeet Ember (#D04800, 4.4:1). WCAG asks 3:1 of large text, so a headline can stay vividly orange where body-size brand text (text.brand) must darken to the AA step. Never for body-size text."
+      },
       "link": {
         "$value": "{color.qeet.700}",
         "$type": "color",

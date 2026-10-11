@@ -116,7 +116,9 @@ describe("Button interaction language", () => {
   it("keeps destructive labels on AA-safe pairs: subtle at rest, solid on intent", () => {
     const cls = buttonVariants({ variant: "destructive" });
     expect(cls).toContain("bg-destructive-subtle text-destructive-text");
-    expect(cls).toContain("hover:bg-destructive hover:text-destructive-foreground");
+    // White on the strong red in both themes; the bright dark-mode mark colour would need a dark label.
+    expect(cls).toContain("hover:bg-destructive-strong hover:text-on-feedback-strong");
+    expect(cls).not.toMatch(/(?:^|\s)hover:bg-destructive(?:\s|$)/);
     // The /20 and /30 tints put the label under 4.5:1 in both themes.
     expect(cls).not.toMatch(/bg-destructive\/\d/);
   });

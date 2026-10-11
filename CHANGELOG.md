@@ -2,6 +2,44 @@
 
 ## Unreleased
 
+### Minor Changes
+
+- **Dark mode is drawn in the brand orange itself.** `text.brand`, `text.link`, `border.brand`,
+  `border.focused` and `focus.ring` move from `qeet.400` (#FF9646, a pale apricot) to `qeet.500`
+  (#F26D0E, the logo's orange): 6.4:1 on the canvas and 5.5:1 on the lightest surface, the
+  popover. Brand text now reads as Qeet orange, and stands apart from warning amber, which
+  `qeet.400` sat beside at the same lightness. `text.link-hover` moves to `qeet.400`.
+- **Dark selection is a Qeet tint.** `surface.brand-subtle` (and `-hover`, `-active`) is
+  `qeet.500` at 10% / 13% / 16% instead of a neutral white lift — warm without going brown, with
+  the indicator and check in the brand orange on top.
+- **`text.brand-display`, for brand-coloured large type.** A new semantic token, and the
+  `text-brand-display` utility, for headlines at 24px and up and for brand marks. Light mode uses
+  Qeet Ember (#D04800, 4.4:1) — WCAG asks 3:1 of large text — so a headline stays vividly orange
+  where body-size `text-brand` has to darken to the AA step; dark mode uses #F26D0E. Not for
+  body-size text.
+
+- **Dark-mode status colours are rich, not pastel.** The 400 step of each status ramp — dark
+  error, warning, success and info text, their fills, and the chart's negative, positive and
+  warning marks — moves to the most saturated shade that still reads at 4.5:1 on every dark
+  surface: error `#FC4351` (was `#FF8F91`, which read as pink), warning `#EFAD1D`, success
+  `#1DC67F`, info `#29A6FC`. Lightness is now set per hue — red lowest, because a lighter red is
+  pink; amber highest, because a darker amber is brown — so the four carry the same weight. Light
+  mode is unchanged; the solid warning fill (`feedback.warning-strong`), which uses warning 400 in
+  both themes, is a slightly richer amber.
+
+### Patch Changes
+
+- **A destructive button commits to white on red in both themes.** Hovered, pressed or with its
+  menu open, it fills with `destructive-strong` (#BE2334) under a white label (6:1), as the
+  primary button is white on Qeet Ember. It used `bg-destructive`, which in dark is the bright
+  mark colour and could only carry a near-black label. Light mode looks the same as before. For
+  any label on a status fill, pair `bg-*-strong` with `text-on-feedback-strong`; the plain
+  `bg-destructive`, `bg-success`, `bg-warning` and `bg-info` are for marks — dots, bars, rings.
+- **Dark text selection is 20%, as in light.** At 32% a selected link, now the brand orange, fell
+  below 4.5:1 on the highlight.
+
+## 2.1.4
+
 ### Major Changes
 
 - **`@qeetrix/ui` is the component library, and only that.** Eight modules that were not
