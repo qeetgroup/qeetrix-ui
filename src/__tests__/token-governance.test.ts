@@ -165,6 +165,8 @@ const AA_PAIRS: [string, string, number][] = [
   ...["link", "link-hover", "brand"].flatMap((t) =>
     SURFACES.map((s): [string, string, number] => [`--qx-color-text-${t}`, s, 4.5]),
   ),
+  // large brand type only, which WCAG holds to 3:1
+  ...SURFACES.map((s): [string, string, number] => ["--qx-color-text-brand-display", s, 3]),
   ...["", "-hover", "-active"].map((s): [string, string, number] => [
     "--qx-color-text-on-brand",
     `--qx-color-action-primary${s}`,

@@ -241,6 +241,7 @@
   --color-brand-subtle-hover: var(--qx-color-surface-brand-subtle-hover);
   --color-brand-subtle-active: var(--qx-color-surface-brand-subtle-active);
   --color-brand: var(--qx-color-text-brand);
+  --color-brand-display: var(--qx-color-text-brand-display);
   --color-link: var(--qx-color-text-link);
   --color-link-hover: var(--qx-color-text-link-hover);
   --color-control: var(--qx-color-border-control);

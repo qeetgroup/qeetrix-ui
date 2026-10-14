@@ -216,7 +216,7 @@
       }
     },
     "danger": {
-      "$description": "Status — danger / error (red, hue 17–24). A complete ramp: earlier steps that aliased neutral gray are gone, so error states and negative chart series can never resolve to gray. Kept clearly redder than Qeet orange (hue 47) so the two never read as the same signal.",
+      "$description": "Status — danger / error (red, hue 17–24). A complete ramp: earlier steps that aliased neutral gray are gone, so error states and negative chart series can never resolve to gray. Kept clearly redder than Qeet orange (hue 47) so the two never read as the same signal. 400 is the dark-mode status colour (text, fills, chart marks): the richest shade that still reads at 4.5:1 on every dark surface, so its lightness is set per hue — red lowest, amber highest — rather than on the shared ladder; a paler 400 read as pastel (red as pink).",
       "50": {
         "$value": "oklch(0.976 0.011 17)",
         "$type": "color"
@@ -234,7 +234,7 @@
         "$type": "color"
       },
       "400": {
-        "$value": "oklch(0.77 0.136 19.102)",
+        "$value": "oklch(0.66 0.22 22)",
         "$type": "color"
       },
       "500": {
@@ -263,7 +263,7 @@
       }
     },
     "success": {
-      "$description": "Status — success (emerald green, hue 156–162), on the shared lightness ladder: 700 is the first step that passes AA as text on light surfaces, 400 on dark ones.",
+      "$description": "Status — success (emerald green, hue 156–162), on the shared lightness ladder: 700 is the first step that passes AA as text on light surfaces, 400 on dark ones. 400 is the dark-mode status colour (text, fills, chart marks): the richest shade that still reads at 4.5:1 on every dark surface, so its lightness is set per hue — red lowest, amber highest — rather than on the shared ladder; a paler 400 read as pastel (red as pink).",
       "50": {
         "$value": "oklch(0.976 0.017 156)",
         "$type": "color"
@@ -281,7 +281,7 @@
         "$type": "color"
       },
       "400": {
-        "$value": "oklch(0.77 0.135 157.802)",
+        "$value": "oklch(0.73 0.165 158)",
         "$type": "color"
       },
       "500": {
@@ -310,7 +310,7 @@
       }
     },
     "warning": {
-      "$description": "Status — warning (amber, hue 70–92). Deliberately yellower than Qeet orange so a warning never reads as a brand accent; 700 is AA text on light surfaces, 400 on dark.",
+      "$description": "Status — warning (amber, hue 70–92). Deliberately yellower than Qeet orange so a warning never reads as a brand accent; 700 is AA text on light surfaces, 400 on dark. 400 is the dark-mode status colour (text, fills, chart marks): the richest shade that still reads at 4.5:1 on every dark surface, so its lightness is set per hue — red lowest, amber highest — rather than on the shared ladder; a paler 400 read as pastel (red as pink).",
       "50": {
         "$value": "oklch(0.976 0.017 92)",
         "$type": "color"
@@ -328,7 +328,7 @@
         "$type": "color"
       },
       "400": {
-        "$value": "oklch(0.77 0.14 85.394)",
+        "$value": "oklch(0.79 0.158 80)",
         "$type": "color"
       },
       "500": {
@@ -357,7 +357,7 @@
       }
     },
     "info": {
-      "$description": "Status — info (blue, hue 238–252), on the shared lightness ladder.",
+      "$description": "Status — info (blue, hue 238–252), on the shared lightness ladder. 400 is the dark-mode status colour (text, fills, chart marks): the richest shade that still reads at 4.5:1 on every dark surface, so its lightness is set per hue — red lowest, amber highest — rather than on the shared ladder; a paler 400 read as pastel (red as pink).",
       "50": {
         "$value": "oklch(0.976 0.012 238)",
         "$type": "color"
@@ -375,7 +375,7 @@
         "$type": "color"
       },
       "400": {
-        "$value": "oklch(0.77 0.128 242.204)",
+        "$value": "oklch(0.7 0.163 245)",
         "$type": "color"
       },
       "500": {

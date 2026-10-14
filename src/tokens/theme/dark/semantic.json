@@ -26,15 +26,21 @@
         "$type": "color"
       },
       "brand": {
-        "$value": "{color.qeet.400}",
-        "$type": "color"
+        "$value": "{color.qeet.500}",
+        "$type": "color",
+        "$description": "The brand colour itself (#F26D0E): on dark surfaces it clears 4.5:1 (5.5:1 on the lightest, the popover), so dark-mode brand text is the brand rather than a paler tint — which also keeps it apart from warning amber."
+      },
+      "brand-display": {
+        "$value": "{color.qeet.500}",
+        "$type": "color",
+        "$description": "Brand-coloured large type — headlines at 24px and up, and brand marks. The same as text.brand on dark; light mode is where the two differ."
       },
       "link": {
-        "$value": "{color.qeet.400}",
+        "$value": "{color.qeet.500}",
         "$type": "color"
       },
       "link-hover": {
-        "$value": "{color.qeet.300}",
+        "$value": "{color.qeet.400}",
         "$type": "color"
       },
       "success": {
@@ -115,16 +121,16 @@
         "$type": "color"
       },
       "brand-subtle": {
-        "$value": "color-mix(in oklab, {color.graphite.0} 7%, transparent)",
+        "$value": "color-mix(in oklab, {color.qeet.500} 10%, transparent)",
         "$type": "color",
-        "$description": "Dark selection is a neutral lift, not an orange tint: orange at dark-mode lightness is brown. The Qeet signal on a selected item comes from its indicator (border.brand) and brand-coloured icon or check, on a clean graphite lift. Translucent, so it reads the same on card, popover and sidebar."
+        "$description": "A Qeet tint at 10% — warm without going brown, which it starts to past ~14% on graphite. Pairs with the indicator (border.brand) and a brand-coloured icon or check. Translucent, so it reads the same on card, popover and sidebar."
       },
       "brand-subtle-hover": {
-        "$value": "color-mix(in oklab, {color.graphite.0} 10%, transparent)",
+        "$value": "color-mix(in oklab, {color.qeet.500} 13%, transparent)",
         "$type": "color"
       },
       "brand-subtle-active": {
-        "$value": "color-mix(in oklab, {color.graphite.0} 13%, transparent)",
+        "$value": "color-mix(in oklab, {color.qeet.500} 16%, transparent)",
         "$type": "color"
       },
       "rail": {
@@ -158,7 +164,7 @@
         "$type": "color"
       },
       "focused": {
-        "$value": "{color.qeet.400}",
+        "$value": "{color.qeet.500}",
         "$type": "color"
       },
       "hover": {
@@ -166,7 +172,7 @@
         "$type": "color"
       },
       "brand": {
-        "$value": "{color.qeet.400}",
+        "$value": "{color.qeet.500}",
         "$type": "color"
       },
       "danger": {
@@ -254,7 +260,7 @@
     },
     "focus": {
       "ring": {
-        "$value": "{color.qeet.400}",
+        "$value": "{color.qeet.500}",
         "$type": "color"
       }
     },
@@ -266,8 +272,9 @@
     },
     "selection": {
       "background": {
-        "$value": "color-mix(in oklab, {color.qeet.500} 32%, transparent)",
-        "$type": "color"
+        "$value": "color-mix(in oklab, {color.qeet.500} 20%, transparent)",
+        "$type": "color",
+        "$description": "Text selection: the same 20% Qeet tint as light. Any stronger and a selected link (text.link, the brand orange) drops below 4.5:1 on it."
       }
     },
     "rating": {

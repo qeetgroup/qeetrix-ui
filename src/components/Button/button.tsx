@@ -59,10 +59,11 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-surface-interactive-hover hover:text-foreground active:bg-surface-interactive-active data-popup-open:bg-surface-interactive-hover data-popup-open:text-foreground",
         // Destructive: quiet at rest (danger text on the designed error surface), and it commits
-        // to solid danger on intent. The old /20 and /30 hover tints dropped the label below
-        // 4.5:1 in both themes.
+        // to solid danger on intent — white on the strong red in both themes, as the primary
+        // button is white on Ember. `bg-destructive` is the bright mark colour in dark, which
+        // only a dark label can sit on.
         destructive:
-          "bg-destructive-subtle text-destructive-text hover:bg-destructive hover:text-destructive-foreground active:bg-destructive active:text-destructive-foreground data-popup-open:bg-destructive data-popup-open:text-destructive-foreground",
+          "bg-destructive-subtle text-destructive-text hover:bg-destructive-strong hover:text-on-feedback-strong active:bg-destructive-strong active:text-on-feedback-strong data-popup-open:bg-destructive-strong data-popup-open:text-on-feedback-strong",
         link: "text-link underline-offset-4 hover:text-link-hover hover:underline",
       },
       size: {
