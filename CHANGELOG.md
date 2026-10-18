@@ -1,6 +1,6 @@
 # @qeetrix/ui
 
-## Unreleased
+## 2.1.6
 
 ### Major Changes
 
@@ -40,6 +40,8 @@
   which Cal Sans v2 does not have, and 11 that no `@font-face` ever referenced) and the three Fira
   Code TTFs are gone: 29 files and 2,256.3 KiB down to 2 files and 393.6 KiB. A weight-300 request
   now renders Regular. Import a font file directly only if it is still listed in `fonts/`.
+
+## 2.1.5
 
 ### Minor Changes
 
