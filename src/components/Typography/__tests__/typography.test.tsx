@@ -33,7 +33,7 @@ describe("Typography", () => {
   });
 
   describe("Qeet type roles", () => {
-    it("sets headings in Qeet Display, scaling the page title from `sm`", () => {
+    it("sets headings in the heading style, scaling the page title from `sm`", () => {
       render(<Typography variant="h1">Tenant settings</Typography>);
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toHaveClass(
@@ -45,12 +45,12 @@ describe("Typography", () => {
       expect(h1).toHaveClass("sm:text-title");
     });
 
-    it("sets body copy in Qeet Text at the body role", () => {
+    it("sets body copy in the body style at the body role", () => {
       render(<Typography>Members sign in with a passkey.</Typography>);
       expect(screen.getByText(/passkey/)).toHaveClass("font-sans", "text-body");
     });
 
-    it("sets small labels in Qeet UI and inline code in Fira Code, sized in em", () => {
+    it("sets small labels in the UI style and inline code in Fira Code, sized in em", () => {
       render(
         <>
           <Typography variant="small">Label</Typography>
@@ -72,7 +72,7 @@ describe("Typography", () => {
       expect(p).toHaveClass("text-muted-foreground", "text-body");
     });
 
-    it("never synthesises italics — the Qeet faces ship no italic", () => {
+    it("sets a blockquote upright", () => {
       render(<Typography variant="blockquote">Quoted</Typography>);
       expect(screen.getByText("Quoted")).not.toHaveClass("italic");
     });

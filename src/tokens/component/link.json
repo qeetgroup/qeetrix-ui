@@ -10,7 +10,7 @@
       "underline-offset": {
         "$value": "0.25em",
         "$type": "dimension",
-        "$description": "Underline gap, em-relative so an inline link keeps the same proportion in a caption and in a heading. Clears descenders in Qeet Text without detaching from the word."
+        "$description": "Underline gap, em-relative so an inline link keeps the same proportion in a caption and in a heading. Clears descenders in Qeet Sans without detaching from the word."
       }
     }
   }

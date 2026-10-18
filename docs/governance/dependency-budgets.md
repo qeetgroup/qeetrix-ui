@@ -78,28 +78,29 @@ question `DEP-001` leaves behind: **install cost is measured and stated, not sol
 
 ## Fonts
 
-The package ships 30 font files, 2,260.6 KiB, published through the `./fonts/*` wildcard export
-and copied wholesale into `dist/` by `scripts/build/postbuild.mjs`.
+The package ships 2 font files, 393.6 KiB, published through the `./fonts/*` wildcard export and
+copied wholesale into `dist/` by `scripts/build/postbuild.mjs`. Both are referenced by an
+`@font-face` in `src/styles/index.css`, and both are variable fonts, so one file carries every
+weight:
 
-- **18 files, 1,658.2 KiB** are referenced by an `@font-face` in `src/styles/index.css` — Qeet
-  Display, Qeet Text, Qeet UI (five weights each) and Fira Code (three).
-- **11 files, 598.1 KiB** are referenced by nothing: `Qeet-{Light,Regular,Medium,SemiBold,Bold}`,
-  `QeetUIText-{Light,Regular,Medium,SemiBold,Bold}`, and the `Qeet[wght,GEOM]` variable font.
+- **`QeetSans.woff2`, 283.2 KiB** — Cal Sans v2.011's complete variable font, unmodified: every
+  weight, optical size, letter style and the italics. A page that uses Qeet Sans downloads this
+  one file.
+- **`FiraCode-VF.woff2`, 110.4 KiB** — Fira Code 6.2's variable font, unmodified. Fetched only
+  where monospace text appears.
 
-Those 11 are **recorded, not deleted.** `./fonts/*` is a published wildcard export, so removing a
-file from it is a consumer-visible change that nobody can verify is unused from inside this
-repository — and a font file costs install space, not download bandwidth, since a browser fetches
-only what an `@font-face` asks for. The removed gate was shaped accordingly, and nothing replaces
-it today:
+The Cal Sans v2.011 upgrade replaced 29 files, 2,256.3 KiB: 26 static Cal Sans v1.100 cuts (the
+three Qeet families in five weights, and 11 files no `@font-face` ever referenced: `Qeet-*`,
+`QeetUIText-*` and a `Qeet[wght,GEOM]` variable font) plus three Fira Code TTFs. That is a
+`./fonts/*` contract change, recorded in the CHANGELOG; nothing in the Qeet workspace imported
+those files directly.
+
+The removed gate held this line, and nothing replaces it today:
 
 - The total payload was on a shrink-only budget.
-- A **new** unreferenced font file failed the gate; the recorded list could only shrink.
+- A font file no `@font-face` references failed the gate.
 - The referenced list was parsed from the stylesheet, not hard-coded, so adding an `@font-face`
   automatically permitted its file.
-
-Pruning them is a one-line change to `postbuild.mjs` (copy the parsed referenced set plus `*.txt`
-licences instead of the whole tree) and a major-version note. It needs somebody to accept the
-`./fonts/*` contract change.
 
 ---
 

@@ -1,16 +1,17 @@
 {
   "font": {
     "family": {
+      "$description": "sans, heading and ui are all Qeet Sans (Cal Sans v2's variable font); what tells them apart is font.geometry, the letter style each role pairs with its family.",
       "sans": {
-        "$value": "\"Qeet Text\", ui-sans-serif, system-ui, sans-serif",
+        "$value": "\"Qeet Sans\", ui-sans-serif, system-ui, sans-serif",
         "$type": "fontFamily"
       },
       "heading": {
-        "$value": "\"Qeet Display\", ui-sans-serif, system-ui, sans-serif",
+        "$value": "\"Qeet Sans\", ui-sans-serif, system-ui, sans-serif",
         "$type": "fontFamily"
       },
       "ui": {
-        "$value": "\"Qeet UI\", ui-sans-serif, system-ui, sans-serif",
+        "$value": "\"Qeet Sans\", ui-sans-serif, system-ui, sans-serif",
         "$type": "fontFamily"
       },
       "mono": {
@@ -22,6 +23,13 @@
         "$value": "\"Noto Sans\", \"Noto Sans Devanagari\", \"Noto Sans Bengali\", \"Noto Sans Tamil\", \"Noto Sans Telugu\", \"Noto Sans Kannada\", \"Noto Sans Gujarati\", \"Noto Sans Gurmukhi\", ui-sans-serif, system-ui, sans-serif",
         "$type": "fontFamily"
       }
+    },
+    "geometry": {
+      "$description": "Positions on Qeet Sans's GEOM axis, the letter style: from accessibility-first neutral forms to fully geometric ones. Applied as font-variation-settings: \"GEOM\" <n> on the web, and as the same axis value on Android and iOS.",
+      "a11y": { "$value": "0", "$type": "number" },
+      "ui": { "$value": "25", "$type": "number" },
+      "base": { "$value": "50", "$type": "number" },
+      "geo": { "$value": "100", "$type": "number" }
     },
     "line-height": {
       "none": { "$value": "1", "$type": "number" },

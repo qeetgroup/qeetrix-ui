@@ -123,7 +123,7 @@ function EmptyState({
         <p
           data-slot="empty-state-title"
           className={cn(
-            "font-heading font-semibold tracking-tight text-foreground",
+            "font-heading font-semibold text-foreground",
             resolvedSize === "sm" ? "text-sm" : resolvedSize === "lg" ? "text-lg" : "text-base",
           )}
         >

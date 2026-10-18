@@ -153,7 +153,7 @@ function Stat({
             <span
               data-slot="stat-value"
               className={cn(
-                "min-w-0 font-heading leading-tight font-semibold tracking-tight text-foreground",
+                "min-w-0 font-heading leading-tight font-semibold text-foreground",
                 STAT_VALUE_SIZE[resolvedSize],
               )}
             >

@@ -10,7 +10,7 @@
       "font-size": {
         "$value": "{typography.micro.font-size}",
         "$type": "dimension",
-        "$description": "Key labels are interface micro-copy: the micro role, set in Qeet UI. Small enough to sit inside a menu row or a button without crowding the label beside it."
+        "$description": "Key labels are interface micro-copy: the micro role, in Qeet Sans's UI style. Small enough to sit inside a menu row or a button without crowding the label beside it."
       },
       "foreground": {
         "$value": "var(--qx-color-text-secondary)",

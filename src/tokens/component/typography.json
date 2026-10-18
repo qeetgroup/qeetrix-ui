@@ -15,7 +15,7 @@
       "code-font-size": {
         "$value": "0.875em",
         "$type": "dimension",
-        "$description": "Inline code is sized relative to the text around it, not fixed on the ramp: Fira Code sets larger than Qeet Text at the same size, and a fixed size would make code in a heading tiny and code in a caption loud."
+        "$description": "Inline code is sized relative to the text around it, not fixed on the ramp: Fira Code sets larger than Qeet Sans at the same size, and a fixed size would make code in a heading tiny and code in a caption loud."
       },
       "code-background": {
         "$value": "var(--qx-color-surface-sunken)",

@@ -50,7 +50,7 @@ describe("FileTypeIcon", () => {
     ["ivr-greeting.mp3", "audio"],
     ["audit-log-2026-10.zip", "archive"],
     ["saml-signing.pem", "certificate"],
-    ["QeetText-Regular.woff2", "font"],
+    ["QeetSans.woff2", "font"],
     ["signing-cert.unknownext", "file"],
     ["png", "image"],
   ])("resolves the filename or extension %s to %s", (type, category) => {

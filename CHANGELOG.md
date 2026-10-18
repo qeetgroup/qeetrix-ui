@@ -2,6 +2,45 @@
 
 ## Unreleased
 
+### Major Changes
+
+- **One typeface, Qeet Sans: Cal Sans v2.011's variable font.** Qeet Display, Qeet Text and Qeet
+  UI (static Cal Sans v1.100 cuts) are replaced by one family, `"Qeet Sans"`, loaded from one file,
+  `fonts/QeetSans.woff2`: Cal Sans [v2.011](https://github.com/calcom/sans/releases/tag/v2.011)'s
+  complete variable font, unmodified. It carries every weight from 400 to 700, optical sizes that
+  follow `font-size` on their own (tight headline drawing large, roomier spacing small), real
+  italics, 1,585 glyphs (up from 1,069) and the upstream kerning and accent fixes. The Cal Sans
+  licence ships as `fonts/CalSans-OFL.txt`.
+- **Cal Sans v2's own pairing, set by the same utilities.** Headings are Cal Sans (the Base
+  letter style, GEOM 50): `font-heading`, `font-display` and `h1`–`h6`. Body and interface text
+  are Cal Sans Text UI (the UI letter style, GEOM 25): `font-sans`, `font-ui`, and the host rule
+  for buttons, inputs, labels and menus. Size is not a font choice any more: optical size follows
+  `font-size`, so headlines get the display drawing and small text the text drawing. Headings
+  move from Geo forms to Base, and body text from Text forms to UI. The positions are tokens:
+  `font.geometry.{a11y,ui,base,geo}` and a `font-geometry` on every typography role
+  (`--qx-typography-<role>-font-geometry`). The `font.family.sans/heading/ui` tokens are all
+  `"Qeet Sans"`. The host rule for buttons, inputs,
+  labels and menu slots applies `font-ui` instead of only its family. If your CSS names `"Qeet
+  Display"`, `"Qeet Text"` or `"Qeet UI"`, use the utilities or `var(--font-heading)` and friends
+  with the matching `font-variation-settings`.
+- **Real italics.** `italic` now renders Qeet Sans's drawn italic instead of a browser-slanted
+  upright. Blockquote stays upright by design.
+- **No tracking on top of Cal Sans's own spacing.** Cal Sans spaces each size itself (small
+  sizes set wider by design), so the `display`, `title` and `heading` roles move to
+  `letter-spacing: 0` (from -0.04em / -0.02em) and `micro` from 0.02em to 0; `h1`–`h6` no longer
+  get `tracking-tight`, and neither do the `font-heading` titles in Alert, EmptyState, PageHeader
+  and Stat.
+- **`html` no longer sets `font-feature-settings`.** The letter style now decides the forms, as
+  Cal Sans v2 intends: headings keep Base's single-storey a, and body and interface text use the
+  UI style's double-storey a. The old `"cv11", "ss01", "ss03"` would now force a humanist G, a
+  geometric a and a tailed a.
+- **Fira Code is its variable font.** `fonts/FiraCode-VF.woff2` (Fira Code 6.2, unmodified, every
+  weight 300–700) replaces the three TTFs, 877 KiB down to 110.
+- **`./fonts/*` is two files.** The 26 static Cal Sans v1 files (including the three Light weights,
+  which Cal Sans v2 does not have, and 11 that no `@font-face` ever referenced) and the three Fira
+  Code TTFs are gone: 29 files and 2,256.3 KiB down to 2 files and 393.6 KiB. A weight-300 request
+  now renders Regular. Import a font file directly only if it is still listed in `fonts/`.
+
 ### Minor Changes
 
 - **Dark mode is drawn in the brand orange itself.** `text.brand`, `text.link`, `border.brand`,

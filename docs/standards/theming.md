@@ -352,11 +352,11 @@ Inside `@layer base` (so any host rule of equal specificity that is unlayered wi
 |:--|:--|
 | `:root`, `.dark` | `color-scheme: light` / `dark`, so browser-drawn UI (scrollbars, form controls, autofill) follows the theme |
 | `*` | `border-color` and `outline-color` defaults |
-| `html` | `font-sans`, antialiasing, `font-feature-settings` |
+| `html` | `font-sans` (Qeet Sans in Cal Sans Text UI's letter style, GEOM 25), `font-optical-sizing: auto`, antialiasing |
 | `body` | `bg-background`, `font-sans`, `text-foreground` |
 | `::selection` | selection background |
-| `h1`–`h6` | `font-heading`, `tracking-tight` |
-| `button`, `[role="button"]`, `input`, `select`, `textarea`, `label`, and the menu, sidebar and breadcrumb text slots | `font-family: var(--font-ui)` |
+| `h1`–`h6` | `font-heading` (Qeet Sans in Cal Sans's Base letter style, GEOM 50) |
+| `button`, `[role="button"]`, `input`, `select`, `textarea`, `label`, and the menu, sidebar and breadcrumb text slots | `font-ui` (Qeet Sans in Cal Sans Text UI's letter style, GEOM 25) |
 | `button:not(:disabled)`, `[role="button"]:not(:disabled)` | `cursor: pointer` |
 | `[data-slot="skeleton"]` | the shimmer sweep |
 | `*`, `::before`, `::after` under `prefers-reduced-motion` | all animation and transition collapsed, `!important` |
@@ -371,7 +371,7 @@ Unlayered, so it beats everything (this is intended — forced colors is not neg
 | `:focus-visible` under `forced-colors` | `Highlight` outline, `!important` |
 | a handful of `[data-slot=…]` rules | overlays opaque, skeleton stilled, chart and rating opted out of the forced palette |
 
-Plus 17 `@font-face` declarations (three Qeet families and Fira Code) and `@import "tailwindcss"`,
+Plus 3 `@font-face` declarations (Qeet Sans upright and italic, Fira Code; each one variable font) and `@import "tailwindcss"`,
 which brings **Tailwind Preflight** — a full element reset — with it.
 
 There is deliberately **no scoped variant**. Making `styles.css` apply only inside a Qeetrix
