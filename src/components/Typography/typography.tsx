@@ -6,16 +6,20 @@ import { cn } from "@/lib/utils";
 /*
  * Qeet type, applied by role rather than by step:
  *
- *   Qeet Display  (font-heading)  h1–h4 — titles and section headings
- *   Qeet Text     (font-sans)     p, lead, large, muted, blockquote, list — reading copy
- *   Qeet UI       (font-ui)       small — interface labels
- *   Fira Code     (font-mono)     inlineCode — sized in em, so it matches the text around it
+ *   Qeet Sans as Cal Sans          (font-heading)  h1–h4 — titles and section headings
+ *   Qeet Sans as Cal Sans Text UI  (font-sans)     p, lead, large, muted, blockquote, list — reading copy
+ *   Qeet Sans as Cal Sans Text UI  (font-ui)       small — interface labels
+ *   Fira Code                      (font-mono)     inlineCode — sized in em, so it matches the text around it
+ *
+ * That is Cal Sans v2's own pairing: the Base letter style for headings, the UI letter style for
+ * reading and interface text. Optical size follows font-size, so a 24px title gets the display
+ * drawing and a 14px paragraph the text drawing without either being chosen here.
  *
  * The scale is an application scale, not a marketing one. h1 is a page title (24px, 32px from
  * `sm`), h2 a section (20 → 24px), h3 a group (18 → 20px), h4 a block heading (16px). There is
  * no display or hero variant on purpose; those belong to marketing surfaces, not to Typography.
  *
- * Each family is set explicitly so the roles hold even where a host page restyles headings over
+ * Each style is set explicitly so the roles hold even where a host page restyles headings over
  * the stylesheet's host-global heading rule. Where a semantic type role exists (`text-title`, `text-heading`,
  * `text-body`, `text-label`, `text-code`) it is used by name; the steps in between (24px, 18px,
  * 16px) have no role and come from the ramp with a role's line height.

@@ -4,10 +4,10 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * The quote is content, so it is set in Qeet Text at full text colour with a relaxed measure;
+ * The quote is content, so it is set in the body style at full text colour with a relaxed measure;
  * the inline-start rule (the strong decorative border, visible in both themes) marks it as a
- * quotation. Upright on purpose: the Qeet faces ship no italic, and a browser-synthesised
- * oblique is the one thing that would make a quote look cheap.
+ * quotation. Upright on purpose: the rule already marks it as quoted, so the words keep the
+ * reading face.
  */
 const blockquoteVariants = cva("border-s-2 border-border-strong ps-4 font-sans text-foreground", {
   variants: {

@@ -101,7 +101,7 @@ function OverflowList({
   }, [needsMeasure, items, measurement, recompute]);
 
   // Web fonts swap in after first paint (`font-display: swap`), and the first measurement was
-  // taken in the fallback face — Qeet UI is not the same width as the system font, so the row
+  // taken in the fallback face — Qeet Sans is not the same width as the system font, so the row
   // collapsed to the wrong count until something else re-rendered it. Re-measure once the
   // document's fonts have settled.
   React.useEffect(() => {

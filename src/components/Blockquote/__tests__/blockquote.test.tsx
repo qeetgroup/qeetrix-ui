@@ -62,7 +62,7 @@ describe("Blockquote", () => {
     );
   });
 
-  it("sets the quote upright — the Qeet faces ship no italic", () => {
+  it("sets the quote upright — the rule, not a slant, marks it as quoted", () => {
     const { container } = render(
       <Blockquote attribution="Someone">
         <p>Quote</p>

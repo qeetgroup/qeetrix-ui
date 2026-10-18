@@ -15,7 +15,7 @@ interface KbdProps extends React.ComponentProps<"kbd"> {
 /**
  * A keyboard key cap — one key of a shortcut hint. Combine keys with `KbdGroup` (⌘ + K).
  *
- * Set in Qeet UI at the micro role, on a translucent cap derived from its own text colour: the
+ * Set in Qeet Sans's UI style at the micro role, on a translucent cap derived from its own text colour: the
  * cap reads on any surface in both themes (canvas, card, menu, command palette, button) and
  * follows the text if a consumer recolours it. Static content — no states, no motion.
  *

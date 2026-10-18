@@ -49,7 +49,7 @@ function PageHeader({
         )}
         <h1
           data-slot="page-header-title"
-          className="font-heading text-2xl font-semibold tracking-tight text-balance wrap-break-word text-foreground"
+          className="font-heading text-2xl font-semibold text-balance wrap-break-word text-foreground"
         >
           {title}
         </h1>

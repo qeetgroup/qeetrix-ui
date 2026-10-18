@@ -81,7 +81,7 @@ The 35 from the first pass, plus these six:
 | `META-001` | P1 | `check:release` fails closed on the contradiction, accepting either resolution | **The licence decision itself** |
 | `TEST-001` | P1 | 14 real-browser tests, coverage at 88% lines on a ratchet, CI jobs | Not a *required* gate: that means accepting a ~200 MB browser download. No VRT baselines |
 | `RTL-001` | P2 | Direction + locale runtime contracts, 10 components migrated | Injectable messages deliberately unstarted — 55 hardcoded labels across ~33 files |
-| `DEP-001` | P2 | 22 byte budgets + a font budget, all shrink-only | Install cost measured but not budgeted; 11 unreferenced fonts governed, not pruned |
+| `DEP-001` | P2 | 22 byte budgets + a font budget, all shrink-only | Install cost measured but not budgeted (unreferenced fonts since pruned) |
 | `A11Y-009` | P2 | Named `role="toolbar"` with roving focus, `aria-placeholder`/`aria-readonly` | A `<label for>` cannot click-focus a contenteditable; named via `aria-labelledby` instead |
 | `A11Y-011` | P2 | Whole-widget axe restored, minus one node, asserting that node still exists | Upstream in Base UI; all four workarounds ruled out empirically |
 | `DENSITY-001` | P2 | Applicability contract, per-slug lock, enforcement rule | 125 families still report a `not-applicable` nobody decided; now 119 `unknown` |
@@ -96,9 +96,10 @@ being precise about which is which:
   a required gate (`TEST-001`).
 - **Two are credentials or infrastructure** outside the repository: `REL-001`'s registry and branch
   protection.
-- **Three are deliberately scoped down** with the reason recorded: injectable messages (`RTL-001`),
-  font pruning (`DEP-001`), and stylesheet scoping (`CSS-001`) — each needs a contract change and a
-  human's agreement.
+- **Three are deliberately scoped down** with the reason recorded: injectable messages (`RTL-001`)
+  and stylesheet scoping (`CSS-001`), each needing a contract change and a human's agreement, and
+  install-cost budgets (`DEP-001`), which on-disk layout makes unmeasurable. `DEP-001`'s font
+  pruning got its agreement and was done in the Cal Sans v2.011 upgrade.
 - **Two are genuinely blocked**: `A11Y-011` upstream in Base UI, and `DENSITY-001` waiting on 125
   per-component declarations that only a maintainer can make.
 
@@ -1390,10 +1391,9 @@ fault injection. Measured gzip: RichTextEditor 155.0 KiB, DataTable 102.0, Chart
 drags in redux-toolkit, immer and twelve d3 packages), Calendar 39.0.
 
 **Residual.** Install cost is measured and documented but not budgeted, because on-disk layout
-varies by registry and platform: lucide-react 45.1 MiB, date-fns 26.5, Base UI 19.2. **11 font
-files totalling 598 KiB are referenced by no `@font-face`** — governed rather than pruned, because
-`./fonts/*` is a published wildcard export and nothing here can prove they are unused. Pruning
-them is a published-contract change needing a decision.
+varies by registry and platform: lucide-react 45.1 MiB, date-fns 26.5, Base UI 19.2. The 11 font
+files no `@font-face` referenced were deleted, with the three Light weights, in the Cal Sans
+v2.011 upgrade — a `./fonts/*` contract change, agreed and recorded in the CHANGELOG.
 
 ### BUNDLE-001 — Root barrel cost is unmeasured — RESOLVED
 
@@ -2434,8 +2434,8 @@ What remains, precisely:
   (`REL-001`) that no repository can grant itself.
 - **Four real WCAG 1.4.11 contrast failures remain by decision**, with measured candidate values
   tabulated, because the token involved is both border and fill across 53 components.
-- **Injectable messages, font pruning and stylesheet scoping** are each scoped out with a written
-  reason; all three are contract changes needing agreement.
+- **Injectable messages and stylesheet scoping** are each scoped out with a written reason; both
+  are contract changes needing agreement. (Font pruning got its agreement and is done.)
 
 The next move is no longer an engineering question. It is whether the browser gate becomes required
 and what licence this package ships under.

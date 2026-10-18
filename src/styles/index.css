@@ -23,137 +23,40 @@
 /* Scan the whole package for utility classes (this file lives one level down). */
 @source "../**/*.{ts,tsx}";
 
-/* Qeet Display — large headlines, hero text */
+/* Qeet Sans — the Qeet typeface: Cal Sans v2.011's complete variable font, unmodified
+ * (CalSansVF.woff2 from github.com/calcom/sans; SIL OFL 1.1, see ./fonts/CalSans-OFL.txt). One file
+ * holds every style:
+ *   wght 400–700  font-weight. Cal Sans has no 300, so a 300 request renders Regular.
+ *   opsz 8–45     follows font-size by itself (font-optical-sizing: auto, the browser default):
+ *                 the tight headline drawing at large sizes, roomier spacing for small text.
+ *   GEOM 0–100    the letter style: A11y 0 · UI 25 · Base 50 · Geo 100. Set per role by the
+ *                 font-* utilities in @theme below, not per @font-face: Safari ignores the
+ *                 font-variation-settings descriptor, so one file cannot carry three styles.
+ *   ital 0–1      the drawn italics, used by the italic face.
+ * Upgrading: replace QeetSans.woff2 with a newer CalSansVF.woff2, and CalSans-OFL.txt with its OFL.txt. */
 @font-face {
-  font-family: "Qeet Display";
-  src: url("../fonts/QeetDisplay-Light.woff2") format("woff2");
-  font-weight: 300;
+  font-family: "Qeet Sans";
+  src: url("../fonts/QeetSans.woff2") format("woff2");
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Qeet Display";
-  src: url("../fonts/QeetDisplay-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
+  font-family: "Qeet Sans";
+  src: url("../fonts/QeetSans.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: italic;
   font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Display";
-  src: url("../fonts/QeetDisplay-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Display";
-  src: url("../fonts/QeetDisplay-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Display";
-  src: url("../fonts/QeetDisplay-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+  font-variation-settings: "ital" 1;
 }
 
-/* Qeet Text — body copy, paragraphs */
-@font-face {
-  font-family: "Qeet Text";
-  src: url("../fonts/QeetText-Light.woff2") format("woff2");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Text";
-  src: url("../fonts/QeetText-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Text";
-  src: url("../fonts/QeetText-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Text";
-  src: url("../fonts/QeetText-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet Text";
-  src: url("../fonts/QeetText-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Qeet UI — buttons, labels, menus, small interface text */
-@font-face {
-  font-family: "Qeet UI";
-  src: url("../fonts/QeetUI-Light.woff2") format("woff2");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet UI";
-  src: url("../fonts/QeetUI-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet UI";
-  src: url("../fonts/QeetUI-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet UI";
-  src: url("../fonts/QeetUI-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Qeet UI";
-  src: url("../fonts/QeetUI-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Fira Code — monospace (code blocks, <kbd>, secrets, JSON/diff). SIL OFL 1.1;
- * see ./fonts/FiraCode-OFL.txt. Bundled as TTF (no woff2 tooling offline). */
+/* Fira Code — monospace (code blocks, <kbd>, secrets, JSON/diff). Fira Code 6.2's variable font,
+ * unmodified (FiraCode-VF.woff2 from github.com/tonsky/FiraCode), every weight 300–700 in one file;
+ * SIL OFL 1.1, see ./fonts/FiraCode-OFL.txt. */
 @font-face {
   font-family: "Fira Code";
-  src: url("../fonts/FiraCode-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Fira Code";
-  src: url("../fonts/FiraCode-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Fira Code";
-  src: url("../fonts/FiraCode-SemiBold.ttf") format("truetype");
-  font-weight: 600;
+  src: url("../fonts/FiraCode-VF.woff2") format("woff2");
+  font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
@@ -179,10 +82,20 @@
 }
 
 @theme inline {
-  --font-display: "Qeet Display", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Qeet Display", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Qeet Text", ui-sans-serif, system-ui, sans-serif;
-  --font-ui: "Qeet UI", ui-sans-serif, system-ui, sans-serif;
+  /* One typeface, set the way Cal Sans v2 pairs it: headings in Cal Sans (Base, GEOM 50), body
+   * text and interface text in Cal Sans Text UI (UI, GEOM 25). Each font-* utility sets Qeet Sans
+   * and the GEOM position of its typography role (font.geometry in the tokens); optical size
+   * follows font-size, so no utility picks a Display/Text/Micro cut. font-variation-settings
+   * inherits, so text inside a heading keeps the heading style until an element sets another
+   * font-* utility. No stylistic sets: the letter style decides the forms. */
+  --font-display: "Qeet Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display--font-variation-settings: "GEOM" var(--qx-typography-display-font-geometry);
+  --font-heading: "Qeet Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading--font-variation-settings: "GEOM" var(--qx-typography-heading-font-geometry);
+  --font-sans: "Qeet Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans--font-variation-settings: "GEOM" var(--qx-typography-body-font-geometry);
+  --font-ui: "Qeet Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-ui--font-variation-settings: "GEOM" var(--qx-typography-label-font-geometry);
   --font-mono: "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -457,7 +370,7 @@
 }
 
 /* :root and .dark semantic variables come from ./styles/tokens.css (generated;
- * imported above). Edit token source in packages/ui/tokens, not here. */
+ * imported above). Edit token source in src/tokens, not here. */
 
 /* ─── Host-global section ──────────────────────────────────────────────────────────────────
  *
@@ -476,9 +389,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Cal Sans v2's whole integration: the family, and optical size following font-size. Stated
+   * rather than left to the browser default, so a host reset cannot switch it off. */
   html {
     @apply font-sans antialiased;
-    font-feature-settings: "cv11", "ss01", "ss03";
+    font-optical-sizing: auto;
   }
   body {
     @apply bg-background font-sans text-foreground;
@@ -492,7 +407,7 @@
   h4,
   h5,
   h6 {
-    @apply font-heading tracking-tight;
+    @apply font-heading;
   }
   button,
   [role="button"],
@@ -506,7 +421,7 @@
   [data-slot="sidebar-menu-sub-button"],
   [data-slot="sidebar-group-label"],
   [data-slot="breadcrumb-list"] {
-    font-family: var(--font-ui);
+    @apply font-ui;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
